@@ -29,6 +29,7 @@ package haven;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class TextEntry extends SIWidget {
@@ -52,6 +53,8 @@ public class TextEntry extends SIWidget {
     private double focusstart;
     private boolean readonly = false;
     private Text.Line tcache = null;
+    private final Consumer<String> onChange;
+    private final Consumer<String> onActivate;
 
     @RName("text")
     public static class $_ implements Factory {
@@ -168,24 +171,34 @@ public class TextEntry extends SIWidget {
 	}
     }
 
-    public TextEntry(int w, String deftext) {
+    public TextEntry(final int w, final String deftext, final Consumer<String> onChange, final Consumer<String> onActivate) {
 	super(new Coord(w, UI.scale(mext.getHeight())));
+	this.onChange = onChange;
+	this.onActivate = onActivate;
 	rsettext(deftext);
 	setcanfocus(true);
     }
 
+    public TextEntry(int w, String deftext) {
+        this(w, deftext, null, null);
+    }
+
     @Deprecated
     public TextEntry(Coord sz, String deftext) {
-	this(sz.x, deftext);
+	this(sz.x, deftext, null, null);
     }
 
     protected void changed() {
 	dirty = true;
+	if (onChange != null)
+	    onChange.accept(text);
     }
 
     public void activate(String text) {
 	if(canactivate)
 	    wdgmsg("activate", text);
+	if (onActivate != null)
+	    onActivate.accept(text);
     }
 
     public boolean gkeytype(KeyEvent ev) {
