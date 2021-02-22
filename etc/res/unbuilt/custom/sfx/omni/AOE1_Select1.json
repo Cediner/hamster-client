@@ -1,0 +1,9 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio",
+      "audio": "unbuilt\\custom\\sfx\\omni\\AOE1_Select1\\audio-0.ogg"
+    }
+  ]
+}

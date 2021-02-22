@@ -1,0 +1,9 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio",
+      "audio": "unbuilt\\custom\\sfx\\omni\\AOE2_TownBell\\audio-0.ogg"
+    }
+  ]
+}

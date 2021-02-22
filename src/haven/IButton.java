@@ -33,6 +33,8 @@ public class IButton extends SIWidget {
     public final BufferedImage up, down, hover;
     public boolean h = false, a = false;
     public Runnable action = null;
+    private final Runnable laction;
+    private long pressStart = 0L;
     private UI.Grab d = null;
 
     @RName("ibtn")
@@ -42,17 +44,25 @@ public class IButton extends SIWidget {
 	}
     }
 
-    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, Runnable action) {
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, Runnable action, Runnable laction) {
 	super(Utils.imgsz(up));
 	this.up = up;
 	this.down = down;
 	this.hover = hover;
 	this.action = action;
+	this.laction = laction;
+    }
+
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, Runnable action) {
+	this(up, down, hover, action, action);
     }
 
     public IButton(BufferedImage up, BufferedImage down, BufferedImage hover) {
-	this(up, down, hover, null);
-	this.action = () -> wdgmsg("activate");
+	super(Utils.imgsz(up));
+	this.up = up;
+	this.down = down;
+	this.hover = hover;
+	this.action = this.laction = () -> wdgmsg("activate");
     }
 
     public IButton(BufferedImage up, BufferedImage down) {
@@ -99,6 +109,11 @@ public class IButton extends SIWidget {
 	    action.run();
     }
 
+    public void longclick() {
+	if(laction != null)
+	    laction.run();
+    }
+
     public boolean gkeytype(java.awt.event.KeyEvent ev) {
 	click();
 	return(true);
@@ -119,6 +134,7 @@ public class IButton extends SIWidget {
 	d = ui.grabmouse(this);
 	depress();
 	redraw();
+	pressStart = System.currentTimeMillis();
 	return(true);
     }
 
@@ -129,7 +145,11 @@ public class IButton extends SIWidget {
 	    mousemove(c);
 	    if(checkhit(c)) {
 		unpress();
-		click();
+		if (System.currentTimeMillis() - pressStart < 3000) {
+		    click();
+		} else {
+		    longclick();
+		}
 	    }
 	    return(true);
 	}

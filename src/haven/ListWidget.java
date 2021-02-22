@@ -38,6 +38,9 @@ public abstract class ListWidget<T> extends Widget {
     protected abstract T listitem(int i);
     protected abstract int listitems();
     protected abstract void drawitem(GOut g, T item, int i);
+    protected Object itemtooltip(Coord c, T item) {
+	return null;
+    }
 
     public int find(T item) {
 	for(int i = 0; i < listitems(); i++) {

@@ -1,2 +1,4 @@
 /hafen-res.jar
 /builtin-res.jar
+/checker-compat*
+/*-javadoc.jar

@@ -1,0 +1,10 @@
+[LOG] Downloading new version file
+[ERROR] java.io.IOException: Server returned HTTP response code: 503 for URL: https://gitlab.com/users/sign_in
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1932)
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1528)
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:224)
+	at java.base/java.net.URL.openStream(URL.java:1167)
+	at org.apache.commons.io.FileUtils.copyURLToFile(FileUtils.java:1478)
+	at ape.Updater.update(Updater.java:67)
+	at ape.Updater.main(Updater.java:15)
+[LOG] Starting client
