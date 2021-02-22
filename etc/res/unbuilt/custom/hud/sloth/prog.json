@@ -1,0 +1,234 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "anim",
+      "data": "unbuilt\\custom\\hud\\sloth\\prog\\anim-0.dat"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-0.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-1.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 2,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-2.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 3,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-3.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 4,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-4.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 5,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-5.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 6,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-6.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 7,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-7.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 8,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-8.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 9,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-9.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 10,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-10.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 11,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-11.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 12,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-12.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 13,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-13.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 14,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-14.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 15,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-15.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 16,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-16.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 17,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-17.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 18,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-18.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 19,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-19.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 20,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-20.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 21,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-21.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 22,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-22.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 23,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-23.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 24,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-24.png"
+    }
+  ]
+}

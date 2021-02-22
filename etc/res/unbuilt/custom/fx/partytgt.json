@@ -1,0 +1,29 @@
+{
+  "ver": 4,
+  "layers": [
+    {
+      "layer-name": "mat2",
+      "data": "unbuilt\\custom\\fx\\partytgt\\mat2-0.dat"
+    },
+    {
+      "layer-name": "mesh",
+      "data": "unbuilt\\custom\\fx\\partytgt\\mesh-0.dat"
+    },
+    {
+      "layer-name": "skan",
+      "data": "unbuilt\\custom\\fx\\partytgt\\skan-0.dat"
+    },
+    {
+      "layer-name": "skel",
+      "data": "unbuilt\\custom\\fx\\partytgt\\skel-0.dat"
+    },
+    {
+      "layer-name": "tex",
+      "data": "unbuilt\\custom\\fx\\partytgt\\tex-0.dat"
+    },
+    {
+      "layer-name": "vbuf2",
+      "data": "unbuilt\\custom\\fx\\partytgt\\vbuf2-0.dat"
+    }
+  ]
+}

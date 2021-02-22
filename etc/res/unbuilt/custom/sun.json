@@ -1,0 +1,126 @@
+{
+  "ver": 5,
+  "layers": [
+    {
+      "layer-name": "anim",
+      "data": "unbuilt\\custom\\sun\\anim-0.dat"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-0.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-1.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 2,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-2.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 3,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-3.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 4,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-4.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 5,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-5.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 6,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-6.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 7,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-7.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 8,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-8.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 9,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-9.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 10,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-10.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 11,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-11.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 12,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\sun\\image-12.png"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-0.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-1.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 2,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-2.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 3,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-3.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 4,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-4.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 5,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-5.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 6,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-6.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 7,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-7.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 8,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-8.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 9,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-9.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 10,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\window\\image-10.png"
+    },
+    {
+      "layer-name": "windowconfig",
+      "tlc": "Coord{19, 36}",
+      "brc": "Coord{19, 24}",
+      "capc": "Coord{40, 15}",
+      "btnc": "Coord{40, 18}"
+    }
+  ]
+}

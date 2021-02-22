@@ -1,0 +1,26 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "action",
+      "data": "unbuilt\\custom\\paginae\\default\\wnd\\alerted\\action-0.dat"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\paginae\\default\\wnd\\alerted\\image-0.png"
+    },
+    {
+      "layer-name": "tooltip",
+      "t": "Used to manage what objects you have sound alerts setup for."
+    },
+    {
+      "layer-name": "tooltip",
+      "t": "Open Alerted Management"
+    }
+  ]
+}

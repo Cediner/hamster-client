@@ -1,0 +1,9 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio",
+      "audio": "unbuilt\\custom\\sfx\\omni\\Z_WW_Get_Rupee_Blue\\audio-0.ogg"
+    }
+  ]
+}

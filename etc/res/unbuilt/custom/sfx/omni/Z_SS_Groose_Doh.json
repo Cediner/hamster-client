@@ -1,0 +1,9 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio",
+      "audio": "unbuilt\\custom\\sfx\\omni\\Z_SS_Groose_Doh\\audio-0.ogg"
+    }
+  ]
+}

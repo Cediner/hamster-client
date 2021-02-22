@@ -1,0 +1,23 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\vm\\image-0.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "nooff": false,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\default\\vm\\image-1.png"
+    }
+  ]
+}
