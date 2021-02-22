@@ -29,6 +29,7 @@ package haven;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.regex.Pattern;
 
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
@@ -44,9 +45,12 @@ public class TextEntry extends SIWidget {
     public LineEdit buf;
     public int sx;
     public boolean pw = false;
+    private final static Pattern numpat = Pattern.compile("(-)|(-?[0-9]+)");
+    public boolean numeric = false;
     public String text;
     private boolean dirty = false;
     private double focusstart;
+    private boolean readonly = false;
     private Text.Line tcache = null;
 
     @RName("text")
@@ -79,6 +83,15 @@ public class TextEntry extends SIWidget {
 	redraw();
     }
 
+    public void setpw(final boolean val) {
+	this.pw = val;
+	commit();
+    }
+
+    public void setReadOnly(final boolean readonly) {
+	this.readonly = readonly;
+    }
+
     public void commit() {
 	dirty = false;
 	redraw();
@@ -97,6 +110,24 @@ public class TextEntry extends SIWidget {
 	    commit();
 	} else {
 	    super.uimsg(name, args);
+	}
+    }
+
+    public int numvalue() {
+	if (numeric) {
+	    if (text.length() == 0)
+		return 0;
+	    else if (text.equals("-"))
+		return 0;
+	    else {
+		try {
+		    return Integer.parseInt(text);
+		} catch (RuntimeException re) {
+		    return 0;
+		}
+	    }
+	} else {
+	    return 0;
 	}
     }
 
@@ -163,7 +194,7 @@ public class TextEntry extends SIWidget {
     }
 
     public boolean keydown(KeyEvent e) {
-	return(buf.key(e));
+	return !readonly && (buf.key(e));
     }
 
     public boolean mousedown(Coord c, int button) {
