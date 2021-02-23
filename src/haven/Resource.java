@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.io.SQLResCache;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.annotation.*;
@@ -39,6 +41,7 @@ import java.awt.image.BufferedImage;
 
 public class Resource implements Serializable {
     private static ResCache prscache;
+    private static ResCache sqlcache;
     public static ThreadGroup loadergroup = null;
     private static Map<String, LayerFactory<?>> ltypes = new TreeMap<String, LayerFactory<?>>();
     public static Class<Image> imgc = Image.class;
@@ -700,6 +703,7 @@ public class Resource implements Serializable {
 	    synchronized(Resource.class) {
 		if(_local == null) {
 		    Pool local = new Pool(new JarSource("res"));
+		    sqlcache = new SQLResCache();
 		    try {
 			if(Config.resdir != null)
 			    local.add(new FileSource(new File(Config.resdir)));
@@ -721,6 +725,7 @@ public class Resource implements Serializable {
 	    synchronized(Resource.class) {
 		if(_remote == null) {
 		    Pool remote = new Pool(local(), new JarSource("res-preload"));
+		    remote.add(new CacheSource(sqlcache));
 		    if(prscache != null)
 			remote.add(new CacheSource(prscache));
 		    _remote = remote;;
@@ -741,7 +746,7 @@ public class Resource implements Serializable {
 		    return(cache.store("res/" + name));
 		}
 	    }
-	    src = new Caching(src, prscache);
+	    src = new Caching(src, sqlcache);
 	}
 	remote().add(src);
     }
@@ -855,7 +860,7 @@ public class Resource implements Serializable {
 	for(Class<?> cl : dolda.jglob.Loader.get(LayerName.class).classes()) {
 	    String nm = cl.getAnnotation(LayerName.class).value();
 	    if(LayerFactory.class.isAssignableFrom(cl)) {
-		addltype(nm, Utils.construct(cl.asSubclass(LayerFactory.class)));
+		addltype(nm, (LayerFactory<?>) Utils.construct(cl.asSubclass(LayerFactory.class)));
 	    } else if(Layer.class.isAssignableFrom(cl)) {
 		addltype(nm, cl.asSubclass(Layer.class));
 	    } else {
