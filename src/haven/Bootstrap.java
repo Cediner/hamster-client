@@ -26,7 +26,7 @@
 
 package haven;
 
-import hamster.login.AccountLoginScreen;
+import hamster.ui.login.AccountLoginScreen;
 
 import java.net.*;
 import java.util.*;

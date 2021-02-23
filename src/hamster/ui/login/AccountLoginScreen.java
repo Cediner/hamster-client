@@ -1,6 +1,5 @@
-package hamster.login;
+package hamster.ui.login;
 
-import hamster.io.Storage;
 import hamster.security.AccountManagement;
 import com.google.common.flogger.FluentLogger;
 import haven.Button;
@@ -8,11 +7,7 @@ import haven.Label;
 import haven.*;
 
 import java.awt.*;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,14 +20,6 @@ public class AccountLoginScreen extends Widget {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Tex bg = Resource.loadtex("gfx/loginscr");
 
-    static {
-        Storage.dynamic.ensure((sql) -> {
-            try (final Statement stmt = sql.createStatement()) {
-                stmt.executeUpdate("CREATE TABLE IF NOT EXISTS account_blob ( name TEXT PRIMARY KEY, data BLOB )");
-            }
-        });
-    }
-
     private final List<String> accounts;
     private final Listbox<String> accountlst;
     private final TextEntry keyfield;
@@ -40,17 +27,7 @@ public class AccountLoginScreen extends Widget {
 
     public AccountLoginScreen() {
         super(bg.sz());
-        accounts = new ArrayList<>();
-        Storage.dynamic.ensure((sql) -> {
-            try (final Statement stmt = sql.createStatement()) {
-                try (final ResultSet res = stmt.executeQuery("SELECT name FROM account_blob")) {
-                    while (res.next()) {
-                        accounts.add(res.getString(1));
-                    }
-                }
-            }
-        });
-
+        accounts = AccountManagement.getAccounts();
         accountlst = new Listbox<>(200, 13, 20) {
             final Coord offset = new Coord(5, 1);
 
@@ -116,11 +93,7 @@ public class AccountLoginScreen extends Widget {
 
     private void delete() {
         if (accountlst.sel != null) {
-            Storage.dynamic.ensure((sql) -> {
-                final PreparedStatement stmt = Storage.dynamic.prepare("DELETE FROM account_blob WHERE name = ?");
-                stmt.setString(1, accountlst.sel);
-                stmt.executeUpdate();
-            });
+            AccountManagement.deleteAccount(accountlst.sel);
             accounts.remove(accountlst.sel);
         }
     }
