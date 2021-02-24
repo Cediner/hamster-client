@@ -11,18 +11,26 @@ import java.sql.Statement;
 
 public class SQLResCache implements ResCache {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
-    private static final Storage resdb = Storage.create("jdbc:sqlite:data/res.sqlite")
-            .orElseThrow(() -> new RuntimeException("Failed to open map database"));
-    private static final PreparedStatement upsert;
-    private static final PreparedStatement fetch;
-
+    public static final SQLResCache resdb, mapdb;
     static {
+        resdb = new SQLResCache("jdbc:sqlite:data/res.sqlite");
+        mapdb = new SQLResCache("jdbc:sqlite:data/map.sqlite");
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 resdb.close();
+                mapdb.close();
             }
         });
-        resdb.ensure(sql -> {
+    }
+
+    private final Storage db;
+    private final PreparedStatement upsert;
+    private final PreparedStatement fetch;
+
+    public SQLResCache(final String jdbc) {
+        db = Storage.create(jdbc)
+                .orElseThrow(() -> new RuntimeException("Failed to open map database"));
+        db.ensure(sql -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("""
                         CREATE TABLE IF NOT EXISTS resource (
@@ -32,12 +40,16 @@ public class SQLResCache implements ResCache {
             }
         });
 
-        upsert = resdb.ensurePrepare("""
+        upsert = db.ensurePrepare("""
                 INSERT INTO resource (name, data)
                     VALUES (?, ?)
                     ON CONFLICT (name) DO UPDATE SET
                         data=excluded.data""");
-        fetch = resdb.ensurePrepare("SELECT data FROM resource WHERE name =  ?");
+        fetch = db.ensurePrepare("SELECT data FROM resource WHERE name =  ?");
+    }
+
+    public void close() {
+        db.close();
     }
 
     @Override
@@ -47,7 +59,7 @@ public class SQLResCache implements ResCache {
             public void close() throws IOException {
                 super.close();
                 final byte[] data = toByteArray();
-                resdb.write(sql -> {
+                db.write(sql -> {
                     upsert.setString(1, name);
                     upsert.setBytes(2, data);
                     upsert.execute();
@@ -77,7 +89,7 @@ public class SQLResCache implements ResCache {
         if (data != null) {
             return new ByteArrayInputStream(data);
         } else {
-            return null;
+            throw(new FileNotFoundException(name));
         }
     }
 }
