@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.io.SQLResCache;
+
 import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
@@ -676,13 +678,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ui.destroy(mapfile);
 		mapfile = null;
 	    }
-	    ResCache mapstore = ResCache.global;
-	    if(Config.mapbase != null) {
-		try {
-		    mapstore = HashDirCache.get(Config.mapbase.toURI());
-		} catch(java.net.URISyntaxException e) {
-		}
-	    }
+	    ResCache mapstore = SQLResCache.mapdb;
 	    if(mapstore != null) {
 		MapFile file = MapFile.load(mapstore, mapfilename());
 		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);

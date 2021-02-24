@@ -703,7 +703,7 @@ public class Resource implements Serializable {
 	    synchronized(Resource.class) {
 		if(_local == null) {
 		    Pool local = new Pool(new JarSource("res"));
-		    sqlcache = new SQLResCache();
+		    sqlcache = SQLResCache.resdb;
 		    try {
 			if(Config.resdir != null)
 			    local.add(new FileSource(new File(Config.resdir)));
