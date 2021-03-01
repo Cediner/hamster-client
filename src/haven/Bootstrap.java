@@ -147,6 +147,8 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 			    loginname = creds.name();
 			    break;
 			}
+		    } else if(msg.name.equals("close")) {
+		        return null;
 		    }
 		}
 		ui.uimsg(1, "prg", "Authenticating...");

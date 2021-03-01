@@ -577,6 +577,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		} else {
 		    if (lui.sess != null) {
 			lui.sess.close();
+		    } else {
+		        //Login screen
+			lui.root.wdgmsg("close");
 		    }
 		}
 		close.remove();
