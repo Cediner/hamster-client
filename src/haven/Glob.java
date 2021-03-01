@@ -26,12 +26,15 @@
 
 package haven;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
 import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
+    public WeakReference<UI> ui;
+
     public final OCache oc = new OCache(this);
     public final MCache map;
     public final Session sess;
@@ -58,6 +61,11 @@ public class Glob {
 	this.sess = sess;
 	map = new MCache(sess);
 	party = new Party(this);
+    }
+
+    public void attach(final UI ui) {
+	this.ui = new WeakReference<>(ui);
+	//TODO: oc.attached(ui);
     }
 
     @Resource.PublishedCode(name = "wtr")
