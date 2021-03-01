@@ -26,17 +26,25 @@
 
 package haven;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
+import java.util.List;
 
 public class MainFrame extends java.awt.Frame implements Console.Directory {
+    /* Multi Session */
+    public static MainFrame instance;
+    private final List<Thread> sessionThreads = new ArrayList<>();
+    /*  */
+
     UIPanel p;
     private final ThreadGroup g;
     private Thread mt;
     DisplayMode fsmode = null, prefs = null;
+    private boolean alive;
 	
     static {
 	try {
@@ -159,6 +167,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 
     public MainFrame(Coord isz) {
 	super("Haven and Hearth");
+	instance = this;
 	Coord sz;
 	if(isz == null) {
 	    sz = Utils.getprefc("wndsz", new Coord(800, 600));
@@ -189,7 +198,21 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	setVisible(true);
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    mt.interrupt();
+		    if (p.sessionCount() > 1) {
+			if (p.isMasterUIActive()) {
+			    if (JOptionPane.showConfirmDialog(MainFrame.this,
+				    "Are you sure you want to quit? You have other active sessions open.",
+				    "Close Client",
+				    JOptionPane.YES_NO_OPTION,
+				    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				mt.interrupt();
+			    }
+			} else {
+			    p.closeCurrentSession();
+			}
+		    } else {
+			mt.interrupt();
+		    }
 		}
 
 		public void windowActivated(WindowEvent e) {
@@ -271,17 +294,51 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	return(sess);
     }
 
+    public void makeNewSession() {
+        final Thread rui = new HackThread(() -> {
+	    final UI lui = p.newui(null);
+            try {
+                // Login first
+		UI.Runner fun = new Bootstrap();
+		lui.reset(new Coord(p.getSize()), fun);
+                fun = fun.run(lui);
+		//Run remote
+                if(fun != null) {
+                    lui.reset(new Coord(p.getSize()), fun);
+                    fun.run(lui);
+		}
+	    } catch (InterruptedException ignored) {
+	    } finally {
+                // Remove this UI once done
+		p.removeUI(lui);
+		synchronized (sessionThreads) {
+		    sessionThreads.remove(Thread.currentThread());
+		}
+	    }
+	}, "Remote UI Session Thread");
+        rui.start();
+        synchronized (sessionThreads) {
+            sessionThreads.add(rui);
+	}
+    }
+
     private void uiloop() throws InterruptedException {
-	UI.Runner fun = null;
-	while(true) {
-	    if(fun == null)
-		fun = new Bootstrap();
-	    String t = fun.title();
-	    if(t == null)
-		setTitle("Haven and Hearth");
-	    else
-		setTitle("Haven and Hearth \u2013 " + t);
-	    fun = fun.run(p.newui(fun));
+        final UI lui = p.newui(null);
+        try {
+	    while (true) {
+		// Login first
+		UI.Runner fun = new Bootstrap();
+		lui.reset(new Coord(p.getSize()), fun);
+		fun = fun.run(lui);
+		//Run remote
+		if (fun != null) {
+		    lui.reset(new Coord(p.getSize()), fun);
+		    fun.run(lui);
+		}
+	    }
+	} catch (InterruptedException e) {
+	    p.removeUI(lui);
+	    throw e;
 	}
     }
 
@@ -292,8 +349,11 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    this.mt = Thread.currentThread();
 	}
 	try {
+	    setTitle("Haven and Hearth");
 	    Thread ui = new HackThread(p, "Haven UI thread");
+	    p.setupMail(ui);
 	    ui.start();
+	    alive = true;
 	    try {
 		try {
 		    if(task == null) {
@@ -302,16 +362,21 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 			while(task != null)
 			    task = task.run(p.newui(task));
 		    }
-		} catch(InterruptedException e) {
+		} catch(InterruptedException ignored) {
 		} finally {
 		    p.newui(null);
 		}
 		savewndstate();
 	    } finally {
 		ui.interrupt();
+		synchronized (sessionThreads) {
+		    for (final Thread thr : sessionThreads) {
+			thr.interrupt();
+		    }
+		}
 		try {
 		    ui.join(5000);
-		} catch(InterruptedException e) {}
+		} catch(InterruptedException ignored) {}
 		if(ui.isAlive())
 		    Warning.warn("ui thread failed to terminate");
 		dispose();

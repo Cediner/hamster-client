@@ -42,6 +42,7 @@ import haven.render.Render;
 public class UI {
     public static int MOD_SHIFT = 1, MOD_CTRL = 2, MOD_META = 4, MOD_SUPER = 8;
     public RootWidget root;
+    public GameUI gui;
     private final LinkedList<Grab> keygrab = new LinkedList<Grab>(), mousegrab = new LinkedList<Grab>();
     private final Map<Integer, Widget> widgets = new TreeMap<Integer, Widget>();
     private final Map<Widget, Integer> rwidgets = new HashMap<Widget, Integer>();
@@ -58,7 +59,7 @@ public class UI {
     private final Context uictx;
     public GSettings gprefs = GSettings.load(true);
     private boolean gprefsdirty = false;
-    public final ActAudio.Root audio = new ActAudio.Root();
+    public ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
     
     {
@@ -113,7 +114,10 @@ public class UI {
 		});
 	    setcmd("lo", new Command() {
 		    public void run(Console cons, String[] args) {
-			sess.close();
+			if (gui != null)
+			    gui.act("lo");
+			else
+			    sess.close();
 		    }
 		});
 	    setcmd("gl", new Command() {
@@ -170,7 +174,21 @@ public class UI {
 	if(fun != null)
 	    fun.init(this);
     }
-	
+
+    public void reset(final Coord sz, final Runner fun) {
+	final RootWidget oldroot = root;
+	destroy();
+	root = new RootWidget(this, sz);
+	widgets.put(0, root);
+	rwidgets.put(root, 0);
+	root.ggprof = oldroot.ggprof;
+	root.grprof = oldroot.grprof;
+	root.guprof = oldroot.guprof;
+	audio = new ActAudio.Root();
+	if(fun != null)
+	    fun.init(this);
+    }
+
     public void setreceiver(Receiver rcvr) {
 	this.rcvr = rcvr;
     }
