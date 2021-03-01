@@ -38,7 +38,7 @@ public class Text {
     public static final Font mono  = new Font("Monospaced", Font.PLAIN, 10);
     public static final Font fraktur = Resource.local().loadwait("ui/fraktur").layer(Resource.Font.class).font;
     public static final Font dfont = sans;
-    public static final Foundry std;
+    public static final Foundry std, std12, std16;
     public final BufferedImage img;
     public final String text;
     private Tex tex;
@@ -47,6 +47,8 @@ public class Text {
 	
     static {
 	std = new Foundry(sans, 10);
+	std12 = new Foundry(sans, 12);
+	std16 = new Foundry(sans, 16);
     }
 	
     public static class Line extends Text {
@@ -169,7 +171,29 @@ public class Text {
 	public Text renderwrap(String text, int width) {
 	    return(renderwrap(text, null, width));
 	}
-                
+
+	public Line renderstroked(String text, Color c, Color stroke) {
+	    Coord sz = strsize(text);
+	    if (sz.x < 1)
+		sz = sz.add(1, 0);
+	    sz = sz.add(2, 0);
+	    BufferedImage img = TexI.mkbuf(sz);
+	    Graphics g = img.createGraphics();
+	    if (aa)
+		Utils.AA(g);
+	    g.setFont(font);
+	    FontMetrics m = g.getFontMetrics();
+	    g.setColor(stroke);
+	    g.drawString(text, 0, m.getAscent());
+	    g.drawString(text, 2, m.getAscent());
+	    g.drawString(text, 1, m.getAscent() - 1);
+	    g.drawString(text, 1, m.getAscent() + 1);
+	    g.setColor(c);
+	    g.drawString(text, 1, m.getAscent());
+	    g.dispose();
+	    return (new Line(text, img, m));
+	}
+
 	public Line render(String text, Color c) {
 	    Coord sz = strsize(text);
 	    if(sz.x < 1)
@@ -275,7 +299,18 @@ public class Text {
     public static Line render(String text) {
 	return(render(text, Color.WHITE));
     }
-	
+
+    public static Line renderstroked(String text, Color c, Color stroke) {
+	return (renderstroked(text, c, stroke, std));
+    }
+
+    public static Line renderstroked(String text) {
+	return renderstroked(text, Color.WHITE, Color.BLACK);
+    }
+
+    public static Line renderstroked(String text, Color c, Color stroke, Foundry foundry) {
+	return (foundry.renderstroked(text, c, stroke));
+    }
     public Tex tex() {
 	if(tex == null)
 	    tex = new TexI(img);
