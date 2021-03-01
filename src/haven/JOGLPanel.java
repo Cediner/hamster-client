@@ -584,6 +584,21 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
+    private void updateBackgroundSessions(final UI ui) {
+	//Update all other UIs as well, just don't render
+	synchronized (sessions) {
+	    for (final UI lui : sessions) {
+		if (lui != ui) {
+		    if (lui.sess != null)
+			lui.sess.glob.ctick();
+		    lui.tick();
+		    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+			lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		}
+	    }
+	}
+    }
+
     public void run() {
 	Thread drawthread = new HackThread(this::renderloop, "Render thread");
 	drawthread.start();
@@ -738,6 +753,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
 		    if(curf != null) curf.fin();
 		    prevframe = curframe;
+
+		    //Update background UIs
+		    updateBackgroundSessions(ui);
 		}
 	    } finally {
 		if(buf != null)
