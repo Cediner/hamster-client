@@ -150,11 +150,8 @@
     <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
       <arg line="rev-parse HEAD"/>
     </exec>
-    <exec executable="git" outputproperty="gitbranch" failifexecutionfails="false">
-      <arg line="branch --show-current"/>
-    </exec>
     <echo file="update/run.bat">mkdir logs
-java -Xmx1024m -jar hafen-updater.jar update https://gitlab.com/Boshaw/hamster-client/raw/${gitbranch}/update/ -Djava.util.logging.config.file=logging.properties -Xmx1024M -jar hafen.jar</echo>
+java -Xmx1024m -Dhttp.agent="curl/7.51.0" -jar hafen-updater.jar update https://gitlab.com/Boshaw/hamster-client/raw/master/update/ -Djava.util.logging.config.file=logging.properties -Xmx1024M -jar hafen.jar</echo>
     <java jar="update/hafen-updater.jar" fork="true">
       <arg value="hash"/>
       <arg value="update/"/>

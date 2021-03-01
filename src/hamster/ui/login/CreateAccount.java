@@ -1,4 +1,4 @@
-package hamster.login;
+package hamster.ui.login;
 
 import hamster.security.AccountManagement;
 import com.google.common.flogger.FluentLogger;

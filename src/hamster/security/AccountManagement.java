@@ -1,12 +1,15 @@
 package hamster.security;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.io.Storage;
 import haven.MessageBuf;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Stored in dynamic.sqlite
@@ -14,6 +17,52 @@ import java.util.List;
  * | Name (PK) | data (Encrypted blob) |
  */
 public class AccountManagement {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static final Storage datastore;
+    static {
+        final Optional<Storage> cls = Storage.create("jdbc:sqlite:data/accounts.sqlite");
+        if(cls.isPresent()) {
+            datastore = cls.get();
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    datastore.close();
+                }
+            });
+
+            datastore.ensure((sql) -> {
+                try (final Statement stmt = sql.createStatement()) {
+                    stmt.executeUpdate("CREATE TABLE IF NOT EXISTS account_blob ( name TEXT PRIMARY KEY, data BLOB )");
+                }
+            });
+        } else {
+            datastore = null;
+            logger.atSevere().log("Failed to open account datastore");
+            System.exit(1);
+        }
+    }
+
+    public static List<String> getAccounts() {
+        final var accounts = new ArrayList<String>();
+        datastore.ensure((sql) -> {
+            try (final Statement stmt = sql.createStatement()) {
+                try (final ResultSet res = stmt.executeQuery("SELECT name FROM account_blob")) {
+                    while (res.next()) {
+                        accounts.add(res.getString(1));
+                    }
+                }
+            }
+        });
+        return accounts;
+    }
+
+    public static void deleteAccount(final String name) {
+        datastore.ensure((sql) -> {
+            final PreparedStatement stmt = datastore.prepare("DELETE FROM account_blob WHERE name = ?");
+            stmt.setString(1, name);
+            stmt.executeUpdate();
+        });
+    }
+
     public static class Account {
         public String username;
         public String password;
@@ -36,7 +85,7 @@ public class AccountManagement {
     public AccountManagement(final byte[] key, final String name) throws Exception {
         this.name = name;
         DerivedKeyGen keyg = new DerivedKeyGen();
-        this.key = keyg.generateKey(key, "slow-and-steady".getBytes());
+        this.key = keyg.generateKey(key, "spin2win".getBytes());
         accounts = new ArrayList<>();
         load(name);
     }
@@ -68,8 +117,8 @@ public class AccountManagement {
 
         final byte[] data = Crypto.encrypt(buf.fin(), key);
 
-        Storage.dynamic.write(sql -> {
-            final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO account_blob VALUES (?, ?)");
+        datastore.write(sql -> {
+            final PreparedStatement stmt = datastore.prepare("INSERT OR REPLACE INTO account_blob VALUES (?, ?)");
             stmt.setString(1, name);
             stmt.setBytes(2, data);
             stmt.executeUpdate();
@@ -86,7 +135,7 @@ public class AccountManagement {
      *   +------------------------|
      */
     private void load(final String name) throws Exception {
-        final PreparedStatement stmt = Storage.dynamic.prepare("SELECT data FROM account_blob WHERE name = ?");
+        final PreparedStatement stmt = datastore.prepare("SELECT data FROM account_blob WHERE name = ?");
         stmt.setString(1, name);
         try (final ResultSet res = stmt.executeQuery()) {
             if (res.next()) {
