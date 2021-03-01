@@ -368,6 +368,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    });
 	Debug.log = ui.cons.out;
 	opts.c = sz.sub(opts.sz).div(2);
+	// Adding local widgets / custom stuff
+	ui.root.sessionDisplay.unlink();
+	add(ui.root.sessionDisplay);
     }
 
     public void dispose() {

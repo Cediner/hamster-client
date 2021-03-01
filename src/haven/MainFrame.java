@@ -40,7 +40,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
     private final List<Thread> sessionThreads = new ArrayList<>();
     /*  */
 
-    UIPanel p;
+    public UIPanel p;
     private final ThreadGroup g;
     private Thread mt;
     DisplayMode fsmode = null, prefs = null;
