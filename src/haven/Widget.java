@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.ui.core.WdgLocationHelper;
+
 import java.util.*;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -289,6 +291,29 @@ public class Widget {
     }
 
     protected void added() {}
+
+    protected void binded() {}
+
+    public Coord2d relpos() {
+	return new Coord2d(c.x / (double) parent.sz.x,
+		c.y / (double) parent.sz.y);
+    }
+
+    public void setPosRel(final Coord2d rel) {
+	c = new Coord((int) (rel.x * parent.sz.x),
+		(int) (rel.y * parent.sz.y));
+	if ((c.x + sz.x * WdgLocationHelper.VISIBLE_PER) > parent.sz.x) {
+	    c.x = parent.sz.x - sz.x;
+	} else if ((c.x + (sz.x * WdgLocationHelper.VISIBLE_PER)) < 0) {
+	    c.x = 0;
+	}
+	if ((c.y + sz.y * WdgLocationHelper.VISIBLE_PER) > parent.sz.y) {
+	    c.y = parent.sz.y - sz.y;
+	} else if ((c.y + (sz.y * WdgLocationHelper.VISIBLE_PER)) < 0) {
+	    c.y = 0;
+	}
+    }
+
 
     public static class RelposError extends RuntimeException {
 	public final String spec;

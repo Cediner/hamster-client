@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.util.ObservableListener;
+
 import java.util.*;
 import java.awt.Dimension;
 import java.awt.Component;
@@ -36,6 +38,16 @@ import java.awt.event.*;
 
 public interface UIPanel extends Runnable {
     public static final Cursor emptycurs = Toolkit.getDefaultToolkit().createCustomCursor(TexI.mkbuf(new Coord(1, 1)), new java.awt.Point(), "");
+
+    /* Multi Session */
+    void removeUI(final UI lui);
+    void setActiveUI(final UI ui);
+    boolean isActiveUI(final UI ui);
+    UI getActiveUI();
+    void listenToSessions(final ObservableListener<UI> listener);
+    void stopListeningToSessions(final ObservableListener<UI> listener);
+    void setupMail(final Thread t);
+    /**/
 
     public UI newui(UI.Runner fun);
     public void background(boolean bg);

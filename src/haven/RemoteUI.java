@@ -98,6 +98,9 @@ public class RemoteUI implements UI.Receiver, UI.Runner {
 
     public void init(UI ui) {
 	ui.sess = sess;
+	if (ui.sess != null) {
+	    ui.sess.glob.attach(ui);
+	}
     }
 
     public String title() {

@@ -50,6 +50,17 @@ public class AudioSprite {
 
     public static final Sprite.Factory fact = new Sprite.Factory() {
 	    public Sprite create(Sprite.Owner owner, Resource res, Message sdt) {
+		final UI ui;
+		if (owner instanceof Gob) {
+		    ui = ((Gob) owner).glob.ui.get();
+		} else {
+		    ui = null;
+		}
+
+		// TODO: account for PAUSED / other settings
+		if (ui != null && !MainFrame.instance.p.isActiveUI(ui)) {
+		    return new IgnoreSprite(owner, res);
+		}
 		{
 		    Resource.Audio clip = randoom(res, "cl");
 		    if(clip != null)
@@ -67,6 +78,16 @@ public class AudioSprite {
 		return(null);
 	    }
 	};
+
+    public static class IgnoreSprite extends Sprite {
+	public IgnoreSprite(Owner owner, Resource res) {
+	    super(owner, res);
+	}
+
+	public boolean tick(int dt) {
+	    return true;
+	}
+    }
 
     public static class ClipSprite extends Sprite {
 	public final ActAudio.PosClip clip;

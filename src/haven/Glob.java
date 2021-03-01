@@ -26,12 +26,15 @@
 
 package haven;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
 import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
+    public WeakReference<UI> ui;
+
     public final OCache oc = new OCache(this);
     public final MCache map;
     public final Session sess;
@@ -50,11 +53,19 @@ public class Glob {
     public double skyblend = 0.0;
     private final Map<String, CAttr> cattr = new HashMap<String, CAttr>();
     private Map<Indir<Resource>, Object> wmap = new HashMap<Indir<Resource>, Object>();
-    
+
+    //Last time a Global Alerts for this session went out
+    public long lastAlert = 0;
+
     public Glob(Session sess) {
 	this.sess = sess;
 	map = new MCache(sess);
 	party = new Party(this);
+    }
+
+    public void attach(final UI ui) {
+	this.ui = new WeakReference<>(ui);
+	//TODO: oc.attached(ui);
     }
 
     @Resource.PublishedCode(name = "wtr")
