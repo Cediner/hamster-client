@@ -30,13 +30,60 @@ import java.util.*;
 import java.awt.Toolkit;
 import java.awt.Robot;
 import java.awt.Point;
+import java.util.concurrent.atomic.AtomicReference;
+
+import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
+import hamster.util.MessageBus;
+import hamster.util.ObservableCollection;
+import hamster.util.ObservableListener;
 import haven.render.*;
 import haven.render.States;
 import haven.render.gl.*;
 
 public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Directory, UI.Context {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    /* MultiSession */
+    //All of our UIs
+    private final ObservableCollection<UI> sessions = new ObservableCollection<>(new ArrayList<>());
+    //The UI for the next frame, or null if no change
+    private final AtomicReference<UI> nextUI = new AtomicReference<>(null);
+    //The current active UI
+    private final AtomicReference<UI> ui = new AtomicReference<>(null);
+    /*  */
+
+    /* MultiSession Mailsystem */
+    public static class RemoveUIMessage extends MessageBus.Message {
+	final UI lui;
+
+	public RemoveUIMessage(final UI lui) {
+	    this.lui = lui;
+	}
+    }
+
+    public static class AddUIMessage extends MessageBus.Message {
+	final UI lui;
+
+	public AddUIMessage(final UI lui) {
+	    this.lui = lui;
+	}
+    }
+
+    public static class CloseUIMessage extends MessageBus.Message {
+	final UI lui;
+
+	public CloseUIMessage(final UI lui) {
+	    this.lui = lui;
+	}
+    }
+
+    private MessageBus.Office UIThreadOffice;
+    private MessageBus.MailBox<AddUIMessage> adduibox;
+    private MessageBus.MailBox<RemoveUIMessage> remuibox;
+    private MessageBus.MailBox<CloseUIMessage> closeuibox;
+    /*  */
+
     private static final boolean dumpbgl = true;
     public final boolean vsync = true;
     public final CPUProfile uprof = new CPUProfile(300), rprof = new CPUProfile(300);
@@ -48,7 +95,6 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     private double uidle = 0.0, ridle = 0.0;
     private final Dispatcher ed;
     private GLEnvironment env = null;
-    private UI ui;
     private Area shape;
     private Pipe base, wnd;
 
@@ -117,17 +163,21 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	setFocusTraversalKeysEnabled(false);
 	ed = new Dispatcher();
 	ed.register(this);
-	newui(null);
 	if(Toolkit.getDefaultToolkit().getMaximumCursorColors() >= 256)
 	    cursmode = "awt";
     }
 
     private boolean iswap() {
-	return(this.ui.gprefs.vsync.val);
+        final UI ui = this.ui.get();
+        if(ui != null) {
+            return ui.gprefs.vsync.val;
+	} else {
+            return true;
+	}
     }
 
     private double framedur() {
-	GSettings gp = this.ui.gprefs;
+	GSettings gp = this.ui.get().gprefs;
 	double hz = gp.hz.val, bghz = gp.bghz.val;
 	if(bgmode) {
 	    if(bghz != Double.POSITIVE_INFINITY)
@@ -136,6 +186,13 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	if(hz == Double.POSITIVE_INFINITY)
 	    return(0.0);
 	return(1.0 / hz);
+    }
+
+    public void setupMail(final Thread owner) {
+	UIThreadOffice = new MessageBus.Office(owner);
+	adduibox = new MessageBus.MailBox<>(UIThreadOffice, "add");
+	remuibox = new MessageBus.MailBox<>(UIThreadOffice, "rem");
+	closeuibox = new MessageBus.MailBox<>(UIThreadOffice, "close");
     }
 
     private void initgl(GL gl) {
@@ -154,8 +211,11 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	if(this.env != null)
 	    this.env.dispose();
 	this.env = env;
-	if(this.ui != null)
-	    this.ui.env = env;
+	synchronized (sessions) {
+	    for(final var ui : sessions) {
+	        ui.env = this.env;
+	    }
+	}
 
 	if(errh != null) {
 	    GLEnvironment.Caps caps = env.caps();
@@ -464,6 +524,84 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	drawcursor(ui, g);
     }
 
+    private void processMail() {
+	{ //Handle transfers
+	    UIThreadOffice.processTransfers();
+	}
+	{ //Handle new UIs
+	    final Iterator<AddUIMessage> add = adduibox.mailqueue.iterator();
+	    while (add.hasNext()) {
+		final UI lui = add.next().lui;
+		//TODO: lui.setupMail(Thread.currentThread());
+
+		synchronized (sessions) {
+		    sessions.add(lui);
+		}
+
+		this.ui.getAndUpdate(cui -> cui != null ? cui : lui);
+		add.remove();
+	    }
+	}
+	{ //Handle any UI's that need to be destroyed.
+	    final Iterator<RemoveUIMessage> rem = remuibox.mailqueue.iterator();
+	    while (rem.hasNext()) {
+		final UI lui = rem.next().lui;
+		logger.atFine().log("Destroying UI [ui %s]", lui);
+		lui.destroy();
+		synchronized (sessions) {
+		    sessions.remove(lui);
+		}
+		logger.atFine().log("Destroying UI [ui %s] [sessions %s]", lui, sessions.size());
+
+		this.ui.getAndUpdate(ui -> {
+		    logger.atFine().log("Comparing UIs [cur %s] [rem %s]", ui, lui);
+		    if (ui == lui) {
+			synchronized (sessions) {
+			    Iterator<UI> itr = sessions.iterator();
+			    if (itr.hasNext())
+				return itr.next();
+			}
+			return null;
+		    }
+		    return ui;
+		});
+		rem.remove();
+	    }
+	}
+	{ //Handle any UI's that need to start the closure process
+	    final Iterator<CloseUIMessage> close = closeuibox.mailqueue.iterator();
+	    while (close.hasNext()) {
+		final UI lui = close.next().lui;
+		if (lui.gui != null) {
+		    lui.gui.act("lo");
+		} else {
+		    if (lui.sess != null) {
+			lui.sess.close();
+		    } else {
+		        //Login screen
+			lui.root.wdgmsg("close");
+		    }
+		}
+		close.remove();
+	    }
+	}
+    }
+
+    private void updateBackgroundSessions(final UI ui) {
+	//Update all other UIs as well, just don't render
+	synchronized (sessions) {
+	    for (final UI lui : sessions) {
+		if (lui != ui) {
+		    if (lui.sess != null)
+			lui.sess.glob.ctick();
+		    lui.tick();
+		    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+			lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		}
+	    }
+	}
+    }
+
     public void run() {
 	Thread drawthread = new HackThread(this::renderloop, "Render thread");
 	drawthread.start();
@@ -481,9 +619,33 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		int framep = 0;
 		while(true) {
 		    double fwaited = 0;
+
+		    //Process any incoming mail
+		    processMail();
+
+		    //Get next UI to render this frame off
+		    final UI ui;
+		    final UI nextUI = this.nextUI.getAndSet(null);
+		    if(nextUI != null) {
+		        final UI oui = this.ui.get();
+		        ui = nextUI;
+		        this.ui.set(ui);
+		        oui.audio.amb.clear();
+		    } else {
+		        ui = this.ui.get();
+		    }
+		    if(ui == null) {
+		        if(sessions.size() > 0)
+		            logger.atSevere().log("UI is missing [sessions %s]", sessions.size());
+		        continue;
+		    }
+		    if(ui.env != this.env) {
+		        ui.env = this.env;
+		    }
+
+		    //
 		    GLEnvironment env = this.env;
 		    buf = env.render();
-		    UI ui = this.ui;
 		    Debug.cycle(ui.modflags());
 		    GSettings prefs = ui.gprefs;
 		    SyncMode syncmode = prefs.syncmode.val;
@@ -594,6 +756,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
 		    if(curf != null) curf.fin();
 		    prevframe = curframe;
+
+		    //Update background UIs
+		    updateBackgroundSessions(ui);
 		}
 	    } finally {
 		if(buf != null)
@@ -606,20 +771,74 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     }
 
     public UI newui(UI.Runner fun) {
-	if(ui != null) {
-	    synchronized(ui) {
-		ui.destroy();
-	    }
+        final UI lui = new UI(this, new Coord(getSize()), fun);
+        lui.env = this.env;
+        lui.root.guprof = uprof;
+        lui.root.grprof = rprof;
+        lui.root.ggprof = gprof;
+        if(getParent() instanceof  Console.Directory) {
+            lui.cons.add((Console.Directory)getParent());
 	}
-	ui = new UI(this, new Coord(getSize()), fun);
-	ui.env = this.env;
-	ui.root.guprof = uprof;
-	ui.root.grprof = rprof;
-	ui.root.ggprof = gprof;
-	if(getParent() instanceof Console.Directory)
-	    ui.cons.add((Console.Directory)getParent());
-	ui.cons.add(this);
-	return(ui);
+        lui.cons.add(this);
+        adduibox.mail(new AddUIMessage(lui));
+        return lui;
+    }
+
+
+    public UI getActiveUI() {
+	return this.ui.get();
+    }
+
+    public boolean isActiveUI(final UI lui) {
+	return getActiveUI() == lui;
+    }
+
+    public void setActiveUI(final UI lui) {
+	if (getActiveUI() != lui) {
+	    this.nextUI.set(lui);
+	}
+    }
+
+    public int sessionCount() {
+	synchronized (sessions) {
+	    return sessions.size();
+	}
+    }
+
+    public boolean isMasterUIActive() {
+	synchronized (sessions) {
+	    final UI ui = this.ui.get();
+	    Iterator<UI> itr = sessions.iterator();
+	    if (itr.hasNext())
+		return itr.next() == ui;
+	    else
+		return false;
+	}
+    }
+
+    @Override
+    public void listenToSessions(ObservableListener<UI> listener) {
+	synchronized (sessions) {
+	    sessions.addListener(listener);
+	}
+    }
+
+    @Override
+    public void stopListeningToSessions(ObservableListener<UI> listener) {
+	synchronized (sessions) {
+	    sessions.removeListener(listener);
+	}
+    }
+
+    public void closeCurrentSession() {
+	final UI ui = this.ui.get();
+	closeuibox.mail(new CloseUIMessage(ui));
+    }
+
+    //Remove a UI
+    public void removeUI(final UI lui) {
+	logger.atFine().log("Closing session [ui %s] [thread %s]", lui, Thread.currentThread());
+	remuibox.mail(new RemoveUIMessage(lui));
     }
 
     public void background(boolean bg) {

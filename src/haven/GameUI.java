@@ -343,6 +343,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     protected void added() {
 	resize(parent.sz);
+	ui.gui = this;
 	ui.cons.out = new java.io.PrintWriter(new java.io.Writer() {
 		StringBuilder buf = new StringBuilder();
 		
@@ -367,6 +368,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    });
 	Debug.log = ui.cons.out;
 	opts.c = sz.sub(opts.sz).div(2);
+	// Adding local widgets / custom stuff
+	ui.root.sessionDisplay.unlink();
+	add(ui.root.sessionDisplay);
     }
 
     public void dispose() {

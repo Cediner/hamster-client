@@ -176,5 +176,6 @@ public class LoginScreen extends Widget {
 	setfocus(username);
 	adda(new Button(100, "Options", () -> adda(new OptWnd(), sz.div(2), 0.5, 0.5)),
 		10, sz.y - 10, 0, 1);
+	adda(new Button(100, "Close", () -> ui.root.wdgmsg("close")), sz.x - 10, sz.y - 10, 1, 1);
     }
 }
