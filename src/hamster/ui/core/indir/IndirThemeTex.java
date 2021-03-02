@@ -54,11 +54,29 @@ public class IndirThemeTex {
         }
     }
 
+    public BufferedImage imgs() {
+        checkTheme(GlobalSettings.HUDTHEME.get());
+        if(id == -1) {
+            return cached.layer(Resource.imgc).scaled();
+        } else {
+            return imgs(id);
+        }
+    }
+
     public BufferedImage img(final int id) {
         checkTheme(GlobalSettings.HUDTHEME.get());
         for(final Resource.Image img : cached.layers(Resource.imgc)) {
             if(img.id == id)
                 return img.img;
+        }
+        throw new RuntimeException("Failed to find tex for " + String.format(fmt, theme, res) + " - id: " + id);
+    }
+
+    public BufferedImage imgs(final int id) {
+        checkTheme(GlobalSettings.HUDTHEME.get());
+        for(final Resource.Image img : cached.layers(Resource.imgc)) {
+            if(img.id == id)
+                return img.scaled();
         }
         throw new RuntimeException("Failed to find tex for " + String.format(fmt, theme, res) + " - id: " + id);
     }
