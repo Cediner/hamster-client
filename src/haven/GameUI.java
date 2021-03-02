@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.SessionSettings;
 import hamster.io.SQLResCache;
 
 import java.util.*;
@@ -71,6 +72,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Session
+    public final SessionSettings settings;
 
     private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
@@ -134,16 +138,18 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    String genus = "";
 	    if(args.length > 2)
 		genus = (String)args[2];
-	    return(new GameUI(chrid, plid, genus));
+	    return(new GameUI(ui.sess.username, chrid, plid, genus));
 	}
     }
     
     private final Coord minimapc;
     private final Coord menugridc;
-    public GameUI(String chrid, long plid, String genus) {
+    public GameUI(final String usr, String chrid, long plid, String genus) {
 	this.chrid = chrid;
 	this.plid = plid;
 	this.genus = genus;
+	settings = new SessionSettings(usr, chrid);
+
 	setcanfocus(true);
 	setfocusctl(true);
 	chat = add(new ChatUI(0, 0));
