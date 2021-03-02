@@ -232,8 +232,8 @@ public class GobIcon extends GAttrib {
 	    }
 
 	    private Coord showc() {
-		return(new Coord(sz.x - (sb.vis() ? sb.sz.x : 0) - ((elh - CheckBox.sbox.sz().y) / 2) - CheckBox.sbox.sz().x,
-				 ((elh - CheckBox.sbox.sz().y) / 2)));
+		return(new Coord(sz.x - (sb.vis() ? sb.sz.x : 0) - ((elh - CheckBox.sbox.tex().sz().y) / 2) - CheckBox.sbox.tex().sz().x,
+				 ((elh - CheckBox.sbox.tex().sz().y) / 2)));
 	    }
 
 	    public void tick(double dt) {
@@ -299,9 +299,9 @@ public class GobIcon extends GAttrib {
 		} catch(Loading l) {}
 		if(icon.name != null)
 		    g.aimage(icon.name.tex(), new Coord(elh + UI.scale(5), elh / 2), 0.0, 0.5);
-		g.image(CheckBox.sbox, showc);
+		g.image(CheckBox.sbox.tex(), showc);
 		if(icon.conf.show)
-		    g.image(CheckBox.smark, showc);
+		    g.image(CheckBox.smark.tex(), showc);
 	    }
 
 	    public boolean mousedown(Coord c, int button) {
@@ -309,7 +309,7 @@ public class GobIcon extends GAttrib {
 		if((idx >= 0) && (idx < listitems())) {
 		    Icon icon = listitem(idx);
 		    Coord ic = c.sub(idxc(idx));
-		    if(ic.isect(showc, CheckBox.sbox.sz())) {
+		    if(ic.isect(showc, CheckBox.sbox.tex().sz())) {
 			icon.conf.show = !icon.conf.show;
 			if(save != null)
 			    save.run();
