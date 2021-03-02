@@ -1000,6 +1000,10 @@ public class Resource implements Serializable {
 	    return(tex);
 	}
 
+	public TexI texi() {
+	    return (TexI) tex();
+	}
+
 	private boolean detectgay() {
 	    for(int y = 0; y < sz.y; y++) {
 		for(int x = 0; x < sz.x; x++) {
@@ -1589,6 +1593,28 @@ public class Resource implements Serializable {
 
     public static Tex loadtex(String name) {
 	return(loadrimg(name).tex());
+    }
+
+    public static BufferedImage loadimg(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for (Image img : imgs) {
+	    if (img.id == id) {
+		return img.img;
+	    }
+	}
+	throw new RuntimeException("Failed to find img for " + name + " - id: " + id);
+    }
+
+    public static Tex loadtex(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for (Image img : imgs) {
+	    if (img.id == id) {
+		return img.tex();
+	    }
+	}
+	throw new RuntimeException("Failed to find tex for " + name + " - id: " + id);
     }
 
     public String toString() {

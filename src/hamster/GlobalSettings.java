@@ -23,7 +23,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SYMMETRICOUTLINES = new IndirSetting<>(global, "display.outlines.symmetric", false);
 
     //Theme options
-    public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "sloth");
+    public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");
     public static final IndirSetting<Color> WNDCOL =
             new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.wnd.color", HUDTHEME),
                     Color.WHITE);
