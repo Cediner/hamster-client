@@ -49,7 +49,7 @@ public class Speaking extends GAttrib implements RenderTree.Node, PView.Render2D
     public void draw(GOut g, Coord c) {
 	Coord sz = text.sz();
 	sz.x = Math.max(sz.x, UI.scale(15));
-	Coord tl = c.sub(sx, sb.cisz().y + sz.y + svans.sz().y - sb.bb.sz().y);
+	Coord tl = c.sub(sx, sb.cisz().y + sz.y + svans.sz().y - sb.bb().sz().y);
 	Coord ftl = tl.add(sb.btloff());
 	g.chcolor(Color.WHITE);
 	g.frect(ftl, sz);

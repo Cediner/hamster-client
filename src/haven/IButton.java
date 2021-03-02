@@ -38,7 +38,7 @@ public class IButton extends SIWidget {
 	UP, DOWN, HOVER
     }
 
-    private interface ImgData {
+    protected interface ImgData {
 	BufferedImage up();
 	BufferedImage down();
 	BufferedImage hover();
@@ -46,7 +46,7 @@ public class IButton extends SIWidget {
 	void swap(final Type left, final Type right);
     }
 
-    private static class StaticImgData implements ImgData {
+    protected static class StaticImgData implements ImgData {
 	BufferedImage up, down, hover;
 
 	private StaticImgData(final BufferedImage up, final BufferedImage down, final BufferedImage hover) {
@@ -95,7 +95,7 @@ public class IButton extends SIWidget {
 	}
     }
 
-    private static class IndirImgData implements ImgData {
+    protected static class IndirImgData implements ImgData {
 	IndirThemeTex up, down, hover;
 
 	private IndirImgData(final IndirThemeTex up, final IndirThemeTex down, final IndirThemeTex hover) {
@@ -144,7 +144,7 @@ public class IButton extends SIWidget {
 	}
     }
 
-    private final ImgData imgs;
+    protected final ImgData imgs;
     boolean h = false;
     boolean a = false;
     UI.Grab d = null;

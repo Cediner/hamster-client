@@ -26,19 +26,116 @@
 
 package haven;
 
-public class IBox {
-    public final Tex ctl, ctr, cbl, cbr;
-    public final Tex bl, br, bt, bb;
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeTex;
 
+public class IBox {
+    public interface ImgData {
+	Tex ctl();
+	Tex ctr();
+	Tex cbl();
+	Tex cbr();
+	Tex bl();
+	Tex br();
+	Tex bt();
+	Tex bb();
+    }
+
+    private static class StaticImgData implements ImgData {
+	public final Tex ctl, ctr, cbl, cbr;
+	public final Tex bl, br, bt, bb;
+
+	private StaticImgData(Tex ctl, Tex ctr, Tex cbl, Tex cbr, Tex bl, Tex br, Tex bt, Tex bb) {
+	    this.ctl = ctl;
+	    this.ctr = ctr;
+	    this.cbl = cbl;
+	    this.cbr = cbr;
+	    this.bl = bl;
+	    this.br = br;
+	    this.bt = bt;
+	    this.bb = bb;
+	}
+
+	public Tex ctl() {
+	    return ctl;
+	}
+	public Tex ctr() {
+	    return ctr;
+	}
+	public Tex cbl() {
+	    return cbl;
+	}
+	public Tex cbr() {
+	    return cbr;
+	}
+	public Tex bl() {
+	    return bl;
+	}
+	public Tex br() {
+	    return br;
+	}
+	public Tex bt() {
+	    return bt;
+	}
+	public Tex bb() {
+	    return bb;
+	}
+    }
+
+    private static class IndirImgData implements ImgData {
+	public final IndirThemeTex ctl, ctr, cbl, cbr;
+	public final IndirThemeTex bl, br, bt, bb;
+
+	public IndirImgData(IndirThemeTex ctl, IndirThemeTex ctr, IndirThemeTex cbl, IndirThemeTex cbr,
+			    IndirThemeTex bl, IndirThemeTex br, IndirThemeTex bt, IndirThemeTex bb) {
+	    this.ctl = ctl;
+	    this.ctr = ctr;
+	    this.cbl = cbl;
+	    this.cbr = cbr;
+	    this.bl = bl;
+	    this.br = br;
+	    this.bt = bt;
+	    this.bb = bb;
+	}
+
+	public Tex ctl() {
+	    return ctl.tex();
+	}
+	public Tex ctr() {
+	    return ctr.tex();
+	}
+	public Tex cbl() {
+	    return cbl.tex();
+	}
+	public Tex cbr() {
+	    return cbr.tex();
+	}
+	public Tex bl() {
+	    return bl.tex();
+	}
+	public Tex br() {
+	    return br.tex();
+	}
+	public Tex bt() {
+	    return bt.tex();
+	}
+	public Tex bb() {
+	    return bb.tex();
+	}
+    }
+
+    public final ImgData imgs;
+
+    /* Themed IBox */
+    public IBox(final String res) {
+	this.imgs = new IndirImgData(Theme.themetex(res, 0), Theme.themetex(res, 1), Theme.themetex(res, 2),
+		Theme.themetex(res, 3), Theme.themetex(res, 4), Theme.themetex(res, 5),
+		Theme.themetex(res, 6), Theme.themetex(res, 7));
+    }
+
+    /* Non-themed IBox */
     public IBox(Tex ctl, Tex ctr, Tex cbl, Tex cbr, Tex bl, Tex br, Tex bt, Tex bb) {
-	this.ctl = ctl;
-	this.ctr = ctr;
-	this.cbl = cbl;
-	this.cbr = cbr;
-	this.bl = bl;
-	this.br = br;
-	this.bt = bt;
-	this.bb = bb;
+	this.imgs = new StaticImgData(ctl, ctr, cbl, cbr, bl, br, bt, bb);
     }
 
     public IBox(String base, String ctl, String ctr, String cbl, String cbr, String bl, String br, String bt, String bb) {
@@ -53,27 +150,27 @@ public class IBox {
     }
 
     public Coord btloff() {
-	return(new Coord(bl.sz().x, bt.sz().y));
+	return(new Coord(imgs.bl().sz().x, imgs.bt().sz().y));
     }
 
     public Coord ctloff() {
-	return(ctl.sz());
+	return(imgs.ctl().sz());
     }
 
     public Coord bbroff() {
-	return(new Coord(br.sz().x, bb.sz().y));
+	return(new Coord(imgs.br().sz().x, imgs.bb().sz().y));
     }
 
     public Coord cbroff() {
-	return(cbr.sz());
+	return(imgs.cbr().sz());
     }
 
     public Coord bisz() {
-	return(new Coord(bl.sz().x + br.sz().x, bt.sz().y + bb.sz().y));
+	return(new Coord(imgs.bl().sz().x + imgs.br().sz().x, imgs.bt().sz().y + imgs.bb().sz().y));
     }
 
     public Coord cisz() {
-	return(ctl.sz().add(cbr.sz()));
+	return(imgs.ctl().sz().add(imgs.cbr().sz()));
     }
 
     @Deprecated
@@ -86,7 +183,11 @@ public class IBox {
 	return(cisz());
     }
 
+    public Tex bb() { return imgs.bb(); }
+
     public void draw(GOut g, Coord tl, Coord sz) {
+	final Tex ctl = imgs.ctl(), ctr = imgs.ctr(), cbl = imgs.cbl(), cbr = imgs.cbr();
+	final Tex bl = imgs.bl(), br = imgs.br(), bt = imgs.bt(), bb = imgs.bb();
 	g.image(bt, tl.add(new Coord(ctl.sz().x, 0)), new Coord(sz.x - ctr.sz().x - ctl.sz().x, bt.sz().y));
 	g.image(bb, tl.add(new Coord(cbl.sz().x, sz.y - bb.sz().y)), new Coord(sz.x - cbr.sz().x - cbl.sz().x, bb.sz().y));
 	g.image(bl, tl.add(new Coord(0, ctl.sz().y)), new Coord(bl.sz().x, sz.y - cbl.sz().y - ctl.sz().y));
