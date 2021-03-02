@@ -73,6 +73,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
 
+    //Equipment
+    public Equipory equ;
+
     //Session
     public final SessionSettings settings;
 
@@ -717,7 +720,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	} else if(place == "equ") {
 	    equwnd = new Hidewnd(Coord.z, "Equipment");
-	    equwnd.add(child, Coord.z);
+	    equwnd.add(equ = (Equipory)child, Coord.z);
 	    equwnd.pack();
 	    equwnd.hide();
 	    add(equwnd, Utils.getprefc("wndc-equ", new Coord(400, 10)));
