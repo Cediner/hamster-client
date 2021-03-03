@@ -19,7 +19,7 @@ public class KeyBindEdit extends Widget {
     private final IndirSetting<String> keybind;
     private Tex tbind, tseq;
 
-    private static final Coord kbsz = new Coord(100, 20);
+    private static final Coord kbsz = new Coord(UI.scale(100), UI.scale(20));
 
     public KeyBindEdit(final IndirSetting<String> keybind) {
         super(kbsz);

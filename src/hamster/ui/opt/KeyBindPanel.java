@@ -25,16 +25,16 @@ public class KeyBindPanel extends Widget {
     }
 
     public KeyBindPanel(final UI ui) {
-        super(new Coord(500, 395));
-        final Coord spacer = new Coord(20, 5);
-        final LinearGrouping grp = new LinearGrouping(5, false);
-        grp.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", 400).tex()));
+        super(new Coord(UI.scale(500), UI.scale(395)));
+        final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
+        final LinearGrouping grp = new LinearGrouping(UI.scale(5), false);
+        grp.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", UI.scale(400)).tex()));
         final TabManager tabs = grp.add(new TabManager());
         {//Key Binds
             final Map<String, List<KeyBind>> groupings = KeyBind.generateGroupings();
             for (final String group : groupings.keySet()) {
-                final Scrollport view = new Scrollport(new Coord(480, 400));
-                final Grouping binds = new GridGrouping(group + " Keybinds", spacer, spacer.x, 600, false);
+                final Scrollport view = new Scrollport(new Coord(UI.scale(480), UI.scale(400)));
+                final Grouping binds = new GridGrouping(group + " Keybinds", spacer, spacer.x, UI.scale(600), false);
                 for (final KeyBind kb : groupings.get(group)) {
                     binds.add(KeyBindEditWithLabel(kb.name, kb.bind));
                 }

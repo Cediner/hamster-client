@@ -102,26 +102,26 @@ public class OptionsWnd extends Window {
 
         { //Main Menu
             int y = 0;
-            y += main.add(new PButton(200, "Video settings", 'v', video), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(200, "Audio settings", 'a', audio), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(200, "Theme settings", 't', theme), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(200, "Mousebind settings", 'm', mbinds), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(200, "Keybind settings", 'b', kbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Video settings", 'v', video), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Theme settings", 't', theme), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Mousebind settings", 'm', mbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Keybind settings", 'b', kbinds), new Coord(0, y)).sz.y + spacer;
             if (gopts) {
-                y += main.add(new PButton(200, "UI settings", 'u', uip), new Coord(0, y)).sz.y + spacer;
-                y += main.add(new PButton(200, "Gameplay settings", 'g', gp), new Coord(0, y)).sz.y + spacer;
-                y += main.add(new Button(200, "Switch character") {
+                y += main.add(new PButton(UI.scale(200), "UI settings", 'u', uip), new Coord(0, y)).sz.y + spacer;
+                y += main.add(new PButton(UI.scale(200), "Gameplay settings", 'g', gp), new Coord(0, y)).sz.y + spacer;
+                y += main.add(new Button(UI.scale(200), "Switch character") {
                     public void click() {
                         getparent(GameUI.class).act("lo", "cs");
                     }
                 }, new Coord(0, y)).sz.y + spacer;
-                y += main.add(new Button(200, "Log out") {
+                y += main.add(new Button(UI.scale(200), "Log out") {
                     public void click() {
                         getparent(GameUI.class).act("lo");
                     }
                 }, new Coord(0, y)).sz.y + spacer;
             }
-            y += main.add(new Button(200, "Close") {
+            y += main.add(new Button(UI.scale(200), "Close") {
                 public void click() {
                     OptionsWnd.this.hide();
                 }
@@ -133,17 +133,17 @@ public class OptionsWnd extends Window {
             int y = 0;
             //TODO redo with an IndirHSlider
             audio.add(new Label("Master audio volume"), new Coord(0, y));
-            y += 15;
-            audio.add(new HSlider(200, 0, 1000, (int) (Audio.volume * 1000)) {
+            y += UI.scale(15);
+            audio.add(new HSlider(UI.scale(200), 0, 1000, (int) (Audio.volume * 1000)) {
                 public void changed() {
                     Audio.setvolume(val / 1000.0);
                 }
             }, new Coord(0, y));
-            y += 30;
+            y += UI.scale(30);
             //TODO redo with an IndirHSlider
             audio.add(new Label("In-game event volume"), new Coord(0, y));
-            y += 15;
-            audio.add(new HSlider(200, 0, 1000, 0) {
+            y += UI.scale(15);
+            audio.add(new HSlider(UI.scale(200), 0, 1000, 0) {
                 protected void attach(UI ui) {
                     super.attach(ui);
                     val = (int) (ui.audio.pos.volume * 1000);
@@ -153,11 +153,11 @@ public class OptionsWnd extends Window {
                     ui.audio.pos.setvolume(val / 1000.0);
                 }
             }, new Coord(0, y));
-            y += 20;
+            y += UI.scale(20);
             //TODO redo with an IndirHSlider
             audio.add(new Label("Ambient volume"), new Coord(0, y));
-            y += 15;
-            audio.add(new HSlider(200, 0, 1000, 0) {
+            y += UI.scale(15);
+            audio.add(new HSlider(UI.scale(200), 0, 1000, 0) {
                 protected void attach(UI ui) {
                     super.attach(ui);
                     val = (int) (ui.audio.amb.volume * 1000);
@@ -167,8 +167,8 @@ public class OptionsWnd extends Window {
                     ui.audio.amb.setvolume(val / 1000.0);
                 }
             }, new Coord(0, y));
-            y += 35;
-            audio.add(new PButton(200, "Back", 27, main), new Coord(0, 180));
+            y += UI.scale(35);
+            audio.add(new PButton(UI.scale(200), "Back", 27, main), new Coord(0, UI.scale(180)));
             audio.pack();
         }
 
@@ -177,28 +177,28 @@ public class OptionsWnd extends Window {
             int y = 0;
             y += theme.add(new ThemePanel(ui)).sz.y + 5;
             theme.pack();
-            theme.adda(new PButton(200, "Back", 27, main), new Coord(200 / 2, y), -0.5, 0);
+            theme.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200) / 2, y), -0.5, 0);
             theme.pack();
         }
         { //Video Panel
             int y = 0;
             y += video.add(new VideoPanel(ui, ui.gprefs)).sz.y + 5;
             video.pack();
-            video.adda(new PButton(200, "Back", 27, main), new Coord(200 / 2, y), -0.5, 0);
+            video.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200) / 2, y), -0.5, 0);
             video.pack();
         }
         { //Mousebind panel
             int y = 0;
             y += mbinds.add(new MouseBindsPanel(ui)).sz.y + 5;
             mbinds.pack();
-            mbinds.adda(new PButton(200, "Back", 27, main), new Coord(200 / 2, y), -0.5, 0);
+            mbinds.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200) / 2, y), -0.5, 0);
             mbinds.pack();
         }
         { //Keybind panel
             int y = 0;
             y += kbinds.add(new KeyBindPanel(ui)).sz.y + 5;
             kbinds.pack();
-            kbinds.adda(new PButton(200, "Back", 27, main), new Coord(200, y), -0.5, 0);
+            kbinds.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200), y), -0.5, 0);
             kbinds.pack();
         }
         if (gopts) {
@@ -206,14 +206,14 @@ public class OptionsWnd extends Window {
                 int y = 0;
                 y += uip.add(new UIPanel(ui)).sz.y + 5;
                 uip.pack();
-                uip.adda(new PButton(200, "Back", 27, main), new Coord(200 / 2, y), -0.5, 0);
+                uip.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200) / 2, y), -0.5, 0);
                 uip.pack();
             }
             { //Gameplay Panel
                 int y = 0;
                 y += gp.add(new GameplayPanel(ui)).sz.y + 5;
                 gp.pack();
-                gp.adda(new PButton(200, "Back", 27, main), new Coord(200 / 2, y), -0.5, 0);
+                gp.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(UI.scale(200) / 2, y), -0.5, 0);
                 gp.pack();
             }
         }

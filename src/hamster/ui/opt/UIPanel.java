@@ -10,11 +10,11 @@ import haven.UI;
 
 public class UIPanel extends Scrollport {
     public UIPanel(final UI ui) {
-        super(new Coord(500, 395));
-        final Coord spacer = new Coord(20, 5);
+        super(new Coord(UI.scale(500), UI.scale(395)));
+        final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
-        final Grouping visibility = new GridGrouping("UI Visibility Settings", spacer, spacer.x, 200, false);
-        final Grouping minimap = new GridGrouping("Minimap Settings", spacer, spacer.x, 200, false);
+        final Grouping visibility = new GridGrouping("UI Visibility Settings", spacer, spacer.x, UI.scale(200), false);
+        final Grouping minimap = new GridGrouping("Minimap Settings", spacer, spacer.x, UI.scale(200), false);
         final Grouping meter = new LinearGrouping("Meter Settings", spacer, false);
         final Grouping inv = new LinearGrouping("Inventory Settings", spacer, false);
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);

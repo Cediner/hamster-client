@@ -16,15 +16,15 @@ import static hamster.GlobalSettings.*;
 
 public class VideoPanel extends Scrollport {
     public VideoPanel(final UI ui, final GSettings gprefs) {
-        super(new Coord(500, 395));
-        final Coord spacer = new Coord(20, 5);
+        super(new Coord(UI.scale(500), UI.scale(395)));
+        final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping disp = new LinearGrouping("Display Settings", spacer, false);
         final Grouping shadow = new LinearGrouping("Shadow Settings", spacer, false);
         final Grouping ol = new LinearGrouping("Outline Settings", spacer, false);
 
         { //Display
-            final IndirRadioGroup<String> fsm = disp.add(new IndirRadioGroup<>("Frame Sync Mode", 450, FRAMESYNCMODE));
+            final IndirRadioGroup<String> fsm = disp.add(new IndirRadioGroup<>("Frame Sync Mode", UI.scale(450), FRAMESYNCMODE));
             fsm.add("One-frame overlap", JOGLPanel.SyncMode.FRAME.name());
             fsm.add("Tick overlap", JOGLPanel.SyncMode.TICK.name());
             fsm.add("CPU-sequential", JOGLPanel.SyncMode.SEQ.name());
@@ -32,16 +32,16 @@ public class VideoPanel extends Scrollport {
 
             disp.add(new IndirCheckBox("VSync Mode", VSYNC));
             disp.add(new IndirLabel(() -> String.format("FPS: %d", FPS.get())));
-            disp.add(new IndirHSlider(210, 5, 240, FPS));
+            disp.add(new IndirHSlider(UI.scale(210), 5, 240, FPS));
             disp.add(new IndirLabel(() -> String.format("Background FPS: %d", BGFPS.get())));
-            disp.add(new IndirHSlider(210, 5, 240, BGFPS));
+            disp.add(new IndirHSlider(UI.scale(210), 5, 240, BGFPS));
 
                     //TODO redo with an IndirHSlider
             disp.add(new Label("Render scale"));
             {
                 Label dpy = disp.add(new Label(""));
                 final int steps = 4;
-                disp.add(new HSlider(160, -2 * steps, 2 * steps, (int) Math.round(steps * Math.log(gprefs.rscale.val) / Math.log(2.0f))) {
+                disp.add(new HSlider(UI.scale(160), -2 * steps, 2 * steps, (int) Math.round(steps * Math.log(gprefs.rscale.val) / Math.log(2.0f))) {
                     protected void added() {
                         dpy();
                     }
@@ -98,19 +98,19 @@ public class VideoPanel extends Scrollport {
             shadow.add(new IndirCheckBox("Render shadows", SHADOWS));
             //shadow quality
             {
-                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Quality", 450, SHADOWQUALITY, resetshadows));
+                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Quality", UI.scale(450), SHADOWQUALITY, resetshadows));
                 for(int i = 0; i < MapView.shadowmap.length; ++i) {
                     sqrg.add(Integer.toString(MapView.shadowmap[i]), i);
                 }
             }
             {
-                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Size", 450, SHADOWSIZE, resetshadows));
+                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Size", UI.scale(450), SHADOWSIZE, resetshadows));
                 for(int i = 0; i < MapView.shadowsizemap.length;++i) {
                     sqrg.add(Integer.toString(MapView.shadowsizemap[i]), i);
                 }
             }
             {
-                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Depth", 450, SHADOWDEPTH, resetshadows));
+                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Depth", UI.scale(450), SHADOWDEPTH, resetshadows));
                 for(int i = 0; i < MapView.shadowdepthmap.length;++i) {
                     sqrg.add(Integer.toString(MapView.shadowdepthmap[i]), i);
                 }

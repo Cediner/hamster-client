@@ -9,8 +9,8 @@ import haven.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
-        super(new Coord(500, 395));
-        final Coord spacer = new Coord(20, 5);
+        super(new Coord(UI.scale(500), UI.scale(395)));
+        final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
@@ -24,7 +24,7 @@ public class GameplayPanel extends Scrollport {
         }
         { //Camera
             final Coord c = new Coord(0, 0);
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", 500, ui.gui.settings.CAMERA, (camera) -> {
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), ui.gui.settings.CAMERA, (camera) -> {
                 if(ui.gui != null) {
                     ui.gui.map.setcam(camera);
                 }
@@ -64,7 +64,7 @@ public class GameplayPanel extends Scrollport {
             gob.pack();
         }
         { //Pathfinding
-            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", 450, ui.gui.settings.PATHFINDINGTIER));
+            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), ui.gui.settings.PATHFINDINGTIER));
             {
                 rg.add("Perfect", 1);
                 rg.add("Decent", 2);

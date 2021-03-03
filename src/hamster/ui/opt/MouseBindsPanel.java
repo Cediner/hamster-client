@@ -21,11 +21,11 @@ public class MouseBindsPanel extends Scrollport {
     }
 
     public MouseBindsPanel(final UI ui) {
-        super(new Coord(500, 395));
-        final Coord spacer = new Coord(20, 5);
-        final Grouping binds = new GridGrouping("Mousebinds", spacer, spacer.x,600, false);
+        super(new Coord(UI.scale(500), UI.scale(395)));
+        final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
+        final Grouping binds = new GridGrouping("Mousebinds", spacer, spacer.x, UI.scale(600), false);
         {
-            binds.add(new Img(RichText.render("Click on the black box to start editing. Escape to cancel or Enter to confirm. You must click on the box when changing the binding! If your choice shows up Red/Purple then it conflicts with another bind in that group.", 400).tex()));
+            binds.add(new Img(RichText.render("Click on the black box to start editing. Escape to cancel or Enter to confirm. You must click on the box when changing the binding! If your choice shows up Red/Purple then it conflicts with another bind in that group.", UI.scale(400)).tex()));
             for (final String grp : MouseBind.bindgrps.keySet()) {
                 final Grouping bindgrp = new LinearGrouping(grp, spacer, false);
                 for (final MouseBind mb : MouseBind.bindgrps.get(grp)) {

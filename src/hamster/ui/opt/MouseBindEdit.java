@@ -20,7 +20,7 @@ public class MouseBindEdit extends Widget {
     private final IndirSetting<String> bind;
     private Tex tbind, tseq;
 
-    private static final Coord kbsz = new Coord(100, 20);
+    private static final Coord kbsz = new Coord(UI.scale(100), UI.scale(20));
 
     public MouseBindEdit(final String group, final IndirSetting<String> bind) {
         super(kbsz);
