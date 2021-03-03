@@ -31,6 +31,8 @@ import java.util.function.*;
 import java.io.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+
+import hamster.ui.core.ResizableWnd;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
@@ -42,7 +44,7 @@ import static haven.Utils.eq;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
-public class MapWnd extends Window implements Console.Directory {
+public class MapWnd extends ResizableWnd implements Console.Directory {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
     public final MapFile file;
     public final MiniMap view;
@@ -78,15 +80,7 @@ public class MapWnd extends Window implements Console.Directory {
 	view = viewf.add(new View(file));
 	recenter();
 	toolbar = add(new Widget(Coord.z));
-	toolbar.add(new Img(Resource.loadtex("gfx/hud/mmap/fgwdg")) {
-		public boolean mousedown(Coord c, int button) {
-		    if((button == 1) && checkhit(c)) {
-			MapWnd.this.drag(parentpos(MapWnd.this, c));
-			return(true);
-		    }
-		    return(super.mousedown(c, button));
-		}
-	    }, Coord.z);
+	toolbar.add(new Img(Resource.loadtex("gfx/hud/mmap/fgwdg")), Coord.z);
 	toolbar.add(new IButton("gfx/hud/mmap/home", "", "-d", "-h") {
 		{settip("Follow"); setgkey(kb_home);}
 		public void click() {
@@ -100,14 +94,9 @@ public class MapWnd extends Window implements Console.Directory {
 	    .state(() -> hmarkers).set(a -> hmarkers = a)
 	    .settip("Hide markers").setgkey(kb_hmark);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
-	    .state(() -> decohide()).set(a -> {
-		    compact(a);
-		    Utils.setprefb("compact-map", a);
-		})
 	    .settip("Compact mode").setgkey(kb_compact);
 	toolbar.pack();
 	tool = add(new Toolbox());;
-	compact(Utils.getprefb("compact-map", false));
 	resize(sz);
     }
 
@@ -120,30 +109,17 @@ public class MapWnd extends Window implements Console.Directory {
 
 	public void resize(Coord sz) {
 	    super.resize(sz);
-	    sc = sz.sub(box.bisz()).add(box.btloff()).sub(sizer.sz());
+	    sc = sz.sub(box.bisz()).add(box.btloff());
 	}
 
 	public void draw(GOut g) {
 	    super.draw(g);
-	    if(decohide())
-		g.image(sizer, sc);
 	}
 
 	private UI.Grab drag;
 	private Coord dragc;
 	public boolean mousedown(Coord c, int button) {
 	    Coord cc = c.sub(sc);
-	    if((button == 1) && decohide() && (cc.x < sizer.sz().x) && (cc.y < sizer.sz().y) && (cc.y >= sizer.sz().y - UI.scale(25) + (sizer.sz().x - cc.x))) {
-		if(drag == null) {
-		    drag = ui.grabmouse(this);
-		    dragc = asz.sub(parentpos(MapWnd.this, c));
-		    return(true);
-		}
-	    }
-	    if((button == 1) && (checkhit(c) || ui.modshift)) {
-		MapWnd.this.drag(parentpos(MapWnd.this, c));
-		return(true);
-	    }
 	    return(super.mousedown(c, button));
 	}
 
@@ -414,6 +390,7 @@ public class MapWnd extends Window implements Console.Directory {
 	toolbar.c = viewf.c.add(0, viewf.sz.y - toolbar.sz.y).add(UI.scale(2), UI.scale(-2));
     }
 
+    @Deprecated
     public void compact(boolean a) {
 	tool.show(!a);
 	if(a)
@@ -434,7 +411,6 @@ public class MapWnd extends Window implements Console.Directory {
     }
 
     protected void drawframe(GOut g) {
-	g.image(sizer, ctl.add(csz).sub(sizer.sz()));
 	super.drawframe(g);
     }
 

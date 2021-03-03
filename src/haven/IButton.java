@@ -250,6 +250,10 @@ public class IButton extends SIWidget {
 	return(imgs.up().getRaster().getSample(c.x, c.y, 3) >= 128);
     }
 
+    public void swap(final Type left, final Type right) {
+	imgs.swap(left, right);
+    }
+
     public void click() {
 	if(action != null)
 	    action.run();
