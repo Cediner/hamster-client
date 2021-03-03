@@ -3,9 +3,9 @@ package hamster.ui.core;
 import haven.*;
 
 public class Scrollport extends Widget {
-    private static final Tex vchainb = Theme.tex("scroll/vertical", 0);
+    private static final Tex vchainb = Theme.tex("scroll/vertical", 2);
     private static final Tex vchainm = Theme.tex("scroll/vertical", 1);
-    private static final Tex vchaint = Theme.tex("scroll/vertical", 2);
+    private static final Tex vchaint = Theme.tex("scroll/vertical", 0);
     private static final Tex vflarp = Theme.tex("scroll/vertical", 3);
     private static final Tex hchainl = Theme.tex("scroll/horizontal", 0);
     private static final Tex hchainm = Theme.tex("scroll/horizontal", 1);
@@ -47,15 +47,13 @@ public class Scrollport extends Widget {
     public void draw(GOut g) {
         if (vsz.x < rsz.x) {
             g.image(hchainl, new Coord(0, vsz.y));
-            g.image(hchainm, new Coord(hchainl.sz().x, vsz.y),
-                    new Coord(vsz.x - (hchainl.sz().x + hchainr.sz().x), hchainm.sz().y));
+            g.rimageh(hchainm, new Coord(hchainl.sz().x, vsz.y), vsz.x - (hchainl.sz().x + hchainr.sz().x));
             g.image(hchainr, new Coord(vsz.x - hchainr.sz().x, vsz.y));
             g.image(hflarp, new Coord((int) ((vsz.x - hflarp.sz().x) * ((double) ul.x / (rsz.x - vsz.x))), vsz.y));
         }
         if (vsz.y < rsz.y) {
             g.image(vchaint, new Coord(vsz.x, 0));
-            g.image(vchainm, new Coord(vsz.x, vchaint.sz().y),
-                    new Coord(vchainm.sz().x, vsz.y - (vchainb.sz().y + vchaint.sz().y)));
+            g.rimagev(vchainm, new Coord(vsz.x, vchaint.sz().y), vsz.y - (vchainb.sz().y + vchaint.sz().y));
             g.image(vchainb, new Coord(vsz.x, vsz.y - vchainb.sz().y));
             g.image(vflarp, new Coord(vsz.x, (int) ((vsz.y - vflarp.sz().y) * ((double) ul.y / (rsz.y - vsz.y)))));
         }

@@ -41,8 +41,7 @@ public class IndirHSlider extends Widget {
         //Top
         g.image(left.tex(), new Coord(0, cy));
         //middle
-        for (int x = left.tex().sz().x; x < sz.x - right.tex().sz().x; x += middle.tex().sz().x)
-            g.image(middle.tex(), new Coord(x, cy));
+        g.rimageh(middle.tex(), new Coord(left.tex().sz().x, cy), sz.x - (left.tex().sz().x + right.tex().sz().x));
         //bottom
         g.image(right.tex(), new Coord(sz.x - right.tex().sz().x, cy));
         //slider

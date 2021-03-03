@@ -25,7 +25,7 @@ public class KeyBindPanel extends Widget {
     }
 
     public KeyBindPanel(final UI ui) {
-        super(new Coord(500, 400));
+        super(new Coord(500, 395));
         final Coord spacer = new Coord(20, 5);
         final LinearGrouping grp = new LinearGrouping(5, false);
         grp.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", 400).tex()));

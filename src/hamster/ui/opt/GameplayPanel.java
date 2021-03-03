@@ -9,7 +9,7 @@ import haven.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
-        super(new Coord(500, 400));
+        super(new Coord(500, 395));
         final Coord spacer = new Coord(20, 5);
 
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);

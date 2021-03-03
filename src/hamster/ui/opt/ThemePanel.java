@@ -15,7 +15,7 @@ import static hamster.GlobalSettings.*;
 
 public class ThemePanel extends Scrollport {
     public ThemePanel(final UI ui) {
-        super(new Coord(500, 400));
+        super(new Coord(500, 395));
         final Coord spacer = new Coord(20, 5);
 
         final Grouping theme = new LinearGrouping("Theme Settings", spacer, false);

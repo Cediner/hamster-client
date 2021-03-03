@@ -1,6 +1,5 @@
 package hamster.ui.opt;
 
-import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
 import hamster.ui.core.indir.IndirHSlider;
@@ -17,7 +16,7 @@ import static hamster.GlobalSettings.*;
 
 public class VideoPanel extends Scrollport {
     public VideoPanel(final UI ui, final GSettings gprefs) {
-        super(new Coord(500, 400));
+        super(new Coord(500, 395));
         final Coord spacer = new Coord(20, 5);
 
         final Grouping disp = new LinearGrouping("Display Settings", spacer, false);
@@ -33,9 +32,9 @@ public class VideoPanel extends Scrollport {
 
             disp.add(new IndirCheckBox("VSync Mode", VSYNC));
             disp.add(new IndirLabel(() -> String.format("FPS: %d", FPS.get())));
-            disp.add(new IndirHSlider(200, 5, 240, FPS));
+            disp.add(new IndirHSlider(210, 5, 240, FPS));
             disp.add(new IndirLabel(() -> String.format("Background FPS: %d", BGFPS.get())));
-            disp.add(new IndirHSlider(200, 5, 240, BGFPS));
+            disp.add(new IndirHSlider(210, 5, 240, BGFPS));
 
                     //TODO redo with an IndirHSlider
             disp.add(new Label("Render scale"));
