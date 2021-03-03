@@ -21,7 +21,7 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
             super(Coord.z);
             this.ui = ui;
             this.nm = "Login";
-            add(this.btn = new Button(100, nm, this::click));
+            add(this.btn = new Button(UI.scale(100), nm, this::click));
             pack();
         }
 
@@ -53,8 +53,8 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
     public SessionDisplay() {
         super(Coord.z, "Session Display");
         uimap = new HashMap<>();
-        grp = new GridGrouping("Sessions", new Coord(5, 5), 0,100, true);
-        add = new Button(100, "New Session", this::newSession);
+        grp = new GridGrouping("Sessions", new Coord(UI.scale(5), UI.scale(5)), 0,UI.scale(100), true);
+        add = new Button(UI.scale(100), "New Session", this::newSession);
         add(grp);
         grp.add(add);
         MainFrame.instance.p.listenToSessions(this);
@@ -78,7 +78,6 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
     @Override
     public void tick(double dt) {
         super.tick(dt);
-        /* TODO: Add back when doing settings overhaul
         if(ui != null && ui.gui != null) {
             if (visible && !ui.gui.settings.SHOWSESSIONS.get()) {
                 hide();
@@ -86,7 +85,6 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
                 show();
             }
         }
-         */
     }
 
     public void init(Collection<UI> base) {

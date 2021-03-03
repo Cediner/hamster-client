@@ -28,8 +28,8 @@ public class AccountLoginScreen extends Widget {
     public AccountLoginScreen() {
         super(bg.sz());
         accounts = AccountManagement.getAccounts();
-        accountlst = new Listbox<>(200, 13, 20) {
-            final Coord offset = new Coord(5, 1);
+        accountlst = new Listbox<>(UI.scale(200), 13, UI.scale(20)) {
+            final Coord offset = new Coord(UI.scale(5), UI.scale(1));
 
             @Override
             protected String listitem(int i) {
@@ -49,17 +49,17 @@ public class AccountLoginScreen extends Widget {
         if (accounts.size() > 0)
             accountlst.sel = accounts.get(0);
         final Label keylbl = new Label("Password:");
-        keyfield = new TextEntry(200, "", null, text -> login());
+        keyfield = new TextEntry(UI.scale(200), "", null, text -> login());
         keyfield.pw = true;
-        final Button login = new Button(100, "Login", this::login);
-        final Button create = new Button(100, "Create", this::create);
-        final Button remove = new Button(100, "Remove", this::delete);
+        final Button login = new Button(UI.scale(100), "Login", this::login);
+        final Button create = new Button(UI.scale(100), "Create", this::create);
+        final Button remove = new Button(UI.scale(100), "Remove", this::delete);
         errlbl = new Label("");
 
-        final int spacer = 10;
+        final int spacer = UI.scale(10);
         add(new Img(bg), Coord.z);
-        add(accountlst, new Coord(sz.x / 2 - accountlst.sz.x, 300));
-        add(keylbl, new Coord(sz.x / 2 + spacer, 325));
+        add(accountlst, new Coord(sz.x / 2 - accountlst.sz.x, UI.scale(300)));
+        add(keylbl, new Coord(sz.x / 2 + spacer, UI.scale(325)));
         add(keyfield, new Coord(sz.x / 2 + spacer, keylbl.c.y + keylbl.sz.y + spacer));
         add(errlbl, new Coord(keyfield.c.x, keyfield.c.y + keyfield.sz.y + spacer));
         add(login, new Coord(keyfield.c.x + keyfield.sz.x / 2 - login.sz.x / 2, errlbl.c.y + errlbl.sz.y + spacer));
