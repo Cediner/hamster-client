@@ -168,25 +168,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    cursmode = "awt";
     }
 
-    private boolean iswap() {
-        final UI ui = this.ui.get();
-        if(ui != null) {
-            return ui.gprefs.vsync.val;
-	} else {
-            return true;
-	}
-    }
-
     private double framedur() {
-	GSettings gp = this.ui.get().gprefs;
-	double hz = gp.hz.val, bghz = gp.bghz.val;
-	if(bgmode) {
-	    if(bghz != Double.POSITIVE_INFINITY)
-		return(1.0 / bghz);
-	}
-	if(hz == Double.POSITIVE_INFINITY)
-	    return(0.0);
-	return(1.0 / hz);
+        return (bgmode && (1.0 / GlobalSettings.BGFPS.get() > 0.0))
+		? 1.0 / GlobalSettings.BGFPS.get()
+		: 1.0 / GlobalSettings.FPS.get();
     }
 
     public void setupMail(final Thread owner) {
@@ -199,7 +184,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     private void initgl(GL gl) {
 	Collection<String> exts = Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" "));
 	GLCapabilitiesImmutable caps = getChosenGLCapabilities();
-	gl.setSwapInterval((aswap = iswap()) ? 1 : 0);
+	gl.setSwapInterval((aswap = GlobalSettings.VSYNC.get()) ? 1 : 0);
 	if(exts.contains("GL_ARB_multisample") && caps.getSampleBuffers()) {
 	    /* Apparently, having sample buffers in the config enables
 	     * multisampling by default on some systems. */
@@ -283,7 +268,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
 	public void run(GL3 gl) {
 	    long start = System.nanoTime();
-	    boolean iswap = iswap();
+	    boolean iswap = GlobalSettings.VSYNC.get();
 	    if(debuggl)
 		haven.render.gl.GLException.checkfor(gl, null);
 	    if(iswap != aswap)
@@ -648,8 +633,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 			GLEnvironment env = this.env;
 			buf = env.render();
 			Debug.cycle(ui.modflags());
-			GSettings prefs = ui.gprefs;
-			SyncMode syncmode = prefs.syncmode.val;
+			SyncMode syncmode = SyncMode.valueOf(GlobalSettings.FRAMESYNCMODE.get());
 			CPUProfile.Frame curf = Config.profile ? uprof.new Frame() : null;
 			GPUProfile.Frame curgf = Config.profilegpu ? gprof.new Frame(buf) : null;
 			BufferBGL.Profile frameprof = false ? new BufferBGL.Profile() : null;

@@ -111,7 +111,7 @@ public class Window extends MovableWidget implements DTarget {
     //margin based off large or not
     public final Coord mrgn;
     //close button
-    public final IButton cbtn, lbtn;
+    public final IButton lbtn;
     public final ArrayList<IButton> btns = new ArrayList<>();
 
     public boolean dt = false;
@@ -145,8 +145,8 @@ public class Window extends MovableWidget implements DTarget {
     public Window(Coord sz, String cap, final String moveKey, boolean lg, Coord tlo, Coord rbo) {
 	super(moveKey);
 	this.mrgn = lg ? dlmrgn : dsmrgn;
-	cbtn = add(new IButton("buttons/close", null, this::close));
-	lbtn = add(new IButton("buttons/lock", null, this::toggleLock));
+	addBtn("buttons/close", null, this::close);
+	lbtn = addBtn("buttons/lock", null, this::toggleLock);
 	chcap(cap);
 	resize2(sz);
 	setfocustab(true);
@@ -163,7 +163,7 @@ public class Window extends MovableWidget implements DTarget {
     /* Default Base Client Constructors */
     public Window(Coord sz, String cap, boolean lg, Coord tlo, Coord rbo) {
 	this.mrgn = lg ? dlmrgn : dsmrgn;
-	cbtn = add(new IButton("buttons/close", null, this::close));
+	addBtn("buttons/close", null, this::close);
 	lbtn = null;
 	chcap(cap);
 	resize2(sz);
@@ -316,7 +316,7 @@ public class Window extends MovableWidget implements DTarget {
     public Coord contentsz() {
 	Coord max = new Coord(0, 0);
 	for(Widget wdg = child; wdg != null; wdg = wdg.next) {
-	    if(wdg == cbtn)
+	    if(wdg instanceof IButton && btns.contains(wdg))
 		continue;
 	    if(!wdg.visible)
 		continue;
@@ -329,16 +329,9 @@ public class Window extends MovableWidget implements DTarget {
 	return(max);
     }
 
-    private void placecbtn() {
+    private void placebtns() {
 	final WindowConfig cfg = Window.res.layer(WindowConfig.class);
-	cbtn.c = new Coord(sz.x - cbtn.sz.x - atl.x - UI.scale(cfg.btnc.x), -atl.y + UI.scale(cfg.btnc.y));
-	final Coord c;
-	if (lbtn != null) {
-	    lbtn.c = cbtn.c.sub(lbtn.sz.x + UI.scale(5), 0);
-	    c = new Coord(lbtn.c.x - (lbtn.sz.x + UI.scale(5)), lbtn.c.y);
-	} else {
-	    c = new Coord(cbtn.c.x - (cbtn.sz.x + UI.scale(5)), cbtn.c.y);
-	}
+	final Coord c = new Coord(sz.x - atl.x - UI.scale(cfg.btnc.x), -atl.y + UI.scale(cfg.btnc.y));
 	for (final IButton btn : btns) {
 	    btn.c = c.copy();
 	    c.x -= btn.sz.x + UI.scale(5);
@@ -358,10 +351,9 @@ public class Window extends MovableWidget implements DTarget {
 	//Top left coordinate of where usable space starts after accounting for margin
 	atl = ctl.add(mrgn);
 	//Where the close button goes
-	cbtn.c = new Coord(sz.x - UI.scale(cfg.btnc.x) - cbtn.sz.x, UI.scale(cfg.btnc.y));
 	for (Widget ch = child; ch != null; ch = ch.next)
 	    ch.presize();
-	placecbtn();
+	placebtns();
     }
 
     public void resize(Coord sz) {
@@ -401,27 +393,13 @@ public class Window extends MovableWidget implements DTarget {
 	if (hidable) {
 	    if (c.isect(Coord.z, sz) || moving()) {
 		hidden = false;
-		cbtn.visible = true;
-		if (lbtn != null)
-		    lbtn.visible = true;
 		btns.forEach(btn -> btn.visible = true);
 	    } else {
 		hidden = true;
-		cbtn.visible = false;
-		if (lbtn != null)
-		    lbtn.visible = false;
 		btns.forEach(btn -> btn.visible = false);
 	    }
 	}
 	super.mousemove(c);
-    }
-
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == cbtn) {
-	    close();
-	} else {
-	    super.wdgmsg(sender, msg, args);
-	}
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {

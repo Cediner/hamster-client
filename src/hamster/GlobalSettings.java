@@ -1,5 +1,7 @@
 package hamster;
 
+import haven.JOGLPanel;
+
 import java.awt.*;
 
 /**
@@ -21,6 +23,8 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> SHADOWSIZE = new IndirSetting<>(global, "display.shadows.size", 3);
     public static final IndirSetting<Integer> SHADOWDEPTH = new IndirSetting<>(global, "display.shadows.depth", 3);
     public static final IndirSetting<Boolean> SYMMETRICOUTLINES = new IndirSetting<>(global, "display.outlines.symmetric", false);
+    public static final IndirSetting<Double> UISCALE = new IndirSetting<>(global, "display.ui-scale", 1.0);
+    public static final IndirSetting<String> FRAMESYNCMODE = new IndirSetting<>(global, "display.frame-sync-mode", JOGLPanel.SyncMode.FRAME.name());
 
     //Theme options
     public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");

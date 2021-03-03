@@ -28,6 +28,7 @@ package haven;
 
 import hamster.SessionSettings;
 import hamster.io.SQLResCache;
+import hamster.ui.opt.OptionsWnd;
 
 import java.util.*;
 import java.util.function.*;
@@ -61,7 +62,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Zergwnd zerg;
     public final Collection<Polity> polities = new ArrayList<Polity>();
     public HelpWnd help;
-    public OptWnd opts;
+    public OptionsWnd opts;
     public Collection<DraggedItem> hand = new LinkedList<DraggedItem>();
     public WItem vhand;
     public ChatUI chat;
@@ -204,8 +205,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = ulpanel.add(new Bufflist(), UI.scale(new Coord(95, 65)));
 	umpanel.add(new Cal(), Coord.z);
 	syslog = chat.add(new ChatUI.Log("System"));
-	opts = add(new OptWnd());
-	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
     }
@@ -376,10 +375,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		public void flush() {}
 	    });
 	Debug.log = ui.cons.out;
-	opts.c = sz.sub(opts.sz).div(2);
 	// Adding local widgets / custom stuff
 	ui.root.sessionDisplay.unlink();
 	add(ui.root.sessionDisplay);
+	opts = add(new OptionsWnd(ui));
+	opts.hide();
     }
 
     public void dispose() {

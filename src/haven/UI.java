@@ -36,6 +36,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import static haven.Utils.el;
+
+import hamster.GlobalSettings;
 import haven.render.Environment;
 import haven.render.Render;
 
@@ -571,7 +573,7 @@ public class UI {
     private static double loadscale() {
 	if(Config.uiscale != null)
 	    return(Config.uiscale);
-	double scale = Utils.getprefd("uiscale", 1.0);
+	double scale = GlobalSettings.UISCALE.get();
 	scale = Math.max(Math.min(scale, maxscale()), 1.0);
 	return(scale);
     }

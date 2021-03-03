@@ -4,7 +4,9 @@ import haven.UI;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KeyBind {
     private static final Settings datastore = new Settings("keybinds");
@@ -158,6 +160,19 @@ public class KeyBind {
 	return false;
     }
 
+    public static Map<String, List<KeyBind>> generateGroupings() {
+        final Map<String, List<KeyBind>> groups = new HashMap<>();
+        for(final var kb : keybinds) {
+            if(groups.containsKey(kb.grouping)) {
+                groups.get(kb.grouping).add(kb);
+	    } else {
+                final List<KeyBind> kbs = new ArrayList<>();
+                kbs.add(kb);
+                groups.put(kb.grouping, kbs);
+	    }
+	}
+        return groups;
+    }
 
     public static String generateSequence(final KeyEvent ev, final UI ui) {
 	switch (ev.getKeyCode()) {

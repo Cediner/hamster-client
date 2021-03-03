@@ -246,7 +246,7 @@ public class Utils {
 	}
     }
 
-    static double getprefd(String prefname, double def) {
+    public static double getprefd(String prefname, double def) {
 	try {
 	    return(prefs().getDouble(prefname, def));
 	} catch(SecurityException e) {
@@ -254,7 +254,7 @@ public class Utils {
 	}
     }
     
-    static void setprefd(String prefname, double val) {
+    public static void setprefd(String prefname, double val) {
 	try {
 	    prefs().putDouble(prefname, val);
 	} catch(SecurityException e) {

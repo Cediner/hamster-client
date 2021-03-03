@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.security.AccountManagement;
+import hamster.ui.opt.OptionsWnd;
 
 import java.awt.*;
 
@@ -174,7 +175,7 @@ public class LoginScreen extends Widget {
 	presize();
 	parent.setfocus(this);
 	setfocus(username);
-	adda(new Button(100, "Options", () -> adda(new OptWnd(), sz.div(2), 0.5, 0.5)),
+	adda(new Button(100, "Options", () -> adda(new OptionsWnd(ui), sz.div(2), 0.5, 0.5)),
 		10, sz.y - 10, 0, 1);
 	adda(new Button(100, "Close", () -> ui.root.wdgmsg("close")), sz.x - 10, sz.y - 10, 1, 1);
     }

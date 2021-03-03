@@ -15,7 +15,7 @@ public class ColorPicker extends Window {
     private final Consumer<Color> callback;
 
     public ColorPicker(final Color def, final Consumer<Color> callback) {
-        super(Coord.z, "Color Picker"); //TODO: Update for Movable Windows.
+        super(Coord.z, "Color Picker", "Color Picker");
         this.callback = callback;
         this.col = def;
         int w = 0;

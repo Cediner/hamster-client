@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+
 import java.util.*;
 import static haven.Inventory.invsq;
 
@@ -111,7 +113,7 @@ public class Equipory extends Widget implements DTarget {
 		}
 
 		{
-		    basic.add(new Outlines(true));
+		    basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 		}
 
 		final FColor cc = new FColor(0, 0, 0, 0);
