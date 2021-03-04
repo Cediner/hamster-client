@@ -1097,7 +1097,7 @@ public class ChatUI extends Widget {
     private static final Tex bmf = Resource.loadtex("gfx/hud/chat-mid");
     private static final Tex bcbd = Resource.loadtex("gfx/hud/chat-close-g");
     public void draw(GOut g) {
-	g.rimage(Window.bg, marg, sz.sub(marg.x * 2, marg.y));
+	g.rimage(Window.bg.tex(), marg, sz.sub(marg.x * 2, marg.y));
 	super.draw(g);
 	g.image(bulc, new Coord(0, 0));
 	g.image(burc, new Coord(sz.x - burc.sz().x, 0));

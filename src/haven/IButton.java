@@ -26,16 +26,132 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class IButton extends SIWidget {
-    public final BufferedImage up, down, hover;
-    public boolean h = false, a = false;
-    public Runnable action = null;
+    public enum Type {
+	UP, DOWN, HOVER
+    }
+
+    protected interface ImgData {
+	BufferedImage up();
+	BufferedImage down();
+	BufferedImage hover();
+
+	void swap(final Type left, final Type right);
+    }
+
+    protected static class StaticImgData implements ImgData {
+	BufferedImage up, down, hover;
+
+	private StaticImgData(final BufferedImage up, final BufferedImage down, final BufferedImage hover) {
+	    this.up = up;
+	    this.down = down;
+	    this.hover = hover;
+	}
+
+	@Override
+	public BufferedImage up() {
+	    return up;
+	}
+
+	@Override
+	public BufferedImage down() {
+	    return down;
+	}
+
+	@Override
+	public BufferedImage hover() {
+	    return hover;
+	}
+
+	private BufferedImage get(final Type ty) {
+	    return switch (ty) {
+		case UP -> up;
+		case DOWN -> down;
+		case HOVER -> hover;
+	    };
+	}
+
+	private void set(final Type ty, final BufferedImage img) {
+	    switch (ty) {
+		case UP -> up = img;
+		case DOWN -> down = img;
+		case HOVER -> hover = img;
+	    }
+	}
+
+	@Override
+	public void swap(Type left, Type right) {
+	    final BufferedImage limg = get(left);
+	    final BufferedImage rimg = get(right);
+	    set(left, rimg);
+	    set(right, limg);
+	}
+    }
+
+    protected static class IndirImgData implements ImgData {
+	IndirThemeTex up, down, hover;
+
+	private IndirImgData(final IndirThemeTex up, final IndirThemeTex down, final IndirThemeTex hover) {
+	    this.up = up;
+	    this.down = down;
+	    this.hover = hover;
+	}
+
+	@Override
+	public BufferedImage up() {
+	    return up.imgs();
+	}
+
+	@Override
+	public BufferedImage down() {
+	    return down.imgs();
+	}
+
+	@Override
+	public BufferedImage hover() {
+	    return hover.imgs();
+	}
+
+	private IndirThemeTex get(final Type ty) {
+	    return switch (ty) {
+		case UP -> up;
+		case DOWN -> down;
+		case HOVER -> hover;
+	    };
+	}
+
+	private void set(final Type ty, final IndirThemeTex img) {
+	    switch (ty) {
+		case UP -> up = img;
+		case DOWN -> down = img;
+		case HOVER -> hover = img;
+	    }
+	}
+
+	@Override
+	public void swap(Type left, Type right) {
+	    final IndirThemeTex limg = get(left);
+	    final IndirThemeTex rimg = get(right);
+	    set(left, rimg);
+	    set(right, limg);
+	}
+    }
+
+    protected final ImgData imgs;
+    boolean h = false;
+    boolean a = false;
+    UI.Grab d = null;
+
+    private Runnable action;
     private final Runnable laction;
     private long pressStart = 0L;
-    private UI.Grab d = null;
 
     @RName("ibtn")
     public static class $_ implements Factory {
@@ -44,24 +160,51 @@ public class IButton extends SIWidget {
 	}
     }
 
-    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, Runnable action, Runnable laction) {
-	super(Utils.imgsz(up));
-	this.up = up;
-	this.down = down;
-	this.hover = hover;
+    /* Theme based constructors */
+    public IButton(final String themeres, final String tooltip, final Runnable action, final Runnable laction) {
+	super(Coord.z);
+	if (tooltip != null)
+	    settip(tooltip);
+	final IndirThemeRes res = Theme.themeres(themeres);
+	imgs = new IndirImgData(res.img(0), res.img(1), res.img(2));
 	this.action = action;
 	this.laction = laction;
+	resize(Utils.imgsz(imgs.up()));
     }
 
+    public IButton(final String themeres, final String tooltip, final Runnable action) {
+	this(themeres, tooltip, action, action);
+    }
+
+    public IButton(final String themeres, final String tooltip) {
+	super(Coord.z);
+	if (tooltip != null)
+	    settip(tooltip);
+	final IndirThemeRes res = Theme.themeres(themeres);
+	imgs = new IndirImgData(res.img(0), res.img(1), res.img(2));
+	action = () -> wdgmsg("activate");
+	laction = () -> wdgmsg("activate");
+	resize(Utils.imgsz(imgs.up()));
+    }
+
+    public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, final Runnable action, final Runnable longAction) {
+	super(Utils.imgsz(up));
+	imgs = new StaticImgData(up, down, hover);
+	this.action = action;
+	this.laction = longAction;
+    }
+
+    /* Default constructors from base client */
     public IButton(BufferedImage up, BufferedImage down, BufferedImage hover, Runnable action) {
-	this(up, down, hover, action, action);
+	super(Utils.imgsz(up));
+	imgs = new StaticImgData(up, down, hover);
+	this.action = action;
+	this.laction = action;
     }
 
     public IButton(BufferedImage up, BufferedImage down, BufferedImage hover) {
 	super(Utils.imgsz(up));
-	this.up = up;
-	this.down = down;
-	this.hover = hover;
+	imgs = new StaticImgData(up, down, hover);
 	this.action = this.laction = () -> wdgmsg("activate");
     }
 
@@ -69,8 +212,11 @@ public class IButton extends SIWidget {
 	this(up, down, up);
     }
 
-    public IButton(String base, String up, String down, String hover, Runnable action) {
-	this(Resource.loadsimg(base + up), Resource.loadsimg(base + down), Resource.loadsimg(base + (hover == null?up:hover)), action);
+    public IButton(String base, String up, String down, String hover, final Runnable action) {
+	this(Resource.loadsimg(base + up),
+		Resource.loadsimg(base + down),
+		Resource.loadsimg(base + (hover == null ? up : hover)),
+		action, null);
     }
 
     public IButton(String base, String up, String down, String hover) {
@@ -87,11 +233,11 @@ public class IButton extends SIWidget {
 	Graphics g = buf.getGraphics();
 	BufferedImage img;
 	if(a)
-	    img = down;
+	    img = imgs.down();
 	else if(h)
-	    img = hover;
+	    img = imgs.hover();
 	else
-	    img = up;
+	    img = imgs.up();
 	g.drawImage(img, 0, 0, null);
 	g.dispose();
     }
@@ -99,9 +245,13 @@ public class IButton extends SIWidget {
     public boolean checkhit(Coord c) {
 	if(!c.isect(Coord.z, sz))
 	    return(false);
-	if(up.getRaster().getNumBands() < 4)
+	if(imgs.up().getRaster().getNumBands() < 4)
 	    return(true);
-	return(up.getRaster().getSample(c.x, c.y, 3) >= 128);
+	return(imgs.up().getRaster().getSample(c.x, c.y, 3) >= 128);
+    }
+
+    public void swap(final Type left, final Type right) {
+	imgs.swap(left, right);
     }
 
     public void click() {

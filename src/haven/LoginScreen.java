@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.security.AccountManagement;
+import hamster.ui.opt.OptionsWnd;
 
 import java.awt.*;
 
@@ -46,8 +47,8 @@ public class LoginScreen extends Widget {
 	setfocustab(true);
 	this.accdb = accdb;
 
-	accounts = new Listbox<>(275, 24, 20) {
-	    final Coord offset = new Coord(5, 1);
+	accounts = new Listbox<>(UI.scale(275), 24, UI.scale(20)) {
+	    final Coord offset = new Coord(UI.scale(5), UI.scale(1));
 
 	    @Override
 	    protected AccountManagement.Account listitem(int i) {
@@ -73,8 +74,8 @@ public class LoginScreen extends Widget {
 		super.change(item);
 	    }
 	};
-	username = new TextEntry(150, "", null, text -> login());
-	password = new TextEntry(150, "", null, text -> login());
+	username = new TextEntry(UI.scale(150), "", null, text -> login());
+	password = new TextEntry(UI.scale(150), "", null, text -> login());
 	password.pw = true;
 	CheckBox showPassword = new CheckBox("Show Password", false, val -> password.setpw(!val));
 	showPassword.a = false;
@@ -90,7 +91,7 @@ public class LoginScreen extends Widget {
 	    password.settext(acc.password);
 	}
 
-	final int spacer = 5;
+	final int spacer = UI.scale(5);
 	add(new Img(bg), Coord.z);
 	adda(new IButton("gfx/hud/buttons/login", "u", "d", "o", this::login) {
 	    protected void depress() {
@@ -100,17 +101,17 @@ public class LoginScreen extends Widget {
 	    protected void unpress() {
 		Audio.play(Button.lbtup.stream());
 	    }
-	}, 419, 520, 0.5, 0.5);
-	add(accounts, new Coord(25, 25));
-	add(error, new Coord(420 - username.sz.x / 2, 300));
-	add(progress, new Coord(420 - username.sz.x / 2, error.c.y + error.sz.y + spacer));
-	add(userlbl, new Coord(420 - username.sz.x / 2, progress.c.y + progress.sz.y + spacer));
-	add(username, new Coord(420 - username.sz.x / 2, userlbl.c.y + userlbl.sz.y + spacer));
-	add(passlbl, new Coord(420 - username.sz.x / 2, username.c.y + username.sz.y + spacer));
-	add(password, new Coord(420 - password.sz.x / 2, passlbl.c.y + passlbl.sz.y + spacer));
+	}, UI.scale(419), UI.scale(520), 0.5, 0.5);
+	add(accounts, new Coord(UI.scale(25), UI.scale(25)));
+	add(error, new Coord(UI.scale(420) - username.sz.x / 2, UI.scale(300)));
+	add(progress, new Coord(UI.scale(420) - username.sz.x / 2, error.c.y + error.sz.y + spacer));
+	add(userlbl, new Coord(UI.scale(420) - username.sz.x / 2, progress.c.y + progress.sz.y + spacer));
+	add(username, new Coord(UI.scale(420) - username.sz.x / 2, userlbl.c.y + userlbl.sz.y + spacer));
+	add(passlbl, new Coord(UI.scale(420) - username.sz.x / 2, username.c.y + username.sz.y + spacer));
+	add(password, new Coord(UI.scale(420) - password.sz.x / 2, passlbl.c.y + passlbl.sz.y + spacer));
 	add(showPassword, new Coord(password.c.x, password.c.y + password.sz.y + spacer));
-	adda(new Button(100, "Save", this::save), new Coord(420, showPassword.c.y + showPassword.sz.y + spacer), 0.5, 0);
-	add(new Button(275, "New Account", this::newAccount), new Coord(accounts.c.x, accounts.c.y + accounts.sz.y + spacer));
+	adda(new Button(UI.scale(100), "Save", this::save), new Coord(UI.scale(420), showPassword.c.y + showPassword.sz.y + spacer), 0.5, 0);
+	add(new Button(UI.scale(275), "New Account", this::newAccount), new Coord(accounts.c.x, accounts.c.y + accounts.sz.y + spacer));
     }
 
     public Object[] data() {
@@ -174,8 +175,8 @@ public class LoginScreen extends Widget {
 	presize();
 	parent.setfocus(this);
 	setfocus(username);
-	adda(new Button(100, "Options", () -> adda(new OptWnd(), sz.div(2), 0.5, 0.5)),
-		10, sz.y - 10, 0, 1);
-	adda(new Button(100, "Close", () -> ui.root.wdgmsg("close")), sz.x - 10, sz.y - 10, 1, 1);
+	adda(new Button(UI.scale(100), "Options", () -> adda(new OptionsWnd(ui), sz.div(2), 0.5, 0.5)),
+		UI.scale(10), sz.y - UI.scale(10), 0, 1);
+	adda(new Button(UI.scale(100), "Close", () -> ui.root.wdgmsg("close")), sz.x - UI.scale(10), sz.y - UI.scale(10), 1, 1);
     }
 }

@@ -26,7 +26,9 @@
 
 package haven;
 
+import hamster.SessionSettings;
 import hamster.io.SQLResCache;
+import hamster.ui.opt.OptionsWnd;
 
 import java.util.*;
 import java.util.function.*;
@@ -60,7 +62,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Zergwnd zerg;
     public final Collection<Polity> polities = new ArrayList<Polity>();
     public HelpWnd help;
-    public OptWnd opts;
+    public OptionsWnd opts;
     public Collection<DraggedItem> hand = new LinkedList<DraggedItem>();
     public WItem vhand;
     public ChatUI chat;
@@ -71,6 +73,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Equipment
+    public Equipory equ;
+
+    //Session
+    public final SessionSettings settings;
 
     private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
@@ -134,16 +142,18 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    String genus = "";
 	    if(args.length > 2)
 		genus = (String)args[2];
-	    return(new GameUI(chrid, plid, genus));
+	    return(new GameUI(ui.sess.username, chrid, plid, genus));
 	}
     }
     
     private final Coord minimapc;
     private final Coord menugridc;
-    public GameUI(String chrid, long plid, String genus) {
+    public GameUI(final String usr, String chrid, long plid, String genus) {
 	this.chrid = chrid;
 	this.plid = plid;
 	this.genus = genus;
+	settings = new SessionSettings(usr, chrid);
+
 	setcanfocus(true);
 	setfocusctl(true);
 	chat = add(new ChatUI(0, 0));
@@ -195,8 +205,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = ulpanel.add(new Bufflist(), UI.scale(new Coord(95, 65)));
 	umpanel.add(new Cal(), Coord.z);
 	syslog = chat.add(new ChatUI.Log("System"));
-	opts = add(new OptWnd());
-	opts.hide();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
     }
@@ -367,10 +375,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		public void flush() {}
 	    });
 	Debug.log = ui.cons.out;
-	opts.c = sz.sub(opts.sz).div(2);
 	// Adding local widgets / custom stuff
 	ui.root.sessionDisplay.unlink();
 	add(ui.root.sessionDisplay);
+	opts = add(new OptionsWnd(ui));
+	opts.hide();
     }
 
     public void dispose() {
@@ -711,7 +720,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	} else if(place == "equ") {
 	    equwnd = new Hidewnd(Coord.z, "Equipment");
-	    equwnd.add(child, Coord.z);
+	    equwnd.add(equ = (Equipory)child, Coord.z);
 	    equwnd.pack();
 	    equwnd.hide();
 	    add(equwnd, Utils.getprefc("wndc-equ", new Coord(400, 10)));
@@ -1495,7 +1504,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    Tex glow;
 		    {
 			this.tooltip = RichText.render("Chat ($col[255,255,0]{Ctrl+C})", 0);
-			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(up.getRaster(), 2, 2, Color.WHITE)));
+			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(imgs.up().getRaster(), 2, 2, Color.WHITE)));
 		    }
 
 		    public void click() {

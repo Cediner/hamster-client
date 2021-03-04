@@ -24,19 +24,19 @@ public class CreateAccount extends Window {
         this.accounts = accounts;
         this.onCreate = onCreate;
 
-        final int spacer = 10;
+        final int spacer = UI.scale(10);
         final Label name = new Label("Account: ");
         final Label key = new Label("Key: ");
 
         add(name, Coord.z);
         add(key, name.c.add(0, name.sz.y + spacer));
 
-        namefield = add(new TextEntry(200, ""), name.c.add(name.sz.x, 0));
-        keyfield = add(new TextEntry(200, "", null, text -> create()), name.c.add(name.sz.x, name.sz.y + spacer));
+        namefield = add(new TextEntry(UI.scale(200), ""), name.c.add(name.sz.x, 0));
+        keyfield = add(new TextEntry(UI.scale(200), "", null, text -> create()), name.c.add(name.sz.x, name.sz.y + spacer));
         keyfield.pw = true;
 
-        errlbl = add(new Label(""), new Coord(5, keyfield.c.y + keyfield.sz.y + spacer));
-        add(new Button(100, "Create", this::create), new Coord((name.sz.x + namefield.sz.x) / 2 - 50, errlbl.c.y + errlbl.sz.y + spacer));
+        errlbl = add(new Label(""), new Coord(UI.scale(5), keyfield.c.y + keyfield.sz.y + spacer));
+        add(new Button(UI.scale(100), "Create", this::create), new Coord((name.sz.x + namefield.sz.x) / 2 - UI.scale(50), errlbl.c.y + errlbl.sz.y + spacer));
 
         pack();
     }

@@ -32,9 +32,12 @@ import static haven.OCache.posres;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
+
+import hamster.GlobalSettings;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -489,7 +492,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.glob = glob;
 	this.cc = cc;
 	this.plgob = plgob;
-	basic.add(new Outlines(false));
+	basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
 	this.clickmap = new ClickMap();
@@ -992,10 +995,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private ShadowMap.ShadowList slist = null;
     private ShadowMap smap = null;
     private double lsmch = 0;
+    public static final int[] shadowmap = {128, 256, 512, 1024, 2048, 4096, 8192, 16384};
+    public static final int[] shadowsizemap = {100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000};
+    public static final int[] shadowdepthmap = {100, 1000, 3000, 5000, 10000, 25000, 50000};
+    public AtomicBoolean resetsmap = new AtomicBoolean(false);
+
+    public void resetshadows() {
+	resetsmap.set(true);
+    }
+
     private void updsmap(DirLight light) {
-	boolean usesdw = ui.gprefs.lshadow.val;
-	int sdwres = ui.gprefs.shadowres.val;
-	sdwres = (sdwres < 0) ? (2048 >> -sdwres) : (2048 << sdwres);
+	boolean usesdw = GlobalSettings.SHADOWS.get();
 	if(usesdw) {
 	    Coord3f dir, cc;
 	    try {
@@ -1004,14 +1014,32 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } catch(Loading l) {
 		return;
 	    }
+
+
+	    if (resetsmap.getAndSet(false)) {
+		if (smap != null) {
+		    instancer.remove(slist);
+		    smap.dispose();
+		    smap = null;
+		    slist.dispose();
+		    slist = null;
+		    basic(ShadowMap.class, null);
+		}
+		smapcc = null;
+	    }
+
 	    if(smap == null) {
 		if(instancer == null)
 		    return;
 		slist = new ShadowMap.ShadowList(instancer);
-		smap = new ShadowMap(new Coord(sdwres, sdwres), 750, 5000, 1);
-	    } else if(smap.lbuf.w != sdwres) {
+		smap = new ShadowMap(new Coord(shadowmap[GlobalSettings.SHADOWQUALITY.get()], shadowmap[GlobalSettings.SHADOWQUALITY.get()]),
+			shadowsizemap[GlobalSettings.SHADOWSIZE.get()],
+			shadowdepthmap[GlobalSettings.SHADOWDEPTH.get()], 1);
+	    } else if(smap.lbuf.w != shadowmap[GlobalSettings.SHADOWQUALITY.get()]) {
 		smap.dispose();
-		smap = new ShadowMap(new Coord(sdwres, sdwres), 750, 5000, 1);
+		smap = new ShadowMap(new Coord(shadowmap[GlobalSettings.SHADOWQUALITY.get()], shadowmap[GlobalSettings.SHADOWQUALITY.get()]),
+			shadowsizemap[GlobalSettings.SHADOWSIZE.get()],
+			shadowdepthmap[GlobalSettings.SHADOWDEPTH.get()], 1);
 		smapcc = null;
 		basic(ShadowMap.class, null);
 	    }
@@ -2255,6 +2283,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    throw(new RuntimeException(e));
 	}
 	throw(new RuntimeException("No valid constructor found for camera " + ct.getName()));
+    }
+
+    public void setcam(final String cam) {
+	Class<? extends Camera> ct = camtypes.get(cam);
+	if (ct != null) {
+	    camera = makecam(ct);
+	} else {
+	    camera = new SOrthoCam();
+	}
     }
 
     private Camera restorecam() {

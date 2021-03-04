@@ -26,20 +26,24 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 public class Button extends SIWidget {
-    public static final BufferedImage bl = Resource.loadsimg("gfx/hud/buttons/tbtn/left");
-    public static final BufferedImage br = Resource.loadsimg("gfx/hud/buttons/tbtn/right");
-    public static final BufferedImage bt = Resource.loadsimg("gfx/hud/buttons/tbtn/top");
-    public static final BufferedImage bb = Resource.loadsimg("gfx/hud/buttons/tbtn/bottom");
-    public static final BufferedImage dt = Resource.loadsimg("gfx/hud/buttons/tbtn/dtex");
-    public static final BufferedImage ut = Resource.loadsimg("gfx/hud/buttons/tbtn/utex");
-    public static final BufferedImage bm = Resource.loadsimg("gfx/hud/buttons/tbtn/mid");
-    public static final int hs = bl.getHeight(), hl = bm.getHeight();
+    private static final IndirThemeRes res = Theme.themeres("buttons/textbtn");
+    public static final IndirThemeTex ul = res.img(0);
+    public static final IndirThemeTex um = res.img(1);
+    public static final IndirThemeTex ur = res.img(2);
+    public static final IndirThemeTex dl = res.img(3);
+    public static final IndirThemeTex dm = res.img(4);
+    public static final IndirThemeTex dr = res.img(5);
+    public static final int hs = ul.imgs().getHeight(), hl = um.imgs().getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
     public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
     public static final Resource.Audio lbtup   = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "up");
@@ -50,7 +54,7 @@ public class Button extends SIWidget {
     public Runnable action = null;
     static Text.Foundry tf = new Text.Foundry(Text.serif.deriveFont(Font.BOLD, UI.scale(12f))).aa(true);
     static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
-    private boolean a = false;
+    protected boolean a = false;
     private UI.Grab d = null;
 	
     @RName("btn")
@@ -73,9 +77,9 @@ public class Button extends SIWidget {
 	Button ret = new Button(w, tf.renderwrap(text, w - margin));
 	return(ret);
     }
-        
+
     private static boolean largep(int w) {
-	return(w >= (bl.getWidth() + bm.getWidth() + br.getWidth()));
+	return (w >= (ul.img().getWidth() + um.img().getWidth() + ur.img().getWidth()));
     }
 
     private Button(int w, boolean lg) {
@@ -113,6 +117,13 @@ public class Button extends SIWidget {
 	this(w, largep(w));
 	this.cont = cont;
     }
+
+    public Button(final String text) {
+	this(0, false);
+	change(text);
+	sz = new Coord(cont.getWidth() + ul.img().getWidth() + um.img().getWidth() + ur.img().getWidth(), ul.img().getHeight());
+	this.action = () -> wdgmsg("activate");
+    }
 	
     public Button action(Runnable action) {
 	this.action = action;
@@ -121,21 +132,23 @@ public class Button extends SIWidget {
 
     public void draw(BufferedImage img) {
 	Graphics g = img.getGraphics();
-	int yo = lg?((hl - hs) / 2):0;
 
-	g.drawImage(a?dt:ut, 4, yo + 4, sz.x - 8, hs - 8, null);
+	if (a) {
+	    //down
+	    g.drawImage(dl.imgs(), 0, 0, dl.img().getWidth(), sz.y, null);
+	    g.drawImage(dm.imgs(), dl.img().getWidth(), 0, sz.x - dr.img().getWidth() - dl.img().getWidth(), sz.y, null);
+	    g.drawImage(dr.imgs(), sz.x - dr.img().getWidth(), 0, dr.img().getWidth(), sz.y, null);
+	} else {
+	    //up
+	    g.drawImage(ul.imgs(), 0, 0, ul.img().getWidth(), sz.y, null);
+	    g.drawImage(um.imgs(), ul.img().getWidth(), 0, sz.x - ur.img().getWidth() - ul.img().getWidth(), sz.y, null);
+	    g.drawImage(ur.imgs(), sz.x - ur.img().getWidth(), 0, ur.img().getWidth(), sz.y, null);
+	}
 
 	Coord tc = sz.sub(Utils.imgsz(cont)).div(2);
 	if(a)
 	    tc = tc.add(UI.scale(1), UI.scale(1));
 	g.drawImage(cont, tc.x, tc.y, null);
-
-	g.drawImage(bl, 0, yo, null);
-	g.drawImage(br, sz.x - br.getWidth(), yo, null);
-	g.drawImage(bt, bl.getWidth(), yo, sz.x - bl.getWidth() - br.getWidth(), bt.getHeight(), null);
-	g.drawImage(bb, bl.getWidth(), yo + hs - bb.getHeight(), sz.x - bl.getWidth() - br.getWidth(), bb.getHeight(), null);
-	if(lg)
-	    g.drawImage(bm, (sz.x - bm.getWidth()) / 2, 0, null);
 
 	g.dispose();
     }
