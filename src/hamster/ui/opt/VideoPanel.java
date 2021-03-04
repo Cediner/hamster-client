@@ -90,8 +90,7 @@ public class VideoPanel extends Scrollport {
         { //Shadow
             final Consumer<Integer> resetshadows = val -> {
                 if (ui.gui != null && ui.gui.map != null) {
-                    //TODO: Imp
-                    //ui.gui.map.resetshadows();
+                    ui.gui.map.resetshadows();
                 }
             };
 
