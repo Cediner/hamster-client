@@ -28,6 +28,7 @@ package haven;
 
 import hamster.GlobalSettings;
 import hamster.KeyBind;
+import hamster.ui.ProfWnd;
 import hamster.ui.SessionDisplay;
 
 import java.awt.event.KeyEvent;
@@ -54,12 +55,14 @@ public class RootWidget extends ConsoleHost {
         if(!super.globtype(key, ev)) {
 	    final String cmdstr = KeyBind.generateSequence(ev, ui);
 	    if(!KB_TOGGLE_PROFILER.check(cmdstr, () -> {
-		if(Config.profile) {
-		    add(new Profwnd(guprof, "UI profile"), UI.scale(100, 100));
-		    add(new Profwnd(grprof, "GL profile"), UI.scale(500, 100));
+		final Widget par = ui.gui != null ? ui.gui : ui.root;
+		final ProfWnd wnd = par.add(new ProfWnd());
+		if (Config.profile) {
+		    wnd.add(ui.root.guprof, "UI profile");
+		    wnd.add(ui.root.grprof, "GL profile");
 		}
-		if(Config.profilegpu) {
-		    add(new Profwnd(ggprof, "GPU profile"), UI.scale(500, 250));
+		if (Config.profilegpu) {
+		    wnd.add(ui.root.ggprof, "GPU profile");
 		}
 		return true;
 	    }) && !KB_TOGGLE_CMD.check(cmdstr, () -> {
