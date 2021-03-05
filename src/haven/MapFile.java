@@ -308,7 +308,7 @@ public class MapFile {
 
     // Simple custom icons that ae a combo of PMarker (color) and SMarker (Custom res)
     public static class CustomMarker extends Marker {
-        public final Color color;
+        public Color color;
         public final Resource.Spec res;
 
         public CustomMarker(final long seq, final Coord tc, final String nm,
