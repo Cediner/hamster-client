@@ -26,11 +26,90 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.util.function.*;
 import java.awt.image.BufferedImage;
 
 public class ICheckBox extends Widget {
-    public final Tex up, down, hoverup, hoverdown;
+    public enum Type {
+	UP, DOWN, HOVERUP, HOVERDOWN
+    }
+
+    protected interface ImgData {
+	Tex up();
+	Tex down();
+	Tex hoverup();
+	Tex hoverdown();
+    }
+
+    protected static class StaticImgData implements ImgData {
+	final Tex up, down, hoverup, hoverdown;
+
+	private StaticImgData(final Tex up, final Tex down,
+			      final Tex hoverup, final Tex hoverdown) {
+	    this.up = up;
+	    this.down = down;
+	    this.hoverup = hoverup;
+	    this.hoverdown = hoverdown;
+	}
+
+	@Override
+	public Tex up() {
+	    return up;
+	}
+
+	@Override
+	public Tex down() {
+	    return down;
+	}
+
+	@Override
+	public Tex hoverup() {
+	    return hoverup;
+	}
+
+	@Override
+	public Tex hoverdown() {
+	    return hoverdown;
+	}
+    }
+
+    protected static class IndirImgData implements ImgData {
+	final IndirThemeTex up, down, hoverup, hoverdown;
+
+	private IndirImgData(final IndirThemeTex up, final IndirThemeTex down,
+			     final IndirThemeTex hoverup, final IndirThemeTex hoverdown) {
+	    this.up = up;
+	    this.down = down;
+	    this.hoverup = hoverup;
+	    this.hoverdown = hoverdown;
+	}
+
+	@Override
+	public Tex up() {
+	    return up.tex();
+	}
+
+	@Override
+	public Tex down() {
+	    return down.tex();
+	}
+
+	@Override
+	public Tex hoverup() {
+	    return hoverup.tex();
+	}
+
+	@Override
+	public Tex hoverdown() {
+	    return hoverdown.tex();
+	}
+    }
+
+    private final ImgData imgs;
     private final BufferedImage img;
     public boolean h, a;
 
@@ -47,12 +126,24 @@ public class ICheckBox extends Widget {
 	}
     }
 
+    /* Themed Constructors */
+    public ICheckBox(final String themeres, final String tooltip) {
+	super(Coord.z);
+	if (tooltip != null)
+	    settip(tooltip);
+	final IndirThemeRes res = Theme.themeres(themeres);
+	imgs = new IndirImgData(res.img(0), res.img(1), res.img(2), res.img(1));
+    	if(imgs.up() instanceof TexI)
+    	    this.img = ((TexI)imgs.up()).back;
+    	else
+    	    this.img = null;
+	resize(imgs.up().sz());
+    }
+
+    /* Default Client Constructors */
     public ICheckBox(Tex up, Tex down, Tex hoverup, Tex hoverdown) {
 	super(up.sz());
-	this.up = up;
-	this.down = down;
-	this.hoverup = hoverup;
-	this.hoverdown = hoverdown;
+	this.imgs = new StaticImgData(up, down, hoverup, hoverdown);
 	if(up instanceof TexI)
 	    this.img = ((TexI)up).back;
 	else
@@ -79,9 +170,9 @@ public class ICheckBox extends Widget {
 
     public void draw(GOut g) {
 	if(!state())
-	    g.image(h ? hoverup : up, Coord.z);
+	    g.image(h ? imgs.hoverup() : imgs.up(), Coord.z);
 	else
-	    g.image(h ? hoverdown : down, Coord.z);
+	    g.image(h ? imgs.hoverdown() : imgs.down(), Coord.z);
         super.draw(g);
     }
 

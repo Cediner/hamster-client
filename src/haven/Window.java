@@ -112,7 +112,7 @@ public class Window extends MovableWidget implements DTarget {
     public final Coord mrgn;
     //close button
     public final IButton lbtn;
-    public final ArrayList<IButton> btns = new ArrayList<>();
+    public final ArrayList<Widget> btns = new ArrayList<>();
 
     public boolean dt = false;
     //Caption
@@ -236,6 +236,12 @@ public class Window extends MovableWidget implements DTarget {
 	return btn;
     }
 
+    public ICheckBox addBtn(final ICheckBox chk) {
+        add(chk);
+        btns.add(chk);
+        return chk;
+    }
+
     @Override
     public void toggleLock() {
 	lbtn.swap(IButton.Type.UP, IButton.Type.HOVER);
@@ -332,7 +338,7 @@ public class Window extends MovableWidget implements DTarget {
     private void placebtns() {
 	final WindowConfig cfg = Window.res.layer(WindowConfig.class);
 	final Coord c = new Coord(sz.x - atl.x - UI.scale(cfg.btnc.x), -atl.y + UI.scale(cfg.btnc.y));
-	for (final IButton btn : btns) {
+	for (final Widget btn : btns) {
 	    btn.c = c.copy();
 	    c.x -= btn.sz.x + UI.scale(5);
 	}

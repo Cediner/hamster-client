@@ -86,19 +86,46 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar.add(new ICheckBox("gfx/hud/mmap/hmark", "", "-d", "-h", "-dh"))
 	    .state(() -> hmarkers).set(a -> hmarkers = a)
 	    .settip("Hide markers").setgkey(kb_hmark);
-	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
-	    .changed((a) ->  markers = markers == null ? ui.gui.add(new MapMarkerWnd(this)) : markers).settip("Compact mode").setgkey(kb_compact);
+	final var chk = toolbar.add(new ICheckBox("gfx/hud/lbtn-ico", "", "-d", "-h", "-dh"))
+		.state(() -> ui.gui.wndstate(ui.gui.iconwnd)).click(() -> {
+		    if(ui.gui.iconconf == null)
+			return;
+		    if(ui.gui.iconwnd == null) {
+			ui.gui.iconwnd = new GobIcon.SettingsWindow(ui.gui.iconconf, () -> Utils.defer(ui.gui::saveiconconf));
+			ui.gui.add(ui.gui.iconwnd);
+		    } else {
+			ui.destroy(ui.gui.iconwnd);
+			ui.gui.iconwnd = null;
+		    }
+		}).settip("Icon settings");
+	chk.move(new Coord(UI.scale(49), -UI.scale(18)));
 	toolbar.pack();
 
-	addBtn("buttons/square/two", "2nd remembered window size",
+	makeHidable();
+	addBtn("buttons/wnd/view", "Toggle view range", () -> ui.gui.settings.MMSHOWVIEW.set(!ui.gui.settings.MMSHOWVIEW.get()));
+	addBtn("buttons/wnd/grid", "Toggle grid on minimap", () -> ui.gui.settings.MMSHOWGRID.set(!ui.gui.settings.MMSHOWGRID.get()));
+	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisiblity());
+	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
+	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
+	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("realm", a));
+
+	addBtn("buttons/wnd/two", "2nd remembered window size",
 		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
 		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
-	addBtn("buttons/square/one", "1st remembered window size",
+	addBtn("buttons/wnd/one", "1st remembered window size",
 		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
 		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
 
 	resize(sz);
-	makeHidable();
+    }
+
+    private void toggleol(String tag, boolean a) {
+	if(ui.gui.map != null) {
+	    if(a)
+		ui.gui.map.enol(tag);
+	    else
+		ui.gui.map.disol(tag);
+	}
     }
 
     private void remember(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
@@ -169,8 +196,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	public boolean clickmarker(DisplayMarker mark, Location loc, int button, boolean press) {
 	    if(button == 1) {
 		if(!press && !domark) {
-		    if(markers != null)
-		        markers.list.change(mark.m);
+		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
 		}
 	    } else if(mark.m instanceof SMarker) {
@@ -193,8 +219,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    if(domark && (button == 1) && !press) {
 		Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker", BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
 		file.add(nm);
-		if(markers != null)
-		    markers.list.change(nm);
+		ui.gui.mapmarkers.list.change(nm);
 		domark = false;
 		return(true);
 	    }

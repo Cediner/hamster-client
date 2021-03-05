@@ -28,6 +28,7 @@ package haven;
 
 import hamster.SessionSettings;
 import hamster.io.SQLResCache;
+import hamster.ui.MapMarkerWnd;
 import hamster.ui.opt.OptionsWnd;
 
 import java.util.*;
@@ -52,7 +53,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
     private double msgtime;
-    private Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
+    public Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -73,6 +74,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Map Markers
+    public MapMarkerWnd mapmarkers;
 
     //Equipment
     public Equipory equ;
@@ -691,7 +695,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
+		ui.destroy(mapmarkers);
 		mapfile = null;
+		mapmarkers = null;
 	    }
 	    ResCache mapstore = SQLResCache.mapdb;
 	    if(mapstore != null) {
@@ -700,7 +706,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		mmap.lower();
 		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		mapfile.show(Utils.getprefb("wndvis-map", false));
+		mapmarkers = new MapMarkerWnd(mapfile);
+		mapmarkers.hide();
 		add(mapfile, Utils.getprefc("wndc-map", new Coord(50, 50)));
+		add(mapmarkers, new Coord(50, 50));
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
@@ -1169,7 +1178,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	wdg.c = fitwdg(wdg, wdg.c);
     }
 
-    private boolean wndstate(Window wnd) {
+    public boolean wndstate(Window wnd) {
 	if(wnd == null)
 	    return(false);
 	return(wnd.visible);
