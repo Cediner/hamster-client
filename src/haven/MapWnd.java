@@ -32,6 +32,7 @@ import java.io.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import hamster.IndirSetting;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import haven.MapFile.Marker;
@@ -88,8 +89,28 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
 	    .changed((a) ->  markers = markers == null ? ui.gui.add(new MapMarkerWnd(this)) : markers).settip("Compact mode").setgkey(kb_compact);
 	toolbar.pack();
+
+	addBtn("buttons/square/two", "2nd remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
+		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
+	addBtn("buttons/square/one", "1st remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
+		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
+
 	resize(sz);
 	makeHidable();
+    }
+
+    private void remember(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+	size.set(asz);
+	pos.set(c);
+    }
+
+    public void recall(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+	resize(size.get());
+	move(pos.get());
+	Utils.setprefc("wndsz-map", asz);
+	savePosition();
     }
 
     private class ViewFrame extends Frame {
