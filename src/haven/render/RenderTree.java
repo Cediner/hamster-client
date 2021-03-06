@@ -631,8 +631,11 @@ public class RenderTree implements RenderList.Adapter {
 	}
 
 	private void chstate(Pipe.Op cstate, Pipe.Op ostate) {
-	    if((parent != null) && (pidx < 0))
-		throw(new SlotRemoved(this));
+	    if((parent != null) && (pidx < 0)) {
+		//MOD: XXX: Don't crash on this
+	        //throw (new SlotRemoved(this));
+	    	return;
+	    }
 	    if(stlock)
 		throw(new RuntimeException("attempted state change of locked slot"));
 	    if(this.dstate != null) {
