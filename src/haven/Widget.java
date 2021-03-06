@@ -1449,6 +1449,13 @@ public class Widget {
 	    show();
     }
 
+    public void setVisible(final boolean val) {
+	if (val)
+	    show();
+	else
+	    hide();
+    }
+
     public void hide() {
 	visible = false;
 	if(canfocus && (parent != null))

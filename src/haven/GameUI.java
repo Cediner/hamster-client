@@ -27,7 +27,9 @@
 package haven;
 
 import hamster.SessionSettings;
+import hamster.data.BeltData;
 import hamster.io.SQLResCache;
+import hamster.ui.BeltWnd;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.QuestWnd;
 import hamster.ui.opt.OptionsWnd;
@@ -37,6 +39,9 @@ import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+
+import static hamster.GlobalSettings.*;
+import static hamster.KeyBind.*;
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
@@ -59,7 +64,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public CharWnd chrwdg;
     public MapWnd mapfile;
     public BuddyWnd buddies;
-    private final Zergwnd zerg;
+    public final Zergwnd zerg;
     public final Collection<Polity> polities = new ArrayList<Polity>();
     public HelpWnd help;
     public OptionsWnd opts;
@@ -70,9 +75,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public double prog = -1;
     private boolean afk = false;
     public BeltSlot[] belt = new BeltSlot[144];
-    public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Hotbars
+    public final BeltWnd hotbar1, hotbar2, hotbar3;
 
     //Questing Related widgets
     public final QuestWnd questwnd; // container
@@ -115,32 +122,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	private GameUI wdg() {return(GameUI.this);}
     }
 
-    public abstract class Belt extends Widget {
-	public Belt(Coord sz) {
-	    super(sz);
-	}
-
-	public void keyact(final int slot) {
-	    if(map != null) {
-		Coord mvc = map.rootxlate(ui.mc);
-		if(mvc.isect(Coord.z, map.sz)) {
-		    map.new Hittest(mvc) {
-			    protected void hit(Coord pc, Coord2d mc, ClickData inf) {
-				Object[] args = {slot, 1, ui.modflags(), mc.floor(OCache.posres)};
-				if(inf != null)
-				    args = Utils.extend(args, inf.clickargs());
-				GameUI.this.wdgmsg("belt", args);
-			    }
-			    
-			    protected void nohit(Coord pc) {
-				GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
-			    }
-			}.run();
-		}
-	    }
-	}
-    }
-    
     @RName("gameui")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -167,7 +148,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chat.hresize(chat.savedh);
 	    chat.show();
 	}
-	beltwdg.raise();
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
 		    super.move(a);
@@ -201,6 +181,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	zerg.hide();
 	//Extras
 	questwnd = new QuestWnd();
+	//Setup hotbars
+	final BeltData data = new BeltData(usr + "::" + chrid);
+	hotbar1 = new BeltWnd("Hotbar 1", data, KB_STYLE, KB_VIS, KB_PAGE, KB_LOCK, Arrays.asList(KB_HK),5, 0);
+	hotbar2 = new BeltWnd("Hotbar 2", data, KB_F_STYLE, KB_F_VIS, KB_F_PAGE, KB_F_LOCK, Arrays.asList(KB_HK_F), 5, 50);
+	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), 4, 100);
     }
 
     protected void attached() {
@@ -651,6 +636,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
+	    //Setup hotbars
+	    add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
+	    add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
+	    add(hotbar3, new Coord(20, 500)).setVisible(ui.gui.settings.SHOWHOTBAR3.get());
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
@@ -815,15 +804,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void draw(GOut g) {
-	beltwdg.c = new Coord(chat.c.x, Math.min(chat.c.y - beltwdg.sz.y, sz.y - beltwdg.sz.y));
 	super.draw(g);
 	if(prog >= 0)
 	    drawprog(g, prog);
 	int by = sz.y;
 	if(chat.visible)
 	    by = Math.min(by, chat.c.y);
-	if(beltwdg.visible)
-	    by = Math.min(by, beltwdg.c.y);
 	if(cmdline != null) {
 	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(20)));
 	} else if(lastmsg != null) {
@@ -997,6 +983,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    sdt = new MessageBuf((byte[])args[2]);
 		belt[slot] = new BeltSlot(slot, res, sdt);
 	    }
+	    if (slot <= 49)
+		hotbar1.update(slot);
+	    else if (slot <= 99)
+		hotbar2.update(slot);
+	    else if (slot <= 140)
+		hotbar3.update(slot);
 	} else if(msg == "polowner") {
 	    int id = (Integer)args[0];
 	    String o = (String)args[1];
@@ -1232,7 +1224,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	chat.move(new Coord(blpw, sz.y));
 	if(map != null)
 	    map.resize(sz);
-	beltwdg.c = new Coord(blpw + UI.scale(10), sz.y - beltwdg.sz.y - UI.scale(5));
 	super.resize(sz);
     }
     
@@ -1293,226 +1284,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	wdgmsg("act", al);
     }
 
-    public class FKeyBelt extends Belt implements DTarget, DropTarget {
-	public final int beltkeys[] = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
-				       KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
-				       KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
-	public int curbelt = 0;
-
-	public FKeyBelt() {
-	    super(UI.scale(new Coord(450, 34)));
-	}
-
-	private Coord beltc(int i) {
-	    return(new Coord((((invsq.sz().x + UI.scale(2)) * i) + (10 * (i / 4))), 0));
-	}
-    
-	private int beltslot(Coord c) {
-	    for(int i = 0; i < 12; i++) {
-		if(c.isect(beltc(i), invsq.sz()))
-		    return(i + (curbelt * 12));
-	    }
-	    return(-1);
-	}
-    
-	public void draw(GOut g) {
-	    for(int i = 0; i < 12; i++) {
-		int slot = i + (curbelt * 12);
-		Coord c = beltc(i);
-		g.image(invsq, beltc(i));
-		try {
-		    if(belt[slot] != null)
-			belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
-		} catch(Loading e) {}
-		g.chcolor(156, 180, 158, 255);
-		FastText.aprintf(g, c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1, "F%d", i + 1);
-		g.chcolor();
-	    }
-	}
-	
-	public boolean mousedown(Coord c, int button) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		if(button == 1)
-		    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
-		if(button == 3)
-		    GameUI.this.wdgmsg("setbelt", slot, 1);
-		return(true);
-	    }
-	    return(false);
-	}
-
-	public boolean globtype(char key, KeyEvent ev) {
-	    boolean M = (ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0;
-	    for(int i = 0; i < beltkeys.length; i++) {
-		if(ev.getKeyCode() == beltkeys[i]) {
-		    if(M) {
-			curbelt = i;
-			return(true);
-		    } else {
-			keyact(i + (curbelt * 12));
-			return(true);
-		    }
-		}
-	    }
-	    return(false);
-	}
-	
-	public boolean drop(Coord c, Coord ul) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		GameUI.this.wdgmsg("setbelt", slot, 0);
-		return(true);
-	    }
-	    return(false);
-	}
-
-	public boolean iteminteract(Coord c, Coord ul) {return(false);}
-	
-	public boolean dropthing(Coord c, Object thing) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		if(thing instanceof Resource) {
-		    Resource res = (Resource)thing;
-		    if(res.layer(Resource.action) != null) {
-			GameUI.this.wdgmsg("setbelt", slot, res.name);
-			return(true);
-		    }
-		}
-	    }
-	    return(false);
-	}
-    }
-    
-    private static final Tex nkeybg = Resource.loadtex("gfx/hud/hb-main");
-    public class NKeyBelt extends Belt implements DTarget, DropTarget {
-	public int curbelt = 0;
-	final Coord pagoff = UI.scale(new Coord(5, 25));
-
-	public NKeyBelt() {
-	    super(nkeybg.sz());
-	    adda(new IButton("gfx/hud/hb-btn-chat", "", "-d", "-h") {
-		    Tex glow;
-		    {
-			this.tooltip = RichText.render("Chat ($col[255,255,0]{Ctrl+C})", 0);
-			glow = new TexI(PUtils.rasterimg(PUtils.blurmask(imgs.up().getRaster(), 2, 2, Color.WHITE)));
-		    }
-
-		    public void click() {
-			if(chat.targeth == 0) {
-			    chat.sresize(chat.savedh);
-			    setfocus(chat);
-			} else {
-			    chat.sresize(0);
-			}
-			Utils.setprefb("chatvis", chat.targeth != 0);
-		    }
-
-		    public void draw(GOut g) {
-			super.draw(g);
-			Color urg = chat.urgcols[chat.urgency];
-			if(urg != null) {
-			    GOut g2 = g.reclipl(new Coord(-2, -2), g.sz().add(4, 4));
-			    g2.chcolor(urg.getRed(), urg.getGreen(), urg.getBlue(), 128);
-			    g2.image(glow, Coord.z, UI.scale(glow.sz()));
-			}
-		    }
-		}, sz, 1, 1);
-	}
-	
-	private Coord beltc(int i) {
-	    return(pagoff.add(UI.scale((36 * i) + (10 * (i / 5))), 0));
-	}
-    
-	private int beltslot(Coord c) {
-	    for(int i = 0; i < 10; i++) {
-		if(c.isect(beltc(i), invsq.sz()))
-		    return(i + (curbelt * 12));
-	    }
-	    return(-1);
-	}
-    
-	public void draw(GOut g) {
-	    g.image(nkeybg, Coord.z);
-	    for(int i = 0; i < 10; i++) {
-		int slot = i + (curbelt * 12);
-		Coord c = beltc(i);
-		g.image(invsq, beltc(i));
-		try {
-		    if(belt[slot] != null) {
-			belt[slot].spr().draw(g.reclip(c.add(UI.scale(1), UI.scale(1)), invsq.sz().sub(UI.scale(2), UI.scale(2))));
-		    }
-		} catch(Loading e) {}
-		g.chcolor(156, 180, 158, 255);
-		FastText.aprintf(g, c.add(invsq.sz().sub(UI.scale(2), 0)), 1, 1, "%d", (i + 1) % 10);
-		g.chcolor();
-	    }
-	    super.draw(g);
-	}
-	
-	public boolean mousedown(Coord c, int button) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		if(button == 1)
-		    GameUI.this.wdgmsg("belt", slot, 1, ui.modflags());
-		if(button == 3)
-		    GameUI.this.wdgmsg("setbelt", slot, 1);
-		return(true);
-	    }
-	    return(super.mousedown(c, button));
-	}
-
-	public boolean globtype(char key, KeyEvent ev) {
-	    int c = ev.getKeyCode();
-	    if((c < KeyEvent.VK_0) || (c > KeyEvent.VK_9))
-		return(false);
-	    int i = Utils.floormod(c - KeyEvent.VK_0 - 1, 10);
-	    boolean M = (ev.getModifiersEx() & (KeyEvent.META_DOWN_MASK | KeyEvent.ALT_DOWN_MASK)) != 0;
-	    if(M) {
-		curbelt = i;
-	    } else {
-		keyact(i + (curbelt * 12));
-	    }
-	    return(true);
-	}
-	
-	public boolean drop(Coord c, Coord ul) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		GameUI.this.wdgmsg("setbelt", slot, 0);
-		return(true);
-	    }
-	    return(false);
-	}
-
-	public boolean iteminteract(Coord c, Coord ul) {return(false);}
-	
-	public boolean dropthing(Coord c, Object thing) {
-	    int slot = beltslot(c);
-	    if(slot != -1) {
-		if(thing instanceof Resource) {
-		    Resource res = (Resource)thing;
-		    if(res.layer(Resource.action) != null) {
-			GameUI.this.wdgmsg("setbelt", slot, res.name);
-			return(true);
-		    }
-		}
-	    }
-	    return(false);
-	}
-    }
-    
-    {
-	String val = Utils.getpref("belttype", "n");
-	if(val.equals("n")) {
-	    beltwdg = add(new NKeyBelt());
-	} else if(val.equals("f")) {
-	    beltwdg = add(new FKeyBelt());
-	} else {
-	    beltwdg = add(new NKeyBelt());
-	}
-    }
-    
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
     {
 	cmdmap.put("afk", new Console.Command() {
@@ -1526,21 +1297,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    Object[] ad = new Object[args.length - 1];
 		    System.arraycopy(args, 1, ad, 0, ad.length);
 		    wdgmsg("act", ad);
-		}
-	    });
-	cmdmap.put("belt", new Console.Command() {
-		public void run(Console cons, String[] args) {
-		    if(args[1].equals("f")) {
-			beltwdg.destroy();
-			beltwdg = add(new FKeyBelt());
-			Utils.setpref("belttype", "f");
-			resize(sz);
-		    } else if(args[1].equals("n")) {
-			beltwdg.destroy();
-			beltwdg = add(new NKeyBelt());
-			Utils.setpref("belttype", "n");
-			resize(sz);
-		    }
 		}
 	    });
 	cmdmap.put("chrmap", new Console.Command() {

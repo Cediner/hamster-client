@@ -32,6 +32,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import haven.Resource.AButton;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
@@ -46,6 +47,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     private UI.Grab grab;
     private int curoff = 0;
     private boolean recons = true;
+    public final Map<String, CustomPagina> custompag = new HashMap<>();
 	
     @RName("scm")
     public static class $_ implements Factory {
@@ -77,7 +79,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    return(KeyBinding.get("scm/" + res.name, hotkey()));
 	}
 	public void use() {
-	    pag.scm.wdgmsg("act", (Object[])res.layer(Resource.action).ad);
+	    pag.use();
 	}
 
 	public String sortkey() {
@@ -166,6 +168,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	public Indir<Tex> img;
 	public int newp;
 	public Object[] rawinfo = {};
+	private final Consumer<Pagina> onUse;
 
 	public static enum State {
 	    ENABLED, DISABLED {
@@ -183,6 +186,14 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    this.scm = scm;
 	    this.res = res;
 	    state(State.ENABLED);
+	    this.onUse = (me) -> scm.wdgmsg("act", (Object[]) res().layer(Resource.action).ad);
+	}
+
+	public Pagina(MenuGrid scm, Indir<Resource> res, final Consumer<Pagina> onUse) {
+	    this.scm = scm;
+	    this.res = res;
+	    state(State.ENABLED);
+	    this.onUse = onUse;
 	}
 
 	public Resource res() {
@@ -191,6 +202,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	public Resource.AButton act() {
 	    return(res().layer(Resource.action));
+	}
+
+	public void use() {
+	    onUse.accept(this);
 	}
 
 	private PagButton button = null;
@@ -209,6 +224,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	public void state(State st) {
 	    this.st = st;
 	    this.img = st.img(this);
+	}
+    }
+
+    public static class CustomPagina extends Pagina {
+	public final String key;
+
+	private CustomPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
+	    super(scm, res, onUse);
+	    this.key = key;
 	}
     }
 
@@ -271,6 +295,37 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
     public MenuGrid() {
 	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
+	//Custom Management Menu
+	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
+	//TODO: All the Custom window toggles
+	//Hafen Window toggles
+	addCustom(new CustomPagina(this, "management::inv",
+		Resource.local().load("custom/paginae/default/wnd/inv"),
+		(pag) -> ui.gui.invwnd.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::char",
+		Resource.local().load("custom/paginae/default/wnd/char"),
+		(pag) -> ui.gui.chrwdg.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::equ",
+		Resource.local().load("custom/paginae/default/wnd/equ"),
+		(pag) -> ui.gui.equwnd.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::kithnkin",
+		Resource.local().load("custom/paginae/default/wnd/kithnkin"),
+		(pag) -> ui.gui.zerg.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::lmap",
+		Resource.local().load("custom/paginae/default/wnd/lmap"),
+		(pag) -> ui.gui.mapfile.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::opts",
+		Resource.local().load("custom/paginae/default/wnd/opts"),
+		(pag) -> ui.gui.opts.toggleVisiblity()));
+	//TODO: Chat window
+	//addCustom(new CustomPagina(this, "management::chat",
+	//	Resource.local().load("custom/paginae/default/wnd/chat"),
+	//	(pag) -> ui.gui.chatwnd.toggleVisiblity()));
+    }
+
+    private void addCustom(final CustomPagina pag) {
+	paginae.add(pag);
+	custompag.put(pag.key, pag);
     }
 
     private void updlayout() {
@@ -445,7 +500,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	PagButton h = bhit(c);
 	if((button == 1) && (grab != null)) {
 	    if(dragging != null) {
-		ui.dropthing(ui.root, ui.mc, dragging.res());
+	        if(!(dragging instanceof CustomPagina))
+	            ui.dropthing(ui.root, ui.mc, dragging.res());
+	        else
+	            ui.dropthing(ui.root, ui.mc, dragging);
 		pressed = null;
 		dragging = null;
 	    } else if(pressed != null) {
