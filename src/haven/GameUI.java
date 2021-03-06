@@ -29,6 +29,7 @@ package haven;
 import hamster.SessionSettings;
 import hamster.io.SQLResCache;
 import hamster.ui.MapMarkerWnd;
+import hamster.ui.QuestWnd;
 import hamster.ui.opt.OptionsWnd;
 
 import java.util.*;
@@ -57,7 +58,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Inventory maininv;
     public CharWnd chrwdg;
     public MapWnd mapfile;
-    private Widget qqview;
     public BuddyWnd buddies;
     private final Zergwnd zerg;
     public final Collection<Polity> polities = new ArrayList<Polity>();
@@ -73,6 +73,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Questing Related widgets
+    public final QuestWnd questwnd; // container
+    public Widget qqview; // actual quest details
 
     //Map Markers
     public MapMarkerWnd mapmarkers;
@@ -195,6 +199,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	syslog = chat.add(new ChatUI.Log("System"));
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
+	//Extras
+	questwnd = new QuestWnd();
     }
 
     protected void attached() {
@@ -319,6 +325,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(ui.root.sessionDisplay);
 	opts = add(new OptionsWnd(ui));
 	opts.hide();
+	add(questwnd, new Coord(0, sz.y - 200));
     }
 
     public void dispose() {
@@ -721,19 +728,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "qq") {
 	    if(qqview != null)
 		qqview.reqdestroy();
-	    final Widget cref = qqview = child;
-	    add(new AlignPanel() {
-		    {add(cref);}
-
-		    protected Coord getc() {
-			return(new Coord(10,  this.sz.y - 10));
-		    }
-
-		    public void cdestroy(Widget ch) {
-			qqview = null;
-			destroy();
-		    }
-		});
+	    qqview = child;
+	    questwnd.add(child, Coord.z);
+	    questwnd.pack();
 	} else if(place == "misc") {
 	    Coord c;
 	    int a = 1;
