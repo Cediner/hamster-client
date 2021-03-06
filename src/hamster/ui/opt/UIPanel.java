@@ -20,7 +20,7 @@ public class UIPanel extends Scrollport {
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);
 
         { //visibility
-            visibility.add(new IndirCheckBox("Show Player Avatar", ui.gui.settings.SHOWPLAVA));
+            visibility.add(new IndirCheckBox("Show Player Avatar", ui.gui.settings.SHOWPLAVA, (val) -> ui.gui.portrait.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Player Speed", ui.gui.settings.SHOWSPEED));
             visibility.add(new IndirCheckBox("Show Player Health", ui.gui.settings.SHOWHEALTH));
             visibility.add(new IndirCheckBox("Show Player Energy", ui.gui.settings.SHOWENERGY));

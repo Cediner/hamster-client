@@ -106,6 +106,15 @@ public class Avaview extends PView {
 	super.added();
 	if(loc != null)
 	    loc.added();
+	if(type == Type.PLAYER)
+	    setVisible(ui.gui.settings.SHOWPLAVA.get());
+    }
+
+    @Override
+    public void toggleVisiblity() {
+	super.toggleVisiblity();
+	if(type == Type.PLAYER)
+	    ui.gui.settings.SHOWPLAVA.set(visible);
     }
 
     protected void makeproj() {
