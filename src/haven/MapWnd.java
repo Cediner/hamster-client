@@ -49,6 +49,7 @@ import javax.swing.filechooser.*;
 //TODO: Readd export / import via window buttons
 public class MapWnd extends ResizableWnd implements Console.Directory {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
+    private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     public final MapFile file;
     public final MiniMap view;
     public final MapView mv;
@@ -102,8 +103,12 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar.pack();
 
 	makeHidable();
-	addBtn("buttons/wnd/view", "Toggle view range", () -> ui.gui.settings.MMSHOWVIEW.set(!ui.gui.settings.MMSHOWVIEW.get()));
-	addBtn("buttons/wnd/grid", "Toggle grid on minimap", () -> ui.gui.settings.MMSHOWGRID.set(!ui.gui.settings.MMSHOWGRID.get()));
+	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
+		.state(() -> ui.gui.settings.MMSHOWVIEW.get())
+		.changed(a -> ui.gui.settings.MMSHOWVIEW.set(a));
+	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
+		.state(() -> ui.gui.settings.MMSHOWGRID.get())
+		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a));
 	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisiblity());
 	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
 	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
@@ -239,11 +244,31 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    return(true);
 	}
 
+	private Optional<Coord> xlateo(final Location loc) {
+	    return Optional.ofNullable(xlate(loc));
+	}
+
+	private void drawview(final GOut g, final Coord ploc) {
+	    if (ui.gui.settings.MMSHOWVIEW.get()) {
+		final Coord vsz = viewbox.sz().div(scalef());
+		g.image(viewbox, ploc.sub(vsz.div(2)), vsz);
+	    }
+	}
+
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
 	    g.chcolor();
+	    //Draw map, icons, grid
 	    super.draw(g);
+
+	    //Draw anything relative to player
+	    try {
+	        resolveo(player).flatMap(this::xlateo).ifPresent(ploc -> {
+		    //Draw our view
+		    drawview(g, ploc);
+		});
+	    } catch (Loading ignored){}
 	}
 
 	public Resource getcurs(Coord c) {

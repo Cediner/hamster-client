@@ -28,6 +28,8 @@ package haven;
 
 import java.util.*;
 import java.awt.Color;
+
+import hamster.data.MarkerData;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
 import haven.MapFile.Grid;
@@ -175,6 +177,14 @@ public class MiniMap extends Widget {
 	}
     }
 
+    public Optional<Location> resolveo(final Locator loc) {
+	try {
+	    return Optional.ofNullable(resolve(loc));
+	} catch (Loading l) {
+	    return Optional.empty();
+	}
+    }
+
     public Coord xlate(Location loc) {
 	Location dloc = this.dloc;
 	if((dloc == null) || (dloc.seg != loc.seg))
@@ -271,15 +281,20 @@ public class MiniMap extends Widget {
 	}
     }
 
+    private enum Type {
+	NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE
+    }
+
     public static class DisplayMarker {
 	public static final Resource.Image flagbg, flagfg;
 	public static final Coord flagcc;
 	public final Marker m;
-	public final Text tip;
+	public Text tip;
 	public Area hit;
 	private Resource.Image img;
 	private Coord imgsz;
 	private Coord cc;
+	private final Type type;
 
 	static {
 	    Resource flag = Resource.local().loadwait("gfx/hud/mmap/flag");
@@ -288,37 +303,177 @@ public class MiniMap extends Widget {
 	    flagcc = UI.scale(flag.layer(Resource.negc).cc);
 	}
 
-	public DisplayMarker(Marker marker) {
-	    this.m = marker;
-	    this.tip = Text.render(m.nm);
-	    if(marker instanceof PMarker)
-		this.hit = Area.sized(flagcc.inv(), UI.scale(flagbg.sz));
+	private void checkTip(final String nm) {
+	    if (tip == null || !tip.text.equals(nm)) {
+		tip = Text.renderstroked(nm, Color.WHITE, Color.BLACK);
+	    }
 	}
 
-	public void draw(GOut g, Coord c) {
-	    if(m instanceof PMarker) {
-		Coord ul = c.sub(flagcc);
-		g.chcolor(((PMarker)m).color);
-		g.image(flagfg, ul);
-		g.chcolor();
-		g.image(flagbg, ul);
-	    } else if(m instanceof SMarker) {
-		SMarker sm = (SMarker)m;
-		try {
-		    if(cc == null) {
-			Resource res = sm.res.loadsaved(Resource.remote());
-			img = res.layer(Resource.imgc);
-			Resource.Neg neg = res.layer(Resource.negc);
-			cc = (neg != null) ? neg.cc : img.ssz.div(2);
-			if(hit == null)
-			    hit = Area.sized(cc.inv(), img.ssz);
-		    }
-		} catch(Loading l) {
-		} catch(Exception e) {
-		    cc = Coord.z;
+	public DisplayMarker(Marker marker, final UI ui) {
+	    this.m = marker;
+	    checkTip(marker.tip(ui));
+	    if(marker instanceof PMarker)
+		this.hit = Area.sized(flagcc.inv(), UI.scale(flagbg.sz));
+
+	    if (marker instanceof MapFile.VillageMarker)
+		type = Type.VILLAGE;
+	    else if (marker instanceof MapFile.RealmMarker)
+		type = Type.KINGDOM;
+	    else if (marker instanceof MapFile.LinkedMarker)
+		type = Type.LINKED;
+	    else if (marker instanceof MapFile.CustomMarker)
+		type = Type.CUSTOM;
+	    else if (marker instanceof MapFile.PMarker)
+		type = Type.PLACED;
+	    else
+		type = Type.NATURAL;
+	}
+
+	private Area hit(final UI ui) {
+	    if ((type == Type.PLACED && ui.gui.settings.SHOWPMARKERS.get()) ||
+		    (type == Type.KINGDOM && ui.gui.settings.SHOWKMARKERS.get()) ||
+		    (type == Type.LINKED && ui.gui.settings.SHOWLMARKERS.get()) ||
+		    (type == Type.CUSTOM && ui.gui.settings.SHOWCMARKERS.get()) ||
+		    (type == Type.NATURAL && ui.gui.settings.SHOWNMARKERS.get()) ||
+		    (type == Type.VILLAGE && ui.gui.settings.SHOWVMARKERS.get())) {
+		if (!(m instanceof MapFile.CustomMarker || m instanceof MapFile.RealmMarker)) {
+		    return hit;
+		} else if (img != null) {
+		    final Coord sz = ui.gui.settings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
+		    return Area.sized(sz.div(2).inv(), sz);
+		} else {
+		    return null;
 		}
-		if(img != null)
-		    g.image(img, c.sub(cc));
+	    } else {
+		return null;
+	    }
+	}
+
+	public void draw(GOut g, Coord c, final float scale, final UI ui) {
+	    if ((type == Type.PLACED && ui.gui.settings.SHOWPMARKERS.get()) ||
+		    (type == Type.KINGDOM && ui.gui.settings.SHOWKMARKERS.get()) ||
+		    (type == Type.LINKED && ui.gui.settings.SHOWLMARKERS.get()) ||
+		    (type == Type.CUSTOM && ui.gui.settings.SHOWCMARKERS.get()) ||
+		    (type == Type.NATURAL && ui.gui.settings.SHOWNMARKERS.get()) ||
+		    (type == Type.VILLAGE && ui.gui.settings.SHOWVMARKERS.get())) {
+		checkTip(m.tip(ui));
+
+		if (m instanceof PMarker) {
+		    Coord ul = c.sub(flagcc);
+		    g.chcolor(((PMarker) m).color);
+		    g.image(flagfg, ul);
+		    g.chcolor();
+		    g.image(flagbg, ul);
+		    if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			final Coord tipc = new Coord(ul.x + flagbg.img.getWidth() / 2 - tip.sz().x / 2,
+				ul.y - tip.sz().y);
+			g.image(tip.tex(), tipc);
+		    }
+		} else if (m instanceof SMarker) {
+		    SMarker sm = (SMarker) m;
+		    try {
+			if (cc == null) {
+			    Resource res = MapFile.loadsaved(Resource.remote(), sm.res);
+			    img = res.layer(Resource.imgc);
+			    Resource.Neg neg = res.layer(Resource.negc);
+			    cc = (neg != null) ? neg.cc : img.sz.div(2);
+			    if (hit == null)
+				hit = Area.sized(cc.inv(), img.sz);
+			}
+		    } catch (Loading ignored) {
+		    } catch (Exception e) {
+			cc = Coord.z;
+		    }
+		    if (img != null) {
+			final Coord ul = c.sub(cc);
+			g.image(img, ul);
+			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    g.image(tip.tex(), tipc);
+			}
+		    }
+		} else if (m instanceof MapFile.CustomMarker) {
+		    final MapFile.CustomMarker mark = (MapFile.CustomMarker) m;
+		    g.chcolor(mark.color);
+		    if (img != null) {
+			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			cc = sz.div(2);
+			final Coord ul = c.sub(cc);
+			g.image(img.tex(), ul, sz);
+			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    g.image(tip.tex(), tipc);
+			}
+		    } else {
+			try {
+			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.CustomMarker) m).res);
+			    img = res.layer(Resource.imgc);
+			} catch (Loading l) {
+			    //ignore
+			}
+		    }
+		    g.chcolor();
+		} else if (m instanceof MapFile.RealmMarker) {
+		    final MapFile.RealmMarker mark = (MapFile.RealmMarker) m;
+		    if (img != null) {
+			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			cc = sz.div(2);
+			final Coord ul = c.sub(cc);
+			g.image(img.tex(), ul, sz);
+			if (ui.gui.settings.SHOWKMARKERRAD.get()) {
+			    g.chcolor(MarkerData.getRealmColor(mark.realm));
+			    g.frect(c.sub(new Coord(250, 250).div(scale)), new Coord(500, 500).div(scale));
+			    g.chcolor();
+			}
+			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    g.image(tip.tex(), tipc);
+			}
+		    } else {
+			try {
+			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.RealmMarker) m).res);
+			    img = res.layer(Resource.imgc);
+			} catch (Loading l) {
+			    //ignore
+			}
+		    }
+		} else if (m instanceof MapFile.VillageMarker) {
+		    final MapFile.VillageMarker mark = (MapFile.VillageMarker) m;
+		    if (img != null) {
+			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			cc = sz.div(2);
+			final Coord ul = c.sub(cc);
+			g.image(img.tex(), ul, sz);
+			if (ui.gui.settings.SHOWVMARKERRAD.get()) {
+			    final int offset, isz;
+			    if (mark.nm.equals("Idol")) {
+				offset = 50;
+				isz = 101;
+			    } else {
+				//Banner
+				offset = 30;
+				isz = 61;
+			    }
+
+			    g.chcolor(MarkerData.getVillageColor(mark.village));
+			    g.frect(c.sub(new Coord(offset, offset).div(scale)), new Coord(isz, isz).div(scale));
+			    g.chcolor();
+			}
+			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    g.chcolor(MarkerData.getVillageBoldColor(mark.village));
+			    g.image(tip.tex(), tipc);
+			    g.chcolor();
+			}
+		    } else {
+			try {
+			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.VillageMarker) m).res);
+			    img = res.layer(Resource.imgc);
+			} catch (Loading l) {
+			    //ignore
+			}
+		    }
+		}
 	    }
 	}
     }
@@ -377,14 +532,14 @@ public class MiniMap extends Widget {
 
 	private Collection<DisplayMarker> markers = Collections.emptyList();
 	private int markerseq = -1;
-	public Collection<DisplayMarker> markers(boolean remark) {
+	public Collection<DisplayMarker> markers(boolean remark, final UI ui) {
 	    if(remark && (markerseq != file.markerseq)) {
 		if(file.lock.readLock().tryLock()) {
 		    try {
 			ArrayList<DisplayMarker> marks = new ArrayList<>();
 			for(Marker mark : file.markers) {
 			    if((mark.seg == this.seg.id) && mapext.contains(mark.tc))
-				marks.add(new DisplayMarker(mark));
+				marks.add(new DisplayMarker(mark, ui));
 			}
 			marks.trimToSize();
 			markers = (marks.size() == 0) ? Collections.emptyList() : marks;
@@ -398,7 +553,7 @@ public class MiniMap extends Widget {
 	}
     }
 
-    private float scalef() {
+    public float scalef() {
 	return(UI.unscale((float)(1 << dlvl)));
     }
 
@@ -458,16 +613,41 @@ public class MiniMap extends Widget {
 	}
     }
 
+    public void drawgrid(final GOut g, final Location loc) {
+	if (ui.gui.settings.MMSHOWGRID.get()) {
+	    Coord hsz = sz.div(2);
+	    //Grid view is weird due to how zoommaps work, the only guarantee is that if we have one zoommap done
+	    //we know it's ul is on a grid edge. gc is the ul of SOME grid
+	    //Normal grids are 100x100 boxes, factor in zoomlevels and we're closer to
+	    // (100,100).div(1 << dlvl)
+	    final Coord sc = dgext.ul.mul(cmaps).sub(loc.tc.div(1 << dlvl)).add(hsz);
+	    final Coord step = cmaps.div(1 << dlvl);
+	    Coord tlc = new Coord(sc); //Top left grid that we can see within our window view
+	    while (tlc.y - step.y >= 0) tlc.y -= step.y;
+	    while (tlc.x - step.x >= 0) tlc.x -= step.x;
+	    g.chcolor(Color.RED);
+	    //Make horizontal lines
+	    for (int y = tlc.y; y < sz.y; y += step.y) {
+		g.line(new Coord(0, y), new Coord(sz.x, y), 1);
+	    }
+	    //Make vertical lines
+	    for (int x = tlc.x; x < sz.x; x += step.x) {
+		g.line(new Coord(x, 0), new Coord(x, sz.y), 1);
+	    }
+	    g.chcolor();
+	}
+    }
+
     public void drawmarkers(GOut g) {
 	Coord hsz = sz.div(2);
 	for(Coord c : dgext) {
 	    DisplayGrid dgrid = display[dgext.ri(c)];
 	    if(dgrid == null)
 		continue;
-	    for(DisplayMarker mark : dgrid.markers(true)) {
+	    for(DisplayMarker mark : dgrid.markers(true, ui)) {
 		if(filter(mark))
 		    continue;
-		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz));
+		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz), scalef(),ui);
 	    }
 	}
     }
@@ -544,7 +724,7 @@ public class MiniMap extends Widget {
 	}
     }
 
-    public void drawparty(GOut g) {
+    private void drawparty(final GOut g) {
 	synchronized(ui.sess.glob.party.memb) {
 	    for(Party.Member m : ui.sess.glob.party.memb.values()) {
 		try {
@@ -559,11 +739,11 @@ public class MiniMap extends Widget {
 	}
     }
 
-    public void drawparts(GOut g){
+    public void drawparts(GOut g, final Location loc){
 	drawmap(g);
 	drawmarkers(g);
-	if(dlvl == 0)
-	    drawicons(g);
+	drawicons(g);
+	drawgrid(g, loc);
 	drawparty(g);
     }
 
@@ -573,7 +753,7 @@ public class MiniMap extends Widget {
 	    return;
 	redisplay(loc);
 	remparty();
-	drawparts(g);
+	drawparts(g, loc);
     }
 
     private static boolean hascomplete(DisplayGrid[] disp, Area dext, Coord c) {
@@ -617,7 +797,7 @@ public class MiniMap extends Widget {
 	for(DisplayGrid dgrid : display) {
 	    if(dgrid == null)
 		continue;
-	    for(DisplayMarker mark : dgrid.markers(false)) {
+	    for(DisplayMarker mark : dgrid.markers(false, ui)) {
 		if((mark.m instanceof SMarker) && (((SMarker)mark.m).oid == id))
 		    return(mark);
 	    }
@@ -629,8 +809,8 @@ public class MiniMap extends Widget {
 	for(DisplayGrid dgrid : display) {
 	    if(dgrid == null)
 		continue;
-	    for(DisplayMarker mark : dgrid.markers(false)) {
-		if((mark.hit != null) && mark.hit.contains(tc.sub(mark.m.tc).div(scalef())) && !filter(mark))
+	    for(DisplayMarker mark : dgrid.markers(false, ui)) {
+		if((mark.hit(ui) != null) && mark.hit(ui).contains(tc.sub(mark.m.tc).div(scalef())) && !filter(mark))
 		    return(mark);
 	    }
 	}

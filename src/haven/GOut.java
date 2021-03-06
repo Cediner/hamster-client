@@ -30,6 +30,9 @@ import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.nio.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.*;
 import haven.render.*;
 import haven.render.DataBuffer;
@@ -236,11 +239,179 @@ public class GOut {
 	drawt(mode, data, data.length / 4);
     }
 
-    public void line(Coord c1, Coord c2, double w) {
+    public void _line(Coord c1, Coord c2, double w) {
 	usestate(new States.LineWidth(w));
 	float[] data = {c1.x + tx.x + 0.5f, c1.y + tx.y + 0.5f,
 			c2.x + tx.x + 0.5f, c2.y + tx.y + 0.5f};
 	drawp(Model.Mode.LINES, data);
+    }
+
+    //TODO: There is bound to be easier methods to do this to get 2 points to fit within the bounding box..
+    public void line(Coord c1, Coord c2, double w) {
+	final Coord sz = sz();
+	boolean c1in = c1.isect(Coord.z, sz);
+	boolean c2in = c2.isect(Coord.z, sz);
+	//Don't render something completely outside of our frame
+	if (c1in || c2in) {
+	    if (c1in && c2in) {
+		//Simple, all insides
+		_line(c1, c2, w);
+	    } else {
+		//One of the coordinates is now inside
+		final Coord inside = c1in ? c1 : c2;
+		final Coord outside = c1in ? c2 : c1;
+
+		inside.hlsect(outside, 0).ifPresent(point -> {
+		    if (point.isect(Coord.z, sz.add(1, 1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+
+		inside.hlsect(outside, sz.y).ifPresent(point -> {
+		    if (point.isect(Coord.z, sz.add(1, 1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+
+		inside.vlsect(outside, 0).ifPresent(point -> {
+		    if (point.isect(Coord.z, sz.add(1, 1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+
+		inside.vlsect(outside, sz.x).ifPresent(point -> {
+		    if (point.isect(Coord.z, sz.add(1, 1)) && point.between(inside, outside)) {
+			_line(inside, point, w);
+		    }
+		});
+	    }
+	} else {
+	    //Both are outside, but they could cross through still..
+	    //If c1.x == c2.x -> Vertical line, could intersect top and bottom faces; easy case
+	    //If c1.y == c2.y -> Horizontal line, could intersect left and right faces; easy case
+	    //else could be: {left,top}, {top,right}, {right,bottom}, {bottom,left}, {left, right}, {top, bottom}; annoying cases
+	    if (c1.x == c2.x) {
+		if (c1.x >= 0 && c1.x <= sz.x) {
+		    _line(new Coord(c1.x, 0), new Coord(c1.x, sz.y), w);
+		}
+		//Not within, don't draw anything
+	    } else if (c1.y == c2.y) {
+		if (c1.y >= 0 && c1.y <= sz.y) {
+		    _line(new Coord(0, c1.y), new Coord(sz.x, c1.y), w);
+		}
+		//Not within, don't draw anything
+	    } else {
+		//Need to find 2 points because the original 2 are both outside it....
+		//Could be anything, just brute force it.
+		Optional<Coord> e1, e2;
+		//top-bottom
+		e1 = c1.hlsect(c2, 0);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.hlsect(c2, sz.y);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//left-right
+		e1 = c1.vlsect(c2, 0);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//top-right
+		e1 = c1.hlsect(c2, 0);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//top-left
+		e1 = c1.hlsect(c2, 0);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, 0);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//bottom-left
+		e1 = c1.hlsect(c2, sz.y);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, 0);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+		//bottom-right
+		e1 = c1.hlsect(c2, sz.y);
+		if (e1.isPresent() && e1.get().between(c1, c2) && e1.get().isect(Coord.z, sz)) {
+		    e2 = c1.vlsect(c2, sz.x);
+		    if (e2.isPresent() && e2.get().between(c1, c2) && e2.get().isect(Coord.z, sz)) {
+			_line(e1.get(), e2.get(), w);
+		    }
+		}
+	    }
+	}
+    }
+
+    //Alternative to line, uses GL_POINTS, surprisingly better than lines tbh
+    public void dottedline(Coord c1, Coord c2, float w) {
+	final float m = (float) (c2.y - c1.y) / (c2.x - c1.x);
+	final Coord sz = sz();
+	final List<Float> data = new ArrayList<>();
+	if (Float.isFinite(m) && m != 0) {
+	    final float b = c2.y - m * c2.x;
+	    float x = Math.max(Math.min(c1.x, c2.x), 0);
+	    float y;
+	    float end = Math.min(Math.max(c1.x, c2.x), sz.x);
+	    float step = Math.min(1f, (end - x) / Math.abs((m * x + b) - (m * end + b)));
+	    //float step = Math.max((end-x)/1f >= 20 ? 1f : (end-x)/Math.abs((m*x+b) - (m*end+b)), 0.01f);
+
+	    for (; x <= end; x += step) {
+		y = m * x + b;
+		if (y >= 0 && y <= sz.y) {
+		    data.add(ul.x + x);
+		    data.add(ul.y + y);
+		}
+	    }
+	} else if (m == 0) {
+	    //Horizontal
+	    if (c1.y >= 0 && c1.y <= sz.y) {
+		float x = Math.max(Math.min(c1.x, c2.x), 0);
+		if (x < sz.x) {
+		    float mx = Math.min(Math.max(c1.x, c2.x), sz.x);
+		    for (; x <= mx; x += 0.25) {
+			data.add(ul.x + x);
+			data.add(ul.y + (float) c1.y);
+		    }
+		}
+	    }
+	} else {
+	    //Vertical
+	    if (c1.x >= 0 && c1.x <= sz.x) {
+		float y = Math.max(Math.min(c1.y, c2.y), 0);
+		if (y < sz.x) {
+		    float my = Math.min(Math.max(c1.y, c2.y), sz.y);
+		    for (; y <= my; y += 0.25) {
+			data.add(ul.x + (float) c1.x);
+			data.add(ul.y + y);
+		    }
+		}
+	    }
+	}
+
+	final float[] fdata = new float[data.size()];
+	{
+	    int i = 0;
+	    for (final float v : data) {
+		fdata[i++] = v;
+	    }
+	}
+
+	usestate(new States.PointSize(w));
+	drawp(Model.Mode.POINTS, fdata);
     }
 
     public void frect2(Coord ul, Coord br) {
