@@ -71,7 +71,11 @@ public class FastText {
 	    r += cw[text.charAt(i)];
 	return(r);
     }
-    
+
+    public static Coord size(final String text) {
+	return new Coord(textw(text), meter.getHeight());
+    }
+
     public static void aprint(GOut g, Coord c, double ax, double ay, String text) {
 	Coord lc = c.add(g.tx);
 	if(ax > 0)
