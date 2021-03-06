@@ -333,7 +333,7 @@ public class GobIcon extends GAttrib {
 	}
 
 	public SettingsWindow(Settings conf, Runnable save) {
-	    super(Coord.z, "Icon settings");
+	    super(Coord.z, "Icon settings", "Icon settings");
 	    this.conf = conf;
 	    this.save = save;
 	    Widget prev = add(new IconList(UI.scale(250), 25), Coord.z);

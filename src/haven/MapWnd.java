@@ -32,6 +32,8 @@ import java.io.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import hamster.IndirSetting;
+import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
@@ -44,28 +46,20 @@ import static haven.Utils.eq;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
+//TODO: Readd export / import via window buttons
 public class MapWnd extends ResizableWnd implements Console.Directory {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
+    private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
     public final MapFile file;
     public final MiniMap view;
     public final MapView mv;
-    public final Toolbox tool;
     public boolean hmarkers = false;
     private final Locator player;
     private final Widget toolbar;
     private final Frame viewf;
-    private GroupSelector colsel;
-    private Button mremove;
-    private Predicate<Marker> mflt = pmarkers;
-    private Comparator<Marker> mcmp = namecmp;
-    private List<Marker> markers = Collections.emptyList();
-    private int markerseq = -1;
+    private MapMarkerWnd markers = null;
     private boolean domark = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
-
-    private final static Predicate<Marker> pmarkers = (m -> m instanceof PMarker);
-    private final static Predicate<Marker> smarkers = (m -> m instanceof SMarker);
-    private final static Comparator<Marker> namecmp = ((a, b) -> a.nm.compareTo(b.nm));
 
     public static final KeyBinding kb_home = KeyBinding.get("mapwnd/home", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
     public static final KeyBinding kb_mark = KeyBinding.get("mapwnd/mark", KeyMatch.nil);
@@ -93,11 +87,63 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar.add(new ICheckBox("gfx/hud/mmap/hmark", "", "-d", "-h", "-dh"))
 	    .state(() -> hmarkers).set(a -> hmarkers = a)
 	    .settip("Hide markers").setgkey(kb_hmark);
-	toolbar.add(new ICheckBox("gfx/hud/mmap/wnd", "", "-d", "-h", "-dh"))
-	    .settip("Compact mode").setgkey(kb_compact);
+	final var chk = toolbar.add(new ICheckBox("gfx/hud/lbtn-ico", "", "-d", "-h", "-dh"))
+		.state(() -> ui.gui.wndstate(ui.gui.iconwnd)).click(() -> {
+		    if(ui.gui.iconconf == null)
+			return;
+		    if(ui.gui.iconwnd == null) {
+			ui.gui.iconwnd = new GobIcon.SettingsWindow(ui.gui.iconconf, () -> Utils.defer(ui.gui::saveiconconf));
+			ui.gui.add(ui.gui.iconwnd);
+		    } else {
+			ui.destroy(ui.gui.iconwnd);
+			ui.gui.iconwnd = null;
+		    }
+		}).settip("Icon settings");
+	chk.move(new Coord(UI.scale(49), -UI.scale(18)));
 	toolbar.pack();
-	tool = add(new Toolbox());;
+
+	makeHidable();
+	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
+		.state(() -> ui.gui.settings.MMSHOWVIEW.get())
+		.changed(a -> ui.gui.settings.MMSHOWVIEW.set(a));
+	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
+		.state(() -> ui.gui.settings.MMSHOWGRID.get())
+		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a));
+	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisiblity());
+	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
+	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
+	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
+	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("realm", a));
+
+	addBtn("buttons/wnd/two", "2nd remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
+		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
+	addBtn("buttons/wnd/one", "1st remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
+		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
+
 	resize(sz);
+    }
+
+    private void toggleol(String tag, boolean a) {
+	if(ui.gui.map != null) {
+	    if(a)
+		ui.gui.map.enol(tag);
+	    else
+		ui.gui.map.disol(tag);
+	}
+    }
+
+    private void remember(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+	size.set(asz);
+	pos.set(c);
+    }
+
+    public void recall(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
+	resize(size.get());
+	move(pos.get());
+	Utils.setprefc("wndsz-map", asz);
+	savePosition();
     }
 
     private class ViewFrame extends Frame {
@@ -143,60 +189,6 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	}
     }
 
-    private static final int btnw = UI.scale(95);
-    public class Toolbox extends Widget {
-	public final MarkerList list;
-	private final Frame listf;
-	private final Button pmbtn, smbtn, mebtn, mibtn;
-	private TextEntry namesel;
-
-	private Toolbox() {
-	    super(UI.scale(200, 200));
-	    listf = add(new Frame(UI.scale(new Coord(200, 200)), false), 0, 0);
-	    list = listf.add(new MarkerList(listf.inner().x, 0), 0, 0);
-	    pmbtn = add(new Button(btnw, "Placed", false) {
-		    public void click() {
-			mflt = pmarkers;
-			markerseq = -1;
-		    }
-		});
-	    smbtn = add(new Button(btnw, "Natural", false) {
-		    public void click() {
-			mflt = smarkers;
-			markerseq = -1;
-		    }
-		});
-	    mebtn = add(new Button(btnw, "Export...", false) {
-		    public void click() {
-			exportmap();
-		    }
-		});
-	    mibtn = add(new Button(btnw, "Import...", false) {
-		    public void click() {
-			importmap();
-		    }
-		});
-	}
-
-	public void resize(int h) {
-	    super.resize(new Coord(sz.x, h));
-	    listf.resize(listf.sz.x, sz.y - UI.scale(180));
-	    listf.c = new Coord(sz.x - listf.sz.x, 0);
-	    list.resize(listf.inner());
-	    mebtn.c = new Coord(0, sz.y - mebtn.sz.y);
-	    mibtn.c = new Coord(sz.x - btnw, sz.y - mibtn.sz.y);
-	    pmbtn.c = new Coord(0, mebtn.c.y - UI.scale(30) - pmbtn.sz.y);
-	    smbtn.c = new Coord(sz.x - btnw, mibtn.c.y - UI.scale(30) - smbtn.sz.y);
-	    if(namesel != null) {
-		namesel.c = listf.c.add(0, listf.sz.y + UI.scale(10));
-		if(colsel != null) {
-		    colsel.c = namesel.c.add(0, namesel.sz.y + UI.scale(10));
-		    mremove.c = colsel.c.add(0, colsel.sz.y + UI.scale(10));
-		}
-	    }
-	}
-    }
-
     private class View extends MiniMap {
 	View(MapFile file) {
 	    super(file);
@@ -209,8 +201,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 
 	public boolean clickmarker(DisplayMarker mark, Location loc, int button, boolean press) {
 	    if(button == 1) {
-		if(!decohide() && !press && !domark) {
-		    focus(mark.m);
+		if(!press && !domark) {
+		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
 		}
 	    } else if(mark.m instanceof SMarker) {
@@ -233,7 +225,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    if(domark && (button == 1) && !press) {
 		Marker nm = new PMarker(loc.seg.id, loc.tc, "New marker", BuddyWnd.gc[new Random().nextInt(BuddyWnd.gc.length)]);
 		file.add(nm);
-		focus(nm);
+		ui.gui.mapmarkers.list.change(nm);
 		domark = false;
 		return(true);
 	    }
@@ -253,11 +245,32 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    return(true);
 	}
 
+	private Optional<Coord> xlateo(final Location loc) {
+	    return Optional.ofNullable(xlate(loc));
+	}
+
+	private void drawview(final GOut g, final Coord ploc) {
+	    if (ui.gui.settings.MMSHOWVIEW.get()) {
+		final Coord vsz = viewbox.sz().div(scalef());
+		g.image(viewbox, ploc.sub(vsz.div(2)), vsz);
+	    }
+	}
+
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
 	    g.chcolor();
+	    //Draw map, icons, grid
 	    super.draw(g);
+
+	    //Draw anything relative to player
+	    try {
+	        resolveo(player).flatMap(this::xlateo).ifPresent(ploc -> {
+		    //Draw our view
+		    drawview(g, ploc);
+		    //TODO: Draw queued movement and tracking
+		});
+	    } catch (Loading ignored){}
 	}
 
 	public Resource getcurs(Coord c) {
@@ -280,171 +293,22 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		i.remove();
 	    }
 	}
-	if(visible && (markerseq != view.file.markerseq)) {
-	    if(view.file.lock.readLock().tryLock()) {
-		try {
-		    List<Marker> markers = view.file.markers.stream().filter(mflt).collect(java.util.stream.Collectors.toList());
-		    markers.sort(mcmp);
-		    this.markers = markers;
-		} finally {
-		    view.file.lock.readLock().unlock();
-		}
-	    }
-	}
-    }
-
-    public static final Color every = new Color(255, 255, 255, 16), other = new Color(255, 255, 255, 32), found = new Color(255, 255, 0, 32);
-    public class MarkerList extends Searchbox<Marker> {
-	private final Text.Foundry fnd = CharWnd.attrf;
-
-	public Marker listitem(int idx) {return(markers.get(idx));}
-	public int listitems() {return(markers.size());}
-	public boolean searchmatch(int idx, String txt) {return(markers.get(idx).nm.toLowerCase().indexOf(txt.toLowerCase()) >= 0);}
-
-	public MarkerList(int w, int n) {
-	    super(w, n, UI.scale(20));
-	}
-
-	private Function<String, Text> names = new CachedFunction<>(500, nm -> fnd.render(nm));
-	protected void drawbg(GOut g) {}
-	public void drawitem(GOut g, Marker mark, int idx) {
-	    if(soughtitem(idx)) {
-		g.chcolor(found);
-		g.frect(Coord.z, g.sz());
-	    }
-	    g.chcolor(((idx % 2) == 0)?every:other);
-	    g.frect(Coord.z, g.sz());
-	    if(mark instanceof PMarker)
-		g.chcolor(((PMarker)mark).color);
-	    else
-		g.chcolor();
-	    g.aimage(names.apply(mark.nm).tex(), new Coord(UI.scale(5), itemh / 2), 0, 0.5);
-	}
-
-	public void change(Marker mark) {
-	    change2(mark);
-	    if(mark != null)
-		view.center(new SpecLocator(mark.seg, mark.tc));
-	}
-
-	public void change2(Marker mark) {
-	    this.sel = mark;
-
-	    if(tool.namesel != null) {
-		ui.destroy(tool.namesel);
-		tool.namesel = null;
-		if(colsel != null) {
-		    ui.destroy(colsel);
-		    colsel = null;
-		    ui.destroy(mremove);
-		    mremove = null;
-		}
-	    }
-
-	    if(mark != null) {
-		if(tool.namesel == null) {
-		    tool.namesel = tool.add(new TextEntry(UI.scale(200), "") {
-			    {dshow = true;}
-			    public void activate(String text) {
-				mark.nm = text;
-				view.file.update(mark);
-				commit();
-				change2(null);
-			    }
-			});
-		}
-		tool.namesel.settext(mark.nm);
-		tool.namesel.buf.point = mark.nm.length();
-		tool.namesel.commit();
-		if(mark instanceof PMarker) {
-		    PMarker pm = (PMarker)mark;
-		    colsel = tool.add(new GroupSelector(Math.max(0, Utils.index(BuddyWnd.gc, pm.color))) {
-			    public void changed(int group) {
-				pm.color = BuddyWnd.gc[group];
-				view.file.update(mark);
-			    }
-			});
-		    mremove = tool.add(new Button(UI.scale(200), "Remove", false) {
-			    public void click() {
-				view.file.remove(mark);
-				change2(null);
-			    }
-			});
-		}
-		MapWnd.this.resize(asz);
-	    }
-	}
     }
 
     public void resize(Coord sz) {
+        sz = new Coord(Math.max(sz.x, UI.scale(350)), Math.max(sz.y, UI.scale(150)));
 	super.resize(sz);
-	tool.resize(sz.y);
-	if(!decohide()) {
-	    tool.c = new Coord(sz.x - tool.sz.x, 0);
-	    viewf.resize(tool.pos("bl").subs(10, 0));
-	} else {
-	    viewf.resize(sz);
-	    tool.c = viewf.pos("ur").adds(10, 0);
-	}
+	viewf.resize(sz);
 	view.resize(viewf.inner());
 	toolbar.c = viewf.c.add(0, viewf.sz.y - toolbar.sz.y).add(UI.scale(2), UI.scale(-2));
-    }
-
-    @Deprecated
-    public void compact(boolean a) {
-	tool.show(!a);
-	if(a)
-	    delfocusable(tool);
-	else
-	    newfocusable(tool);
-	decohide(a);
-	pack();
     }
 
     public void recenter() {
 	view.follow(player);
     }
 
-    public void focus(Marker m) {
-	tool.list.change2(m);
-	tool.list.display(m);
-    }
-
     protected void drawframe(GOut g) {
 	super.drawframe(g);
-    }
-
-    private UI.Grab drag;
-    private Coord dragc;
-    public boolean mousedown(Coord c, int button) {
-	Coord cc = c.sub(ctl);
-	if((button == 1) && (cc.x < csz.x) && (cc.y < csz.y) && (cc.y >= csz.y - UI.scale(25) + (csz.x - cc.x))) {
-	    if(drag == null) {
-		drag = ui.grabmouse(this);
-		dragc = asz.sub(c);
-		return(true);
-	    }
-	}
-	return(super.mousedown(c, button));
-    }
-
-    public void mousemove(Coord c) {
-	if(drag != null) {
-	    Coord nsz = c.add(dragc);
-	    nsz.x = Math.max(nsz.x, UI.scale(350));
-	    nsz.y = Math.max(nsz.y, UI.scale(150));
-	    resize(nsz);
-	}
-	super.mousemove(c);
-    }
-
-    public boolean mouseup(Coord c, int button) {
-	if((button == 1) && (drag != null)) {
-	    drag.remove();
-	    drag = null;
-	    return(true);
-	}
-	return(super.mouseup(c, button));
     }
 
     public void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {
