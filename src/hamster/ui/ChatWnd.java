@@ -20,9 +20,16 @@ public class ChatWnd extends ResizableWnd {
     }
 
     @Override
+    public void toggleVisiblity() {
+        super.toggleVisiblity();
+        ui.gui.settings.SHOWCHAT.set(visible);
+    }
+
+    @Override
     protected void added() {
         super.added();
         chat.resize(asz);
+        setVisible(ui.gui.settings.SHOWCHAT.get());
     }
 
     @Override

@@ -25,6 +25,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox("Show Player Health", ui.gui.settings.SHOWHEALTH));
             visibility.add(new IndirCheckBox("Show Player Energy", ui.gui.settings.SHOWENERGY));
             visibility.add(new IndirCheckBox("Show Player Stamina", ui.gui.settings.SHOWSTAM));
+            visibility.add(new IndirCheckBox("Show Chat Window", ui.gui.settings.SHOWCHAT, (val) -> ui.gui.chatwnd.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Calendar", ui.gui.settings.SHOWCAL));
             visibility.add(new IndirCheckBox("Show Sessions Display", ui.gui.settings.SHOWSESSIONS));
             visibility.add(new IndirCheckBox("Show Hotbar 1", ui.gui.settings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
