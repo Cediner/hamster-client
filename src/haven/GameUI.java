@@ -637,9 +637,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
 	    //Setup hotbars
-	    add(hotbar1, new Coord(20, 300));
-	    add(hotbar2, new Coord(20, 400));
-	    add(hotbar3, new Coord(20, 500));
+	    add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
+	    add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
+	    add(hotbar3, new Coord(20, 500)).setVisible(ui.gui.settings.SHOWHOTBAR3.get());
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
