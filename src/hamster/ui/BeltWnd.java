@@ -19,7 +19,7 @@ import java.util.Optional;
  * pagina_key
  */
 public class BeltWnd extends MovableWidget {
-    private static final Coord offc = new Coord(1, 1);
+    private static final Coord offc = new Coord(UI.scale(1), UI.scale(1));
 
     public class BeltBtn extends Widget implements DTarget, DropTarget {
         //Key to activate
@@ -370,25 +370,27 @@ public class BeltWnd extends MovableWidget {
     }
 
     private void reposition_grid() {
+        final int spacer = UI.scale(2);
         int x = 0, y = 0;
         for (BeltBtn btn : btns) {
-            btn.c = new Coord(x * (Inventory.invsq.sz().x + 2),
-                    y * (Inventory.invsq.sz().y + 2));
+            btn.c = new Coord(x * (Inventory.invsq.sz().x + spacer),
+                    y * (Inventory.invsq.sz().y + spacer));
             x++;
             if (x >= 3) {
                 x = 0;
                 y++;
             }
         }
-        up.c = new Coord(x * (Inventory.invsq.sz().x + 2),
-                y * (Inventory.invsq.sz().y + 2));
-        down.c = new Coord(x * (Inventory.invsq.sz().x + 2) + up.sz.x + 2,
-                y * (Inventory.invsq.sz().y + 2));
-        rotate.c = up.c.add(0, up.sz.y + 2);
-        lock.c = rotate.c.add(rotate.sz.x + 2, 0);
+        up.c = new Coord(x * (Inventory.invsq.sz().x + spacer),
+                y * (Inventory.invsq.sz().y + spacer));
+        down.c = new Coord(x * (Inventory.invsq.sz().x + spacer) + up.sz.x + spacer,
+                y * (Inventory.invsq.sz().y + spacer));
+        rotate.c = up.c.add(0, up.sz.y + spacer);
+        lock.c = rotate.c.add(rotate.sz.x + spacer, 0);
     }
 
     private void reposition() {
+        final int spacer = UI.scale(2);
         if (style == Style.GRID)
             reposition_grid();
         else {
@@ -397,26 +399,26 @@ public class BeltWnd extends MovableWidget {
                 switch (style) {
                     case VERTICAL -> {
                         btn.c = new Coord(0, n);
-                        n += Inventory.invsq.sz().y + 2;
+                        n += Inventory.invsq.sz().y + spacer;
                     }
                     case HORIZONTAL -> {
                         btn.c = new Coord(n, 0);
-                        n += Inventory.invsq.sz().x + 2;
+                        n += Inventory.invsq.sz().x + spacer;
                     }
                 }
             }
             switch (style) {
                 case VERTICAL -> {
                     up.c = new Coord(0, n);
-                    down.c = new Coord(up.sz.x + 2, n);
-                    rotate.c = up.c.add(0, up.sz.y + 2);
-                    lock.c = rotate.c.add(rotate.sz.x + 2, 0);
+                    down.c = new Coord(up.sz.x + spacer, n);
+                    rotate.c = up.c.add(0, up.sz.y + spacer);
+                    lock.c = rotate.c.add(rotate.sz.x + spacer, 0);
                 }
                 case HORIZONTAL -> {
                     up.c = new Coord(n, 0);
-                    down.c = new Coord(n, up.sz.y + 2);
-                    rotate.c = up.c.add(up.sz.x + 2, 0);
-                    lock.c = rotate.c.add(0, rotate.sz.y + 2);
+                    down.c = new Coord(n, up.sz.y + spacer);
+                    rotate.c = up.c.add(up.sz.x + spacer, 0);
+                    lock.c = rotate.c.add(0, rotate.sz.y + spacer);
                 }
             }
         }
