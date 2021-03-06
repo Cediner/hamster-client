@@ -143,6 +143,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     public void recall(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {
 	resize(size.get());
 	move(pos.get());
+	savePosition();
+	saveSize();
 	Utils.setprefc("wndsz-map", asz);
 	savePosition();
     }

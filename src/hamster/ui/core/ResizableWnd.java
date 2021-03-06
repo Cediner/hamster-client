@@ -61,6 +61,17 @@ public class ResizableWnd extends Window {
         super.added();
     }
 
+    public void saveSize() {
+        knownSizes.put(key, asz);
+        Storage.dynamic.write(sql -> {
+            final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_size VALUES (?, ?, ?)");
+            stmt.setString(1, key);
+            stmt.setInt(2, asz.x);
+            stmt.setInt(3, asz.y);
+            stmt.executeUpdate();
+        });
+    }
+
     @Override
     protected void drawframe(GOut g) {
         g.image(sizer, ctl.add(csz).sub(sizer.sz()));
@@ -85,14 +96,7 @@ public class ResizableWnd extends Window {
         if (dm != null) {
             dm.remove();
             dm = null;
-            knownSizes.put(key, asz);
-            Storage.dynamic.write(sql -> {
-                final PreparedStatement stmt = Storage.dynamic.prepare("INSERT OR REPLACE INTO widget_size VALUES (?, ?, ?)");
-                stmt.setString(1, key);
-                stmt.setInt(2, asz.x);
-                stmt.setInt(3, asz.y);
-                stmt.executeUpdate();
-            });
+            saveSize();
             return true;
         } else {
             return super.mouseup(c, button);
