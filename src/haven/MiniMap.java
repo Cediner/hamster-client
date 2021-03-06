@@ -615,13 +615,13 @@ public class MiniMap extends Widget {
 
     public void drawgrid(final GOut g, final Location loc) {
 	if (ui.gui.settings.MMSHOWGRID.get()) {
-	    Coord hsz = sz.div(2);
+	    final Coord hsz = sz.div(2);
 	    //Grid view is weird due to how zoommaps work, the only guarantee is that if we have one zoommap done
 	    //we know it's ul is on a grid edge. gc is the ul of SOME grid
 	    //Normal grids are 100x100 boxes, factor in zoomlevels and we're closer to
 	    // (100,100).div(1 << dlvl)
-	    final Coord sc = dgext.ul.mul(cmaps).sub(loc.tc.div(1 << dlvl)).add(hsz);
-	    final Coord step = cmaps.div(1 << dlvl);
+	    final Coord sc = UI.scale(dgext.ul.mul(cmaps).sub(loc.tc.div(1 << dlvl))).add(hsz);
+	    final Coord step = UI.scale(cmaps.div(1 << dlvl));
 	    Coord tlc = new Coord(sc); //Top left grid that we can see within our window view
 	    while (tlc.y - step.y >= 0) tlc.y -= step.y;
 	    while (tlc.x - step.x >= 0) tlc.x -= step.x;

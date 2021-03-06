@@ -35,6 +35,7 @@ import java.awt.event.KeyEvent;
 import hamster.IndirSetting;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
+import hamster.ui.core.Theme;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
@@ -49,7 +50,7 @@ import javax.swing.filechooser.*;
 //TODO: Readd export / import via window buttons
 public class MapWnd extends ResizableWnd implements Console.Directory {
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
-    private static final Tex viewbox = Resource.loadtex("custom/mm/hud/view", 3);
+    private static final Tex viewbox = Theme.tex("buttons/wnd/view", 3);
     public final MapFile file;
     public final MiniMap view;
     public final MapView mv;
@@ -251,7 +252,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 
 	private void drawview(final GOut g, final Coord ploc) {
 	    if (ui.gui.settings.MMSHOWVIEW.get()) {
-		final Coord vsz = viewbox.sz().div(scalef());
+		final Coord vsz = viewbox.sz().div(UI.scale(scalef()));
 		g.image(viewbox, ploc.sub(vsz.div(2)), vsz);
 	    }
 	}
