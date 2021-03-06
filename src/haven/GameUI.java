@@ -620,7 +620,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(place == "meter") {
 	    int x = (meters.size() % 3) * (IMeter.fsz.x + UI.scale(5));
 	    int y = (meters.size() / 3) * (IMeter.fsz.y + UI.scale(2));
-	    ulpanel.add(child, portrait.c.x + portrait.sz.x + UI.scale(10) + x, portrait.c.y + y);
+	    add(child, portrait.c.x + portrait.sz.x + UI.scale(10) + x, portrait.c.y + y);
 	    meters.add(child);
 	} else if(place == "buff") {
 	    buffs.addchild(child);
