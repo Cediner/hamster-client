@@ -30,11 +30,13 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+
+import hamster.ui.core.MovableWidget;
 import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MenuGrid extends Widget implements KeyBinding.Bindable {
+public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
@@ -294,7 +296,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     }
 
     public MenuGrid() {
-	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
+	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)), "Menugrid");
 	//Custom Management Menu
 	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
 	//TODO: All the Custom window toggles
@@ -317,10 +319,9 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	addCustom(new CustomPagina(this, "management::opts",
 		Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.opts.toggleVisiblity()));
-	//TODO: Chat window
-	//addCustom(new CustomPagina(this, "management::chat",
-	//	Resource.local().load("custom/paginae/default/wnd/chat"),
-	//	(pag) -> ui.gui.chatwnd.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::chat",
+		Resource.local().load("custom/paginae/default/wnd/chat"),
+		(pag) -> ui.gui.chatwnd.toggleVisiblity()));
     }
 
     private void addCustom(final CustomPagina pag) {
@@ -457,13 +458,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    return(null);
     }
 
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return btn == 3 && c.isect(Coord.z, sz);
+    }
+
     public boolean mousedown(Coord c, int button) {
 	PagButton h = bhit(c);
 	if((button == 1) && (h != null)) {
 	    pressed = h;
 	    grab = ui.grabmouse(this);
+	    return (true);
+	} else {
+	    return super.mousedown(c, button);
 	}
-	return(true);
     }
 
     public void mousemove(Coord c) {
@@ -471,6 +479,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    PagButton h = bhit(c);
 	    if(h != pressed)
 		dragging = pressed.pag;
+	} else {
+	    super.mousemove(c);
 	}
     }
 
@@ -513,8 +523,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    }
 	    grab.remove();
 	    grab = null;
+	    return(true);
+	} else {
+	    return super.mouseup(c, button);
 	}
-	return(true);
     }
 
     public void uimsg(String msg, Object... args) {

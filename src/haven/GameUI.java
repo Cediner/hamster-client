@@ -50,9 +50,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private static final int blpw = UI.scale(142), brpw = UI.scale(142);
     public final String chrid, genus;
     public final long plid;
-    private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel;
+    private final Hidepanel ulpanel, umpanel, urpanel;
     public Avaview portrait;
-    public MenuGrid menu;
     public MapView map;
     public GobIcon.Settings iconconf;
     public Fightview fv;
@@ -76,6 +75,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //MenuGrid
+    public MenuGrid menu;
 
     //Chat UI
     public final ChatWnd chatwnd;
@@ -139,7 +141,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    private final Coord menugridc;
     public GameUI(final String usr, String chrid, long plid, String genus) {
 	this.chrid = chrid;
 	this.plid = plid;
@@ -148,26 +149,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
 	setcanfocus(true);
 	setfocusctl(true);
-	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
-		public void move(double a) {
-		    super.move(a);
-		    menupanel.move();
-		}
-	    });
-	menupanel = add(new Hidepanel("menu", new Indir<Coord>() {
-		public Coord get() {
-		    return(new Coord(GameUI.this.sz.x, Math.min(brpanel.c.y - UI.scale(79), GameUI.this.sz.y - menupanel.sz.y)));
-		}
-	    }, new Coord(1, 0)));
 	ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1)));
 	umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1)));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
-	Img brframe = brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), rbtnbg.sz().x - UI.scale(22), 0);
-	menugridc = brframe.c.add(UI.scale(20), UI.scale(34));
-	Img rbtnimg = brpanel.add(new Img(rbtnbg), 0, brpanel.sz.y - rbtnbg.sz().y);
-	menupanel.add(new MainMenu(), 0, 0);
-	menubuttons(rbtnimg);
 	foldbuttons();
 	portrait = ulpanel.add(new Avaview(Avaview.dasz, plid, "avacam") {
 		public boolean mousedown(Coord c, int button) {
@@ -196,88 +181,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public static final KeyBinding kb_srch = KeyBinding.get("scm-srch", KeyMatch.forchar('Z', KeyMatch.C));
-    private void menubuttons(Widget bg) {
-	brpanel.add(new MenuButton("csearch", kb_srch, "Search actions...") {
-		public void click() {
-		    if(menu == null)
-			return;
-		    if(srchwnd == null) {
-			srchwnd = new MenuSearch(menu);
-			fitwdg(GameUI.this.add(srchwnd, Utils.getprefc("wndc-srch", new Coord(200, 200))));
-		    } else {
-			if(!srchwnd.hasfocus) {
-			    this.setfocus(srchwnd);
-			} else {
-			    ui.destroy(srchwnd);
-			    srchwnd = null;
-			}
-		    }
-		}
-	    }, bg.c);
-    }
 
     /* Ice cream */
-    private final IButton[] fold_br = new IButton[4];
-    private final IButton[] fold_bl = new IButton[4];
     private void updfold(boolean reset) {
-	int br;
-	if(brpanel.tvis && menupanel.tvis)
-	    br = 0;
-	else if(brpanel.tvis && !menupanel.tvis)
-	    br = 1;
-	else if(!brpanel.tvis && !menupanel.tvis)
-	    br = 2;
-	else
-	    br = 3;
-	for(int i = 0; i < fold_br.length; i++)
-	    fold_br[i].show(i == br);
-
 	if(reset)
 	    resetui();
     }
 
     private void foldbuttons() {
-	final Tex rdnbg = Resource.loadtex("gfx/hud/rbtn-maindwn");
-	final Tex rupbg = Resource.loadtex("gfx/hud/rbtn-upbg");
-	fold_br[0] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    menupanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_br[1] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    brpanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_br[2] = new IButton("gfx/hud/rbtn-up", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rupbg, Coord.z); super.draw(g);}
-		public void click() {
-		    menupanel.cshow(true);
-		    updfold(true);
-		}
-		public void presize() {
-		    this.c = parent.sz.sub(this.sz);
-		}
-	    };
-	fold_br[3] = new IButton("gfx/hud/rbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(rdnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    brpanel.cshow(true);
-		    updfold(true);
-		}
-	    };
-	menupanel.add(fold_br[0], 0, 0);
-	fold_br[0].lower();
-	brpanel.adda(fold_br[1], brpanel.sz.x, UI.scale(32), 1, 1);
-	adda(fold_br[2], 1, 1);
-	fold_br[2].lower();
-	menupanel.add(fold_br[3], 0, 0);
-	fold_br[3].lower();
-
 	updfold(false);
     }
 
@@ -638,7 +549,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		add(mapmarkers, new Coord(50, 50));
 	    }
 	} else if(place == "menu") {
-	    menu = (MenuGrid)brpanel.add(child, menugridc);
+	    menu = (MenuGrid) add(child, new Coord(sz.x - child.sz.x, sz.y - child.sz.y));
 	    //Setup hotbars
 	    add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
 	    add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
@@ -1179,7 +1090,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private int uimode = 1;
     public void toggleui(int mode) {
-	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
+	Hidepanel[] panels = {ulpanel, umpanel, urpanel};
 	switch(uimode = mode) {
 	case 0:
 	    for(Hidepanel p : panels)
@@ -1197,7 +1108,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void resetui() {
-	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
+	Hidepanel[] panels = {ulpanel, umpanel, urpanel};
 	for(Hidepanel p : panels)
 	    p.cshow(p.tvis);
 	uimode = 1;
