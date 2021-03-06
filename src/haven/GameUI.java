@@ -50,7 +50,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private static final int blpw = UI.scale(142), brpw = UI.scale(142);
     public final String chrid, genus;
     public final long plid;
-    private final Hidepanel umpanel, urpanel;
+    private final Hidepanel urpanel;
     public Avaview portrait;
     public MapView map;
     public GobIcon.Settings iconconf;
@@ -74,6 +74,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Calendar
+    public final Cal cal;
 
     //MenuGrid
     public MenuGrid menu;
@@ -152,11 +155,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
 	setcanfocus(true);
 	setfocusctl(true);
-	umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1)));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
 	foldbuttons();
-	umpanel.add(new Cal(), Coord.z);
+	cal = new Cal();
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
 	//Chat Wdgs
@@ -223,6 +225,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(chatwnd, new Coord(20, sz.y - 200));
 	portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), UI.scale(new Coord(10, 10)));
 	buffs = add(new Bufflist(), UI.scale(new Coord(95, 65)));
+    	add(cal, new Coord(sz.x / 2 - cal.sz.x / 2, 0));
     }
 
     public void dispose() {
@@ -1088,7 +1091,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private int uimode = 1;
     public void toggleui(int mode) {
-	Hidepanel[] panels = {umpanel, urpanel};
+	Hidepanel[] panels = {urpanel};
 	switch(uimode = mode) {
 	case 0:
 	    for(Hidepanel p : panels)
@@ -1106,7 +1109,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void resetui() {
-	Hidepanel[] panels = {umpanel, urpanel};
+	Hidepanel[] panels = {urpanel};
 	for(Hidepanel p : panels)
 	    p.cshow(p.tvis);
 	uimode = 1;
