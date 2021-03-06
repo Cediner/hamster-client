@@ -28,12 +28,19 @@ package haven;
 
 import java.awt.Color;
 import java.util.*;
+
+import hamster.ui.core.WdgLocationHelper;
 import haven.render.*;
 import haven.Composited.Desc;
 import haven.Composited.MD;
 import haven.Composited.ED;
 
 public class Avaview extends PView {
+    private static final String plkey = "PlayerAvaview";
+    private enum Type {
+        PLAYER, PARTY, FIGHT, UNK
+    }
+
     public static final Tex missing = Resource.loadtex("gfx/hud/equip/missing");
     public static final Coord dasz = missing.sz();
     public Color color = Color.WHITE;
@@ -46,6 +53,8 @@ public class Avaview extends PView {
     private List<Composited.MD> cmod = null;
     private List<Composited.ED> cequ = null;
     private final String camnm;
+    private final Type type;
+    private final WdgLocationHelper loc;
 
     @RName("av")
     public static class $_ implements Factory {
@@ -65,10 +74,38 @@ public class Avaview extends PView {
 
     public Avaview(Coord sz, long avagob, String camnm) {
 	super(sz);
-	this.camnm = camnm;
 	this.avagob = avagob;
+	switch (camnm) {
+	    case "plavacam" -> {
+		type = Type.PLAYER;
+		loc = new WdgLocationHelper(plkey, () -> this, this::moveHit, this::relpos, this::setPosRel);
+		this.camnm = "avacam";
+	    }
+	    case "ptavacam" -> {
+		type = Type.PARTY;
+		loc = null;
+		this.camnm = "avacam";
+	    }
+	    case "fightcam", "bdavacam" -> {
+		type = Type.FIGHT;
+		loc = null;
+		this.camnm = "avacam";
+	    }
+	    default -> {
+		type = Type.UNK;
+		loc = null;
+		this.camnm = camnm;
+	    }
+	}
 	basic.add(new DirLight(Color.WHITE, Color.WHITE, Color.WHITE, new Coord3f(1, 1, 1).norm()), null);
 	makeproj();
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	if(loc != null)
+	    loc.added();
     }
 
     protected void makeproj() {
@@ -272,11 +309,33 @@ public class Avaview extends PView {
 	}
     }
 
+    private boolean moveHit(final Coord c, final int button) {
+        return button == 3 && ui.modmeta;
+    }
+
     public boolean mousedown(Coord c, int button) {
-	if(canactivate) {
+        if(loc != null && loc.mousedown(c, button))
+            return true;
+	else if(canactivate && !(type == Type.PARTY && button == 3 && ui.modmeta)) {
 	    wdgmsg("click", button);
 	    return(true);
 	}
 	return(super.mousedown(c, button));
+    }
+
+    @Override
+    public boolean mouseup(final Coord mc, final int button) {
+	if (loc != null && !loc.mouseup(mc, button)) {
+	    return super.mouseup(mc, button);
+	} else {
+	    return true;
+	}
+    }
+
+    @Override
+    public void mousemove(final Coord mc) {
+	if (loc != null && !loc.mousemove(mc)) {
+	    super.mousemove(mc);
+	}
     }
 }

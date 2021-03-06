@@ -154,11 +154,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
 	foldbuttons();
-	portrait = ulpanel.add(new Avaview(Avaview.dasz, plid, "avacam") {
-		public boolean mousedown(Coord c, int button) {
-		    return(true);
-		}
-	    }, UI.scale(new Coord(10, 10)));
 	buffs = ulpanel.add(new Bufflist(), UI.scale(new Coord(95, 65)));
 	umpanel.add(new Cal(), Coord.z);
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
@@ -225,6 +220,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	opts.hide();
 	add(questwnd, new Coord(0, sz.y - 200));
 	add(chatwnd, new Coord(20, sz.y - 200));
+	portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), UI.scale(new Coord(10, 10)));
     }
 
     public void dispose() {

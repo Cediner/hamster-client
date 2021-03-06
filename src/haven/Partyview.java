@@ -26,12 +26,14 @@
 
 package haven;
 
+import hamster.ui.core.MovableWidget;
+import hamster.ui.core.WdgLocationHelper;
 import haven.Party.Member;
 
 import java.util.*;
 import java.util.Map.Entry;
 
-public class Partyview extends Widget {
+public class Partyview extends MovableWidget {
     long ign;
     Party party;
     Map<Long, Member> om = null;
@@ -47,15 +49,26 @@ public class Partyview extends Widget {
     }
 	
     Partyview(long ign) {
-	super(UI.scale(new Coord(84, 140)));
+	super(UI.scale(new Coord(84, 140)), "Partyview");
 	this.ign = ign;
     }
 
     protected void added() {
+        super.added();
 	party = ui.sess.glob.party;
 	update();
     }
-	
+
+    public boolean moveHit(final Coord mc, final int button) {
+        if(button == 3 && ui.modmeta) {
+	    for (final var view : avs.values()) {
+		if(mc.isect(view.c, view.sz))
+		    return true;
+	    }
+	}
+        return false;
+    }
+
     private void update() {
 	if(party.memb != om) {
 	    Collection<Member> old = new HashSet<Member>(avs.keySet());
@@ -64,7 +77,7 @@ public class Partyview extends Widget {
 		    continue;
 		Avaview w = avs.get(m);
 		if(w == null) {
-		    w = add(new Avaview(UI.scale(new Coord(27, 27)), m.gobid, "avacam") {
+		    w = add(new Avaview(UI.scale(new Coord(27, 27)), m.gobid, "ptavacam") {
 			    private Tex tooltip = null;
 			    
 			    public Object tooltip(Coord c, Widget prev) {
