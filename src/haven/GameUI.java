@@ -59,7 +59,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public CharWnd chrwdg;
     public MapWnd mapfile;
     public BuddyWnd buddies;
-    private final Zergwnd zerg;
+    public final Zergwnd zerg;
     public final Collection<Polity> polities = new ArrayList<Polity>();
     public HelpWnd help;
     public OptionsWnd opts;
