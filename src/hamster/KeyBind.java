@@ -43,7 +43,7 @@ public class KeyBind {
 	{ // UI Keybinds
 	    final String UI_GRP = "UI";
 	    KB_TOGGLE_MINIMAP = addKB("Toggle Minimap", UI_GRP, "C-A");
-	    KB_TOGGLE_INV = addKB("Toggle Inventory", UI_GRP, "Tag");
+	    KB_TOGGLE_INV = addKB("Toggle Inventory", UI_GRP, "Tab");
 	    KB_TOGGLE_EQU = addKB("Toggle Equipment", UI_GRP, "C-E");
 	    KB_TOGGLE_CHAR = addKB("Toggle Charsheet", UI_GRP, "C-T");
 	    KB_TOGGLE_KIN = addKB("Toggle Kin List", UI_GRP, "C-B");
