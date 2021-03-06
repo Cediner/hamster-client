@@ -500,7 +500,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	PagButton h = bhit(c);
 	if((button == 1) && (grab != null)) {
 	    if(dragging != null) {
-		ui.dropthing(ui.root, ui.mc, dragging.res());
+	        if(!(dragging instanceof CustomPagina))
+	            ui.dropthing(ui.root, ui.mc, dragging.res());
+	        else
+	            ui.dropthing(ui.root, ui.mc, dragging);
 		pressed = null;
 		dragging = null;
 	    } else if(pressed != null) {

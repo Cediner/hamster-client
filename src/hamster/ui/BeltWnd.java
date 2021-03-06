@@ -1,10 +1,12 @@
 package hamster.ui;
 
 import hamster.IndirSetting;
+import hamster.KeyBind;
 import hamster.data.BeltData;
 import hamster.ui.core.MovableWidget;
 import haven.*;
 
+import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ public class BeltWnd extends MovableWidget {
 
     public class BeltBtn extends Widget implements DTarget, DropTarget {
         //Key to activate
-        private final IndirSetting<String> key;
+        private final KeyBind key;
         //Server slot id
         private int slot;
         //What to render, either a Pagina or a Resource, never both
@@ -33,7 +35,7 @@ public class BeltWnd extends MovableWidget {
         //tooltip
         private Tex tt;
 
-        private BeltBtn(final IndirSetting<String> key) {
+        private BeltBtn(final KeyBind key) {
             super(Inventory.invsq.sz());
             this.key = key;
             cancancel = false;
@@ -64,12 +66,12 @@ public class BeltWnd extends MovableWidget {
                 }
             });
             //always show our hotkey key
-            final Coord ksz = FastText.size(key.get().replace("NumPad-", "N"));
+            final Coord ksz = FastText.size(key.bind.get().replace("NumPad-", "N"));
             final Coord tkeyc = sz.sub(ksz);
             g.chcolor(new java.awt.Color(128, 128, 128, 128));
             g.frect(tkeyc, sz);
             g.chcolor();
-            FastText.aprint(g, sz, 1, 1, key.get().replace("NumPad-", "N"));
+            FastText.aprint(g, sz, 1, 1, key.bind.get().replace("NumPad-", "N"));
         }
 
         private void reset() {
@@ -118,6 +120,15 @@ public class BeltWnd extends MovableWidget {
             } else if (pag != null) {
                 pag.use();
             }
+        }
+
+        @Override
+        public boolean globtype(char key, KeyEvent ev) {
+            final String bind = KeyBind.generateSequence(ev, ui);
+            if(!this.key.check(bind, () -> { use(); return true; }))
+                return super.globtype(key, ev);
+            else
+                return true;
         }
 
         @Override
@@ -233,7 +244,7 @@ public class BeltWnd extends MovableWidget {
     public BeltWnd(final String name, final BeltData data,
 		   final IndirSetting<String> style, final IndirSetting<Boolean> vis,
 		   final IndirSetting<Integer> page, final IndirSetting<Boolean> locked,
-		   final Collection<IndirSetting<String>> kbs,
+		   final Collection<KeyBind> kbs,
 		   final int pages, final int start) {
         super(name);
         this.data = data;
@@ -282,7 +293,7 @@ public class BeltWnd extends MovableWidget {
 
         {
             int i = 0;
-            for(final IndirSetting<String> kb : kbs) {
+            for(final KeyBind kb : kbs) {
                 btns[i++] = add(new BeltBtn(kb), new Coord(0,  0));
             }
         }

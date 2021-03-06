@@ -27,7 +27,9 @@
 package haven;
 
 import hamster.SessionSettings;
+import hamster.data.BeltData;
 import hamster.io.SQLResCache;
+import hamster.ui.BeltWnd;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.QuestWnd;
 import hamster.ui.opt.OptionsWnd;
@@ -37,6 +39,9 @@ import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+
+import static hamster.GlobalSettings.*;
+import static hamster.KeyBind.*;
 import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
@@ -73,6 +78,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Belt beltwdg;
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Hotbars
+    public final BeltWnd hotbar1, hotbar2, hotbar3;
 
     //Questing Related widgets
     public final QuestWnd questwnd; // container
@@ -201,6 +209,11 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	zerg.hide();
 	//Extras
 	questwnd = new QuestWnd();
+	//Setup hotbars
+	final BeltData data = new BeltData(usr + "::" + chrid);
+	hotbar1 = new BeltWnd("Hotbar 1", data, KB_STYLE, KB_VIS, KB_PAGE, KB_LOCK, Arrays.asList(KB_HK),5, 0);
+	hotbar2 = new BeltWnd("Hotbar 2", data, KB_F_STYLE, KB_F_VIS, KB_F_PAGE, KB_F_LOCK, Arrays.asList(KB_HK_F), 5, 50);
+	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), 4, 100);
     }
 
     protected void attached() {
@@ -651,6 +664,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	} else if(place == "menu") {
 	    menu = (MenuGrid)brpanel.add(child, menugridc);
+	    //Setup hotbars
+	    add(hotbar1, new Coord(20, 300));
+	    add(hotbar2, new Coord(20, 400));
+	    add(hotbar3, new Coord(20, 500));
 	} else if(place == "fight") {
 	    fv = urpanel.add((Fightview)child, 0, 0);
 	} else if(place == "fsess") {
@@ -997,6 +1014,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    sdt = new MessageBuf((byte[])args[2]);
 		belt[slot] = new BeltSlot(slot, res, sdt);
 	    }
+	    if (slot <= 49)
+		hotbar1.update(slot);
+	    else if (slot <= 99)
+		hotbar2.update(slot);
+	    else if (slot <= 140)
+		hotbar3.update(slot);
 	} else if(msg == "polowner") {
 	    int id = (Integer)args[0];
 	    String o = (String)args[1];
