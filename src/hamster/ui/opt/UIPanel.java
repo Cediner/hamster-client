@@ -20,14 +20,14 @@ public class UIPanel extends Scrollport {
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);
 
         { //visibility
-            visibility.add(new IndirCheckBox("Show Player Avatar", ui.gui.settings.SHOWPLAVA));
-            visibility.add(new IndirCheckBox("Show Player Speed", ui.gui.settings.SHOWSPEED));
-            visibility.add(new IndirCheckBox("Show Player Health", ui.gui.settings.SHOWHEALTH));
-            visibility.add(new IndirCheckBox("Show Player Energy", ui.gui.settings.SHOWENERGY));
-            visibility.add(new IndirCheckBox("Show Player Stamina", ui.gui.settings.SHOWSTAM));
+            visibility.add(new IndirCheckBox("Show Player Avatar", ui.gui.settings.SHOWPLAVA, (val) -> ui.gui.portrait.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Speed", ui.gui.settings.SHOWSPEED, (val) -> ui.gui.speed.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Health", ui.gui.settings.SHOWHEALTH, (val) -> ui.gui.hp.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Energy", ui.gui.settings.SHOWENERGY, (val) -> ui.gui.energy.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Stamina", ui.gui.settings.SHOWSTAM, (val) -> ui.gui.stam.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Chat Window", ui.gui.settings.SHOWCHAT, (val) -> ui.gui.chatwnd.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Calendar", ui.gui.settings.SHOWCAL));
-            visibility.add(new IndirCheckBox("Show Sessions Display", ui.gui.settings.SHOWSESSIONS));
+            visibility.add(new IndirCheckBox("Show Calendar", ui.gui.settings.SHOWCAL, val -> ui.gui.cal.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Sessions Display", ui.gui.settings.SHOWSESSIONS, val -> ui.root.sessionDisplay.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Hotbar 1", ui.gui.settings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Hotbar 2", ui.gui.settings.SHOWHOTBAR2, (val) -> ui.gui.hotbar2.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Hotbar 3", ui.gui.settings.SHOWHOTBAR3, (val) -> ui.gui.hotbar3.setVisible(val)));

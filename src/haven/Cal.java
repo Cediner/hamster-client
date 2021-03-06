@@ -26,13 +26,15 @@
 
 package haven;
 
+import hamster.ui.core.MovableWidget;
+
 import static java.lang.Math.PI;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Cal extends Widget {
+public class Cal extends MovableWidget {
     public static final double hbr = UI.scale(20.0);
-    static final Tex bg = Resource.loadtex("gfx/hud/calendar/glass");
+    static TexI bg = new TexI(Resource.loadsimg("gfx/hud/calendar/glass"));
     static final Tex[] dlnd = new Tex[4];
     static final Tex[] nlnd = new Tex[4];
     static final Resource.Image dsky = Resource.loadrimg("gfx/hud/calendar/daysky");
@@ -48,7 +50,13 @@ public class Cal extends Widget {
     }
 
     public Cal() {
-	super(bg.sz());
+	super(bg.sz(), "Calendar");
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	setVisible(ui.gui.settings.SHOWCAL.get());
     }
 
     public void draw(GOut g) {
@@ -70,6 +78,11 @@ public class Cal extends Widget {
 
     public boolean checkhit(Coord c) {
 	return(Utils.checkhit(dsky.scaled(), c.sub(dsky.o)));
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return c.isect(Coord.z, bg.sz()) && bg.back.getRaster().getSample(c.x % bg.back.getWidth(), c.y, 3) > 0;
     }
 
     private static String ord(int i) {
