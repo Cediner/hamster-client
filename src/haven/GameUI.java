@@ -43,14 +43,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private static final int blpw = UI.scale(142), brpw = UI.scale(142);
     public final String chrid, genus;
     public final long plid;
-    private final Hidepanel ulpanel, umpanel, urpanel, blpanel, mapmenupanel, brpanel, menupanel;
+    private final Hidepanel ulpanel, umpanel, urpanel, brpanel, menupanel;
     public Avaview portrait;
     public MenuGrid menu;
     public MapView map;
     public GobIcon.Settings iconconf;
-    public MiniMap mmap;
     public Fightview fv;
-    private List<Widget> meters = new LinkedList<Widget>();
+    private final List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
     private double msgtime;
     public Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
@@ -149,8 +148,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    return(new GameUI(ui.sess.username, chrid, plid, genus));
 	}
     }
-    
-    private final Coord minimapc;
+
     private final Coord menugridc;
     public GameUI(final String usr, String chrid, long plid, String genus) {
 	this.chrid = chrid;
@@ -166,17 +164,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    chat.show();
 	}
 	beltwdg.raise();
-	blpanel = add(new Hidepanel("gui-bl", null, new Coord(-1,  1)) {
-		public void move(double a) {
-		    super.move(a);
-		    mapmenupanel.move();
-		}
-	    });
-	mapmenupanel = add(new Hidepanel("mapmenu", new Indir<Coord>() {
-		public Coord get() {
-		    return(new Coord(0, Math.min(blpanel.c.y - mapmenupanel.sz.y + UI.scale(33), GameUI.this.sz.y - mapmenupanel.sz.y)));
-		}
-	    }, new Coord(-1, 0)));
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
 		    super.move(a);
@@ -191,9 +178,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	ulpanel = add(new Hidepanel("gui-ul", null, new Coord(-1, -1)));
 	umpanel = add(new Hidepanel("gui-um", null, new Coord( 0, -1)));
 	urpanel = add(new Hidepanel("gui-ur", null, new Coord( 1, -1)));
-	mapmenupanel.add(new MapMenu(), 0, 0);
-	blpanel.add(new Img(Resource.loadtex("gfx/hud/blframe")), 0, 0);
-	minimapc = new Coord(UI.scale(4), UI.scale(34));
 	Tex rbtnbg = Resource.loadtex("gfx/hud/csearch-bg");
 	Img brframe = brpanel.add(new Img(Resource.loadtex("gfx/hud/brframe")), rbtnbg.sz().x - UI.scale(22), 0);
 	menugridc = brframe.c.add(UI.scale(20), UI.scale(34));
@@ -255,18 +239,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	for(int i = 0; i < fold_br.length; i++)
 	    fold_br[i].show(i == br);
 
-	int bl;
-	if(blpanel.tvis && mapmenupanel.tvis)
-	    bl = 0;
-	else if(blpanel.tvis && !mapmenupanel.tvis)
-	    bl = 1;
-	else if(!blpanel.tvis && !mapmenupanel.tvis)
-	    bl = 2;
-	else
-	    bl = 3;
-	for(int i = 0; i < fold_bl.length; i++)
-	    fold_bl[i].show(i == bl);
-
 	if(reset)
 	    resetui();
     }
@@ -312,43 +284,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	fold_br[2].lower();
 	menupanel.add(fold_br[3], 0, 0);
 	fold_br[3].lower();
-
-	final Tex ldnbg = Resource.loadtex("gfx/hud/lbtn-bgs");
-	final Tex lupbg = Resource.loadtex("gfx/hud/lbtn-upbg");
-	fold_bl[0] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void click() {
-		    mapmenupanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_bl[1] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(ldnbg, Coord.z); super.draw(g);}
-		public void click() {
-		    blpanel.cshow(false);
-		    updfold(true);
-		}
-	    };
-	fold_bl[2] = new IButton("gfx/hud/lbtn-up", "", "-d", "-h") {
-		public void draw(GOut g) {g.image(lupbg, Coord.z); super.draw(g);}
-		public void click() {
-		    mapmenupanel.cshow(true);
-		    updfold(true);
-		}
-		public void presize() {
-		    this.c = new Coord(0, parent.sz.y - sz.y);
-		}
-	    };
-	fold_bl[3] = new IButton("gfx/hud/lbtn-dwn", "", "-d", "-h") {
-		public void click() {
-		    blpanel.cshow(true);
-		    updfold(true);
-		}
-	    };
-	mapmenupanel.add(fold_bl[0], 0, 0);
-	blpanel.adda(fold_bl[1], 0, UI.scale(33), 0, 1);
-	adda(fold_bl[2], 0, 1);
-	fold_bl[2].lower();
-	mapmenupanel.add(fold_bl[3], 0, 0);
 
 	updfold(false);
     }
@@ -691,8 +626,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    child.resize(sz);
 	    map = add((MapView)child, Coord.z);
 	    map.lower();
-	    if(mmap != null)
-		ui.destroy(mmap);
 	    if(mapfile != null) {
 		ui.destroy(mapfile);
 		ui.destroy(mapmarkers);
@@ -702,8 +635,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    ResCache mapstore = SQLResCache.mapdb;
 	    if(mapstore != null) {
 		MapFile file = MapFile.load(mapstore, mapfilename());
-		mmap = blpanel.add(new CornerMap(UI.scale(new Coord(133, 133)), file), minimapc);
-		mmap.lower();
 		mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		mapfile.show(Utils.getprefb("wndvis-map", false));
 		mapmarkers = new MapMarkerWnd(mapfile);
@@ -795,7 +726,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    {add(cref);}
 
 		    protected Coord getc() {
-			return(new Coord(10, mapmenupanel.c.y - this.sz.y - 10));
+			return(new Coord(10,  this.sz.y - 10));
 		    }
 
 		    public void cdestroy(Widget ch) {
@@ -1009,8 +940,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private int lastsaveseq = -1;
     private void mapfiletick() {
 	MapView map = this.map;
-	MiniMap mmap = this.mmap;
-	if((map == null) || (mmap == null))
+	if((map == null) || (mapfile == null))
 	    return;
 	Gob pl = ui.sess.glob.oc.getgob(map.plgob);
 	Coord gc;
@@ -1021,7 +951,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	try {
 	    MCache.Grid grid = ui.sess.glob.map.getgrid(gc);
 	    if((grid != null) && (!Utils.eq(gc, lastsavegrid) || (lastsaveseq != grid.seq))) {
-		mmap.file.update(ui.sess.glob.map, gc);
+	        mapfile.file.update(ui.sess.glob.map, gc);
 		lastsavegrid = gc;
 		lastsaveseq = grid.seq;
 	    }
@@ -1232,51 +1162,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
     }
 
-    public static final KeyBinding kb_map = KeyBinding.get("map", KeyMatch.forchar('A', KeyMatch.C));
-    public static final KeyBinding kb_claim = KeyBinding.get("ol-claim", KeyMatch.nil);
-    public static final KeyBinding kb_vil = KeyBinding.get("ol-vil", KeyMatch.nil);
-    public static final KeyBinding kb_rlm = KeyBinding.get("ol-rlm", KeyMatch.nil);
-    public static final KeyBinding kb_ico = KeyBinding.get("map-icons", KeyMatch.nil);
-    private static final Tex mapmenubg = Resource.loadtex("gfx/hud/lbtn-bg");
-    public class MapMenu extends Widget {
-	private void toggleol(String tag, boolean a) {
-	    if(map != null) {
-		if(a)
-		    map.enol(tag);
-		else
-		    map.disol(tag);
-	    }
-	}
-
-	public MapMenu() {
-	    super(mapmenubg.sz());
-	    add(new MenuCheckBox("lbtn-claim", kb_claim, "Display personal claims"), 0, 0).changed(a -> toggleol("cplot", a));
-	    add(new MenuCheckBox("lbtn-vil", kb_vil, "Display village claims"), 0, 0).changed(a -> toggleol("vlg", a));
-	    add(new MenuCheckBox("lbtn-rlm", kb_rlm, "Display realms"), 0, 0).changed(a -> toggleol("realm", a));
-	    add(new MenuCheckBox("lbtn-map", kb_map, "Map")).state(() -> wndstate(mapfile)).click(() -> {
-		    togglewnd(mapfile);
-		    if(mapfile != null)
-			Utils.setprefb("wndvis-map", mapfile.visible);
-		});
-	    add(new MenuCheckBox("lbtn-ico", kb_ico, "Icon settings"), 0, 0).state(() -> wndstate(iconwnd)).click(() -> {
-		    if(iconconf == null)
-			return;
-		    if(iconwnd == null) {
-			iconwnd = new GobIcon.SettingsWindow(iconconf, () -> Utils.defer(GameUI.this::saveiconconf));
-			fitwdg(GameUI.this.add(iconwnd, Utils.getprefc("wndc-icon", new Coord(200, 200))));
-		    } else {
-			ui.destroy(iconwnd);
-			iconwnd = null;
-		    }
-		});
-	}
-
-	public void draw(GOut g) {
-	    g.image(mapmenubg, Coord.z);
-	    super.draw(g);
-	}
-    }
-
     public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.forchar('S', KeyMatch.M));
     public static final KeyBinding kb_chat = KeyBinding.get("chat-toggle", KeyMatch.forchar('C', KeyMatch.C));
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
@@ -1316,7 +1201,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private int uimode = 1;
     public void toggleui(int mode) {
-	Hidepanel[] panels = {blpanel, brpanel, ulpanel, umpanel, urpanel, menupanel, mapmenupanel};
+	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
 	switch(uimode = mode) {
 	case 0:
 	    for(Hidepanel p : panels)
@@ -1334,7 +1219,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void resetui() {
-	Hidepanel[] panels = {blpanel, brpanel, ulpanel, umpanel, urpanel, menupanel, mapmenupanel};
+	Hidepanel[] panels = {brpanel, ulpanel, umpanel, urpanel, menupanel};
 	for(Hidepanel p : panels)
 	    p.cshow(p.tvis);
 	uimode = 1;

@@ -110,6 +110,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		.state(() -> ui.gui.settings.MMSHOWGRID.get())
 		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a));
 	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisiblity());
+	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
 	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
 	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
 	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("realm", a));
@@ -267,6 +268,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	        resolveo(player).flatMap(this::xlateo).ifPresent(ploc -> {
 		    //Draw our view
 		    drawview(g, ploc);
+		    //TODO: Draw queued movement and tracking
 		});
 	    } catch (Loading ignored){}
 	}
