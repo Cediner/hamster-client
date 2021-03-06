@@ -30,13 +30,19 @@ import hamster.ui.core.MovableWidget;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IMeter extends MovableWidget {
+    private static final Pattern hppat = Pattern.compile("Health: ([0-9]+)/([0-9]+)/([0-9]+)");
+    private static final Pattern stampat = Pattern.compile("Stamina: ([0-9]+)");
+    private static final Pattern energypat = Pattern.compile("Energy: ([0-9]+)");
     public static final Coord off = UI.scale(22, 7);
     public static final Coord fsz = UI.scale(101, 24);
     public static final Coord msz = UI.scale(75, 10);
     public final Indir<Resource> bg;
     public List<Meter> meters;
+    private Tex tt;
     
     @RName("im")
     public static class $_ implements Factory {
@@ -82,6 +88,8 @@ public class IMeter extends MovableWidget {
 	    }
 	    g.chcolor();
 	    g.image(bg, Coord.z);
+	    if (tt != null)
+		g.aimage(tt, sz.div(2), 0.5f, 0.5f);
 	} catch(Loading ignored) {
 	}
     }
@@ -99,6 +107,27 @@ public class IMeter extends MovableWidget {
 	    this.meters = decmeters(args, 0);
 	} else {
 	    super.uimsg(msg, args);
+	    if(msg.equals("tip")) { //TODO: scripting edits
+		final String tt = (String)args[0];
+		this.tt = Text.renderstroked(tt.substring(tt.indexOf(':') + 1)).tex();
+		Matcher matcher = hppat.matcher(tt);
+		if(matcher.find()) {
+		    ui.gui.hp = this;
+		    setVisible(ui.gui.settings.SHOWHEALTH.get());
+		} else {
+		    matcher = stampat.matcher(tt);
+		    if(matcher.find()) {
+		        ui.gui.stam = this;
+			setVisible(ui.gui.settings.SHOWSTAM.get());
+		    } else {
+			matcher = energypat.matcher(tt);
+			if(matcher.find()) {
+			    ui.gui.energy = this;
+			    setVisible(ui.gui.settings.SHOWENERGY.get());
+			}
+		    }
+		}
+	    }
 	}
     }
 }

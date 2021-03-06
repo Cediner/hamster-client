@@ -55,7 +55,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MapView map;
     public GobIcon.Settings iconconf;
     public Fightview fv;
-    private final List<Widget> meters = new LinkedList<Widget>();
     private Text lastmsg;
     private double msgtime;
     public Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
@@ -84,6 +83,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public ChatUI chat;
     public ChatUI.Channel syslog;
 
+    //Meters
+    public Speedget speed;
+    public IMeter hp, stam, energy;
+    private final List<Widget> meters = new LinkedList<>();
 
     //Hotbars
     public final BeltWnd hotbar1, hotbar2, hotbar3;

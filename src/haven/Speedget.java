@@ -68,6 +68,19 @@ public class Speedget extends MovableWidget {
 	this.max = max;
     }
 
+    @Override
+    public void toggleVisiblity() {
+	super.toggleVisiblity();
+	ui.gui.settings.SHOWSPEED.set(visible);
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	setVisible(ui.gui.settings.SHOWSPEED.get());
+	ui.gui.speed = this;
+    }
+
     public void draw(GOut g) {
 	int x = 0;
 	for(int i = 0; i < 4; i++) {
