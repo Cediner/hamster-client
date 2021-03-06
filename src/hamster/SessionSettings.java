@@ -91,6 +91,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWINVONLOGIN;
     public final IndirSetting<Boolean> SHOWBELTONLOGIN;
     public final IndirSetting<Boolean> SHOWSESSIONS;
+    public final IndirSetting<Boolean> SHOWCHAT;
     //Meter UI
     public final IndirSetting<Boolean> BIGSIMPLEMETERS;
     //Inv UI
@@ -193,6 +194,7 @@ public class SessionSettings {
         SHOWMINIEQU = new IndirSetting<>(local, "ui.show-mini-equ", true);
         SHOWSTUDY = new IndirSetting<>(local, "ui.show-study", true);
         SHOWSESSIONS = new IndirSetting<>(local, "ui.show-session-display", true);
+        SHOWCHAT = new IndirSetting<>(local, "ui.show-chat", true);
 
         SHOWINVONLOGIN = new IndirSetting<>(local, "ui.show-inv-on-login", true);
         SHOWBELTONLOGIN = new IndirSetting<>(local, "ui.show-belt-on-login", true);

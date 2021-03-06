@@ -26,10 +26,12 @@
 
 package haven;
 
+import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.io.SQLResCache;
 import hamster.ui.BeltWnd;
+import hamster.ui.ChatWnd;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.QuestWnd;
 import hamster.ui.opt.OptionsWnd;
@@ -42,7 +44,6 @@ import java.awt.image.WritableRaster;
 
 import static hamster.GlobalSettings.*;
 import static hamster.KeyBind.*;
-import static haven.Inventory.invsq;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
     public static final Text.Foundry msgfoundry = new Text.Foundry(Text.dfont, 14);
@@ -70,13 +71,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public OptionsWnd opts;
     public Collection<DraggedItem> hand = new LinkedList<DraggedItem>();
     public WItem vhand;
-    public ChatUI chat;
-    public ChatUI.Channel syslog;
     public double prog = -1;
     private boolean afk = false;
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<Integer, String>();
     public Bufflist buffs;
+
+    //Chat UI
+    public final ChatWnd chatwnd;
+    public ChatUI chat;
+    public ChatUI.Channel syslog;
+
 
     //Hotbars
     public final BeltWnd hotbar1, hotbar2, hotbar3;
@@ -143,11 +148,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
 	setcanfocus(true);
 	setfocusctl(true);
-	chat = add(new ChatUI(0, 0));
-	if(Utils.getprefb("chatvis", true)) {
-	    chat.hresize(chat.savedh);
-	    chat.show();
-	}
 	brpanel = add(new Hidepanel("gui-br", null, new Coord( 1,  1)) {
 		public void move(double a) {
 		    super.move(a);
@@ -176,10 +176,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }, UI.scale(new Coord(10, 10)));
 	buffs = ulpanel.add(new Bufflist(), UI.scale(new Coord(95, 65)));
 	umpanel.add(new Cal(), Coord.z);
-	syslog = chat.add(new ChatUI.Log("System"));
 	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	zerg.hide();
-	//Extras
+	//Chat Wdgs
+	chatwnd = new ChatWnd(chat = new ChatUI(600, 150));
+	syslog = chat.add(new ChatUI.Log("System"));
+	//Quest Wdgs
 	questwnd = new QuestWnd();
 	//Setup hotbars
 	final BeltData data = new BeltData(usr + "::" + chrid);
@@ -311,6 +313,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	opts = add(new OptionsWnd(ui));
 	opts.hide();
 	add(questwnd, new Coord(0, sz.y - 200));
+	add(chatwnd, new Coord(20, sz.y - 200));
     }
 
     public void dispose() {
@@ -808,8 +811,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if(prog >= 0)
 	    drawprog(g, prog);
 	int by = sz.y;
-	if(chat.visible)
-	    by = Math.min(by, chat.c.y);
 	if(cmdline != null) {
 	    drawcmd(g, new Coord(blpw + UI.scale(10), by -= UI.scale(20)));
 	} else if(lastmsg != null) {
@@ -821,9 +822,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		g.chcolor();
 		g.image(lastmsg.tex(), new Coord(blpw + UI.scale(10), by -= UI.scale(20)));
 	    }
-	}
-	if(!chat.visible) {
-	    chat.drawsmall(g, new Coord(blpw + UI.scale(10), by), UI.scale(50));
 	}
     }
     
@@ -1152,31 +1150,22 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.forchar('S', KeyMatch.M));
-    public static final KeyBinding kb_chat = KeyBinding.get("chat-toggle", KeyMatch.forchar('C', KeyMatch.C));
     public static final KeyBinding kb_hide = KeyBinding.get("ui-toggle", KeyMatch.nil);
     public boolean globtype(char key, KeyEvent ev) {
-	if(key == ':') {
-	    entercmd();
+        final String bind = KeyBind.generateSequence(ev, ui);
+	if(KB_TOGGLE_CMD.check(bind, () -> { entercmd(); return true; })) {
 	    return(true);
 	} else if((Config.screenurl != null) && kb_shoot.key().match(ev)) {
 	    Screenshooter.take(this, Config.screenurl);
 	    return(true);
 	} else if(kb_hide.key().match(ev)) {
 	    toggleui();
-	    return(true);
-	} else if(kb_chat.key().match(ev)) {
-	    if(chat.visible && !chat.hasfocus) {
-		setfocus(chat);
-	    } else {
-		if(chat.targeth == 0) {
-		    chat.sresize(chat.savedh);
-		    setfocus(chat);
-		} else {
-		    chat.sresize(0);
-		}
-	    }
-	    Utils.setprefb("chatvis", chat.targeth != 0);
-	    return(true);
+	    return (true);
+	} else if(KB_TOGGLE_CHAT.check(bind, () -> {
+	    chatwnd.toggleVisiblity();
+	    return true;
+	})) {
+	    return true;
 	} else if((key == 27) && (map != null) && !map.hasfocus) {
 	    setfocus(map);
 	    return(true);
@@ -1220,8 +1209,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public void resize(Coord sz) {
 	this.sz = sz;
-	chat.resize(sz.x - blpw - brpw);
-	chat.move(new Coord(blpw, sz.y));
 	if(map != null)
 	    map.resize(sz);
 	super.resize(sz);

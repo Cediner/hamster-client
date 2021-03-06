@@ -40,6 +40,7 @@ import java.util.regex.*;
 import java.io.IOException;
 import java.awt.datatransfer.*;
 
+//TODO: A bit of scripting changes are needed in here
 public class ChatUI extends Widget {
     public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(10f)), TextAttribute.FOREGROUND, Color.BLACK));
     public static final Text.Foundry qfnd = new Text.Foundry(Text.dfont, 12, new java.awt.Color(192, 255, 192));
@@ -55,10 +56,15 @@ public class ChatUI extends Widget {
     public Channel sel = null;
     public int urgency = 0;
     private final Selector chansel;
-    private Coord base = Coord.z;
     private QuickLine qline = null;
     private final LinkedList<Notification> notifs = new LinkedList<Notification>();
     private UI.Grab qgrab;
+
+    public EntryChannel area;
+    public EntryChannel party;
+    public EntryChannel village;
+    public EntryChannel realm;
+    private final List<EntryChannel> privchats = new ArrayList<>();
 
     public ChatUI(int w, int h) {
 	super(new Coord(w, h));
@@ -70,10 +76,27 @@ public class ChatUI extends Widget {
     }
 
     protected void added() {
-	base = this.c;
 	resize(this.sz);
     }
-    
+
+    public void addPrivChat(final EntryChannel chan) {
+	synchronized (privchats) {
+	    privchats.add(chan);
+	}
+    }
+
+    public void remPrivChat(final EntryChannel chan) {
+	synchronized (privchats) {
+	    privchats.remove(chan);
+	}
+    }
+
+    public EntryChannel[] privchats() {
+	synchronized (privchats) {
+	    return privchats.toArray(new EntryChannel[0]);
+	}
+    }
+
     public static class ChatAttribute extends Attribute {
 	private ChatAttribute(String name) {
 	    super(name);
@@ -514,7 +537,6 @@ public class ChatUI extends Widget {
 	public void display() {
 	    select();
 	    ChatUI chat = getparent(ChatUI.class);
-	    chat.expand();
 	    chat.parent.setfocus(chat);
 	}
 
@@ -634,6 +656,7 @@ public class ChatUI extends Widget {
 	    if(in != null) {
 		in.c = new Coord(0, this.sz.y - in.sz.y);
 		in.resize(this.sz.x);
+		in.redraw();
 	    }
 	}
 	
@@ -725,6 +748,18 @@ public class ChatUI extends Widget {
 	    this.name = name;
 	    this.urgency = urgency;
 	}
+
+	@Override
+	protected void added() {
+	    super.added();
+	    if (name.equals("Area Chat")) {
+		ui.gui.chat.area = this;
+	    } else if (name.endsWith("(P)") && urgency == 0) {
+		ui.gui.chat.realm = this;
+	    } else {
+		ui.gui.chat.village = this;
+	    }
+	}
 	
 	private float colseq = 0;
 	private Color nextcol() {
@@ -766,6 +801,13 @@ public class ChatUI extends Widget {
 	public PartyChat() {
 	    super(false, "Party", 2);
 	}
+
+	@Override
+	protected void added() {
+	    super.added();
+	    ui.gui.chat.party = this;
+	}
+
 
 	public void uimsg(String msg, Object... args) {
 	    if(msg == "msg") {
@@ -810,6 +852,18 @@ public class ChatUI extends Widget {
 	public PrivChat(boolean closable, int other) {
 	    super(closable);
 	    this.other = other;
+	}
+
+	@Override
+	protected void added() {
+	    super.added();
+	    ui.gui.chat.addPrivChat(this);
+	}
+
+	@Override
+	public void dispose() {
+	    super.dispose();
+	    ui.gui.chat.remPrivChat(this);
 	}
 
 	public void uimsg(String msg, Object... args) {
@@ -1089,26 +1143,6 @@ public class ChatUI extends Widget {
 	}
     }
 
-    private static final Tex bulc = Resource.loadtex("gfx/hud/chat-lc");
-    private static final Tex burc = Resource.loadtex("gfx/hud/chat-rc");
-    private static final Tex bhb = Resource.loadtex("gfx/hud/chat-hori");
-    private static final Tex bvlb = Resource.loadtex("gfx/hud/chat-verti");
-    private static final Tex bvrb = bvlb;
-    private static final Tex bmf = Resource.loadtex("gfx/hud/chat-mid");
-    private static final Tex bcbd = Resource.loadtex("gfx/hud/chat-close-g");
-    public void draw(GOut g) {
-	g.rimage(Window.bg.tex(), marg, sz.sub(marg.x * 2, marg.y));
-	super.draw(g);
-	g.image(bulc, new Coord(0, 0));
-	g.image(burc, new Coord(sz.x - burc.sz().x, 0));
-	g.rimagev(bvlb, new Coord(0, bulc.sz().y), sz.y - bulc.sz().y);
-	g.rimagev(bvrb, new Coord(sz.x - bvrb.sz().x, burc.sz().y), sz.y - burc.sz().y);
-	g.rimageh(bhb, new Coord(bulc.sz().x, 0), sz.x - bulc.sz().x - burc.sz().x);
-	g.aimage(bmf, new Coord(sz.x / 2, 0), 0.5, 0);
-	if((sel == null) || (sel.cb == null))
-	    g.aimage(bcbd, new Coord(sz.x, 0), 1, 0);
-    }
-
     private static final Resource notifsfx = Resource.local().loadwait("sfx/hud/chat");
     public void notify(Channel chan, Channel.Message msg) {
 	synchronized(notifs) {
@@ -1136,7 +1170,6 @@ public class ChatUI extends Widget {
 
     public void resize(Coord sz) {
 	super.resize(sz);
-	this.c = base.add(0, -this.sz.y);
 	chansel.resize(new Coord(selw, this.sz.y - marg.y));
 	if(sel != null)
 	    sel.resize(new Coord(this.sz.x - marg.x - sel.c.x, this.sz.y - sel.c.y));
@@ -1158,12 +1191,7 @@ public class ChatUI extends Widget {
     }
     
     public void move(Coord base) {
-	this.c = (this.base = base).add(0, -sz.y);
-    }
-
-    public void expand() {
-	if(!visible)
-	    sresize(savedh);
+	this.c = base;
     }
 
     private class QuickLine extends LineEdit {
@@ -1191,40 +1219,6 @@ public class ChatUI extends Widget {
 		return(super.key(c, code, mod));
 	    }
 	    return(true);
-	}
-    }
-
-    private UI.Grab dm = null;
-    private Coord doff;
-    private static final int minh = 111;
-    public int savedh = UI.scale(Math.max(minh, Utils.getprefi("chatsize", minh)));
-    public boolean mousedown(Coord c, int button) {
-	int bmfx = (sz.x - bmf.sz().x) / 2;
-	if((button == 1) && (c.y < bmf.sz().y) && (c.x >= bmfx) && (c.x <= (bmfx + bmf.sz().x))) {
-	    dm = ui.grabmouse(this);
-	    doff = c;
-	    return(true);
-	} else {
-	    return(super.mousedown(c, button));
-	}
-    }
-
-    public void mousemove(Coord c) {
-	if(dm != null) {
-	    resize(sz.x, savedh = Math.max(UI.scale(minh), sz.y + doff.y - c.y));
-	} else {
-	    super.mousemove(c);
-	}
-    }
-
-    public boolean mouseup(Coord c, int button) {
-	if(dm != null) {
-	    dm.remove();
-	    dm = null;
-	    Utils.setprefi("chatsize", UI.unscale(savedh));
-	    return(true);
-	} else {
-	    return(super.mouseup(c, button));
 	}
     }
 
