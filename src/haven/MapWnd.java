@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import hamster.IndirSetting;
+import hamster.KeyBind;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
@@ -41,6 +42,8 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MiniMap.*;
 import haven.BuddyWnd.GroupSelector;
+
+import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
 import static haven.Utils.eq;
@@ -61,6 +64,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private MapMarkerWnd markers = null;
     private boolean domark = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 
     public static final KeyBinding kb_home = KeyBinding.get("mapwnd/home", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
     public static final KeyBinding kb_mark = KeyBinding.get("mapwnd/mark", KeyMatch.nil);
@@ -123,6 +127,10 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
 		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
 
+
+	binds.put(KB_RECALL_MAP_ONE, () -> { recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE); return true; });
+	binds.put(KB_RECALL_MAP_TWO, () -> { recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO); return true; });
+
 	resize(sz);
     }
 
@@ -147,6 +155,16 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	saveSize();
 	Utils.setprefc("wndsz-map", asz);
 	savePosition();
+    }
+
+    @Override
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
+        return super.globtype(key, ev);
     }
 
     private class ViewFrame extends Frame {
