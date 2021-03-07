@@ -73,11 +73,11 @@ public class KeyBind {
 	}
 	{ // Movement Keybinds
 	    final String MV_GRP = "Movement";
-	    KB_CYCLE_SPEED = addKB("Cycle Character Speed", MV_GRP, "C-R"); //TODO
-	    KB_CRAWL = addKB("Change to Crawl Speed", MV_GRP, "M-Q"); //TODO
-	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W"); //TODO
-	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E"); //TODO
-	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R"); //TODO
+	    KB_CYCLE_SPEED = addKB("Cycle Character Speed", MV_GRP, "C-R");
+	    KB_CRAWL = addKB("Change to Crawl Speed", MV_GRP, "M-Q");
+	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W");
+	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E");
+	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R");
 	    KB_MOVE_NORTH = addKB("Move North", MV_GRP, "Up"); //TODO
 	    KB_MOVE_SOUTH = addKB("Move South", MV_GRP, "Down"); //TODO
 	    KB_MOVE_EAST = addKB("Move East", MV_GRP, "Left"); //TODO

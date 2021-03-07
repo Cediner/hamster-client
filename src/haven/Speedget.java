@@ -26,15 +26,32 @@
 
 package haven;
 
+import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Speedget extends MovableWidget {
     public static final Tex[][] imgs;
     public static final String[] tips;
     public static final Coord tsz;
     public int cur, max;
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+
+    public enum Speed {
+	CRAWL(0),
+	WALK(1),
+	RUN(2),
+	SPRINT(3);
+
+	final int id;
+
+	Speed(final int id) {
+	    this.id = id;
+	}
+    }
 
     static {
 	String[] names = {"crawl", "walk", "run", "sprint"};
@@ -66,6 +83,12 @@ public class Speedget extends MovableWidget {
 	super(tsz, "Speedget");
 	this.cur = cur;
 	this.max = max;
+
+	binds.put(KeyBind.KB_CYCLE_SPEED, () -> {cyclespeed(); return true;});
+	binds.put(KeyBind.KB_CRAWL, () -> { setSpeed(Speed.CRAWL); return true; });
+	binds.put(KeyBind.KB_WALK, () -> { setSpeed(Speed.WALK); return true; });
+	binds.put(KeyBind.KB_RUN, () -> { setSpeed(Speed.RUN); return true; });
+	binds.put(KeyBind.KB_SPRINT, () -> { setSpeed(Speed.SPRINT); return true; });
     }
 
     @Override
@@ -140,31 +163,28 @@ public class Speedget extends MovableWidget {
 	return(null);
     }
 
-    public static final KeyBinding kb_speedup = KeyBinding.get("speed-up", KeyMatch.forchar('R', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.C));
-    public static final KeyBinding kb_speeddn = KeyBinding.get("speed-down", KeyMatch.forchar('R', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S | KeyMatch.C));
-    public static final KeyBinding[] kb_speeds = {
-	KeyBinding.get("speed-set/0", KeyMatch.nil),
-	KeyBinding.get("speed-set/1", KeyMatch.nil),
-	KeyBinding.get("speed-set/2", KeyMatch.nil),
-	KeyBinding.get("speed-set/3", KeyMatch.nil),
-    };
-    public boolean globtype(char key, KeyEvent ev) {
-	int dir = 0;
-	if(kb_speedup.key().match(ev))
-	    dir = 1;
-	else if(kb_speeddn.key().match(ev))
-	    dir = -1;
-	if(dir != 0) {
-	    if(max >= 0) {
-		set(Utils.clip(cur + dir, 0, max));
-	    }
-	    return(true);
+    public void cyclespeed() {
+	if (max >= 0) {
+	    int n;
+	    if (cur > max)
+		n = max;
+	    else
+		n = (cur + 1) % (max + 1);
+	    set(n);
 	}
-	for(int i = 0; i < kb_speeds.length; i++) {
-	    if(kb_speeds[i].key().match(ev)) {
-		set(i);
-		return(true);
-	    }
+    }
+
+    public void setSpeed(final Speed spd) {
+	if (max >= 0 && spd.id <= max) {
+	    set(spd.id);
+	}
+    }
+
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
 	}
 	return(super.globtype(key, ev));
     }
