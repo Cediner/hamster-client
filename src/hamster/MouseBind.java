@@ -73,17 +73,17 @@ public class MouseBind {
         return ibind.equals(bind.get()) && action.run();
     }
 
-    public static boolean validBinding(final String group, final String binding) {
+    public static boolean validBinding(final IndirSetting<String> ignore, final String group, final String binding) {
         if (binding.equals("")) {
             return true;
         } else {
             for (final MouseBind mb : bindgrps.get(group)) {
-                if (!mb.bind.get().equals(binding)) {
-                    return true;
+                if (mb.bind != ignore && mb.bind.get().equals(binding)) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public static String generateSequence(final UI ui, final int mbutton) {

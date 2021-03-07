@@ -147,17 +147,17 @@ public class KeyBind {
 	return ibind.equals(bind.get()) && action.run();
     }
 
-    public static boolean validBinding(final String binding) {
+    public static boolean validBinding(final IndirSetting<String> ignore, final String binding) {
 	if (binding.equals("")) {
 	    return true;
 	} else {
 	    for (final var kb : keybinds) {
-		if (!kb.bind.get().equals(binding)) {
-		    return true;
+		if (kb.bind != ignore && kb.bind.get().equals(binding)) {
+		    return false;
 		}
 	    }
 	}
-	return false;
+	return true;
     }
 
     public static Map<String, List<KeyBind>> generateGroupings() {
