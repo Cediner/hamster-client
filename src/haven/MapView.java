@@ -38,6 +38,7 @@ import java.lang.ref.*;
 import java.lang.reflect.*;
 
 import hamster.GlobalSettings;
+import hamster.KeyBind;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -2109,13 +2110,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	return(super.keydown(ev));
     }
 
-    public static final KeyBinding kb_grid = KeyBinding.get("grid", KeyMatch.forchar('G', KeyMatch.C));
     public boolean globtype(char c, KeyEvent ev) {
-	if(kb_grid.key().match(ev)) {
-	    showgrid(gridlines == null);
-	    return(true);
-	}
-	return(false);
+        final String bind = KeyBind.generateSequence(ev, ui);
+        return KeyBind.KB_TOGGLE_GRID.check(bind, () -> { showgrid(gridlines == null); return true; });
     }
 
     public Object tooltip(Coord c, Widget prev) {

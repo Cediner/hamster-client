@@ -42,42 +42,42 @@ public class KeyBind {
     static {
 	{ // UI Keybinds
 	    final String UI_GRP = "UI";
-	    KB_TOGGLE_MINIMAP = addKB("Toggle Minimap", UI_GRP, "C-A");
-	    KB_TOGGLE_INV = addKB("Toggle Inventory", UI_GRP, "Tab");
-	    KB_TOGGLE_EQU = addKB("Toggle Equipment", UI_GRP, "C-E");
-	    KB_TOGGLE_CHAR = addKB("Toggle Charsheet", UI_GRP, "C-T");
-	    KB_TOGGLE_KIN = addKB("Toggle Kin List", UI_GRP, "C-B");
-	    KB_TOGGLE_OPTS = addKB("Toggle Options", UI_GRP, "C-O");
-	    KB_TOGGLE_CHAT = addKB("Toggle Chat", UI_GRP, "C-C");
+	    KB_TOGGLE_MINIMAP = addKB("Toggle Minimap", UI_GRP, "C-A"); //GameUI
+	    KB_TOGGLE_INV = addKB("Toggle Inventory", UI_GRP, "Tab"); //GameUI
+	    KB_TOGGLE_EQU = addKB("Toggle Equipment", UI_GRP, "C-E"); //GameUI
+	    KB_TOGGLE_CHAR = addKB("Toggle Charsheet", UI_GRP, "C-T"); //GameUI
+	    KB_TOGGLE_KIN = addKB("Toggle Kin List", UI_GRP, "C-B"); //GameUI
+	    KB_TOGGLE_OPTS = addKB("Toggle Options", UI_GRP, "C-O"); //GameUI
+	    KB_TOGGLE_CHAT = addKB("Toggle Chat", UI_GRP, "C-C"); //GameUI
 	    KB_TOGGLE_FORAGE = addKB("Toggle Forage", UI_GRP, "S-F"); //TODO
 	    KB_TOGGLE_LIVESTOCK = addKB("Toggle Livestock Manager", UI_GRP, "S-L"); //TODO
-	    KB_TOGGLE_CMD = addKB("Toggle Console", UI_GRP, "S-Semicolon");
+	    KB_TOGGLE_CMD = addKB("Toggle Console", UI_GRP, "S-Semicolon"); //GameUI / Root
 	    KB_TOGGLE_PROFILER = addKB("Toggle Profiler", UI_GRP, "C-L"); //TODO fix
-	    KB_FOCUS_MAP = addKB("Focus Map", UI_GRP, "Escape");
-	    KB_RECALL_MAP_ONE = addKB("Recall First map pos/size", UI_GRP, "C-Z");
-	    KB_RECALL_MAP_TWO = addKB("Recall Second map pos/size", UI_GRP, "C-X");
+	    KB_FOCUS_MAP = addKB("Focus Map", UI_GRP, "Escape"); //GameUI
+	    KB_RECALL_MAP_ONE = addKB("Recall First map pos/size", UI_GRP, "C-Z"); //MapWnd
+	    KB_RECALL_MAP_TWO = addKB("Recall Second map pos/size", UI_GRP, "C-X"); //MapWnd
 	    KB_LOCK_ITEM_ON_MOUSE = addKB("Lock item on mouse", UI_GRP, "Back Quote"); //TODO
-	    KB_SCREENSHOT = addKB("Screenshot", UI_GRP, "M-S");
+	    KB_SCREENSHOT = addKB("Screenshot", UI_GRP, "M-S"); //GameUI
 	}
 	{ // Gameplay Keybinds
 	    final String GP_GRP = "Gameplay";
-	    KB_TOGGLE_GRID = addKB("Toggle Grid Lines", GP_GRP, "C-G"); //TODO
+	    KB_TOGGLE_GRID = addKB("Toggle Grid Lines", GP_GRP, "C-G");
 	    KB_TOGGLE_TIPS = addKB("Toggle Hovertips", GP_GRP, "C-Q"); //TODO
 	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H"); //TODO
 	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G"); //TODO
-	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P");
+	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root
 	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q"); //TODO
 	    KB_QUICK_BOARD = addKB("Quick Board", GP_GRP, "S-Q"); //TODO
 	    KB_EQ_HELD_INTO_LH = addKB("Equip Held Item Into Left Hand", GP_GRP, "M-Z"); //TODO
-	    KB_EQ_HELD_INTO_RH = addKB("Eqip Held Item Into Right Hand", GP_GRP, "M-X"); //TODO
+	    KB_EQ_HELD_INTO_RH = addKB("Equip Held Item Into Right Hand", GP_GRP, "M-X"); //TODO
 	}
 	{ // Movement Keybinds
 	    final String MV_GRP = "Movement";
-	    KB_CYCLE_SPEED = addKB("Cycle Character Speed", MV_GRP, "C-R");
-	    KB_CRAWL = addKB("Change to Crawl Speed", MV_GRP, "M-Q");
-	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W");
-	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E");
-	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R");
+	    KB_CYCLE_SPEED = addKB("Cycle Character Speed", MV_GRP, "C-R"); //Speedget
+	    KB_CRAWL = addKB("Change to Crawl Speed", MV_GRP, "M-Q"); //Speedget
+	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W"); //Speedget
+	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E"); //Speedget
+	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R"); //Speedget
 	    KB_MOVE_NORTH = addKB("Move North", MV_GRP, "Up"); //TODO
 	    KB_MOVE_SOUTH = addKB("Move South", MV_GRP, "Down"); //TODO
 	    KB_MOVE_EAST = addKB("Move East", MV_GRP, "Left"); //TODO
