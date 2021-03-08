@@ -59,18 +59,6 @@ public class VMeter extends Widget {
 	this.amount = amount;
 	this.cl = cl;
     }
-
-    @Override
-    protected void added() {
-	super.added();
-	ui.sess.details.attachVMeter(this);
-    }
-
-    @Override
-    protected void removed() {
-	ui.sess.details.removeVMeter(this);
-	super.removed();
-    }
 	
     public void draw(GOut g) {
 	g.image(bg, Coord.z);
@@ -93,6 +81,18 @@ public class VMeter extends Widget {
     }
 
     /** For the Scripting API  **********************************************************/
+    @Override
+    protected void binded() {
+	super.binded();
+	ui.sess.details.attachVMeter(this);
+    }
+
+    @Override
+    protected void removed() {
+	ui.sess.details.removeVMeter(this);
+	super.removed();
+    }
+
     public int amount() {
 	return amount;
     }

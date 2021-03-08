@@ -79,33 +79,6 @@ public class Inventory extends Widget implements DTarget {
 	super(sqsz.mul(sz).add(1, 1));
 	isz = sz;
     }
-
-    @Override
-    protected void binded() {
-	super.binded();
-	if(parent instanceof Window) {
-	    final Window par = (Window) parent;
-	    if(par.cap != null) {
-		switch (par.cap.text) {
-		    case "Inventory" -> type = SessionDetails.InventoryType.MAIN;
-		    case "Belt" -> type = SessionDetails.InventoryType.BELT;
-		    default -> type = SessionDetails.InventoryType.SUPPLEMENTAL;
-		}
-	    } else {
-		type = SessionDetails.InventoryType.SUPPLEMENTAL;
-	    }
-	} else {
-	    //pretty sure this has to be the study
-	    type = SessionDetails.InventoryType.STUDY;
-	}
-
-	ui.sess.details.attachInventory(this, type);
-    }
-    
-    @Override
-    protected void removed() {
-	ui.sess.details.removeInventory(this, type);
-    }
     
     public boolean mousewheel(Coord c, int amount) {
 	if(ui.modshift) {
@@ -164,6 +137,33 @@ public class Inventory extends Widget implements DTarget {
 
 
     /** For the Scripting API  **********************************************************/
+    @Override
+    protected void binded() {
+	super.binded();
+	if(parent instanceof Window) {
+	    final Window par = (Window) parent;
+	    if(par.cap != null) {
+		switch (par.cap.text) {
+		    case "Inventory" -> type = SessionDetails.InventoryType.MAIN;
+		    case "Belt" -> type = SessionDetails.InventoryType.BELT;
+		    default -> type = SessionDetails.InventoryType.SUPPLEMENTAL;
+		}
+	    } else {
+		type = SessionDetails.InventoryType.SUPPLEMENTAL;
+	    }
+	} else {
+	    //pretty sure this has to be the study
+	    type = SessionDetails.InventoryType.STUDY;
+	}
+
+	ui.sess.details.attachInventory(this, type);
+    }
+
+    @Override
+    protected void removed() {
+	ui.sess.details.removeInventory(this, type);
+    }
+
     public String name() {
 	if(parent instanceof Window && ((Window) parent).cap != null) {
 	    return ((Window) parent).cap.text;
