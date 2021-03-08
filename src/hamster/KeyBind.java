@@ -68,8 +68,8 @@ public class KeyBind {
 	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root
 	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q"); //TODO
 	    KB_QUICK_BOARD = addKB("Quick Board", GP_GRP, "S-Q"); //TODO
-	    KB_EQ_HELD_INTO_LH = addKB("Equip Held Item Into Left Hand", GP_GRP, "M-Z"); //TODO
-	    KB_EQ_HELD_INTO_RH = addKB("Equip Held Item Into Right Hand", GP_GRP, "M-X"); //TODO
+	    KB_EQ_HELD_INTO_LH = addKB("Equip Held Item Into Left Hand", GP_GRP, "M-Z");
+	    KB_EQ_HELD_INTO_RH = addKB("Equip Held Item Into Right Hand", GP_GRP, "M-X");
 	}
 	{ // Movement Keybinds
 	    final String MV_GRP = "Movement";
