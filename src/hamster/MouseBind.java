@@ -58,6 +58,7 @@ public class MouseBind {
         HITM_TOGGLE_LOCK = addMB("Toggle lock on held item", HITM_GRP, "C-B3");
         HITM_DROP = addMB("Drop Held Item ", HITM_GRP, "B1");
         HITM_IACT_OBJ = addMB("Interact Held Item with Object", HITM_GRP, "B3");
+        //XXX: This one may no longer be possible due to server-side updates
         HITM_IACT = addMB("Interact with Held Item (only when locked)", HITM_GRP, "M-B3");
     }
 
