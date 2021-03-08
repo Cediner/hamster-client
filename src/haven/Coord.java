@@ -313,4 +313,8 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
     }
 
     public Coord copy() { return new Coord(x, y); }
+
+    public int area() {
+	return x * y;
+    }
 }
