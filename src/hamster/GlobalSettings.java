@@ -14,6 +14,10 @@ public class GlobalSettings {
     //Non-saved globals
     public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(tmp, "tmp.pause", false);
 
+    //General options
+    public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
+    public static final IndirSetting<Boolean> SHOWSTATS = new IndirSetting<>(global, "system.show-stats", false);
+
     //Display options
     public static final IndirSetting<Boolean> VSYNC = new IndirSetting<>(global, "display.vsync", true);
     public static final IndirSetting<Integer> FPS = new IndirSetting<>(global, "display.fps", 60);

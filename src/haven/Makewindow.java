@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 import static haven.Inventory.invsq;
 
 public class Makewindow extends Widget {
-    public static final Text qmodl = Text.render("Quality:");
+    public static final Text qmodl = Text.render("haven.res.ui.tt.q.qbuff.Quality:");
     public static final Text tooll = Text.render("Tools:");
     public static final Coord boff = UI.scale(new Coord(7, 9));
     public String rcpnm;

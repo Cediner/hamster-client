@@ -1,5 +1,6 @@
 package hamster.ui.opt;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
 import hamster.ui.core.indir.IndirRadioGroup;
@@ -18,8 +19,8 @@ public class GameplayPanel extends Scrollport {
         final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
 
         { //System
-            sys.add(new IndirCheckBox("Debug Mode", ui.gui.settings.DEBUG));
-            sys.add(new IndirCheckBox("Display stats in top right", ui.gui.settings.SHOWSTATS));
+            sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
+            sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
             sys.pack();
         }
         { //Camera

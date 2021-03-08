@@ -71,10 +71,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> LIMITPATHFINDING;
     public final IndirSetting<Boolean> RESEARCHUNTILGOAL;
 
-    ////Debug
-    public final IndirSetting<Boolean> DEBUG;
-    public final IndirSetting<Boolean> SHOWSTATS;
-
     ////UI
     public final IndirSetting<Boolean> SHOWPLAVA;
     public final IndirSetting<Boolean> SHOWSPEED;
@@ -175,10 +171,6 @@ public class SessionSettings {
         PATHFINDINGTIER = new IndirSetting<>(local, "pathfinding.tier", 3);
         LIMITPATHFINDING = new IndirSetting<>(local, "pathfinding.limit-distance-to-view", false);
         RESEARCHUNTILGOAL = new IndirSetting<>(local, "pathfinding.research-until-at-goal", false);
-
-        //Debug
-        DEBUG = new IndirSetting<>(local, "debug", false);
-        SHOWSTATS = new IndirSetting<>(local, "graphics.show-stats", false);
 
         //UI
         SHOWPLAVA = new IndirSetting<>(local, "ui.show-player-avatar", true);

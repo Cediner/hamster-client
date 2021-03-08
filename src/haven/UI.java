@@ -199,6 +199,7 @@ public class UI {
 	synchronized(widgets) {
 	    widgets.put(id, w);
 	    rwidgets.put(w, id);
+	    w.binded();
 	}
     }
 

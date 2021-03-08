@@ -97,7 +97,7 @@ public class VideoPanel extends Scrollport {
             shadow.add(new IndirCheckBox("Render shadows", SHADOWS));
             //shadow quality
             {
-                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow Quality", UI.scale(450), SHADOWQUALITY, resetshadows));
+                final IndirRadioGroup<Integer> sqrg = shadow.add(new IndirRadioGroup<>("Shadow haven.res.ui.tt.q.qbuff.Quality", UI.scale(450), SHADOWQUALITY, resetshadows));
                 for(int i = 0; i < MapView.shadowmap.length; ++i) {
                     sqrg.add(Integer.toString(MapView.shadowmap[i]), i);
                 }

@@ -26,7 +26,9 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.io.SQLResCache;
+import hamster.util.JobSystem;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -1176,8 +1178,67 @@ public class Resource implements Serializable {
 	public Code(Message buf) {
 	    name = buf.string();
 	    data = buf.bytes();
+	    if(GlobalSettings.DEBUG.get()) {
+		JobSystem.submit(() -> {
+		    final String resname = Resource.this.name;
+		    final String path = "data/dump/compiled/" + resname;
+		    final String fn = path + "/" + Code.this.name + ".class";
+		    final File file = new File(path);
+		    if (file.mkdirs()) {
+			try {
+			    final File cls = new File(fn);
+			    boolean exists = cls.exists();
+			    if (!exists)
+				exists = cls.createNewFile();
+			    if (exists) {
+				try (final FileOutputStream fos = new FileOutputStream(cls)) {
+				    fos.write(data);
+				    fos.flush();
+				}
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    }
 	}
 		
+	public void init() {}
+    }
+
+    @LayerName("src")
+    public class Source extends Layer {
+        public Source(final Message buf) {
+	    buf.uint8(); //not sure what this is for.
+            final String name = buf.string();
+	    final byte[] data = buf.bytes();
+	    if(GlobalSettings.DEBUG.get()) {
+		JobSystem.submit(() -> {
+		    final String resname = Resource.this.name;
+		    final String path = "data/dump/source/" + resname;
+		    final String fn = path + "/" + name;
+		    final File file = new File(path);
+		    if (file.mkdirs()) {
+			try {
+			    final File cls = new File(fn);
+			    boolean exists = cls.exists();
+			    if (!exists)
+				exists = cls.createNewFile();
+			    if (exists) {
+				try (final FileOutputStream fos = new FileOutputStream(cls)) {
+				    fos.write(data);
+				    fos.flush();
+				}
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    }
+	}
+
 	public void init() {}
     }
 

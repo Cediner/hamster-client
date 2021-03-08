@@ -469,7 +469,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		};
 		invwnd.add(maininv = (Inventory) child, Coord.z);
 		invwnd.pack();
-		invwnd.hide();
+		if(!settings.SHOWINVONLOGIN.get())
+		    invwnd.hide();
 		add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	    }
 	    case "equ" -> {

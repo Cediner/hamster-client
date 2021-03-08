@@ -31,19 +31,54 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.Pattern;
+
+import hamster.data.ItemData;
 import haven.ItemInfo.AttrCache;
+import haven.res.ui.tt.Wear;
+import haven.res.ui.tt.q.qbuff.Quality;
+
 import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
     public static final Resource missing = Resource.local().loadwait("gfx/invobjs/missing");
+    public static final Tex lockt = Resource.loadtex("custom/inv/locked");
     public final GItem item;
     private Resource cspr = null;
     private Message csdt = Message.nil;
+    private boolean locked = false;
+    //haven.res.ui.tt.q.qbuff.Quality display
+    private double q_last;
+    private Tex qtex;
 
     public WItem(GItem item) {
 	super(sqsz);
 	this.item = item;
+	this.item.setWItem(this);
+	itemols  = new AttrCache<>(this::info, info -> {
+	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
+	    for(ItemInfo inf : info) {
+		if (inf instanceof GItem.OverlayInfo) {
+		    if (inf instanceof Quality) {
+			//For Quality if we have Contents we'd rather get their quality over the item quality
+			item.getinfo(ItemInfo.Contents.class).ifPresentOrElse(cnt -> {
+			    item.getinfo(Quality.class, cnt.sub)
+				    .ifPresentOrElse(q -> buf.add(GItem.InfoOverlay.create(q)),
+					    () -> buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf)));
+			}, () -> buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf)));
+		    } else {
+			buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf));
+		    }
+		}
+	    }
+	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
+	    return(() -> ret);
+	});
+    }
+
+    public boolean locked() {
+	return locked;
     }
 
     public void drawmain(GOut g, GSprite spr) {
@@ -95,6 +130,7 @@ public class WItem extends Widget implements DTarget {
     private double hoverstart;
     private ItemTip shorttip = null, longtip = null;
     private List<ItemInfo> ttinfo = null;
+
     public Object tooltip(Coord c, Widget prev) {
 	double now = Utils.rtime();
 	if(prev == this) {
@@ -115,7 +151,7 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0) {
+	    if(now - hoverstart < 1.0 && !ui.gui.settings.ALWAYSITEMLONGTIPS.get()) {
 		if(shorttip == null)
 		    shorttip = new ShortTip(info);
 		return(shorttip);
@@ -142,16 +178,8 @@ public class WItem extends Widget implements DTarget {
 	    Color fret = ret;
 	    return(() -> fret);
 	});
-    public final AttrCache<GItem.InfoOverlay<?>[]> itemols = new AttrCache<>(this::info, info -> {
-	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
-	    for(ItemInfo inf : info) {
-		if(inf instanceof GItem.OverlayInfo)
-		    buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>)inf));
-	    }
-	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
-	    return(() -> ret);
-	});
-    public final AttrCache<Double> itemmeter = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+    public final AttrCache<GItem.InfoOverlay<?>[]> itemols;
+    public final AttrCache<Double> itemmeter = new AttrCache<Double>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
     private GSprite lspr = null;
     public void tick(double dt) {
@@ -167,6 +195,29 @@ public class WItem extends Widget implements DTarget {
 		sz.y = sqsz.y * ((sz.y / sqsz.y) + 1);
 	    resize(sz);
 	    lspr = spr;
+	}
+    }
+
+    private static final Color[] wearclr = new Color[]{
+	    new Color(233, 0, 14),
+	    new Color(218, 128, 87),
+	    new Color(246, 233, 87),
+	    new Color(145, 225, 60)
+    };
+    private static final Pattern liquid_pat = Pattern.compile("([0-9]+\\.[0-9]+) l of (.+)");
+    private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
+    private static final Pattern seed_pat = Pattern.compile("([0-9]+) seeds of (.+)");
+    private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
+    private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
+
+    public int wearlevel() {
+	final Optional<Wear> wear = item.getinfo(Wear.class);
+	if (wear.isPresent()) {
+	    double p = 1 - wear.get().percent();
+	    int h = (int) (p * (double) sz.y);
+	    return p == 1.0 ? 3 : (int) (p / 0.25);
+	} else {
+	    return -1;
 	}
     }
 
@@ -190,6 +241,20 @@ public class WItem extends Widget implements DTarget {
 		Coord half = sz.div(2);
 		g.prect(half, half.inv(), half, meter * Math.PI * 2);
 		g.chcolor();
+	    }
+
+	    if (ui.gui.settings.SHOWITEMWEAR.get()) {
+		item.getinfo(Wear.class).ifPresent(wear -> {
+		    double p = 1 - wear.percent();
+		    int h = (int) (p * (double) sz.y);
+		    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
+		    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+		    g.chcolor();
+		});
+	    }
+
+	    if (locked) {
+		g.image(lockt, Coord.z);
 	    }
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
