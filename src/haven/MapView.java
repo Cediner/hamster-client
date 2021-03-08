@@ -75,12 +75,32 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public abstract class Camera implements Pipe.Op {
 	protected haven.render.Camera view = new haven.render.Camera(Matrix4f.identity());
 	protected Projection proj = new Projection(Matrix4f.identity());
+	private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 	
 	public Camera() {
 	    resized();
+
+	    binds.put(KeyBind.KB_CAM_IN, this::zoomin);
+	    binds.put(KeyBind.KB_CAM_OUT, this::zoomout);
+	    binds.put(KeyBind.KB_CAM_LEFT, this::turnleft);
+	    binds.put(KeyBind.KB_CAM_RIGHT, this::turnright);
+	    binds.put(KeyBind.KB_CAM_RESET, this::reset);
+	    binds.put(KeyBind.KB_RECENTER_CAMERA, this::center);
 	}
 
+	protected boolean zoomin() { return false; }
+	protected boolean zoomout() { return false; }
+	protected boolean turnleft() { return false; }
+	protected boolean turnright() { return false; }
+	protected boolean reset() { return false; }
+	protected boolean center() { return false; }
+
 	public boolean keydown(KeyEvent ev) {
+	    final String bind = KeyBind.generateSequence(ev, ui);
+	    for(final var kb : binds.keySet()) {
+		if(kb.check(bind, binds.get(kb)))
+		    return true;
+	    }
 	    return(false);
 	}
 
@@ -369,11 +389,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
-    public static KeyBinding kb_camleft  = KeyBinding.get("cam-left",  KeyMatch.forcode(KeyEvent.VK_LEFT, 0));
-    public static KeyBinding kb_camright = KeyBinding.get("cam-right", KeyMatch.forcode(KeyEvent.VK_RIGHT, 0));
-    public static KeyBinding kb_camin    = KeyBinding.get("cam-in",    KeyMatch.forcode(KeyEvent.VK_UP, 0));
-    public static KeyBinding kb_camout   = KeyBinding.get("cam-out",   KeyMatch.forcode(KeyEvent.VK_DOWN, 0));
-    public static KeyBinding kb_camreset = KeyBinding.get("cam-reset", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
     public class SOrthoCam extends OrthoCam {
 	private Coord dragorig = null;
 	private float anglorig;
@@ -453,25 +468,35 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    return(true);
 	}
 
-	public boolean keydown(KeyEvent ev) {
-	    if(kb_camleft.key().match(ev)) {
-		tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) - 0.51) + 0.5));
-		return(true);
-	    } else if(kb_camright.key().match(ev)) {
-		tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) + 0.51) + 0.5));
-		return(true);
-	    } else if(kb_camin.key().match(ev)) {
-		chfield(tfield - 50);
-		return(true);
-	    } else if(kb_camout.key().match(ev)) {
-		chfield(tfield + 50);
-		return(true);
-	    } else if(kb_camreset.key().match(ev)) {
-		tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
-		chfield((float)(100 * Math.sqrt(2)));
-		return(true);
-	    }
-	    return(false);
+	@Override
+	protected boolean zoomin() {
+	    chfield(tfield - 50);
+	    return(true);
+	}
+
+	@Override
+	protected boolean zoomout() {
+	    chfield(tfield + 50);
+	    return(true);
+	}
+
+	@Override
+	protected boolean turnleft() {
+	    tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) - 0.51) + 0.5));
+	    return(true);
+	}
+
+	@Override
+	protected boolean turnright() {
+	    tangl = (float)(Math.PI * 0.5 * (Math.floor((tangl / (Math.PI * 0.5)) + 0.51) + 0.5));
+	    return(true);
+	}
+
+	@Override
+	protected boolean reset() {
+	    tangl = angl + (float)Utils.cangle(-(float)Math.PI * 0.25f - angl);
+	    chfield((float)(100 * Math.sqrt(2)));
+	    return(true);
 	}
     }
     static {camtypes.put("ortho", SOrthoCam.class);}

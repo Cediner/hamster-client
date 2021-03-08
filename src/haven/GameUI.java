@@ -875,7 +875,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	return(wnd.visible);
     }
 
-    public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.forchar('S', KeyMatch.M));
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
     private void setKeybinds() {
         binds.put(KB_TOGGLE_CMD, () -> { entercmd(); return true; });

@@ -27,7 +27,10 @@ public class KeyBind {
 	KB_AGGRO_TARGET, KB_TARGET_CURRENT, KB_PEACE_CURRENT, KB_CYCLEUP_OPP, KB_CYCLEDOWN_OPP;
     public static final KeyBind[] KB_FIGHT_MOVE;
     public static final KeyBind // Camera
-	    KB_RECENTER_CAMERA;
+     	KB_RECENTER_CAMERA, KB_CAM_RESET, KB_CAM_LEFT, KB_CAM_RIGHT, KB_CAM_IN, KB_CAM_OUT;
+    public static final KeyBind // MapWnd
+    	KB_MAP_HOME, KB_MAP_MARK, KB_MAP_HIDE_MARKERS, KB_MAP_COMPACT;
+
     //Hotkeys
     public static final KeyBind[] KB_HK_F, KB_HK_N, KB_HK;
     public static final KeyBind[] KB_HK_FP, KB_HK_NP, KB_HK_P;
@@ -103,6 +106,11 @@ public class KeyBind {
 	{ // Camera Keybinds
 	    final String CAM_GRP = "Camera";
 	    KB_RECENTER_CAMERA = addKB("Recenter Camera on Player", CAM_GRP, "S-C"); //TODO
+	    KB_CAM_RESET = addKB("Reset Camera", CAM_GRP, "Home");
+	    KB_CAM_LEFT = addKB("Move Camera Left", CAM_GRP, "Left");
+	    KB_CAM_RIGHT = addKB("Move Camera Right", CAM_GRP, "Right");
+	    KB_CAM_IN = addKB("Zoom Camera In", CAM_GRP, "Up");
+	    KB_CAM_OUT = addKB("Zoom Camera Out", CAM_GRP, "Down");
 	}
 	{ // Setup Hotkey keybinds
 	    final String HB_GRP = "Hotbar";
@@ -125,6 +133,13 @@ public class KeyBind {
 		}
 	    }
 	}
+	{ // MapWnd Keybinds
+	    final String MAP_GRP = "Minimap";
+	    KB_MAP_HOME = addKB("Recenter minimap on player", MAP_GRP, "C-Home");
+	    KB_MAP_MARK = addKB("Add marker to minimap", MAP_GRP, "");
+	    KB_MAP_HIDE_MARKERS = addKB("Hide all markers on minimap", MAP_GRP, "C-M");
+	    KB_MAP_COMPACT = addKB("Hide borders of minimap", MAP_GRP, "");
+	}
     }
 
     @FunctionalInterface
@@ -146,11 +161,11 @@ public class KeyBind {
     }
 
     public boolean check(final String ibind, final Command action) {
-	return ibind.equals(bind.get()) && action.run();
+	return !ibind.equals("") && ibind.equals(bind.get()) && action.run();
     }
 
     public boolean match(final String ibind) {
-        return ibind.equals(bind.get());
+        return !ibind.equals("") && ibind.equals(bind.get());
     }
 
     public static boolean validBinding(final IndirSetting<String> ignore, final String binding) {
