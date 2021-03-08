@@ -35,6 +35,7 @@ import hamster.ui.ChatWnd;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.QuestWnd;
 import hamster.ui.opt.OptionsWnd;
+import hamster.ui.script.ScriptManager;
 
 import java.util.*;
 import java.util.function.*;
@@ -103,6 +104,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     //Equipment
     public Equipory equ;
 
+    //Script Management
+    public final ScriptManager scripts;
+
     //Session
     public final SessionSettings settings;
 
@@ -170,6 +174,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), 4, 100);
 	//Setup keybinds
 	setKeybinds();
+	//Custom Wdgs
+	scripts = new ScriptManager();
     }
 
     protected void attached() {
@@ -213,6 +219,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	portrait = add(new Avaview(Avaview.dasz, plid, "plavacam"), UI.scale(new Coord(10, 10)));
 	buffs = add(new Bufflist(), UI.scale(new Coord(95, 65)));
     	add(cal, new Coord(sz.x / 2 - cal.sz.x / 2, 0));
+    	add(scripts).hide();
     }
 
     public void dispose() {

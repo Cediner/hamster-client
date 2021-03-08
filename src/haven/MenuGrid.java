@@ -303,6 +303,9 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::landmanager",
 		Resource.local().load("custom/paginae/default/wnd/selector"),
 		(pag) -> ui.gui.add(new MapMod(true))));
+	addCustom(new CustomPagina(this, "management::scripts",
+		Resource.local().load("custom/paginae/default/wnd/scripts"),
+		(pag) -> ui.gui.scripts.toggleVisiblity()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),
