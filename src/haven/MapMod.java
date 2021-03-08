@@ -36,29 +36,36 @@ public class MapMod extends Window implements MapView.Grabber {
     CheckBox cbox;
     Button btn;
     Label text;
-    Coord sc, c1, c2;
+    Coord sc, c1, c2, ec;
     TextEntry tilenm;
     public final static String fmt = "Selected: %d" + (char)(0xD7) + "%d";
+    private final boolean fake;
     
     @RName("mapmod")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
-	    return(new MapMod());
+	    return(new MapMod(false));
 	}
     }
 
-    public MapMod() {
-        super(new Coord(200, 100), "Kartlasskostning");
+    public MapMod(final boolean fake) {
+        super(new Coord(300, 100), "Land Manager", "Land Manager");
         walkmod = false;
-        cbox = add(new CheckBox("Walk drawing", true), Coord.z);
-	cbox.canactivate = true;
-        btn = add(new Button(40, "Change"), asz.add(-50, -30));
+        cbox = add(new CheckBox("Walk drawing"), 0, 20);
+        cbox.canactivate = true;
         text = add(new Label(String.format(fmt, 0, 0)), 0, 0);
-        tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
-        tilenm.canactivate = true;
+        if (!fake) {
+            btn = add(new Button(40, "Change"), asz.add(-50, -30));
+            tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
+            tilenm.canactivate = true;
+        } else {
+            btn = add(new Button(100, "Select Area"), cbox.c.add(0, cbox.sz.y));
+        }
+        this.fake = fake;
     }
 
     protected void added() {
+        super.added();
 	map = ui.sess.glob.map;
 	mv = getparent(GameUI.class).map;
 	grab = mv.new GrabXL(this);
@@ -99,6 +106,9 @@ public class MapMod extends Window implements MapView.Grabber {
 	    mgrab.remove();
 	    mgrab = null;
 	}
+        if (sc != null) {
+            ec = mc.div(MCache.tilesz2);
+        }
 	return(true);
     }
 	
@@ -122,13 +132,30 @@ public class MapMod extends Window implements MapView.Grabber {
         ol.update(new Area(c1, c2.add(1, 1)));
         this.c1 = c1;
         this.c2 = c2;
-        text.settext(String.format(fmt, c2.x - c1.x + 1, c2.y - c1.y + 1));
+        Coord sz = tc.sub(sc).positive().add(1, 1);
+        if (fake)
+            text.settext(String.format(fmt, sz.x, sz.y));
+        else
+            text.settext(String.format(fmt, c2.x - c1.x + 1, c2.y - c1.y + 1));
+    }
+
+    @Override
+    public void close() {
+        if (fake) {
+            ui.destroy(this);
+        } else {
+            super.close();
+        }
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if(sender == btn) {
-            if((c1 != null) && (c2 != null))
+            if ((c1 != null) && (c2 != null) && !fake)
                 wdgmsg("mod", c1, c2);
+            else if(fake) {
+                ui.sess.details.context.dispatchmsg(this, "bot-select", sc, ec);
+                ui.destroy(this);
+            }
             return;
         }
         if(sender == cbox) {
@@ -141,7 +168,8 @@ public class MapMod extends Window implements MapView.Grabber {
                 ol = null;
                 mv.release(grab);
             }
-            wdgmsg("wm", walkmod?1:0);
+            if (!fake)
+                wdgmsg("wm", walkmod ? 1 : 0);
             return;
         }
         if(sender == tilenm) {

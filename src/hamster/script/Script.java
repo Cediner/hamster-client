@@ -83,6 +83,7 @@ public abstract class Script extends Thread {
         return (Script) Thread.currentThread();
     }
 
+    @SuppressWarnings("unused")
     public static void checkintp() throws InterruptedException {
         if (((Script) Thread.currentThread()).intp()) {
             throw new InterruptedException();
@@ -113,6 +114,7 @@ public abstract class Script extends Thread {
         }
     }
 
+    @SuppressWarnings("unused")
     public Coord resolvePosition(final long gridid) {
         return GridData.resolve(gridid);
     }
@@ -129,6 +131,7 @@ public abstract class Script extends Thread {
         return allowExternalMsgs;
     }
 
+    @SuppressWarnings("unused")
     public void stopListening() {
         listening = false;
     }
