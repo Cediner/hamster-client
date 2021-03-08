@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.KeyBind;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -676,8 +678,9 @@ public class FightWnd extends Widget {
 	}
 
 	public boolean keydown(KeyEvent ev) {
+	    final String bind = KeyBind.generateSequence(ev, ui);
 	    if(edit != -1) {
-		if(key_esc.match(ev)) {
+		if(kb_esc.match(bind)) {
 		    edit = -1;
 		    redit = null;
 		    nmed = null;

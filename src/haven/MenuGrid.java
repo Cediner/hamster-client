@@ -37,7 +37,7 @@ import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
+public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
@@ -63,24 +63,24 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
     public static class PagButton implements ItemInfo.Owner {
 	public final Pagina pag;
 	public final Resource res;
-	public final KeyBinding bind;
+	public final KeyBind kb;
 
 	public PagButton(Pagina pag) {
 	    this.pag = pag;
 	    this.res = pag.res();
-	    this.bind = binding();
+	    this.kb = binding();
 	}
 
 	public BufferedImage img() {return(res.layer(Resource.imgc).scaled());}
 	public String name() {return(res.layer(Resource.action).name);}
-	public KeyMatch hotkey() {
+	public String hotkey() {
 	    char hk = res.layer(Resource.action).hk;
 	    if(hk == 0)
-		return(KeyMatch.nil);
-	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0));
+		return "";
+	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0).name());
 	}
-	public KeyBinding binding() {
-	    return(KeyBinding.get("scm/" + res.name, hotkey()));
+	public KeyBind binding() {
+	    return KeyBind.getDynamicKB(res.name, "MenuGrid", hotkey());
 	}
 	public void use() {
 	    pag.use();
@@ -107,17 +107,15 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	public BufferedImage rendertt(boolean withpg) {
 	    Resource.Pagina pg = res.layer(Resource.pagina);
 	    String tt = name();
-	    KeyMatch key = bind.key();
+	    final String key = kb.bind.get();
 	    int pos = -1;
-	    char vkey = key.chr;
-	    if((vkey == 0) && (key.keyname.length() == 1))
-		vkey = key.keyname.charAt(0);
-	    if((vkey != 0) && (key.modmatch == 0))
+	    char vkey = key.length() > 0 ? key.charAt(0) : '\0';
+	    if((vkey != 0) && (key.contains("-")))
 		pos = tt.toUpperCase().indexOf(Character.toUpperCase(vkey));
 	    if(pos >= 0)
 		tt = tt.substring(0, pos) + "$b{$col[255,128,0]{" + tt.charAt(pos) + "}}" + tt.substring(pos + 1);
-	    else if(key != KeyMatch.nil)
-		tt += " [$b{$col[255,128,0]{" + key.name() + "}}]";
+	    else if(!key.equals(""))
+		tt += " [$b{$col[255,128,0]{" + key + "}}]";
 	    BufferedImage ret = ttfnd.render(tt, UI.scale(300)).img;
 	    if(withpg) {
 		List<ItemInfo> info = info();
@@ -136,8 +134,6 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	}
     }
 
-    public static final KeyBinding kb_back = KeyBinding.get("scm-back", KeyMatch.forcode(KeyEvent.VK_BACK_SPACE, 0));
-    public static final KeyBinding kb_next = KeyBinding.get("scm-next", KeyMatch.forchar('N', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S));
     public final PagButton next = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-next").indir())) {
 	    {pag.button = this;}
 
@@ -150,7 +146,7 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 
 	    public String name() {return("More...");}
 
-	    public KeyBinding binding() {return(kb_next);}
+	    public KeyBind binding() {return(KeyBind.KB_SCM_NEXT);}
 	};
 
     public final PagButton bk = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-back").indir())) {
@@ -163,7 +159,7 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 
 	    public String name() {return("Back");}
 
-	    public KeyBinding binding() {return(kb_back);}
+	    public KeyBind binding() {return(KeyBind.KB_SCM_BACK);}
 	};
 
     public static class Pagina {
@@ -608,14 +604,11 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	    if(kb.check(bind, binds.get(kb)))
 		return true;
 	}
-	int cp = -1;
 	PagButton pag = null;
 	for(PagButton btn : curbtns) {
-	    if(btn.bind.key().match(ev)) {
-		int prio = btn.bind.set() ? 1 : 0;
-		if((pag == null) || (prio > cp)) {
+	    if(btn.kb.match(bind)) {
+		if((pag == null)) {
 		    pag = btn;
-		    cp = prio;
 		}
 	    }
 	}
@@ -624,10 +617,5 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	    return(true);
 	}
 	return(false);
-    }
-
-    public KeyBinding getbinding(Coord cc) {
-	PagButton h = bhit(cc);
-	return((h == null) ? null : h.bind);
     }
 }

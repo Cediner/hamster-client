@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class KeyBind {
     private static final Settings datastore = new Settings("keybinds", new HashMap<>());
-    public static final List<KeyBind> keybinds = new ArrayList<>();
+    private static final List<KeyBind> keybinds = new ArrayList<>();
+    private static final Map<String, KeyBind> dynamicKeyBinds = new HashMap<>();
     public static final KeyBind // UI
     	KB_TOGGLE_MINIMAP, KB_TOGGLE_INV, KB_TOGGLE_EQU, KB_TOGGLE_CHAR, KB_TOGGLE_KIN, KB_TOGGLE_OPTS,
     	KB_TOGGLE_CHAT, KB_TOGGLE_FORAGE, KB_TOGGLE_LIVESTOCK, KB_TOGGLE_CMD, KB_TOGGLE_PROFILER, KB_FOCUS_MAP,
@@ -42,6 +43,23 @@ public class KeyBind {
 		new IndirSetting<>(datastore, name.replaceAll("\\s", "-").toLowerCase(), bind));
         keybinds.add(kb);
         return kb;
+    }
+
+    public static KeyBind getDynamicKB(final String name, final String grp, final String bind) {
+        final String key = grp + "/" + name;
+	if(dynamicKeyBinds.containsKey(key)) {
+	    return dynamicKeyBinds.get(key);
+	} else {
+	    final var set = new IndirSetting<>(datastore, key, bind);
+	    final KeyBind kb = new KeyBind(name, grp, set);
+	    dynamicKeyBinds.put(key, kb);
+	    return kb;
+	}
+    }
+
+    public static KeyBind getFinalKB(final String name, final String bind) {
+        return new KeyBind(name, "",
+		new IndirSetting<>(datastore, "final/"+name.replaceAll("\\s", "-").toLowerCase(), bind));
     }
 
     static {
