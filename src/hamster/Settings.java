@@ -53,7 +53,7 @@ public class Settings {
             strarr = Pattern.compile("^\\[(.+)]$"),
             color = Pattern.compile("^([0-9]+),([0-9]+),([0-9]+),([0-9]+)$"),
             basecolor = Pattern.compile("#<basecolor ([0-9]+\\.[0-9]+) ([0-9]+\\.[0-9]+) ([0-9]+\\.[0-9]+) ([0-9]+\\.[0-9]+)>");
-    private static final Map<Pattern, ParseFun> parsers;
+    public static final Map<Pattern, ParseFun> PARSERS_ALL;
 
     static {
         setdb.ensure(sql -> {
@@ -67,23 +67,23 @@ public class Settings {
                 "ON CONFLICT (account, key) DO UPDATE SET " +
                 "value=excluded.value");
 
-        parsers = new HashMap<>();
-        parsers.put(bool, (settings, key, val) -> settings.rawset(key, val.group(1).equals("true")));
-        parsers.put(intval, (settings, key, val) -> settings.rawset(key, Integer.parseInt(val.group(1))));
-        parsers.put(dval, (settings, key, val) -> settings.rawset(key, Double.parseDouble(val.group(1))));
-        parsers.put(coord, (settings, key, val) ->
+        PARSERS_ALL = new HashMap<>();
+        PARSERS_ALL.put(bool, (settings, key, val) -> settings.rawset(key, val.group(1).equals("true")));
+        PARSERS_ALL.put(intval, (settings, key, val) -> settings.rawset(key, Integer.parseInt(val.group(1))));
+        PARSERS_ALL.put(dval, (settings, key, val) -> settings.rawset(key, Double.parseDouble(val.group(1))));
+        PARSERS_ALL.put(coord, (settings, key, val) ->
                 settings.rawset(key, new Coord(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)))));
-        parsers.put(coord2d, (settings, key, val) ->
+        PARSERS_ALL.put(coord2d, (settings, key, val) ->
                 settings.rawset(key, new Coord2d(Double.parseDouble(val.group(1)), Double.parseDouble(val.group(2)))));
-        parsers.put(coord3f, (settings, key, val) ->
+        PARSERS_ALL.put(coord3f, (settings, key, val) ->
                 settings.rawset(key, new Coord3f(Float.parseFloat(val.group(1)), Float.parseFloat(val.group(2)), Float.parseFloat(val.group(3)))));
-        parsers.put(strarr, (settings, key, val) ->
+        PARSERS_ALL.put(strarr, (settings, key, val) ->
                 settings.rawset(key, val.group(1).split(",")));
-        parsers.put(color, (settings, key, val) ->
+        PARSERS_ALL.put(color, (settings, key, val) ->
                 settings.rawset(key,
                         new Color(Integer.parseInt(val.group(1)), Integer.parseInt(val.group(2)),
                                 Integer.parseInt(val.group(3)), Integer.parseInt(val.group(4)))));
-        parsers.put(basecolor, (settings, key, val) ->
+        PARSERS_ALL.put(basecolor, (settings, key, val) ->
             settings.rawset(key,
                     new BaseColor(Float.parseFloat(val.group(1)), Float.parseFloat(val.group(2)),
                             Float.parseFloat(val.group(3)), Float.parseFloat(val.group(4)))));
@@ -95,19 +95,28 @@ public class Settings {
     }
 
     private final Map<String, Object> settings;
+    private final Map<Pattern, ParseFun> parsers;
     private final String key;
     private final boolean writeback;
 
-
-    Settings(final String key, final boolean writeback) {
+    Settings(final String key, final boolean writeback, final Map<Pattern, ParseFun> parsers) {
         this.key = key;
         this.writeback = writeback;
+        this.parsers = parsers;
         settings = new TreeMap<>();
         load();
     }
 
+    Settings(final String key, final boolean writeback) {
+        this(key, writeback, PARSERS_ALL);
+    }
+
     Settings(final String key) {
-        this(key, true);
+        this(key, true, PARSERS_ALL);
+    }
+
+    Settings(final String key, final Map<Pattern, ParseFun> parsers) {
+        this(key, true,  parsers);
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class KeyBind {
-    private static final Settings datastore = new Settings("keybinds");
+    private static final Settings datastore = new Settings("keybinds", new HashMap<>());
     public static final List<KeyBind> keybinds = new ArrayList<>();
     public static final KeyBind // UI
     	KB_TOGGLE_MINIMAP, KB_TOGGLE_INV, KB_TOGGLE_EQU, KB_TOGGLE_CHAR, KB_TOGGLE_KIN, KB_TOGGLE_OPTS,
@@ -97,7 +97,7 @@ public class KeyBind {
 	    final int moves = 10;
 	    KB_FIGHT_MOVE = new KeyBind[moves];
 	    for(var i = 1; i <= moves; ++i) {
-		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, CBT_GRP, Integer.toString(i));
+		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, CBT_GRP, i == 10 ? "0" : Integer.toString(i));
 	    }
 	}
 	{ // Camera Keybinds
@@ -118,7 +118,7 @@ public class KeyBind {
 	    final String[] prefix = { "F", "NumPad-", "" };
 	    for(var j = 1; j <= hotkeys.length; j++) {
 	        for(var i = 1; i <= hotkeys[j-1].length; i++) {
-	            hotkeys[j-1][i-1] = addKB("Hotbar " + j + " - Slot " + i, HB_GRP, prefix[j-1]+i);
+	            hotkeys[j-1][i-1] = addKB("Hotbar " + j + " - Slot " + i, HB_GRP, prefix[j-1]+(i == 10 ? "0" : Integer.toString(i)));
 		}
 	        for(var i = 1; i < pages[j-1].length; i++) {
 	            pages[j-1][i-1] = addKB("Hotbar " + j + " - Page " + i, HB_GRP, "");

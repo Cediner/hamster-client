@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MouseBind {
-    private static final Settings datastore = new Settings("mousebinds");
+    private static final Settings datastore = new Settings("mousebinds", new HashMap<>());
     public static final Map<String, List<MouseBind>> bindgrps = new HashMap<>();
     //MapView related
     public static final MouseBind
@@ -18,7 +18,9 @@ public class MouseBind {
         ITM_TRANSFER, ITM_TRANSFER_ALL_ALIKE, ITM_DROP, ITM_DROP_ALL_ALIKE,
         ITM_TAKE, ITM_TOGGLE_LOCK, ITM_AUTO_EQUIP, ITM_AUTO_EQUIP_LH,
         ITM_AUTO_EQUIP_RH;
-    //
+    //Held Item Related
+    public static final MouseBind
+        HITM_TOGGLE_LOCK, HITM_DROP, HITM_IACT_OBJ, HITM_IACT;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
         final MouseBind mb = new MouseBind(name, group,
@@ -51,6 +53,12 @@ public class MouseBind {
         ITM_AUTO_EQUIP = addMB("Auto equip item", ITM_GRP, "M-B3");
         ITM_AUTO_EQUIP_LH = addMB("Auto equip item into left hand", ITM_GRP, "S-B2");
         ITM_AUTO_EQUIP_RH = addMB("Auto equip item into right hand", ITM_GRP, "C-B2");
+        //Held Item related
+        final String HITM_GRP = "Held Item";
+        HITM_TOGGLE_LOCK = addMB("Toggle lock on held item", HITM_GRP, "C-B3");
+        HITM_DROP = addMB("Drop Held Item ", HITM_GRP, "B1");
+        HITM_IACT_OBJ = addMB("Interact Held Item with Object", HITM_GRP, "B3");
+        HITM_IACT = addMB("Interact with Held Item (only when locked)", HITM_GRP, "M-B3");
     }
 
     @FunctionalInterface

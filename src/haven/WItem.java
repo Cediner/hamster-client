@@ -83,6 +83,10 @@ public class WItem extends Widget implements DTarget {
 	return locked;
     }
 
+    public void setLock(final boolean val) {
+	locked = val;
+    }
+
     public void drawmain(GOut g, GSprite spr) {
 	spr.draw(g);
     }
