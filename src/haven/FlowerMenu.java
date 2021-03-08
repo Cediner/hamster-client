@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.KeyBind;
+
 import java.awt.Color;
 import java.awt.Font;
 import static java.lang.Math.PI;
@@ -243,6 +245,7 @@ public class FlowerMenu extends Widget {
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
 	char key = ev.getKeyChar();
 	if((key >= '0') && (key <= '9')) {
 	    int opt = (key == '0')?10:(key - '1');
@@ -251,7 +254,7 @@ public class FlowerMenu extends Widget {
 		kg.remove();
 	    }
 	    return(true);
-	} else if(key_esc.match(ev)) {
+	} else if(kb_esc.match(bind)) {
 	    choose(null);
 	    kg.remove();
 	    return(true);

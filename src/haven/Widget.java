@@ -26,6 +26,8 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.KeyBind;
 import hamster.ui.core.WdgLocationHelper;
 
 import java.util.*;
@@ -35,6 +37,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public UI ui;
     public Coord c, sz;
     public int z;
@@ -47,9 +50,11 @@ public class Widget {
     public Indir<Resource> cursor = null;
     public Object tooltip = null;
     public KeyMatch gkey;
-    public KeyBinding kb_gkey;
     private Widget prevtt;
     static Map<String, Factory> types = new TreeMap<String, Factory>();
+
+    //Key Bind for custom actions with widget
+    public KeyBind kb;
 
     @dolda.jglob.Discoverable
     @Target(ElementType.TYPE)
@@ -726,10 +731,7 @@ public class Widget {
 	    if(args[0] instanceof Integer) {
 		KeyMatch key = gkeymatch((Integer)args[0]);
 		if(args.length > 1) {
-		    int modign = 0;
-		    if(args.length > 2)
-			modign = (Integer)args[2];
-		    setgkey(KeyBinding.get("wgk/" + (String)args[1], key, modign));
+		    setkb(KeyBind.getDynamicKB((String)args[1], "Widget", key.name()));
 		} else {
 		    gkey = key;
 		}
@@ -878,9 +880,10 @@ public class Widget {
     }
 
     public boolean globtype(char key, KeyEvent ev) {
+        final String bind = KeyBind.generateSequence(ev, ui);
 	KeyMatch gkey = this.gkey;
-	if(kb_gkey != null)
-	    gkey = kb_gkey.key();
+	if(kb != null && kb.match(bind))
+	    return gkeytype(ev);
 	if((gkey != null) && gkey.match(ev))
 	    return(gkeytype(ev));
 	for(Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
@@ -890,25 +893,27 @@ public class Widget {
 	return(false);
     }
 
-    public Widget setgkey(KeyBinding gkey) {
-	kb_gkey = gkey;
-	if((tooltip == null) && (kb_gkey != null))
-	    tooltip = new KeyboundTip();
-	return(this);
+    public Widget setkb(final KeyBind kb) {
+        this.kb = kb;
+        if((tooltip == null) && this.kb != null) {
+            tooltip = new KeyboundTip();
+	}
+        return this;
     }
-	
-    public static final KeyMatch key_act = KeyMatch.forcode(KeyEvent.VK_ENTER, 0);
-    public static final KeyMatch key_esc = KeyMatch.forcode(KeyEvent.VK_ESCAPE, 0);
-    public static final KeyMatch key_tab = KeyMatch.forcode(KeyEvent.VK_TAB, 0);
+
+    public static final KeyBind kb_act = KeyBind.getFinalKB("Activate Widget", "Enter");
+    public static final KeyBind kb_esc = KeyBind.getFinalKB("Cancel Widget", "Escape");
+    public static final KeyBind kb_tab = KeyBind.getFinalKB("Focus Next Widget", "Tab");
     public boolean keydown(KeyEvent ev) {
+        final String bind = KeyBind.generateSequence(ev, ui);
 	if(canactivate) {
-	    if(key_act.match(ev)) {
+	    if(kb_act.match(bind)) {
 		wdgmsg("activate");
 		return(true);
 	    }
 	}
 	if(cancancel) {
-	    if(key_esc.match(ev)) {
+	    if(kb_esc.match(bind)) {
 		wdgmsg("cancel");
 		return(true);
 	    }
@@ -918,7 +923,7 @@ public class Widget {
 		if(focused.keydown(ev))
 		    return(true);
 		if(focustab) {
-		    if(key_tab.match(ev)) {
+		    if(kb_tab.match(bind)) {
 			Widget f = focused;
 			while(true) {
 			    if((ev.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
@@ -1368,7 +1373,7 @@ public class Widget {
 	public final String base;
 	private Tex rend = null;
 	private boolean hrend = false;
-	private KeyMatch rkey = null;
+	private String rkey = null;
 
 	public KeyboundTip(String base) {
 	    this.base = base;
@@ -1379,18 +1384,18 @@ public class Widget {
 	}
 
 	public Tex get() {
-	    KeyMatch key = (kb_gkey == null) ? null : kb_gkey.key();
-	    if(!hrend || (rkey != key)) {
+	    final var key = (kb == null) ? null : kb.bind.get();
+	    if(!hrend || (!rkey.equals(key))) {
 		String tip;
 		if(base != null) {
 		    tip = RichText.Parser.quote(base);
-		    if((key != null) && (key != KeyMatch.nil))
-			tip = String.format("%s ($col[255,255,0]{%s})", tip, RichText.Parser.quote(kb_gkey.key().name()));
+		    if((key != null) && (!key.equals("")))
+			tip = String.format("%s ($col[255,255,0]{%s})", tip, RichText.Parser.quote(key));
 		} else {
-		    if((key == null) || (key == KeyMatch.nil))
+		    if((key == null) || (key.equals("")))
 			tip = null;
 		    else
-			tip = String.format("Keyboard shortcut: $col[255,255,0]{%s}", RichText.Parser.quote(kb_gkey.key().name()));
+			tip = String.format("Keyboard shortcut: $col[255,255,0]{%s}", RichText.Parser.quote(key));
 		}
 		rend = (tip == null) ? null : RichText.render(tip, 0).tex();
 		hrend = true;

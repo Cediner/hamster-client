@@ -55,14 +55,13 @@ public class KeyBindEdit extends Widget {
         g.chcolor();
 
         if (state == State.NOTEDITING) {
-            g.chcolor(KeyBind.validBinding(keybind.get()) ? Color.WHITE : Color.RED);
+            g.chcolor(KeyBind.validBinding(keybind, keybind.get()) ? Color.WHITE : Color.RED);
             g.aimage(tbind, sz.div(2), 0.5, 0.5);
-            g.chcolor();
         } else {
             g.chcolor(state != State.INVALID ? Color.GREEN : Color.MAGENTA);
             g.aimage(tseq, sz.div(2), 0.5, 0.5);
-            g.chcolor();
         }
+        g.chcolor();
     }
 
     @Override
@@ -84,12 +83,12 @@ public class KeyBindEdit extends Widget {
                     keyseq.append("M-");
                 keyseq.append(KeyEvent.getKeyText(ev.getKeyCode()));
                 final String seq = keyseq.toString();
-                tseq = Text.render("").tex();
+                tseq = Text.render(seq).tex();
 
                 switch (state) {
                     case EDITING:
                         this.keyseq = seq;
-                        if (KeyBind.validBinding(seq))
+                        if (KeyBind.validBinding(keybind, seq))
                             state = State.DONE;
                         else
                             state = State.INVALID;

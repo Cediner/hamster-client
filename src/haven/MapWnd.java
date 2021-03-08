@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import hamster.IndirSetting;
+import hamster.KeyBind;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
@@ -41,6 +42,8 @@ import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MiniMap.*;
 import haven.BuddyWnd.GroupSelector;
+
+import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
 import static haven.Utils.eq;
@@ -61,11 +64,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private MapMarkerWnd markers = null;
     private boolean domark = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 
-    public static final KeyBinding kb_home = KeyBinding.get("mapwnd/home", KeyMatch.forcode(KeyEvent.VK_HOME, 0));
-    public static final KeyBinding kb_mark = KeyBinding.get("mapwnd/mark", KeyMatch.nil);
-    public static final KeyBinding kb_hmark = KeyBinding.get("mapwnd/hmark", KeyMatch.forchar('M', KeyMatch.C));
-    public static final KeyBinding kb_compact = KeyBinding.get("mapwnd/compact", KeyMatch.forchar('A', KeyMatch.M));
     public MapWnd(MapFile file, MapView mv, Coord sz, String title) {
 	super(sz, title, true);
 	this.file = file;
@@ -77,17 +77,17 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar = add(new Widget(Coord.z));
 	toolbar.add(new Img(Resource.loadtex("gfx/hud/mmap/fgwdg")), Coord.z);
 	toolbar.add(new IButton("gfx/hud/mmap/home", "", "-d", "-h") {
-		{settip("Follow"); setgkey(kb_home);}
+		{settip("Follow");}
 		public void click() {
 		    recenter();
 		}
 	    }, Coord.z);
 	toolbar.add(new ICheckBox("gfx/hud/mmap/mark", "", "-d", "-h", "-dh"), Coord.z)
 	    .state(() -> domark).set(a -> domark = a)
-	    .settip("Add marker").setgkey(kb_mark);
+	    .settip("Add marker");
 	toolbar.add(new ICheckBox("gfx/hud/mmap/hmark", "", "-d", "-h", "-dh"))
 	    .state(() -> hmarkers).set(a -> hmarkers = a)
-	    .settip("Hide markers").setgkey(kb_hmark);
+	    .settip("Hide markers");
 	final var chk = toolbar.add(new ICheckBox("gfx/hud/lbtn-ico", "", "-d", "-h", "-dh"))
 		.state(() -> ui.gui.wndstate(ui.gui.iconwnd)).click(() -> {
 		    if(ui.gui.iconconf == null)
@@ -123,6 +123,14 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
 		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
 
+
+	binds.put(KB_RECALL_MAP_ONE, () -> { recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE); return true; });
+	binds.put(KB_RECALL_MAP_TWO, () -> { recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO); return true; });
+	binds.put(KB_MAP_HOME, () -> {recenter(); return true;});
+	binds.put(KB_MAP_MARK, () -> {domark = !domark; return true; });
+	binds.put(KB_MAP_HIDE_MARKERS, () -> {hmarkers = !hmarkers; return true;});
+	binds.put(KB_MAP_COMPACT, () -> {toggleHide(); return true;});
+
 	resize(sz);
     }
 
@@ -147,6 +155,16 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	saveSize();
 	Utils.setprefc("wndsz-map", asz);
 	savePosition();
+    }
+
+    @Override
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
+        return super.globtype(key, ev);
     }
 
     private class ViewFrame extends Frame {

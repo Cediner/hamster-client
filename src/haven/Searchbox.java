@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.KeyBind;
+
 import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -46,11 +48,12 @@ public abstract class Searchbox<T> extends Listbox<T> {
     }
 
     public boolean keydown(KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
 	int mod = 0;
 	if((ev.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) mod |= C;
 	if((ev.getModifiersEx() & (InputEvent.META_DOWN_MASK | InputEvent.ALT_DOWN_MASK)) != 0) mod |= M;
 	char c = ev.getKeyChar();
-	if(c == ev.CHAR_UNDEFINED)
+	if(c == KeyEvent.CHAR_UNDEFINED)
 	    c = '\0';
 	int code = ev.getKeyCode();
 	if(mod == 0) {
@@ -59,12 +62,12 @@ public abstract class Searchbox<T> extends Listbox<T> {
 		    search(searching.substring(0, searching.length() - 1));
 		    return(true);
 		}
-	    } else if(key_act.match(ev)) {
+	    } else if(kb_act.match(bind)) {
 		if(searching != null) {
 		    stopsearch();
 		    return(true);
 		}
-	    } else if(key_esc.match(ev)) {
+	    } else if(kb_esc.match(bind)) {
 		if(searching != null) {
 		    stopsearch();
 		    return(true);

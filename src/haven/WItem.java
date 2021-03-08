@@ -31,19 +31,60 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.Pattern;
+
+import hamster.MouseBind;
+import hamster.data.ItemData;
+import hamster.ui.equip.EquipmentType;
 import haven.ItemInfo.AttrCache;
+import haven.res.ui.tt.Wear;
+import haven.res.ui.tt.q.qbuff.Quality;
+
 import static haven.ItemInfo.find;
 import static haven.Inventory.sqsz;
 
 public class WItem extends Widget implements DTarget {
     public static final Resource missing = Resource.local().loadwait("gfx/invobjs/missing");
+    public static final Tex lockt = Resource.loadtex("custom/inv/locked");
     public final GItem item;
     private Resource cspr = null;
     private Message csdt = Message.nil;
+    private boolean locked = false;
+    //Quality display
+    private double q_last;
+    private Tex qtex;
 
     public WItem(GItem item) {
 	super(sqsz);
 	this.item = item;
+	this.item.setWItem(this);
+	itemols  = new AttrCache<>(this::info, info -> {
+	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
+	    for(ItemInfo inf : info) {
+		if (inf instanceof GItem.OverlayInfo) {
+		    if (inf instanceof Quality) {
+			//For Quality if we have Contents we'd rather get their quality over the item quality
+			item.getinfo(ItemInfo.Contents.class).ifPresentOrElse(cnt -> {
+			    item.getinfo(Quality.class, cnt.sub)
+				    .ifPresentOrElse(q -> buf.add(GItem.InfoOverlay.create(q)),
+					    () -> buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf)));
+			}, () -> buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf)));
+		    } else {
+			buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>) inf));
+		    }
+		}
+	    }
+	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
+	    return(() -> ret);
+	});
+    }
+
+    public boolean locked() {
+	return locked;
+    }
+
+    public void setLock(final boolean val) {
+	locked = val;
     }
 
     public void drawmain(GOut g, GSprite spr) {
@@ -95,6 +136,7 @@ public class WItem extends Widget implements DTarget {
     private double hoverstart;
     private ItemTip shorttip = null, longtip = null;
     private List<ItemInfo> ttinfo = null;
+
     public Object tooltip(Coord c, Widget prev) {
 	double now = Utils.rtime();
 	if(prev == this) {
@@ -115,7 +157,7 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0) {
+	    if(now - hoverstart < 1.0 && !ui.gui.settings.ALWAYSITEMLONGTIPS.get()) {
 		if(shorttip == null)
 		    shorttip = new ShortTip(info);
 		return(shorttip);
@@ -142,16 +184,8 @@ public class WItem extends Widget implements DTarget {
 	    Color fret = ret;
 	    return(() -> fret);
 	});
-    public final AttrCache<GItem.InfoOverlay<?>[]> itemols = new AttrCache<>(this::info, info -> {
-	    ArrayList<GItem.InfoOverlay<?>> buf = new ArrayList<>();
-	    for(ItemInfo inf : info) {
-		if(inf instanceof GItem.OverlayInfo)
-		    buf.add(GItem.InfoOverlay.create((GItem.OverlayInfo<?>)inf));
-	    }
-	    GItem.InfoOverlay<?>[] ret = buf.toArray(new GItem.InfoOverlay<?>[0]);
-	    return(() -> ret);
-	});
-    public final AttrCache<Double> itemmeter = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+    public final AttrCache<GItem.InfoOverlay<?>[]> itemols;
+    public final AttrCache<Double> itemmeter = new AttrCache<Double>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
     private GSprite lspr = null;
     public void tick(double dt) {
@@ -167,6 +201,29 @@ public class WItem extends Widget implements DTarget {
 		sz.y = sqsz.y * ((sz.y / sqsz.y) + 1);
 	    resize(sz);
 	    lspr = spr;
+	}
+    }
+
+    private static final Color[] wearclr = new Color[]{
+	    new Color(233, 0, 14),
+	    new Color(218, 128, 87),
+	    new Color(246, 233, 87),
+	    new Color(145, 225, 60)
+    };
+    private static final Pattern liquid_pat = Pattern.compile("([0-9]+\\.[0-9]+) l of (.+)");
+    private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
+    private static final Pattern seed_pat = Pattern.compile("([0-9]+) seeds of (.+)");
+    private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
+    private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
+
+    public int wearlevel() {
+	final Optional<Wear> wear = item.getinfo(Wear.class);
+	if (wear.isPresent()) {
+	    double p = 1 - wear.get().percent();
+	    int h = (int) (p * (double) sz.y);
+	    return p == 1.0 ? 3 : (int) (p / 0.25);
+	} else {
+	    return -1;
 	}
     }
 
@@ -191,28 +248,108 @@ public class WItem extends Widget implements DTarget {
 		g.prect(half, half.inv(), half, meter * Math.PI * 2);
 		g.chcolor();
 	    }
+
+	    if (ui.gui.settings.SHOWITEMWEAR.get()) {
+		item.getinfo(Wear.class).ifPresent(wear -> {
+		    double p = 1 - wear.percent();
+		    int h = (int) (p * (double) sz.y);
+		    g.chcolor(wearclr[p == 1.0 ? 3 : (int) (p / 0.25)]);
+		    g.frect(new Coord(0, sz.y - h), new Coord(3, h));
+		    g.chcolor();
+		});
+	    }
+
+	    if (locked) {
+		g.image(lockt, Coord.z);
+	    }
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
 	}
     }
 
     public boolean mousedown(Coord c, int btn) {
-	if(btn == 1) {
-	    if(ui.modshift) {
-		int n = ui.modctrl ? -1 : 1;
-		item.wdgmsg("transfer", c, n);
-	    } else if(ui.modctrl) {
-		int n = ui.modmeta ? -1 : 1;
-		item.wdgmsg("drop", c, n);
+	final String seq = MouseBind.generateSequence(ui, btn);
+	if (!(MouseBind.ITM_TRANSFER.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("transfer", c, 1);
+		return true;
 	    } else {
-		item.wdgmsg("take", c);
+	        return false;
 	    }
-	    return(true);
-	} else if(btn == 3) {
-	    item.wdgmsg("iact", c, ui.modflags());
-	    return(true);
+	}) || MouseBind.ITM_TRANSFER_ALL_ALIKE.check(seq, () -> {
+	    if(!locked) {
+	        //Note: Since this is server-side locks on items don't apply
+		item.wdgmsg("transfer", c, -1);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_DROP.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("drop", c, 1);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_DROP_ALL_ALIKE.check(seq, () -> {
+	    if(!locked) {
+		//Note: Since this is server-side locks on items don't apply
+		item.wdgmsg("drop", c, -1);
+		return true;
+	    } else {
+	        return false;
+	    }
+	}) || MouseBind.ITM_TAKE.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("take", c);
+		return true;
+	    } else {
+	        return false;
+	    }
+	}) || MouseBind.ITM_TOGGLE_LOCK.check(seq, () -> {
+	    locked = !locked;
+	    return true;
+	}) || MouseBind.ITM_AUTO_EQUIP.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		if (!(parent instanceof Equipory)) {
+		    item.wdgmsg("take", c);
+		    ui.gui.equ.wdgmsg("drop", -1);
+		} else {
+		    item.wdgmsg("transfer", c);
+		}
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_AUTO_EQUIP_LH.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		item.wdgmsg("take", c);
+		ui.gui.equ.wdgmsg("drop", EquipmentType.LeftHand.slot);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_AUTO_EQUIP_RH.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		item.wdgmsg("take", c);
+		ui.gui.equ.wdgmsg("drop", EquipmentType.RightHand.slot);
+		return true;
+	    } else {
+		return false;
+	    }
+	}))) {
+	    if (btn == 3) {
+		item.wdgmsg("iact", c, ui.modflags());
+		return true;
+	    } else {
+		return false;
+	    }
+	} else {
+	    return true;
 	}
-	return(false);
     }
 
     public boolean drop(Coord cc, Coord ul) {

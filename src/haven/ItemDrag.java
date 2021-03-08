@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.MouseBind;
+
 public class ItemDrag extends WItem {
     public Coord doff;
     
@@ -81,22 +83,32 @@ public class ItemDrag extends WItem {
     }
 	
     public boolean mousedown(Coord c, int button) {
-	if(ui.modctrl && !ui.modshift && !ui.modmeta) {
-	    /* XXX */
-	    GameUI gui = getparent(GameUI.class);
-	    if((gui != null) && (gui.map != null)) {
-		ui.modctrl = false;
-		return(gui.map.mousedown(gui.map.rootxlate(c.add(rootpos())), button));
+        final String bind = MouseBind.generateSequence(ui, button);
+        return (MouseBind.HITM_TOGGLE_LOCK.check(bind, () -> {
+	    setLock(!locked());
+	    return true;
+	})) || (MouseBind.HITM_DROP.check(bind, () -> {
+	    if(!locked()) {
+		dropon(parent, c.add(this.c));
+		return true;
+	    } else {
+	        return false;
 	    }
-	}
-	if(button == 1) {
-	    dropon(parent, c.add(this.c));
-	    return(true);
-	} else if(button == 3) {
-	    interact(parent, c.add(this.c));
-	    return(true);
-	}
-	return(false);
+	})) || (MouseBind.HITM_IACT_OBJ.check(bind, () -> {
+	    if(!locked()) {
+		interact(parent, c.add(this.c));
+		return true;
+	    } else {
+		return false;
+	    }
+	})) || (MouseBind.HITM_IACT.check(bind, () -> {
+	    if(locked()) {
+		item.wdgmsg("iact", c, 0);
+		return true;
+	    } else {
+		return false;
+	    }
+	}));
     }
 
     public void mousemove(Coord c) {

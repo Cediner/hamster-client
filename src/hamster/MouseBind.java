@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MouseBind {
-    private static final Settings datastore = new Settings("mousebinds");
+    private static final Settings datastore = new Settings("mousebinds", new HashMap<>());
     public static final Map<String, List<MouseBind>> bindgrps = new HashMap<>();
     //MapView related
     public static final MouseBind
@@ -17,8 +17,10 @@ public class MouseBind {
     public static final MouseBind
         ITM_TRANSFER, ITM_TRANSFER_ALL_ALIKE, ITM_DROP, ITM_DROP_ALL_ALIKE,
         ITM_TAKE, ITM_TOGGLE_LOCK, ITM_AUTO_EQUIP, ITM_AUTO_EQUIP_LH,
-        ITM_AUTO_EQUIP_RH, ITM_ADD_ALL_ALIKE;
-    //
+        ITM_AUTO_EQUIP_RH;
+    //Held Item Related
+    public static final MouseBind
+        HITM_TOGGLE_LOCK, HITM_DROP, HITM_IACT_OBJ, HITM_IACT;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
         final MouseBind mb = new MouseBind(name, group,
@@ -44,7 +46,6 @@ public class MouseBind {
         final String ITM_GRP = "Item";
         ITM_TRANSFER = addMB("Transfer item", ITM_GRP, "S-B1");
         ITM_TRANSFER_ALL_ALIKE = addMB("Transfer all alike items", ITM_GRP, "M-B1");
-        ITM_ADD_ALL_ALIKE = addMB("Add all alike items to object", ITM_GRP, "S-C-B3");
         ITM_DROP = addMB("Drop item", ITM_GRP, "C-B1");
         ITM_DROP_ALL_ALIKE = addMB("Drop all alike items", ITM_GRP, "M-B1");
         ITM_TAKE = addMB("Take item", ITM_GRP, "B1");
@@ -52,6 +53,13 @@ public class MouseBind {
         ITM_AUTO_EQUIP = addMB("Auto equip item", ITM_GRP, "M-B3");
         ITM_AUTO_EQUIP_LH = addMB("Auto equip item into left hand", ITM_GRP, "S-B2");
         ITM_AUTO_EQUIP_RH = addMB("Auto equip item into right hand", ITM_GRP, "C-B2");
+        //Held Item related
+        final String HITM_GRP = "Held Item";
+        HITM_TOGGLE_LOCK = addMB("Toggle lock on held item", HITM_GRP, "C-B3");
+        HITM_DROP = addMB("Drop Held Item ", HITM_GRP, "B1");
+        HITM_IACT_OBJ = addMB("Interact Held Item with Object", HITM_GRP, "B3");
+        //XXX: This one may no longer be possible due to server-side updates
+        HITM_IACT = addMB("Interact with Held Item (only when locked)", HITM_GRP, "M-B3");
     }
 
     @FunctionalInterface
@@ -73,17 +81,17 @@ public class MouseBind {
         return ibind.equals(bind.get()) && action.run();
     }
 
-    public static boolean validBinding(final String group, final String binding) {
+    public static boolean validBinding(final IndirSetting<String> ignore, final String group, final String binding) {
         if (binding.equals("")) {
             return true;
         } else {
             for (final MouseBind mb : bindgrps.get(group)) {
-                if (!mb.bind.get().equals(binding)) {
-                    return true;
+                if (mb.bind != ignore && mb.bind.get().equals(binding)) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     public static String generateSequence(final UI ui, final int mbutton) {

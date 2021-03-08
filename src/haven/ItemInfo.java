@@ -26,6 +26,15 @@
 
 package haven;
 
+import haven.res.ui.tt.ArmorFactory;
+import haven.res.ui.tt.ISlots;
+import haven.res.ui.tt.Level;
+import haven.res.ui.tt.Wear;
+import haven.res.ui.tt.defn.DefName;
+import haven.res.ui.tt.q.qbuff.Quality;
+import haven.res.ui.tt.wpn.Armpen;
+import haven.res.ui.tt.wpn.Damage;
+
 import java.util.*;
 import java.util.function.*;
 import java.lang.reflect.*;
@@ -322,6 +331,19 @@ public abstract class ItemInfo {
 	return(null);
     }
 
+    private static final Map<String, ItemInfo.InfoFactory> builtinfacts = new HashMap<>();
+
+    static {
+	builtinfacts.put("ui/tt/armor", new ArmorFactory());
+	builtinfacts.put("ui/tt/slots", new ISlots.Fac());
+	builtinfacts.put("ui/tt/defn", new DefName());
+	builtinfacts.put("ui/tt/wear", new Wear.Fac());
+	builtinfacts.put("ui/tt/wpn/dmg", new Damage.Fac());
+	builtinfacts.put("ui/tt/wpn/armpen", new Armpen.Fac());
+	builtinfacts.put("ui/tt/q/quality", new Quality.Fac());
+	builtinfacts.put("ui/tt/level", new Level.Fac());
+    }
+
     public static List<ItemInfo> buildinfo(Owner owner, Raw raw) {
 	List<ItemInfo> ret = new ArrayList<ItemInfo>();
 	for(Object o : raw.data) {
@@ -334,13 +356,21 @@ public abstract class ItemInfo {
 		    ttres = (Resource)a[0];
 		} else if(a[0] instanceof Indir) {
 		    ttres = (Resource)((Indir)a[0]).get();
+		} else if (a[0] instanceof DefName) {
+		    ttres = Resource.remote().loadwait("ui/tt/defn");
 		} else {
 		    throw(new ClassCastException("Unexpected info specification " + a[0].getClass()));
 		}
-		InfoFactory f = ttres.getcode(InfoFactory.class, true);
+		final InfoFactory f;
+		if (builtinfacts.containsKey(ttres.name)) {
+		    f = builtinfacts.get(ttres.name);
+		} else {
+		    f = ttres.getcode(InfoFactory.class, true);
+		}
 		ItemInfo inf = f.build(owner, raw, a);
-		if(inf != null)
+		if (inf != null) {
 		    ret.add(inf);
+		}
 	    } else if(o instanceof String) {
 		ret.add(new AdHoc(owner, (String)o));
 	    } else {

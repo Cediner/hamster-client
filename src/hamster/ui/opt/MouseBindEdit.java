@@ -37,10 +37,10 @@ public class MouseBindEdit extends Widget {
         g.chcolor();
 
         if (state == State.NOTEDITING) {
-            g.chcolor(MouseBind.validBinding(grouping, bind.get()) ? Color.WHITE : Color.RED);
+            g.chcolor(MouseBind.validBinding(bind, grouping, bind.get()) ? Color.WHITE : Color.RED);
             g.aimage(tbind, sz.div(2), 0.5, 0.5);
         } else {
-            g.chcolor(MouseBind.validBinding(grouping, seq) ? Color.GREEN : Color.MAGENTA);
+            g.chcolor(MouseBind.validBinding(bind, grouping, seq) ? Color.GREEN : Color.MAGENTA);
             g.aimage(tseq, sz.div(2), 0.5, 0.5);
         }
         g.chcolor();

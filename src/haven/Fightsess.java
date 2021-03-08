@@ -26,11 +26,15 @@
 
 package haven;
 
+import hamster.KeyBind;
 import haven.render.*;
 import java.util.*;
 import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+
+import static hamster.KeyBind.*;
+import static hamster.KeyBind.KB_FOCUS_MAP;
 
 public class Fightsess extends Widget {
     private static final Coord off = new Coord(UI.scale(32), UI.scale(32));
@@ -71,6 +75,7 @@ public class Fightsess extends Widget {
     public Fightsess(int nact) {
 	pho = -UI.scale(40);
 	this.actions = new Action[nact];
+	setKeybinds();
     }
 
     protected void added() {
@@ -318,8 +323,7 @@ public class Fightsess extends Widget {
 		    ca = ca.sub(img.sz().div(2));
 		    if(c.isect(ca, img.sz())) {
 			String tip = act.get().layer(Resource.tooltip).t;
-			if(kb_acts[i].key() != KeyMatch.nil)
-			    tip += " ($b{$col[255,128,0]{" + kb_acts[i].key().name() + "}})";
+			tip += " ($b{$col[255,128,0]{" + KB_FIGHT_MOVE[i].bind.get() + "}})";
 			if((acttip == null) || !acttip.text.equals(tip))
 			    acttip = RichText.render(tip, -1);
 			return(acttip);
@@ -377,20 +381,6 @@ public class Fightsess extends Widget {
 	}
     }
 
-    public static final KeyBinding[] kb_acts = {
-	KeyBinding.get("fgt/0", KeyMatch.forcode(KeyEvent.VK_1, 0)),
-	KeyBinding.get("fgt/1", KeyMatch.forcode(KeyEvent.VK_2, 0)),
-	KeyBinding.get("fgt/2", KeyMatch.forcode(KeyEvent.VK_3, 0)),
-	KeyBinding.get("fgt/3", KeyMatch.forcode(KeyEvent.VK_4, 0)),
-	KeyBinding.get("fgt/4", KeyMatch.forcode(KeyEvent.VK_5, 0)),
-	KeyBinding.get("fgt/5", KeyMatch.forcode(KeyEvent.VK_1, KeyMatch.S)),
-	KeyBinding.get("fgt/6", KeyMatch.forcode(KeyEvent.VK_2, KeyMatch.S)),
-	KeyBinding.get("fgt/7", KeyMatch.forcode(KeyEvent.VK_3, KeyMatch.S)),
-	KeyBinding.get("fgt/8", KeyMatch.forcode(KeyEvent.VK_4, KeyMatch.S)),
-	KeyBinding.get("fgt/9", KeyMatch.forcode(KeyEvent.VK_5, KeyMatch.S)),
-    };
-    public static final KeyBinding kb_relcycle =  KeyBinding.get("fgt-cycle", KeyMatch.forcode(KeyEvent.VK_TAB, KeyMatch.C), KeyMatch.S);
-
     /* XXX: This is a bit ugly, but release message do need to be
      * properly sequenced with use messages in some way. */
     private class Release implements Runnable {
@@ -412,57 +402,71 @@ public class Fightsess extends Widget {
 
     private UI.Grab holdgrab = null;
     private int held = -1;
-    public boolean globtype(char key, KeyEvent ev) {
-	// ev = new KeyEvent((java.awt.Component)ev.getSource(), ev.getID(), ev.getWhen(), ev.getModifiersEx(), ev.getKeyCode(), ev.getKeyChar(), ev.getKeyLocation());
-	{
-	    int n = -1;
-	    for(int i = 0; i < kb_acts.length; i++) {
-		if(kb_acts[i].key().match(ev)) {
-		    n = i;
-		    break;
-		}
-	    }
-	    int fn = n;
-	    if((n >= 0) && (n < actions.length)) {
-		MapView map = getparent(GameUI.class).map;
-		Coord mvc = map.rootxlate(ui.mc);
-		if(held >= 0) {
-		    new Release(held);
-		    held = -1;
-		}
-		if(mvc.isect(Coord.z, map.sz)) {
-		    map.new Maptest(mvc) {
-			    protected void hit(Coord pc, Coord2d mc) {
-				wdgmsg("use", fn, 1, ui.modflags(), mc.floor(OCache.posres));
-			    }
 
-			    protected void nohit(Coord pc) {
-				wdgmsg("use", fn, 1, ui.modflags());
-			    }
-			}.run();
-		}
-		if(holdgrab == null)
-		    holdgrab = ui.grabkeys(this);
-		held = n;
-		return(true);
-	    }
+    // Spam prevention otherwise you can dc...
+    private int last_button = -1;
+    private long last_sent = System.currentTimeMillis();
+
+    //Keybinds
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+    private void setKeybinds() {
+        for(var i = 0; i < KB_FIGHT_MOVE.length; ++i) {
+	    final int slot = i;
+	    binds.put(KB_FIGHT_MOVE[i], () -> { use(slot); return true; });
 	}
-	if(kb_relcycle.key().match(ev, KeyMatch.S)) {
-	    if((ev.getModifiersEx() & KeyEvent.SHIFT_DOWN_MASK) == 0) {
-		Fightview.Relation cur = fv.current;
-		if(cur != null) {
-		    fv.lsrel.remove(cur);
-		    fv.lsrel.addLast(cur);
-		}
-	    } else {
-		Fightview.Relation last = fv.lsrel.getLast();
-		if(last != null) {
-		    fv.lsrel.remove(last);
-		    fv.lsrel.addFirst(last);
-		}
+        binds.put(KB_CYCLEUP_OPP, () -> {
+	    Fightview.Relation cur = fv.current;
+	    if(cur != null) {
+		fv.lsrel.remove(cur);
+		fv.lsrel.addLast(cur);
 	    }
 	    fv.wdgmsg("bump", (int)fv.lsrel.get(0).gobid);
 	    return(true);
+	});
+        binds.put(KB_CYCLEDOWN_OPP, () -> {
+	    Fightview.Relation last = fv.lsrel.getLast();
+	    if(last != null) {
+		fv.lsrel.remove(last);
+		fv.lsrel.addFirst(last);
+	    }
+	    fv.wdgmsg("bump", (int)fv.lsrel.get(0).gobid);
+	    return(true);
+	});
+    }
+
+    public void use(final int fn) {
+	if (last_button != fn || (System.currentTimeMillis() - last_sent) >= 100) {
+
+	    MapView map = getparent(GameUI.class).map;
+	    Coord mvc = map.rootxlate(ui.mc);
+	    if(held >= 0) {
+		new Release(held);
+		held = -1;
+	    }
+	    if(mvc.isect(Coord.z, map.sz)) {
+		map.new Maptest(mvc) {
+		    protected void hit(Coord pc, Coord2d mc) {
+			wdgmsg("use", fn, 1, ui.modflags(), mc.floor(OCache.posres));
+		    }
+
+		    protected void nohit(Coord pc) {
+			wdgmsg("use", fn, 1, ui.modflags());
+		    }
+		}.run();
+	    }
+	    if(holdgrab == null)
+		holdgrab = ui.grabkeys(this);
+	    held = fn;
+
+	    last_button = fn;
+	    last_sent = System.currentTimeMillis();
+	}
+    }
+    public boolean globtype(char key, KeyEvent ev) {
+        final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
 	}
 	return(super.globtype(key, ev));
     }
@@ -472,7 +476,8 @@ public class Fightsess extends Widget {
     }
 
     public boolean keyup(KeyEvent ev) {
-	if((holdgrab != null) && (kb_acts[held].key().match(ev, KeyMatch.MODS))) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	if((holdgrab != null) && (KB_FIGHT_MOVE[held].match(bind))) {
 	    MapView map = getparent(GameUI.class).map;
 	    new Release(held);
 	    holdgrab.remove();

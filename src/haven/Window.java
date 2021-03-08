@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.GlobalSettings;
+import hamster.KeyBind;
 import hamster.data.WindowData;
 import hamster.ui.core.MovableWidget;
 import hamster.ui.core.Theme;
@@ -409,9 +410,10 @@ public class Window extends MovableWidget implements DTarget {
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
 	if(super.keydown(ev))
 	    return(true);
-	if(key_esc.match(ev)) {
+	if(kb_esc.match(bind)) {
 	    close();
 	    return(true);
 	}

@@ -26,6 +26,9 @@
 
 package haven;
 
+import hamster.KeyBind;
+
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.awt.Font;
 import java.awt.Color;
@@ -43,6 +46,7 @@ public class Makewindow extends Widget {
     public List<Indir<Resource>> qmod = Collections.emptyList();
     public List<Indir<Resource>> tools = new ArrayList<>();;
     private final int xoff = UI.scale(45), qmy = UI.scale(38), outy = UI.scale(65);
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 
     @RName("make")
     public static class $_ implements Factory {
@@ -155,15 +159,25 @@ public class Makewindow extends Widget {
 	}
     }
 
-    public static final KeyBinding kb_make = KeyBinding.get("make/one", KeyMatch.forcode(java.awt.event.KeyEvent.VK_ENTER, 0));
-    public static final KeyBinding kb_makeall = KeyBinding.get("make/all", KeyMatch.forcode(java.awt.event.KeyEvent.VK_ENTER, KeyMatch.C));
     public Makewindow(String rcpnm) {
 	add(new Label("Input:"), new Coord(0, UI.scale(8)));
 	add(new Label("Result:"), new Coord(0, outy + UI.scale(8)));
-	add(new Button(UI.scale(85), "Craft"), UI.scale(new Coord(265, 75))).action(() -> wdgmsg("make", 0)).setgkey(kb_make);
-	add(new Button(UI.scale(85), "Craft All"), UI.scale(new Coord(360, 75))).action(() -> wdgmsg("make", 1)).setgkey(kb_makeall);
+	add(new Button(UI.scale(85), "Craft"), UI.scale(new Coord(265, 75))).action(() -> wdgmsg("make", 0));
+	add(new Button(UI.scale(85), "Craft All"), UI.scale(new Coord(360, 75))).action(() -> wdgmsg("make", 1));
+	binds.put(KeyBind.KB_MAKE_ONE, () -> {wdgmsg("make", 0); return true;});
+	binds.put(KeyBind.KB_MAKE_ALL, () -> {wdgmsg("make", 1); return true;});
 	pack();
 	this.rcpnm = rcpnm;
+    }
+
+    @Override
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
+	return(super.globtype(key, ev));
     }
 
     public void uimsg(String msg, Object... args) {

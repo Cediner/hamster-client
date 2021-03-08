@@ -167,6 +167,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	hotbar1 = new BeltWnd("Hotbar 1", data, KB_STYLE, KB_VIS, KB_PAGE, KB_LOCK, Arrays.asList(KB_HK),5, 0);
 	hotbar2 = new BeltWnd("Hotbar 2", data, KB_F_STYLE, KB_F_VIS, KB_F_PAGE, KB_F_LOCK, Arrays.asList(KB_HK_F), 5, 50);
 	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), 4, 100);
+	//Setup keybinds
+	setKeybinds();
     }
 
     protected void attached() {
@@ -467,7 +469,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		};
 		invwnd.add(maininv = (Inventory) child, Coord.z);
 		invwnd.pack();
-		invwnd.hide();
+		if(!settings.SHOWINVONLOGIN.get())
+		    invwnd.hide();
 		add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	    }
 	    case "equ" -> {
@@ -872,22 +875,25 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	return(wnd.visible);
     }
 
-    public static final KeyBinding kb_shoot = KeyBinding.get("screenshot", KeyMatch.forchar('S', KeyMatch.M));
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+    private void setKeybinds() {
+        binds.put(KB_TOGGLE_CMD, () -> { entercmd(); return true; });
+        binds.put(KB_TOGGLE_CHAT, () -> { chatwnd.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_CHAR, () -> { chrwdg.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisiblity(); return true; });
+    	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
+    	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    }
+
     public boolean globtype(char key, KeyEvent ev) {
         final String bind = KeyBind.generateSequence(ev, ui);
-	if(KB_TOGGLE_CMD.check(bind, () -> { entercmd(); return true; })) {
-	    return(true);
-	} else if((Config.screenurl != null) && kb_shoot.key().match(ev)) {
-	    Screenshooter.take(this, Config.screenurl);
-	    return(true);
-	} else if(KB_TOGGLE_CHAT.check(bind, () -> {
-	    chatwnd.toggleVisiblity();
-	    return true;
-	})) {
-	    return true;
-	} else if((key == 27) && (map != null) && !map.hasfocus) {
-	    setfocus(map);
-	    return(true);
+        for(final var kb : binds.keySet()) {
+            if(kb.check(bind, binds.get(kb)))
+                return true;
 	}
 	return(super.globtype(key, ev));
     }
