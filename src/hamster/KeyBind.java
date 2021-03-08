@@ -24,7 +24,7 @@ public class KeyBind {
     public static final KeyBind // Combat
     	KB_AGGRO_NEAREST_ANIMAL_TO_MOUSE, KB_AGGRO_NEAREST_PLAYER_TO_MOUSE,
 	KB_TARGET_NEAREST_ANIMAL_TO_MOUSE, KB_TARGET_NEAREST_PLAYER_TO_MOUSE,
-	KB_AGGRO_TARGET, KB_TARGET_CURRENT, KB_PEACE_CURRENT;
+	KB_AGGRO_TARGET, KB_TARGET_CURRENT, KB_PEACE_CURRENT, KB_CYCLEUP_OPP, KB_CYCLEDOWN_OPP;
     public static final KeyBind[] KB_FIGHT_MOVE;
     public static final KeyBind // Camera
 	    KB_RECENTER_CAMERA;
@@ -92,10 +92,12 @@ public class KeyBind {
 	    KB_AGGRO_TARGET = addKB("Aggro targeted gob", CBT_GRP, "S-T"); //TODO
 	    KB_TARGET_CURRENT = addKB("Target current gob", CBT_GRP, "S-C"); //TODO
 	    KB_PEACE_CURRENT = addKB("Peace current target", CBT_GRP, "S-P"); //TODO
+	    KB_CYCLEUP_OPP = addKB("Cycle Up Current Opponent", CBT_GRP, "");
+	    KB_CYCLEDOWN_OPP = addKB("Cycle Down Current Opponent", CBT_GRP, "");
 	    final int moves = 10;
 	    KB_FIGHT_MOVE = new KeyBind[moves];
-	    for(var i = 1; i < moves; ++i) {
-		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, CBT_GRP, Integer.toString(i)); //TODO
+	    for(var i = 1; i <= moves; ++i) {
+		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, CBT_GRP, Integer.toString(i));
 	    }
 	}
 	{ // Camera Keybinds
@@ -145,6 +147,10 @@ public class KeyBind {
 
     public boolean check(final String ibind, final Command action) {
 	return ibind.equals(bind.get()) && action.run();
+    }
+
+    public boolean match(final String ibind) {
+        return ibind.equals(bind.get());
     }
 
     public static boolean validBinding(final IndirSetting<String> ignore, final String binding) {
