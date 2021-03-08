@@ -59,9 +59,10 @@ public class MapMod extends Window implements MapView.Grabber {
             tilenm = add(new TextEntry(50, ""), new Coord(0, 40));
             tilenm.canactivate = true;
         } else {
-            btn = add(new Button(100, "Select Area"), cbox.c.add(0, cbox.sz.y));
+            btn = add(new Button(150, "Select Area"), cbox.c.add(0, cbox.sz.y));
         }
         this.fake = fake;
+        pack();
     }
 
     protected void added() {
@@ -163,9 +164,6 @@ public class MapMod extends Window implements MapView.Grabber {
             if(!walkmod) {
                 mv.grab(grab);
             } else {
-                if(ol != null)
-                    ol.destroy();
-                ol = null;
                 mv.release(grab);
             }
             if (!fake)

@@ -83,7 +83,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     //Chat UI
     public final ChatWnd chatwnd;
     public ChatUI chat;
-    public ChatUI.Channel syslog;
+    public ChatUI.Channel syslog, botlog;
 
     //Meters
     public Speedget speed;
@@ -160,6 +160,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	//Chat Wdgs
 	chatwnd = new ChatWnd(chat = new ChatUI(600, 150));
 	syslog = chat.add(new ChatUI.Log("System"));
+	botlog = chat.add(new ChatUI.BotChat());
 	//Quest Wdgs
 	questwnd = new QuestWnd();
 	//Setup hotbars
