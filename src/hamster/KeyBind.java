@@ -14,7 +14,9 @@ public class KeyBind {
     public static final KeyBind // UI
     	KB_TOGGLE_MINIMAP, KB_TOGGLE_INV, KB_TOGGLE_EQU, KB_TOGGLE_CHAR, KB_TOGGLE_KIN, KB_TOGGLE_OPTS,
     	KB_TOGGLE_CHAT, KB_TOGGLE_FORAGE, KB_TOGGLE_LIVESTOCK, KB_TOGGLE_CMD, KB_TOGGLE_PROFILER, KB_FOCUS_MAP,
-    	KB_RECALL_MAP_ONE, KB_RECALL_MAP_TWO, KB_LOCK_ITEM_ON_MOUSE, KB_SCREENSHOT;
+    	KB_RECALL_MAP_ONE, KB_RECALL_MAP_TWO, KB_LOCK_ITEM_ON_MOUSE, KB_SCREENSHOT,
+    	//Misc UI stuff
+    	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
     public static final KeyBind // Gameplay
 	KB_TOGGLE_GRID, KB_TOGGLE_TIPS, KB_TOGGLE_HITBOXES, KB_TOGGLE_HIDDEN, KB_TOGGLE_PAUSE,
 	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
@@ -61,6 +63,11 @@ public class KeyBind {
 	    KB_RECALL_MAP_TWO = addKB("Recall Second map pos/size", UI_GRP, "C-X"); //MapWnd
 	    KB_LOCK_ITEM_ON_MOUSE = addKB("Lock item on mouse", UI_GRP, "Back Quote"); //TODO
 	    KB_SCREENSHOT = addKB("Screenshot", UI_GRP, "M-S"); //GameUI
+	    KB_MAKE_ONE = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "Enter");
+	    KB_MAKE_ALL = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "C-Enter");
+	    KB_SCM_ROOT = addKB("Return MenuGrid to Root", UI_GRP, "S-Escape");
+	    KB_SCM_BACK = addKB("Go back a page in MenuGrid", UI_GRP, "Backspace");
+	    KB_SCM_NEXT = addKB("Go to next page in MenuGrid", UI_GRP, "N");
 	}
 	{ // Gameplay Keybinds
 	    final String GP_GRP = "Gameplay";

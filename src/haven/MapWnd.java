@@ -160,7 +160,6 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     @Override
     public boolean globtype(char key, KeyEvent ev) {
 	final String bind = KeyBind.generateSequence(ev, ui);
-	System.out.println(bind);
 	for(final var kb : binds.keySet()) {
 	    if(kb.check(bind, binds.get(kb)))
 		return true;

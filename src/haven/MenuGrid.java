@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 
+import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 import haven.Resource.AButton;
 import java.util.*;
@@ -50,6 +51,7 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
     private int curoff = 0;
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 	
     @RName("scm")
     public static class $_ implements Factory {
@@ -134,6 +136,8 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	}
     }
 
+    public static final KeyBinding kb_back = KeyBinding.get("scm-back", KeyMatch.forcode(KeyEvent.VK_BACK_SPACE, 0));
+    public static final KeyBinding kb_next = KeyBinding.get("scm-next", KeyMatch.forchar('N', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S));
     public final PagButton next = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-next").indir())) {
 	    {pag.button = this;}
 
@@ -322,6 +326,33 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	addCustom(new CustomPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
 		(pag) -> ui.gui.chatwnd.toggleVisiblity()));
+	//Keybinds
+	binds.put(KeyBind.KB_SCM_ROOT, () -> {
+	    if(this.cur != null) {
+		this.cur = null;
+		curoff = 0;
+		updlayout();
+		return true;
+	    } else {
+	        return false;
+	    }
+	});
+	binds.put(KeyBind.KB_SCM_BACK, () -> {
+	    if(this.cur != null) {
+	        use(bk, false);
+	        return true;
+	    } else {
+	        return false;
+	    }
+	});
+	binds.put(KeyBind.KB_SCM_NEXT, () -> {
+	    if((layout[gsz.x - 2][gsz.y - 1] == next)) {
+		use(next, false);
+		return true;
+	    } else {
+		return false;
+	    }
+	});
     }
 
     private void addCustom(final CustomPagina pag) {
@@ -571,21 +602,11 @@ public class MenuGrid extends MovableWidget implements KeyBinding.Bindable {
 	}
     }
 
-    public static final KeyBinding kb_root = KeyBinding.get("scm-root", KeyMatch.forcode(KeyEvent.VK_ESCAPE, 0));
-    public static final KeyBinding kb_back = KeyBinding.get("scm-back", KeyMatch.forcode(KeyEvent.VK_BACK_SPACE, 0));
-    public static final KeyBinding kb_next = KeyBinding.get("scm-next", KeyMatch.forchar('N', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S));
     public boolean globtype(char k, KeyEvent ev) {
-	if(kb_root.key().match(ev) && (this.cur != null)) {
-	    this.cur = null;
-	    curoff = 0;
-	    updlayout();
-	    return(true);
-	} else if(kb_back.key().match(ev) && (this.cur != null)) {
-	    use(bk, false);
-	    return(true);
-	} else if(kb_next.key().match(ev) && (layout[gsz.x - 2][gsz.y - 1] == next)) {
-	    use(next, false);
-	    return(true);
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
 	}
 	int cp = -1;
 	PagButton pag = null;
