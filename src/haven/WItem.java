@@ -33,7 +33,9 @@ import java.util.*;
 import java.util.function.*;
 import java.util.regex.Pattern;
 
+import hamster.MouseBind;
 import hamster.data.ItemData;
+import hamster.ui.equip.EquipmentType;
 import haven.ItemInfo.AttrCache;
 import haven.res.ui.tt.Wear;
 import haven.res.ui.tt.q.qbuff.Quality;
@@ -262,22 +264,88 @@ public class WItem extends Widget implements DTarget {
     }
 
     public boolean mousedown(Coord c, int btn) {
-	if(btn == 1) {
-	    if(ui.modshift) {
-		int n = ui.modctrl ? -1 : 1;
-		item.wdgmsg("transfer", c, n);
-	    } else if(ui.modctrl) {
-		int n = ui.modmeta ? -1 : 1;
-		item.wdgmsg("drop", c, n);
+	final String seq = MouseBind.generateSequence(ui, btn);
+	if (!(MouseBind.ITM_TRANSFER.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("transfer", c, 1);
+		return true;
 	    } else {
-		item.wdgmsg("take", c);
+	        return false;
 	    }
-	    return(true);
-	} else if(btn == 3) {
-	    item.wdgmsg("iact", c, ui.modflags());
-	    return(true);
+	}) || MouseBind.ITM_TRANSFER_ALL_ALIKE.check(seq, () -> {
+	    if(!locked) {
+	        //Note: Since this is server-side locks on items don't apply
+		item.wdgmsg("transfer", c, -1);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_DROP.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("drop", c, 1);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_DROP_ALL_ALIKE.check(seq, () -> {
+	    if(!locked) {
+		//Note: Since this is server-side locks on items don't apply
+		item.wdgmsg("drop", c, -1);
+		return true;
+	    } else {
+	        return false;
+	    }
+	}) || MouseBind.ITM_TAKE.check(seq, () -> {
+	    if(!locked) {
+		item.wdgmsg("take", c);
+		return true;
+	    } else {
+	        return false;
+	    }
+	}) || MouseBind.ITM_TOGGLE_LOCK.check(seq, () -> {
+	    locked = !locked;
+	    return true;
+	}) || MouseBind.ITM_AUTO_EQUIP.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		if (!(parent instanceof Equipory)) {
+		    item.wdgmsg("take", c);
+		    ui.gui.equ.wdgmsg("drop", -1);
+		} else {
+		    item.wdgmsg("transfer", c);
+		}
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_AUTO_EQUIP_LH.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		item.wdgmsg("take", c);
+		ui.gui.equ.wdgmsg("drop", EquipmentType.LeftHand.slot);
+		return true;
+	    } else {
+		return false;
+	    }
+	}) || MouseBind.ITM_AUTO_EQUIP_RH.check(seq, () -> {
+	    final Optional<String> name = item.name();
+	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+		item.wdgmsg("take", c);
+		ui.gui.equ.wdgmsg("drop", EquipmentType.RightHand.slot);
+		return true;
+	    } else {
+		return false;
+	    }
+	}))) {
+	    if (btn == 3) {
+		item.wdgmsg("iact", c, ui.modflags());
+		return true;
+	    } else {
+		return false;
+	    }
+	} else {
+	    return true;
 	}
-	return(false);
     }
 
     public boolean drop(Coord cc, Coord ul) {

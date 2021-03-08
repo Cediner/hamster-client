@@ -17,7 +17,7 @@ public class MouseBind {
     public static final MouseBind
         ITM_TRANSFER, ITM_TRANSFER_ALL_ALIKE, ITM_DROP, ITM_DROP_ALL_ALIKE,
         ITM_TAKE, ITM_TOGGLE_LOCK, ITM_AUTO_EQUIP, ITM_AUTO_EQUIP_LH,
-        ITM_AUTO_EQUIP_RH, ITM_ADD_ALL_ALIKE;
+        ITM_AUTO_EQUIP_RH;
     //
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
@@ -44,7 +44,6 @@ public class MouseBind {
         final String ITM_GRP = "Item";
         ITM_TRANSFER = addMB("Transfer item", ITM_GRP, "S-B1");
         ITM_TRANSFER_ALL_ALIKE = addMB("Transfer all alike items", ITM_GRP, "M-B1");
-        ITM_ADD_ALL_ALIKE = addMB("Add all alike items to object", ITM_GRP, "S-C-B3");
         ITM_DROP = addMB("Drop item", ITM_GRP, "C-B1");
         ITM_DROP_ALL_ALIKE = addMB("Drop all alike items", ITM_GRP, "M-B1");
         ITM_TAKE = addMB("Take item", ITM_GRP, "B1");
