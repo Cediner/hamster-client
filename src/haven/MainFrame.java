@@ -26,6 +26,9 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -35,6 +38,7 @@ import java.lang.reflect.*;
 import java.util.List;
 
 public class MainFrame extends java.awt.Frame implements Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     /* Multi Session */
     public static MainFrame instance;
     private final List<Thread> sessionThreads = new ArrayList<>();
@@ -351,6 +355,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	try {
 	    setTitle("Haven and Hearth");
 	    Thread ui = new HackThread(p, "Haven UI thread");
+	    logger.atInfo().log("Starting master UI thread");
 	    p.setupMail(ui);
 	    ui.start();
 	    alive = true;
@@ -495,19 +500,25 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
     }
 
     private static void main2(String[] args) {
+	logger.atInfo().log("Parse command line into Config");
 	Config.cmdline(args);
 	try {
 	    javabughack();
 	} catch(InterruptedException e) {
 	    return;
 	}
+	logger.atInfo().log("Setup res");
 	setupres();
+	logger.atInfo().log("Init custom data");
+	GlobalSettings.init();
+	logger.atInfo().log("Create the MainFrame");
 	UI.Runner fun = null;
 	if(Config.servargs != null)
 	    fun = new RemoteUI(connect(Config.servargs));
 	MainFrame f = new MainFrame(null);
 	if(Utils.getprefb("fullscreen", false))
 	    f.setfs();
+	logger.atInfo().log("Start the MainFrame thread");
 	f.run(fun);
 	dumplist(Resource.remote().loadwaited(), Config.loadwaited);
 	dumplist(Resource.remote().cached(), Config.allused);
@@ -529,6 +540,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	ThreadGroup g = new ThreadGroup("Haven main group");
 	String ed;
 	if(!(ed = Utils.getprop("haven.errorurl", "")).equals("")) {
+	    logger.atInfo().log("Setting up loftar error logging");
 	    try {
 		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URL(ed));
 		hg.sethandler(new haven.error.ErrorGui(null) {
@@ -542,6 +554,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    }
 	}
 	Thread main = new HackThread(g, () -> main2(args), "Haven main thread");
+	logger.atInfo().log("Starting main thread");
 	main.start();
     }
 	

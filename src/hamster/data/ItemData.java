@@ -54,16 +54,12 @@ public class ItemData {
     public static double maxContent(final String name, final ContainerType type) {
         if (containers.containsKey(name.toUpperCase())) {
             final Container cont = containers.get(name.toUpperCase());
-            switch (type) {
-                case LIQUID:
-                    return cont.liquid_max;
-                case WEIGHT:
-                    return cont.weight_max;
-                case SEED:
-                    return cont.seed_max;
-                default:
-                    return 0;
-            }
+            return switch (type) {
+                case LIQUID -> cont.liquid_max;
+                case WEIGHT -> cont.weight_max;
+                case SEED -> cont.seed_max;
+                default -> 0;
+            };
         } else {
             return 0;
         }

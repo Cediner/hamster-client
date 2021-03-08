@@ -1,15 +1,58 @@
 package hamster;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.data.DangerousData;
+import hamster.data.ForagableData;
+import hamster.data.HighlightData;
+import hamster.data.ItemData;
+import hamster.io.Storage;
 import haven.JOGLPanel;
 
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * A list of settings that will work across all sessions
  */
 public class GlobalSettings {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Settings global = new Settings("global");
     private static final Settings tmp = new Settings("gtmp", false);
+
+    public static void init() {
+        final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
+        if (optint.isPresent()) {
+            //logger.atInfo().log("Loading movables");
+            //Movable.init(optint.get());
+            //logger.atInfo().log("Loading growth");
+            //Growth.init(optint.get());
+            //logger.atInfo().log("Loading range");
+            //Range.init(optint.get());
+            //logger.atInfo().log("Loading alered");
+            //Alerted.init(optint.get());
+            //logger.atInfo().log("Loading deleted");
+            //Deleted.init();
+            //logger.atInfo().log("Loading hidden");
+            //Hidden.init();
+            logger.atInfo().log("Loading highlighted");
+            HighlightData.init();
+            logger.atInfo().log("Loading itemdata");
+            ItemData.init(optint.get());
+            logger.atInfo().log("Loading foragables");
+            ForagableData.init(optint.get());
+            logger.atInfo().log("Loading dangerous");
+            DangerousData.init(optint.get());
+            //logger.atInfo().log("Loading Skill Data");
+            //SkillTree.init(optint.get());
+            //logger.atInfo().log("Loading Credo Data");
+            //CredoTree.init(optint.get());
+            //Internal lookups are no longer needed
+            optint.get().close();
+        } else {
+            logger.atSevere().log("Failed to open static datastore");
+            System.exit(0);
+        }
+    }
 
     //Non-saved globals
     public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(tmp, "tmp.pause", false);
