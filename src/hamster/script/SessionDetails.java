@@ -242,7 +242,7 @@ public class SessionDetails {
     }
 
     /*****************************************************************************************
-     *  Inventory
+     *  Held Items
      *****************************************************************************************/
     public void attachHeldItem(final GItem item) {
         synchronized (heldlock) {
