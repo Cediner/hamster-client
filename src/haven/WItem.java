@@ -48,7 +48,7 @@ public class WItem extends Widget implements DTarget {
     private Resource cspr = null;
     private Message csdt = Message.nil;
     private boolean locked = false;
-    //haven.res.ui.tt.q.qbuff.Quality display
+    //Quality display
     private double q_last;
     private Tex qtex;
 

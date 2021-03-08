@@ -5,7 +5,7 @@ import haven.*;
 
 import java.awt.Color;
 
-/* >tt: haven.res.ui.tt.q.qbuff.Quality */
+/* >tt: Quality */
 public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     private static final Color qcol = Color.WHITE;
     private static final Color qolcol = Color.BLACK;
