@@ -102,6 +102,11 @@ public class Inventory extends Widget implements DTarget {
 	ui.sess.details.attachInventory(this, type);
     }
     
+    @Override
+    protected void removed() {
+	ui.sess.details.removeInventory(this, type);
+    }
+    
     public boolean mousewheel(Coord c, int amount) {
 	if(ui.modshift) {
 	    Inventory minv = getparent(GameUI.class).maininv;

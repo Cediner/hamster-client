@@ -305,6 +305,7 @@ public class UI {
     }
 
     private void removeid(Widget wdg) {
+	wdg.removed();
 	synchronized(widgets) {
 	    Integer id = rwidgets.get(wdg);
 	    if(id != null) {

@@ -59,6 +59,18 @@ public class VMeter extends Widget {
 	this.amount = amount;
 	this.cl = cl;
     }
+
+    @Override
+    protected void added() {
+	super.added();
+	ui.sess.details.attachVMeter(this);
+    }
+
+    @Override
+    protected void removed() {
+	ui.sess.details.removeVMeter(this);
+	super.removed();
+    }
 	
     public void draw(GOut g) {
 	g.image(bg, Coord.z);
@@ -69,14 +81,27 @@ public class VMeter extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg.equals("set")) {
 	    amount = (Integer)args[0];
 	    if(args.length > 1)
 		cl = (Color)args[1];
-	} else if(msg == "col") {
+	} else if(msg.equals("col")) {
 	    cl = (Color)args[0];
 	} else {
 	    super.uimsg(msg, args);
+	}
+    }
+
+    /** For the Scripting API  **********************************************************/
+    public int amount() {
+	return amount;
+    }
+
+    public String owner() {
+	if(parent instanceof Window) {
+	    return ((Window) parent).cap.text;
+	} else {
+	    return "";
 	}
     }
 }
