@@ -107,22 +107,27 @@ public class IMeter extends MovableWidget {
 	    this.meters = decmeters(args, 0);
 	} else {
 	    super.uimsg(msg, args);
-	    if(msg.equals("tip")) { //TODO: scripting edits
+	    if(msg.equals("tip")) {
 		final String tt = (String)args[0];
 		this.tt = Text.renderstroked(tt.substring(tt.indexOf(':') + 1)).tex();
 		Matcher matcher = hppat.matcher(tt);
 		if(matcher.find()) {
 		    ui.gui.hp = this;
+		    ui.sess.details.shp = Integer.parseInt(matcher.group(1));
+		    ui.sess.details.hhp = Integer.parseInt(matcher.group(2));
+		    ui.sess.details.mhp = Integer.parseInt(matcher.group(3));
 		    setVisible(ui.gui.settings.SHOWHEALTH.get());
 		} else {
 		    matcher = stampat.matcher(tt);
 		    if(matcher.find()) {
 		        ui.gui.stam = this;
+			ui.sess.details.stam = Integer.parseInt(matcher.group(1));
 			setVisible(ui.gui.settings.SHOWSTAM.get());
 		    } else {
 			matcher = energypat.matcher(tt);
 			if(matcher.find()) {
 			    ui.gui.energy = this;
+			    ui.sess.details.energy = Integer.parseInt(matcher.group(1));
 			    setVisible(ui.gui.settings.SHOWENERGY.get());
 			}
 		    }
