@@ -28,6 +28,8 @@ package haven;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import hamster.util.JobSystem;
 import haven.render.Render;
 
 public class OCache implements Iterable<Gob> {
@@ -102,6 +104,7 @@ public class OCache implements Iterable<Gob> {
 	    synchronized(old) {
 		for(ChangeCallback cb : cbs)
 		    cb.removed(old);
+		old.dispose();
 	    }
 	}
     }
@@ -230,7 +233,10 @@ public class OCache implements Iterable<Gob> {
 	    ((Sprite.CUpd)d.spr).update(sdt);
 	    d.sdt = sdt;
 	} else if((d == null) || (d.res != res) || !d.sdt.equals(sdt)) {
-	    g.setattr(new ResDrawable(g, res, sdt));
+	    final ResDrawable rd = new ResDrawable(g, res, sdt);
+	    g.setattr(rd);
+	    final String name = rd.getresname();
+	    JobSystem.submit(() -> g.discover(name));
 	}
     }
     public Delta cres(Message msg) {
@@ -312,6 +318,8 @@ public class OCache implements Iterable<Gob> {
 	if((cmp == null) || !cmp.base.equals(base)) {
 	    cmp = new Composite(g, base);
 	    g.setattr(cmp);
+	    final String name = cmp.getresname();
+	    JobSystem.submit(() -> g.discover(name));
 	}
     }
     public Delta composite(Message msg) {

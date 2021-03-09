@@ -233,6 +233,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	return(Math.sqrt((x * x) + (y * y)));
     }
 
+    public Coord positive() {
+	return new Coord(Math.abs(x), Math.abs(y));
+    }
+
     public Coord norm(double n) {
 	return(mul(n / abs()));
     }
@@ -313,4 +317,8 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
     }
 
     public Coord copy() { return new Coord(x, y); }
+
+    public int area() {
+	return x * y;
+    }
 }

@@ -1047,11 +1047,15 @@ public class Resource implements Serializable {
     @LayerName("neg")
     public class Neg extends Layer {
 	public Coord cc;
+	public Coord bc, bs, sz;
 	public Coord[][] ep;
 		
 	public Neg(Message buf) {
 	    cc = cdec(buf);
-	    buf.skip(12);
+	    bc = cdec(buf);
+	    bs = cdec(buf);
+	    sz = cdec(buf);
+	    //buf.skip(12);
 	    ep = new Coord[8][0];
 	    int en = buf.uint8();
 	    for(int i = 0; i < en; i++) {

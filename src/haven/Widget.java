@@ -299,6 +299,8 @@ public class Widget {
 
     protected void binded() {}
 
+    protected void removed() {}
+
     public Coord2d relpos() {
 	return new Coord2d(c.x / (double) parent.sz.x,
 		c.y / (double) parent.sz.y);
@@ -1385,7 +1387,7 @@ public class Widget {
 
 	public Tex get() {
 	    final var key = (kb == null) ? null : kb.bind.get();
-	    if(!hrend || (!rkey.equals(key))) {
+	    if(!hrend || rkey == null || (!rkey.equals(key))) {
 		String tip;
 		if(base != null) {
 		    tip = RichText.Parser.quote(base);

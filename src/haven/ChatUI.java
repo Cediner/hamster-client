@@ -604,6 +604,12 @@ public class ChatUI extends Widget {
 	}
 	
 	public String name() {return(name);}
+
+	@Override
+	public void append(Message msg) {
+	    super.append(msg);
+	    ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
+	}
     }
     
     public static abstract class EntryChannel extends Channel {
@@ -695,6 +701,22 @@ public class ChatUI extends Widget {
 	}
     }
 
+    /**
+     * Chat between player and scripts only
+     */
+    public static class BotChat extends SimpleChat {
+	public BotChat() {
+	    super(false, "Bot");
+	}
+
+	@Override
+	public void send(String text) {
+	    ui.sess.details.context.dispatchmsg(this, "msg", text);
+	    uimsg("msg", text);
+	}
+    }
+
+
     public static class MultiChat extends EntryChannel {
 	public final int urgency;
 	private final String name;
@@ -779,9 +801,21 @@ public class ChatUI extends Widget {
 	    if(msg == "msg") {
 		Integer from = (Integer)args[0];
 		String line = (String)args[1];
+		final String subject;
+		if (this == ui.gui.chat.area)
+		    subject = "area-msg";
+		else if (this == ui.gui.chat.realm)
+		    subject = "realm-msg";
+		else
+		    subject = "village-msg";
 		if(from == null) {
 		    append(new MyMessage(line, iw()));
+		    ui.sess.details.context.dispatchmsg(this, subject, line, ui.sess.details.chrname());
 		} else {
+		    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
+		    String nm = (b == null) ? "???" : (b.name);
+		    ui.sess.details.context.dispatchmsg(this, subject, line, nm);
+
 		    Message cmsg = new NamedMessage(from, line, fromcolor(from), iw());
 		    append(cmsg);
 		    if(urgency > 0)
@@ -823,6 +857,10 @@ public class ChatUI extends Widget {
 		if(from == null) {
 		    append(new MyMessage(line, iw()));
 		} else {
+		    BuddyWnd.Buddy b = getparent(GameUI.class).buddies.find(from);
+		    String nm = (b == null) ? "???" : (b.name);
+		    ui.sess.details.context.dispatchmsg(this, "pt-msg", line, nm);
+
 		    Message cmsg = new NamedMessage(from, line, Utils.blendcol(col, Color.WHITE, 0.5), iw());
 		    append(cmsg);
 		    if(urgency > 0)
@@ -871,10 +909,12 @@ public class ChatUI extends Widget {
 		String t = (String)args[0];
 		String line = (String)args[1];
 		if(t.equals("in")) {
+		    ui.sess.details.context.dispatchmsg(this, "priv-in-msg", line, name());
 		    Message cmsg = new InMessage(line, iw());
 		    append(cmsg);
 		    notify(cmsg, 3);
 		} else if(t.equals("out")) {
+		    ui.sess.details.context.dispatchmsg(this, "priv-out-msg", line);
 		    append(new OutMessage(line, iw()));
 		}
 	    } else if(msg == "err") {

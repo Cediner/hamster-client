@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 
 import hamster.IndirSetting;
 import hamster.KeyBind;
+import hamster.script.pathfinding.Move;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
@@ -277,6 +278,42 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    }
 	}
 
+	/**
+	 * Ideally this will be a line -> X -> line -> X
+	 * Where X is some icon for destinations
+	 * Start at map.moveto
+	 * Then follow map.movequeue
+	 * XXX: does it need an icon?
+	 */
+	private void drawmovement(GOut g, final Location ploc) {
+	    synchronized (mv.movequeue) {
+		final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
+		final Move movingto = mv.movingto();
+		final Iterator<Move> queue = mv.movequeue();
+		Coord last;
+		if (movingto != null) {
+		    //Make the line first
+		    g.chcolor(ui.gui.settings.MMPATHCOL.get());
+		    final Coord cloc = xlate(ploc);
+		    last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.dest().floor(tilesz).sub(pc))));
+		    if (last != null && cloc != null) {
+			g.dottedline(cloc, last, 2);
+			if (queue.hasNext()) {
+			    while (queue.hasNext()) {
+				final Coord next = xlate(new Location(ploc.seg, ploc.tc.add(queue.next().dest().floor(tilesz).sub(pc))));
+				if (next != null) {
+				    g.dottedline(last, next, 2);
+				    last = next;
+				} else {
+				    break;
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+
 	public void draw(GOut g) {
 	    g.chcolor(0, 0, 0, 128);
 	    g.frect(Coord.z, sz);
@@ -286,11 +323,14 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 
 	    //Draw anything relative to player
 	    try {
-	        resolveo(player).flatMap(this::xlateo).ifPresent(ploc -> {
-		    //Draw our view
-		    drawview(g, ploc);
-		    //TODO: Draw queued movement and tracking
-		});
+		resolveo(player).ifPresent(loc ->
+			xlateo(loc).ifPresent(ploc -> {
+			    //Draw our view
+			    drawview(g, ploc);
+			    //Draw out queued moves if any
+			    drawmovement(g.reclip(view.c, view.sz), loc);
+			    //TODO: Draw tracking
+		}));
 	    } catch (Loading ignored){}
 	}
 

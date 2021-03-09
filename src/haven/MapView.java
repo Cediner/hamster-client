@@ -26,11 +26,13 @@
 
 package haven;
 
+import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
@@ -39,6 +41,9 @@ import java.lang.reflect.*;
 
 import hamster.GlobalSettings;
 import hamster.KeyBind;
+import hamster.MouseBind;
+import hamster.script.pathfinding.Move;
+import hamster.script.pathfinding.NBAPathfinder;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -47,6 +52,7 @@ import haven.render.sl.Type;
 public class MapView extends PView implements DTarget, Console.Directory {
     public static boolean clickdb = false;
     public long plgob = -1;
+    public long rlplgob = -1;
     public Coord2d cc;
     private final Glob glob;
     private int view = 2;
@@ -60,6 +66,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public double shake = 0.0;
     public static int plobgran = 8;
     private static final Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
+
+    //Queued Movement
+    private Move movingto;
+    private Coord2d lastrc;
+    private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
+    private long lastMove = System.currentTimeMillis();
+    public final Queue<Move> movequeue = new ArrayDeque<>();
+
     
     public interface Delayed {
 	public void run(GOut g);
@@ -517,7 +531,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	super(sz);
 	this.glob = glob;
 	this.cc = cc;
-	this.plgob = plgob;
+	this.plgob = this.rlplgob = plgob;
 	basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
@@ -1674,7 +1688,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Loader.Future<Plob> placing = this.placing;
 	if((placing != null) && placing.done())
 	    placing.get().gtick(g.out);
-	glob.map.sendreqs();
 	if((olftimer != 0) && (olftimer < Utils.rtime()))
 	    unflashol();
 	try {
@@ -1701,9 +1714,188 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	}
     }
-    
+
+    /************* Queued Movement / Pathfinding *************/
+    private void updateSpeed(final double dt) {
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	if (pl != null) {
+	    final Coord2d plc = new Coord2d(pl.getc());
+	    if (lastrc != null) {
+		totaldist += plc.dist(lastrc);
+		totaldt += dt;
+		if(totaldt >= 1) {
+		    mspeedavg = totaldist/totaldt;
+		    totaldt = 0;
+		    totaldist = 0;
+		}
+		mspeed = plc.dist(lastrc) / dt;
+	    } else {
+		mspeedavg = 0;
+		totaldist = 0;
+		totaldt = 0;
+		mspeed = 0;
+	    }
+	    lastrc = plc;
+	}
+    }
+
+    public double speed() {
+	return mspeedavg;
+    }
+
+    public double rspeed() {
+	if (ui != null) {
+	    final Gob g = ui.sess.glob.oc.getgob(plgob);
+	    if (g != null) {
+		return g.getv();
+	    } else {
+		return 0.0;
+	    }
+	} else {
+	    return 0.0;
+	}
+    }
+
+    /**
+     * 1) If you made it to your destination within a reasonable limit
+     * a) Exactly on target destination
+     * b) Not moving anymore and within 5 units of it
+     * c) Predictive model said it was okay
+     */
+    private boolean triggermove() {
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	if (pl != null) {
+	    if (movingto != null && pl.getattr(Moving.class) != null) {
+		final Coord2d plc = new Coord2d(pl.getc());
+		final double left = plc.dist(movingto.dest()) / mspeed;
+		//Only predictive models can trigger here
+		return movingto.dest().dist(pl.rc) <= 5 || left == 0;
+	    } else if (movingto == null || movingto.dest().dist(pl.rc) <= 5) {
+		return true;
+	    } else {
+		//Way off target and not moving, cancel
+		clearmovequeue();
+		return false;
+	    }
+	} else {
+	    return false;
+	}
+    }
+
+    @SuppressWarnings("unused")
+    public boolean hasmoves() {
+	return movequeue.size() > 0 || movingto != null;
+    }
+
+    public void clearmovequeue() {
+	synchronized (movequeue) {
+	    movequeue.clear();
+	    movingto = null;
+	    //TODO: Pointer
+	    //ui.gui.pointer.update(null);
+	}
+    }
+
+    public void queuemove(final Move c) {
+	synchronized (movequeue) {
+	    movequeue.add(c);
+	}
+    }
+
+    public boolean los(final Coord2d c) {
+	final NBAPathfinder finder = new NBAPathfinder(ui);
+	return finder.walk(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+    }
+
+    public void los(final Gob g) {
+
+    }
+
+    public Move[] findpath(final Coord2d c) {
+	final NBAPathfinder finder = new NBAPathfinder(ui);
+	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+
+	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
+	}
+
+	return moves != null ? moves.toArray(new Move[0]) : null;
+    }
+
+    public Move[] findpath(final Gob g) {
+	final Coord2d c = new Coord2d(g.getc());
+	g.updatePathfindingBlackout(true);
+	final NBAPathfinder finder = new NBAPathfinder(ui);
+	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+
+	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
+	}
+	g.updatePathfindingBlackout(false);
+	return moves != null ? moves.toArray(new Move[0]) : null;
+    }
+
+    public void pathto(final Coord2d c) {
+        final Gob me = player();
+        if(me != null) {
+            me.updatePathfindingBlackout(true);
+	    final Move[] moves = findpath(c);
+	    if (moves != null) {
+		clearmovequeue();
+		for (final Move m : moves) {
+		    queuemove(m);
+		}
+	    }
+	    me.updatePathfindingBlackout(false);
+	}
+    }
+
+    public void pathto(final Gob g) {
+	final Gob me = player();
+	if(me != null) {
+	    me.updatePathfindingBlackout(true);
+	    final Move[] moves = findpath(g);
+	    if (moves != null) {
+		clearmovequeue();
+		for (final Move m : moves) {
+		    queuemove(m);
+		}
+	    }
+	    me.updatePathfindingBlackout(false);
+	}
+    }
+
+    public void moveto(final Coord2d c) {
+	clearmovequeue();
+	wdgmsg("click", new Coord(1, 1), c.floor(posres), 1, 0);
+    }
+
+    public void relMove(final double x, final double y) {
+	relMove(new Coord2d(x, y));
+    }
+
+    public void relMove(final Coord2d c) {
+	if (ui != null) {
+	    final Gob g = ui.sess.glob.oc.getgob(plgob);
+	    if (g != null) {
+		final Coord gc = new Coord2d(g.getc()).add(c).floor(posres);
+		wdgmsg("click", new Coord(1, 1), gc, 1, 0);
+	    }
+	}
+    }
+
+    public Move movingto() {
+	return movingto;
+    }
+
+    public Iterator<Move> movequeue() {
+	return movequeue.iterator();
+    }
+    /*****/
+
     public void tick(double dt) {
 	super.tick(dt);
+	glob.map.sendreqs();
 	camload = null;
 	try {
 	    if((shake = shake * Math.pow(100, -dt)) < 0.01)
@@ -1729,6 +1921,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Loader.Future<Plob> placing = this.placing;
 	if((placing != null) && placing.done())
 	    placing.get().ctick(dt);
+
+	synchronized (movequeue) {
+	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
+		movingto = movequeue.poll();
+		if (movingto != null) {
+		    //TODO: Pointer
+		    //ui.gui.pointer.update(movingto.dest());
+		    movingto.apply(this);
+		    lastMove = System.currentTimeMillis();
+		}
+	    }
+	}
     }
     
     public void resize(Coord sz) {
@@ -1896,8 +2100,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	} else if(msg == "plob") {
 	    if(args[0] == null)
 		plgob = -1;
-	    else
-		plgob = Utils.uint32((Integer)args[0]);
+	    else {
+		plgob = Utils.uint32((Integer) args[0]);
+		rlplgob = plgob;
+	    }
 	} else if(msg == "flashol") {
 	    Collection<String> ols = new ArrayList<>();
 	    int olflash = (Integer)args[0];
@@ -2027,10 +2233,35 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
+	    final String seq = MouseBind.generateSequence(ui, clickb);
 	    Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
-	    if(inf != null)
+	    // For gob clicks
+	    //[ 0, id, rc.floor(posres), 0 ,-1 ]
+	    //  ^-- Contains overlay     ^   ^
+	    //                           |   |- FastMesh Res ID
+	    //                           |
+	    //                           +-- Overlay id
+	    if (inf != null)
 		args = Utils.extend(args, inf.clickargs());
-	    wdgmsg("click", args);
+
+	    Object[] clickargs = args;
+	    if (MV_SHOW_SPEC_MENU.match(seq)) {
+		//TODO: impl later
+	    } else if (MV_QUEUE_MOVE.match(seq)) {
+		movequeue.add(new Move(mc));
+	    } else if (MV_PATHFIND_MOVE.match(seq)) {
+		if (clickargs.length > 4) {
+		    final Gob g = ui.sess.glob.oc.getgob((int) clickargs[5]);
+		    if (g != null)
+			pathto(g);
+		} else {
+		    pathto(mc);
+		}
+	    } else {
+		if (clickb == 1 || clickargs.length > 4)
+		    clearmovequeue();
+		wdgmsg("click", clickargs);
+	    }
 	}
     }
     
@@ -2331,6 +2562,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     private Map<String, Console.Command> cmdmap = new TreeMap<String, Console.Command>();
     {
+	cmdmap.put("dump-hitmap", (cons, args) -> {
+            final var buf = ui.sess.glob.gobhitmap.debug2(new Coord(Integer.MAX_VALUE, Integer.MAX_VALUE),
+		    new Coord(Integer.MIN_VALUE, Integer.MIN_VALUE));
+	    try {
+		javax.imageio.ImageIO.write(buf, "png", new File("hitmap_gobs.png"));
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	});
 	cmdmap.put("cam", new Console.Command() {
 		public void run(Console cons, String[] args) throws Exception {
 		    if(args.length >= 2) {

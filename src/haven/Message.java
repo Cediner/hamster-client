@@ -184,6 +184,9 @@ public abstract class Message {
 	}
     }
     public void bytes(byte[] b) {bytes(b, 0, b.length);}
+    public Coord2d coordf16() {
+	return (new Coord2d(float16(), float16()));
+    }
     public Coord coord() {
 	return(new Coord(int32(), int32()));
     }

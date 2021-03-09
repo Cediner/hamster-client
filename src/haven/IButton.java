@@ -176,6 +176,11 @@ public class IButton extends SIWidget {
 	this(themeres, tooltip, action, action);
     }
 
+
+    public IButton(final String themeres, final Runnable action) {
+	this(themeres, null, action, action);
+    }
+
     public IButton(final String themeres, final String tooltip) {
 	super(Coord.z);
 	if (tooltip != null)

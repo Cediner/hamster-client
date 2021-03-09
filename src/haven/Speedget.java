@@ -163,6 +163,29 @@ public class Speedget extends MovableWidget {
 	return(null);
     }
 
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
+	return(super.globtype(key, ev));
+    }
+
+    /*****************************************************************************************
+     *  Speedget Scripting API
+     *****************************************************************************************/
+    @Override
+    protected void binded() {
+	ui.sess.details.attachSpeedget(this);
+    }
+
+    @Override
+    protected void removed() {
+	ui.gui.speed = null;
+	ui.sess.details.removeSpeedget();
+    }
+
     public void cyclespeed() {
 	if (max >= 0) {
 	    int n;
@@ -178,14 +201,5 @@ public class Speedget extends MovableWidget {
 	if (max >= 0 && spd.id <= max) {
 	    set(spd.id);
 	}
-    }
-
-    public boolean globtype(char key, KeyEvent ev) {
-	final String bind = KeyBind.generateSequence(ev, ui);
-	for(final var kb : binds.keySet()) {
-	    if(kb.check(bind, binds.get(kb)))
-		return true;
-	}
-	return(super.globtype(key, ev));
     }
 }

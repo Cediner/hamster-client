@@ -204,6 +204,10 @@ public class WItem extends Widget implements DTarget {
 	}
     }
 
+    public int size() {
+	return sz.div(sqsz).area();
+    }
+
     private static final Color[] wearclr = new Color[]{
 	    new Color(233, 0, 14),
 	    new Color(218, 128, 87),

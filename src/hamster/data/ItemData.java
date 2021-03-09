@@ -30,6 +30,7 @@ public class ItemData {
     private static final Map<String, Container> containers = new HashMap<>();
 
     public static void init(final Storage internal) {
+        /* TODO: Revisit this later on
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
                 try (final ResultSet res = stmt.executeQuery("SELECT name_key FROM item WHERE item_id in (SELECT item_id FROM item_equipable)")) {
@@ -45,6 +46,7 @@ public class ItemData {
                 }
             }
         });
+         */
     }
 
     public static boolean isEquipable(final String name) {

@@ -29,7 +29,9 @@ package haven;
 import java.util.*;
 import java.awt.Color;
 
+import hamster.MouseBind;
 import hamster.data.MarkerData;
+import hamster.script.pathfinding.Move;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
 import haven.MapFile.Grid;
@@ -37,6 +39,9 @@ import haven.MapFile.GridInfo;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
+
+import static hamster.MouseBind.MV_PATHFIND_MOVE;
+import static hamster.MouseBind.MV_QUEUE_MOVE;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
@@ -933,20 +938,30 @@ public class MiniMap extends Widget {
 	return(super.tooltip(c, prev));
     }
 
+    //TODO Would be nice to do pathfinding but interact with gob once at location
     public void mvclick(MapView mv, Coord mc, Location loc, Gob gob, int button) {
+        final String bind = MouseBind.generateSequence(ui, button);
 	if(mc == null) mc = ui.mc;
 	if((sessloc != null) && (sessloc.seg == loc.seg)) {
-	    if(gob == null)
+	    if(MV_QUEUE_MOVE.match(bind)) {
+		ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+	    } else if(MV_PATHFIND_MOVE.match(bind)) {
+	        if(gob == null)
+	            ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
+	        else
+	            ui.gui.map.pathto(gob);
+	    } else if(gob == null) {
 		mv.wdgmsg("click", mc,
-			  loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			  button, ui.modflags());
-	    else
+			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
+			button, ui.modflags());
+	    } else {
 		mv.wdgmsg("click", mc,
-			  loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			  button, ui.modflags(), 0,
-			  (int)gob.id,
-			  gob.rc.floor(posres),
-			  0, -1);
+			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
+			button, ui.modflags(), 0,
+			(int)gob.id,
+			gob.rc.floor(posres),
+			0, -1);
+	    }
 	}
     }
 }

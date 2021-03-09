@@ -28,6 +28,10 @@ package haven;
 
 import java.util.*;
 import java.util.function.*;
+
+import hamster.gob.Tag;
+import hamster.script.pathfinding.Hitbox;
+import hamster.util.JobSystem;
 import haven.render.*;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
@@ -43,6 +47,20 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     private final Collection<SetupMod> setupmods = new ArrayList<>();
     private final Collection<ResAttr.Cell<?>> rdata = new LinkedList<ResAttr.Cell<?>>();
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
+
+    //Overlays / GAttribs that need to be added after a tick, delayed
+    private List<Overlay> dols = new ArrayList<>();
+    private List<Pair<GAttrib, Consumer<Gob>>> dattrs = new ArrayList<>();
+
+    // Gob tags that help define what it is
+    private Set<Tag> tags;
+    //A Gob can be holding many things (see: boats)
+    private final Set<Long> holding = new HashSet<>();
+    //A Gob can only be held by one thing
+    private long heldby;
+    //Account for this gob during hit checks or not in pathfinding
+    private boolean pathfinding_blackout = false;
+    private Hitbox hitbox = null;
 
     public static class Overlay implements RenderTree.Node {
 	public final int id;
@@ -258,6 +276,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     public void dispose() {
+	glob.gobhitmap.remove(this);
 	for(GAttrib a : attr.values())
 	    a.dispose();
 	for(ResAttr.Cell rd : rdata) {
@@ -272,6 +291,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    m.move(c);
 	this.rc = c;
 	this.a = a;
+	if(hitbox != null) {
+	    glob.gobhitmap.remove(this);
+	    glob.gobhitmap.add(this);
+	}
     }
 
     public Coord3f getc() {
@@ -744,4 +767,138 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	public TickList.Ticking ticker() {return(this);}
     }
     public final Placed placed = new Placed();
+
+
+    // For Player Gobs this will get their Kin name if mem'd or id if not
+    public String gobname() {
+	final KinInfo ki = getattr(KinInfo.class);
+	if (ki != null) {
+	    return ki.name;
+	} else {
+	    return "" + id;
+	}
+    }
+
+    /*
+     * Various ways to get the Resource / Resource name of a gob
+     */
+    public Optional<String> resname() {
+	return res().map((res) -> res.name);
+    }
+
+    public String name() {
+	return resname().orElse("");
+    }
+
+    public Optional<Resource> res() {
+	final Drawable d = getattr(Drawable.class);
+	try {
+	    return d != null ? Optional.of(d.getres()) : Optional.empty();
+	} catch (Exception e) {
+	    return Optional.empty();
+	}
+    }
+
+    public Optional<String> getresname() {
+	final Drawable d = getattr(Drawable.class);
+	if (d != null) {
+	    try {
+		return Optional.of(d.getresname());
+	    } catch (Resource.Loading l) {
+		return Optional.empty();
+	    }
+	} else {
+	    return Optional.empty();
+	}
+    }
+
+    public String rnm(final Indir<Resource> res) {
+	final String nm;
+	if (res instanceof Session.CachedRes.Ref) {
+	    nm = ((Session.CachedRes.Ref) res).name();
+	} else if (res instanceof Resource.Named) {
+	    nm = ((Resource.Spec) res).name;
+	} else {
+	    if (res != null && res.get() != null) {
+		nm = res.get().name;
+	    } else {
+		nm = "";
+	    }
+	}
+
+	return nm != null ? nm : "";
+    }
+
+    /*
+     * Tag System
+     */
+    public boolean hasTag(final Tag t) {
+	return tags != null && tags.contains(t);
+    }
+
+    /*
+     * Holding/Held By stuff
+     */
+    public boolean isHolding(final long id) {
+	return holding.contains(id);
+    }
+
+    public void isNoLongerHolding(final long id) {
+	holding.remove(id);
+    }
+
+    public void hold(final long id) {
+	holding.add(id);
+    }
+
+    public boolean isHeldBySomething() {
+	return heldby != -1;
+    }
+
+    public boolean isHeldBy(final long id) {
+	return heldby == id;
+    }
+
+    public long whoIsHoldingMe() {
+	return heldby;
+    }
+
+    public void isNoLongerHeld() {
+	heldby = -1;
+    }
+
+    public void heldby(final long id) {
+	heldby = id;
+    }
+
+    /*
+     * Pathfinding Related
+     */
+    public void updatePathfindingBlackout(final boolean val) {
+	this.pathfinding_blackout = val;
+    }
+
+    public boolean blackout() {
+        return this.pathfinding_blackout;
+    }
+
+    public Hitbox hitbox() {
+        return hitbox;
+    }
+
+    /*
+     * Gob Discovery and Info gathering, Occurs only once after
+     * its res name has been found
+     */
+    public void discover(final String name) {
+	final UI ui = glob.ui.get();
+	if (ui == null || ui.gui == null || ui.gui.map == null || ui.gui.mapfile == null || ui.gui.map.rlplgob == -1
+		 || res().isEmpty()) {
+	    throw new JobSystem.DependencyNotMet();
+	}
+
+	tags = Tag.getTags(name);
+	hitbox = Hitbox.hbfor(this);
+	ui.sess.glob.gobhitmap.add(this);
+    }
 }
