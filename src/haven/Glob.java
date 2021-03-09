@@ -29,11 +29,14 @@ package haven;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.awt.Color;
+
+import hamster.script.pathfinding.GobHitmap;
 import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
     public WeakReference<UI> ui;
+    public final GobHitmap gobhitmap;
 
     public final OCache oc = new OCache(this);
     public final MCache map;
@@ -59,6 +62,7 @@ public class Glob {
 
     public Glob(Session sess) {
 	this.sess = sess;
+	gobhitmap = new GobHitmap();
 	map = new MCache(sess);
 	party = new Party(this);
     }

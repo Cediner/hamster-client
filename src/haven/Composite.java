@@ -135,7 +135,18 @@ public class Composite extends Drawable {
     public Resource getres() {
 	return(base.get());
     }
-    
+
+    @Override
+    public String getresname() {
+	if (base instanceof Session.CachedRes.Ref) {
+	    return ((Session.CachedRes.Ref) base).name();
+	} else if (base instanceof Resource.Named) {
+	    return ((Resource.Spec) base).name;
+	} else {
+	    return base.get().name;
+	}
+    }
+
     public Pose getpose() {
 	return(comp.pose);
     }

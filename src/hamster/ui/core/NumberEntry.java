@@ -25,8 +25,8 @@ public class NumberEntry extends Widget {
         this.onActivate = onActivate;
         this.min = min;
         this.max = max;
-        final IButton add = new IButton(Theme.fullres("buttons/circular/small/add"), this::add);
-        final IButton sub = new IButton(Theme.fullres("buttons/circular/small/sub"), this::sub);
+        final IButton add = new IButton("buttons/circular/small/add", this::add);
+        final IButton sub = new IButton("buttons/circular/small/sub", this::sub);
         entry = new TextEntry(w - (add.sz.x + sub.sz.x + 6), defval + "", this::onTextChange, this::onTextActivate);
         entry.numeric = true;
 

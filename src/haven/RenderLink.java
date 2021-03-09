@@ -204,6 +204,7 @@ public interface RenderLink {
     public class Res extends Resource.Layer implements Resource.IDLayer<Integer> {
 	public transient final RenderLink l;
 	public final int id;
+	private final Indir<Resource> mesh;
 	
 	public Res(Resource res, Message buf) {
 	    res.super();
@@ -220,14 +221,26 @@ public interface RenderLink {
 	    }
 	    if(t == 0) {
 		l = MeshMat.parse(res, buf);
+	    	mesh = ((MeshMat)l).mesh;
 	    } else if(t == 1) {
+		mesh = null;
 		l = AmbientLink.parse(res, buf);
 	    } else if(t == 2) {
+		mesh = null;
 		l = Collect.parse(res, buf);
 	    } else if(t == 3) {
+		mesh = null;
 		l = Parameters.parse(res, buf);
 	    } else {
 		throw(new Resource.LoadException("Invalid renderlink type: " + t, res));
+	    }
+	}
+
+	public Optional<Resource> mesh() {
+	    try {
+		return mesh != null ? Optional.of(mesh.get()) : Optional.empty();
+	    } catch (Loading l) {
+		return Optional.empty();
 	    }
 	}
 	

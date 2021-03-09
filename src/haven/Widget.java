@@ -1387,7 +1387,7 @@ public class Widget {
 
 	public Tex get() {
 	    final var key = (kb == null) ? null : kb.bind.get();
-	    if(!hrend || (!rkey.equals(key))) {
+	    if(!hrend || rkey == null || (!rkey.equals(key))) {
 		String tip;
 		if(base != null) {
 		    tip = RichText.Parser.quote(base);

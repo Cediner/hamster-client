@@ -71,4 +71,24 @@ public class ResDrawable extends Drawable {
     public Skeleton.Pose getpose() {
 	return(Skeleton.getpose(spr));
     }
+
+    public int sdtnum() {
+	if (sdt != null) {
+	    Message csdt = sdt.clone();
+	    return csdt.eom() ? 0xffff000 : Sprite.decnum(csdt);
+	}
+	return 0;
+    }
+
+    @Override
+    public String getresname() {
+	if (res instanceof Session.CachedRes.Ref) {
+	    return ((Session.CachedRes.Ref) res).name();
+	} else if (res instanceof Resource.Named) {
+	    return ((Resource.Spec) res).name;
+	} else {
+	    return res.get().name;
+	}
+    }
+
 }

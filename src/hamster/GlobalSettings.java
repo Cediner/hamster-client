@@ -1,10 +1,10 @@
 package hamster;
 
 import com.google.common.flogger.FluentLogger;
-import hamster.data.DangerousData;
 import hamster.data.ForagableData;
 import hamster.data.HighlightData;
 import hamster.data.ItemData;
+import hamster.gob.Tag;
 import hamster.io.Storage;
 import haven.JOGLPanel;
 
@@ -22,8 +22,6 @@ public class GlobalSettings {
     public static void init() {
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
-            //logger.atInfo().log("Loading movables");
-            //Movable.init(optint.get());
             //logger.atInfo().log("Loading growth");
             //Growth.init(optint.get());
             //logger.atInfo().log("Loading range");
@@ -34,14 +32,14 @@ public class GlobalSettings {
             //Deleted.init();
             //logger.atInfo().log("Loading hidden");
             //Hidden.init();
+            logger.atInfo().log("Loading Tag Data");
+            Tag.init(optint.get());
             logger.atInfo().log("Loading highlighted");
             HighlightData.init();
             logger.atInfo().log("Loading itemdata");
             ItemData.init(optint.get());
             logger.atInfo().log("Loading foragables");
             ForagableData.init(optint.get());
-            logger.atInfo().log("Loading dangerous");
-            DangerousData.init(optint.get());
             //logger.atInfo().log("Loading Skill Data");
             //SkillTree.init(optint.get());
             //logger.atInfo().log("Loading Credo Data");

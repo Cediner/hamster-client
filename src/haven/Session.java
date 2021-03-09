@@ -109,7 +109,7 @@ public class Session implements Resource.Resolver {
 	}
     }
 
-    private static class CachedRes {
+    static class CachedRes {
 	private final Waitable.Queue wq = new Waitable.Queue();
 	private final int resid;
 	private String resnm = null;
@@ -120,7 +120,7 @@ public class Session implements Resource.Resolver {
 	    resid = id;
 	}
 	
-	private class Ref implements Indir<Resource> {
+	class Ref implements Indir<Resource> {
 	    private Resource res;
 		    
 	    public Resource get() {
@@ -129,6 +129,10 @@ public class Session implements Resource.Resolver {
 		if(res == null)
 		    res = Resource.remote().load(resnm, resver, 0).get();
 		return(res);
+	    }
+
+	    public String name() {
+		return resnm;
 	    }
 	
 	    public String toString() {
