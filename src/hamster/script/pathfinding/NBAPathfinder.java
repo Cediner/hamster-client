@@ -186,9 +186,9 @@ public class NBAPathfinder extends Pathfinder {
             max.y = Math.max(max.y, c.y);
             maxtdepth = Math.max(maxtdepth, end.get(c).g);
         }
+        final BufferedImage buf = ui.sess.glob.gobhitmap.debug2(min, max);
 
         //Render our debug image
-        final BufferedImage buf = new BufferedImage(max.x - min.x + 1, max.y - min.y + 1, BufferedImage.TYPE_INT_RGB);
         {
             final Color sc = Color.GREEN;
             final Color ec = Color.BLUE;

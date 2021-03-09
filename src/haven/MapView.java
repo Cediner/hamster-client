@@ -26,6 +26,7 @@
 
 package haven;
 
+import static hamster.MouseBind.MV_SHOW_SPEC_MENU;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
@@ -40,6 +41,7 @@ import java.lang.reflect.*;
 
 import hamster.GlobalSettings;
 import hamster.KeyBind;
+import hamster.MouseBind;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
 import haven.render.*;
@@ -1789,6 +1791,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	synchronized (movequeue) {
 	    movequeue.clear();
 	    movingto = null;
+	    //TODO: Pointer
 	    //ui.gui.pointer.update(null);
 	}
     }
@@ -1833,22 +1836,32 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public void pathto(final Coord2d c) {
-	final Move[] moves = findpath(c);
-	if(moves != null) {
-	    clearmovequeue();
-	    for(final Move m : moves) {
-		queuemove(m);
+        final Gob me = player();
+        if(me != null) {
+            me.updatePathfindingBlackout(true);
+	    final Move[] moves = findpath(c);
+	    if (moves != null) {
+		clearmovequeue();
+		for (final Move m : moves) {
+		    queuemove(m);
+		}
 	    }
+	    me.updatePathfindingBlackout(false);
 	}
     }
 
     public void pathto(final Gob g) {
-	final Move[] moves = findpath(g);
-	if (moves != null) {
-	    clearmovequeue();
-	    for (final Move m : moves) {
-		queuemove(m);
+	final Gob me = player();
+	if(me != null) {
+	    me.updatePathfindingBlackout(true);
+	    final Move[] moves = findpath(g);
+	    if (moves != null) {
+		clearmovequeue();
+		for (final Move m : moves) {
+		    queuemove(m);
+		}
 	    }
+	    me.updatePathfindingBlackout(false);
 	}
     }
 
@@ -1908,6 +1921,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Loader.Future<Plob> placing = this.placing;
 	if((placing != null) && placing.done())
 	    placing.get().ctick(dt);
+
+	synchronized (movequeue) {
+	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
+		movingto = movequeue.poll();
+		if (movingto != null) {
+		    //TODO: Pointer
+		    //ui.gui.pointer.update(movingto.dest());
+		    movingto.apply(this);
+		    lastMove = System.currentTimeMillis();
+		}
+	    }
+	}
     }
     
     public void resize(Coord sz) {
@@ -2208,10 +2233,38 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
+	    final String seq = MouseBind.generateSequence(ui, clickb);
 	    Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};
+	    // For gob clicks
+	    //[ 0, id, rc.floor(posres), 0 ,-1 ]
+	    //  ^-- Contains overlay     ^   ^
+	    //                           |   |- FastMesh Res ID
+	    //                           |
+	    //                           +-- Overlay id
 	    if(inf != null)
 		args = Utils.extend(args, inf.clickargs());
-	    wdgmsg("click", args);
+
+	     Object[] clickargs = args;
+	    if (!(MouseBind.MV_SHOW_SPEC_MENU.check(seq, () -> {
+	        //TODO: impl later
+		return true;
+	    }) || MouseBind.MV_QUEUE_MOVE.check(seq, () -> {
+		movequeue.add(new Move(mc));
+		return true;
+	    }) || MouseBind.MV_PATHFIND_MOVE.check(seq, () -> {
+		if (clickargs.length > 4) {
+		    final Gob g = ui.sess.glob.oc.getgob((int) clickargs[5]);
+		    if (g != null)
+			pathto(g);
+		} else {
+		    pathto(mc);
+		}
+		return true;
+	    }))) {
+		if (clickb == 1 || clickargs.length > 4)
+		    clearmovequeue();
+		wdgmsg("click", clickargs);
+	    }
 	}
     }
     
