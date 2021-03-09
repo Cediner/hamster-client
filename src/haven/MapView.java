@@ -26,7 +26,7 @@
 
 package haven;
 
-import static hamster.MouseBind.MV_SHOW_SPEC_MENU;
+import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
@@ -2241,17 +2241,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    //                           |   |- FastMesh Res ID
 	    //                           |
 	    //                           +-- Overlay id
-	    if(inf != null)
+	    if (inf != null)
 		args = Utils.extend(args, inf.clickargs());
 
-	     Object[] clickargs = args;
-	    if (!(MouseBind.MV_SHOW_SPEC_MENU.check(seq, () -> {
-	        //TODO: impl later
-		return true;
-	    }) || MouseBind.MV_QUEUE_MOVE.check(seq, () -> {
+	    Object[] clickargs = args;
+	    if (MV_SHOW_SPEC_MENU.match(seq)) {
+		//TODO: impl later
+	    } else if (MV_QUEUE_MOVE.match(seq)) {
 		movequeue.add(new Move(mc));
-		return true;
-	    }) || MouseBind.MV_PATHFIND_MOVE.check(seq, () -> {
+	    } else if (MV_PATHFIND_MOVE.match(seq)) {
 		if (clickargs.length > 4) {
 		    final Gob g = ui.sess.glob.oc.getgob((int) clickargs[5]);
 		    if (g != null)
@@ -2259,8 +2257,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		} else {
 		    pathto(mc);
 		}
-		return true;
-	    }))) {
+	    } else {
 		if (clickb == 1 || clickargs.length > 4)
 		    clearmovequeue();
 		wdgmsg("click", clickargs);

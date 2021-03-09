@@ -11,7 +11,7 @@ public class MouseBind {
     private static final Settings datastore = new Settings("mousebinds", new HashMap<>());
     public static final Map<String, List<MouseBind>> bindgrps = new HashMap<>();
     //MapView related
-    public static final MouseBind
+    public static final MouseBind //TODO MV_PATHFIND_GOB_IACT
         MV_LOCK_PLACING_OBJ, MV_SHOW_SPEC_MENU, MV_QUEUE_MOVE, MV_PATHFIND_MOVE;
     //Item related
     public static final MouseBind

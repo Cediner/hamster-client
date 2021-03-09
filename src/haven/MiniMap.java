@@ -938,6 +938,7 @@ public class MiniMap extends Widget {
 	return(super.tooltip(c, prev));
     }
 
+    //TODO Would be nice to do pathfinding but interact with gob once at location
     public void mvclick(MapView mv, Coord mc, Location loc, Gob gob, int button) {
         final String bind = MouseBind.generateSequence(ui, button);
 	if(mc == null) mc = ui.mc;
