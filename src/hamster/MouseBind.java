@@ -81,6 +81,10 @@ public class MouseBind {
         return ibind.equals(bind.get()) && action.run();
     }
 
+    public boolean match(final String ibind) {
+        return ibind.equals(bind.get());
+    }
+
     public static boolean validBinding(final IndirSetting<String> ignore, final String group, final String binding) {
         if (binding.equals("")) {
             return true;
