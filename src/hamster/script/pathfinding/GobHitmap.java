@@ -1,6 +1,5 @@
 package hamster.script.pathfinding;
 
-import com.google.common.flogger.FluentLogger;
 import haven.Coord;
 import haven.Coord2d;
 import haven.Gob;
@@ -16,6 +15,9 @@ import java.util.*;
 /**
  * A hitmap for Gobs
  * Only contains gobs that can be hit
+ *
+ * TODO: Gobs should be broken up into grids similar to how SuperGrid > Grid > Minimaps work to reduce
+ *       how many gobs we need to compare again as it can be a bit of a delay with many hundreds of gobs.
  */
 public class GobHitmap {
     private static final List<Gob> gobs = new ArrayList<>();
