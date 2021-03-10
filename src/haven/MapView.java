@@ -26,6 +26,8 @@
 
 package haven;
 
+import static hamster.KeyBind.KB_TOGGLE_GRID;
+import static hamster.KeyBind.KB_TOGGLE_TIPS;
 import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
@@ -73,6 +75,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private double mspeed, totaldist = 0, mspeedavg, totaldt = 0;
     private long lastMove = System.currentTimeMillis();
     public final Queue<Move> movequeue = new ArrayDeque<>();
+    //Tooltip info
+    private String lasttt = "";
+    private Object tt;
 
     
     public interface Delayed {
@@ -2481,7 +2486,71 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    }
 	}
     }
-    
+
+    private class Hover extends Hittest {
+	private Hover(Coord c) {
+	    super(c);
+	}
+
+	private Optional<Gob> gobFromClick(final ClickData inf) {
+	    if (inf == null)
+		return Optional.empty();
+	    if (inf.ci instanceof Gob.GobClick) {
+		return Optional.of(((Gob.GobClick) inf.ci).gob);
+	    }
+	    if (inf.ci instanceof Composited.CompositeClick) {
+		return Optional.of(((Composited.CompositeClick) inf.ci).gi.gob);
+	    } else {
+		return Optional.empty();
+	    }
+	}
+
+	private void updatett(final String ntt) {
+	    if (!ntt.equals(lasttt)) {
+		lasttt = null;
+		try {
+		    tt = RichText.render(ntt, 300);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    tt = null;
+		}
+	    }
+	}
+
+	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
+	    if (inf != null) {
+		final Optional<Gob> gob = gobFromClick(inf);
+		if (gob.isPresent()) {
+		    updatett(gob.get().details());
+		} else {
+		    try {
+			final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+			final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
+			final Resource res = ui.sess.glob.map.tilesetr(tile_id);
+			final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
+			updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + " [" + grid.id + "]");
+		    } catch (Exception e) {
+			e.printStackTrace();
+			lasttt = "";
+			tt = null;
+		    }
+		}
+	    } else {
+		try {
+		    final int tile_id = ui.sess.glob.map.gettile_safe(mc.div(MCache.tilesz).floor());
+		    final MCache.Grid grid = ui.sess.glob.map.getgrid(mc.floor(tilesz).div(MCache.cmaps));
+		    final Resource res = ui.sess.glob.map.tilesetr(tile_id);
+		    final String name = ui.sess.glob.map.tiler(tile_id).getClass().getSimpleName();
+		    updatett("Tile: " + res.name + "[" + tile_id + "] of type " + name + "\n" + mc + " [" + grid.id + "]");
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    lasttt = "";
+		    tt = null;
+		}
+	    }
+	}
+    }
+
     public void grab(Grabber grab) {
 	this.grab = grab;
     }
@@ -2520,6 +2589,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		placing.new Adjust(c, ui.modflags()).run();
 	    }
+	} else if (ui.gui.settings.SHOWHOVERTOOLTIPS.get()) {
+	    new Hover(c).run();
+	} else {
+	    lasttt = "";
+	    tt = null;
 	}
     }
     
@@ -2585,13 +2659,22 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public boolean globtype(char c, KeyEvent ev) {
         final String bind = KeyBind.generateSequence(ev, ui);
-        return KeyBind.KB_TOGGLE_GRID.check(bind, () -> { showgrid(gridlines == null); return true; });
+        if(KB_TOGGLE_GRID.match(bind)) {
+	    showgrid(gridlines == null);
+	    return true;
+	} else if(KB_TOGGLE_TIPS.match(bind)) {
+	    ui.gui.settings.SHOWHOVERTOOLTIPS.set(!ui.gui.settings.SHOWHOVERTOOLTIPS.get());
+	    return true;
+        }
+        return false;
     }
 
     public Object tooltip(Coord c, Widget prev) {
 	if(selection != null) {
 	    if(selection.tt != null)
 		return(selection.tt);
+	} else if (tt != null) {
+	    return tt;
 	}
 	return(super.tooltip(c, prev));
     }

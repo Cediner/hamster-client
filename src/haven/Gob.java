@@ -1025,6 +1025,111 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     /*
+     * Details about our Gob
+     */
+    public String eq() {
+	Drawable d = getattr(Drawable.class);
+	if (d instanceof Composite) {
+	    Composite comp = (Composite) d;
+
+	    final StringBuilder sb = new StringBuilder();
+	    sb.append("Equipment:");
+	    if (comp.lastnequ != null)
+		for (Composited.ED eq : comp.lastnequ) {
+		    sb.append("\nEqu: ");
+		    sb.append(rnm(eq.res.res));
+		    sb.append(" @ ");
+		    sb.append(eq.at);
+		}
+
+	    if (comp.lastnmod != null)
+		for (Composited.MD md : comp.lastnmod) {
+		    sb.append("\nMod: ");
+		    sb.append(rnm(md.mod));
+		    for (ResData rd : md.tex) {
+			sb.append("\n  Tex: ");
+			sb.append(rnm(rd.res));
+		    }
+		}
+
+	    sb.append("\nPoses:");
+	    if (comp.oldposes != null) {
+		for (ResData res : comp.oldposes) {
+		    sb.append("\nPose: ");
+		    sb.append(rnm(res.res));
+		}
+	    }
+	    if (comp.oldtposes != null) {
+		for (ResData res : comp.oldtposes) {
+		    sb.append("\nTPose: ");
+		    sb.append(rnm(res.res));
+		}
+	    }
+	    return sb.toString();
+	}
+	return "";
+    }
+
+    public String details() {
+	StringBuilder sb = new StringBuilder();
+	sb.append("Res: ");
+	sb.append(resname().orElse(""));
+	sb.append(" [");
+	sb.append(id);
+	sb.append("]\n");
+	if (tags != null) {
+	    for (final Tag t : tags) {
+		sb.append("Tag: ");
+		sb.append(t);
+		sb.append("\n");
+	    }
+	} else {
+	    sb.append("Tag: None\n");
+	}
+	for (final long hold : holding) {
+	    sb.append("Holding: ");
+	    sb.append(hold);
+	    sb.append("\n");
+	}
+	if (heldby != -1) {
+	    sb.append("Held By: ");
+	    sb.append(heldby);
+	    sb.append("\n");
+	}
+	ResDrawable dw = getattr(ResDrawable.class);
+	sb.append("Angle: ");
+	sb.append(Math.toDegrees(a));
+	sb.append("\n");
+	if (dw != null) {
+	    sb.append("sdt: ");
+	    sb.append(dw.sdtnum());
+	    sb.append("\n");
+	} else {
+	    Composite comp = getattr(Composite.class);
+	    if (comp != null) {
+		sb.append(eq());
+		sb.append("\n");
+	    }
+	}
+	for (GAttrib a : attr.values()) {
+	    sb.append("GAttrib: ");
+	    sb.append(a);
+	    sb.append("\n");
+	}
+	for (Overlay ol : ols) {
+	    sb.append("Overlay: ");
+	    sb.append(ol.spr);
+	    sb.append(" - ");
+	    sb.append(ol.name());
+	    sb.append("\n");
+	}
+	sb.append("Position: ");
+	sb.append(getc());
+	sb.append("\n");
+	return sb.toString();
+    }
+
+    /*
      * Gob Discovery and Info gathering, Occurs only once after
      * its res name has been found
      */
