@@ -43,8 +43,9 @@ public abstract class GAttrib {
     public void dispose() {
     }
 
-    /* Private to Gob.java */
-    Collection<RenderTree.Slot> slots;
+    /* Allow GAttribs to also view this */
+    protected Collection<RenderTree.Slot> slots;
+
     public void added(RenderTree.Slot slot) {
 	if(slots == null)
 	    slots = new ArrayList<>(1);
@@ -66,7 +67,7 @@ public abstract class GAttrib {
 			    parse.apply(new Object[]{gob, sdt});
 			}
 		    });
-	    } catch(NoSuchMethodException e) {}
+	    } catch(NoSuchMethodException ignored) {}
 	    return(null);
 	}
     }

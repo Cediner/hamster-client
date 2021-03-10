@@ -29,7 +29,17 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
-import hamster.gob.Tag;
+import hamster.data.MarkerData;
+import hamster.gob.*;
+import hamster.gob.attrs.draw2d.Speed;
+import hamster.gob.attrs.info.ScreenLocation;
+import hamster.gob.attrs.mods.CheeseRackStatus;
+import hamster.gob.attrs.mods.CupboardStatus;
+import hamster.gob.attrs.mods.DryingFrameStatus;
+import hamster.gob.attrs.mods.TanTubStatus;
+import hamster.gob.attrs.monitors.*;
+import hamster.gob.sprites.Mark;
+import hamster.gob.sprites.TargetSprite;
 import hamster.script.pathfinding.Hitbox;
 import hamster.util.JobSystem;
 import haven.render.*;
@@ -49,8 +59,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     private final Collection<ResAttr.Load> lrdata = new LinkedList<ResAttr.Load>();
 
     //Overlays / GAttribs that need to be added after a tick, delayed
-    private List<Overlay> dols = new ArrayList<>();
-    private List<Pair<GAttrib, Consumer<Gob>>> dattrs = new ArrayList<>();
+    private final List<Overlay> dols = new ArrayList<>();
+    private final List<Pair<GAttrib, Consumer<Gob>>> dattrs = new ArrayList<>();
 
     // Gob tags that help define what it is
     private Set<Tag> tags;
@@ -80,12 +90,36 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    this.spr = null;
 	}
 
+	public Overlay(Gob gob, int id, Sprite spr) {
+	    this.gob = gob;
+	    this.id = id;
+	    this.res = null;
+	    this.sdt = null;
+	    this.spr = spr;
+	}
+
 	public Overlay(Gob gob, Sprite spr) {
 	    this.gob = gob;
 	    this.id = -1;
 	    this.res = null;
 	    this.sdt = null;
 	    this.spr = spr;
+	}
+
+	public String name() {
+	    try {
+		if (res instanceof Session.CachedRes.Ref) {
+		    return ((Session.CachedRes.Ref) res).name();
+		} else if (res instanceof Resource.Named) {
+		    return ((Resource.Spec) res).name;
+		} else if (res != null) {
+		    return res.get().name;
+		} else {
+		    return "";
+		}
+	    } catch (Loading l) {
+		return "";
+	    }
 	}
 
 	private void init() {
@@ -227,7 +261,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    if(ol.slots == null) {
 		try {
 		    ol.init();
-		} catch(Loading e) {}
+		} catch(Loading ignored) {}
 	    } else {
 		boolean done = ol.spr.tick(dt);
 		if((!ol.delign || (ol.spr instanceof Sprite.CDel)) && done) {
@@ -235,6 +269,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    i.remove();
 		}
 	    }
+	}
+	//This is to avoid Iterator state conflicts of adding overlays while in an overlay tick
+	for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
+	    Overlay ol = i.next();
+	    ols.add(ol);
+	    i.remove();
 	}
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
@@ -829,6 +869,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	return nm != null ? nm : "";
     }
 
+    //Useful for getting stage information or model type
+    public int sdt() {
+	ResDrawable dw = getattr(ResDrawable.class);
+	if (dw != null)
+	    return dw.sdtnum();
+	return 0;
+    }
+
     /*
      * Tag System
      */
@@ -887,18 +935,164 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     /*
+     * Crop related helpers
+     */
+    public int getMaxStage() {
+	return Growth.maxstage(name());
+    }
+
+    public int getMaxStage(final int guess) {
+	int max = guess;
+	for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
+	    final int stg = layer.id / 10;
+	    max = Math.max(stg, max);
+	}
+	return max;
+    }
+
+    public boolean multistageplant() {
+	return tags.contains(Tag.MULTISTAGE_PLANT) || name().endsWith("terobjs/plants/carrot") ||
+		name().endsWith("terobjs/plants/hemp");
+    }
+
+    public boolean fallowplant() {
+	return name().endsWith("/fallowplant");
+    }
+
+    /*
+     * Overlay/Attrib extra functionality for adding/removing/getting
+     */
+    public void queueDeltas(final List<OCache.Delta> deltas) {
+	if (deltas.size() > 0) {
+	    final OCache.GobInfo ng = glob.oc.netget(id);
+	    if (ng != null) {
+		synchronized (ng) {
+		    ng.pending.addAll(deltas);
+		    ng.checkdirty(false);
+		}
+	    }
+	}
+    }
+
+    public Overlay daddol(final Overlay ol) {
+	dols.add(ol);
+	return ol;
+    }
+
+    public Overlay daddol(int id, Sprite spr) {
+	final Overlay ol = new Overlay(this, id, spr);
+	daddol(ol);
+	return ol;
+    }
+
+    public void mark(final int life) {
+	queueDeltas(Collections.singletonList((gob) -> {
+	    final Overlay ol = gob.findol(Mark.id);
+	    if (ol != null) {
+		((Mark) ol.spr).setLife(life);
+	    } else {
+		gob.addol(new Overlay(gob, Mark.id, new Mark(life)));
+	    }
+	}));
+    }
+
+    public void unmark() {
+	queueDeltas(Collections.singletonList((gob) -> {
+	    final Overlay ol = gob.findol(Mark.id);
+	    if (ol != null) {
+		((Mark) ol.spr).revoke();
+	    }
+	}));
+    }
+
+    /*
+     * Misc
+     */
+    public boolean isDead() {
+	Drawable d = getattr(Drawable.class);
+	if (d instanceof Composite) {
+	    Composite comp = (Composite) d;
+	    if (comp.oldposes != null) {
+		for (ResData res : comp.oldposes) {
+		    final String nm = rnm(res.res).toLowerCase();
+		    if (nm.endsWith("knock") || nm.endsWith("dead")) {
+			return true;
+		    }
+		}
+	    }
+	}
+	return false;
+    }
+
+    /*
      * Gob Discovery and Info gathering, Occurs only once after
      * its res name has been found
      */
     public void discover(final String name) {
 	final UI ui = glob.ui.get();
 	if (ui == null || ui.gui == null || ui.gui.map == null || ui.gui.mapfile == null || ui.gui.map.rlplgob == -1
-		 || res().isEmpty()) {
+		|| res().isEmpty()) {
 	    throw new JobSystem.DependencyNotMet();
 	}
 
-	tags = Tag.getTags(name);
-	hitbox = Hitbox.hbfor(this);
-	ui.sess.glob.gobhitmap.add(this);
+	if (!Deleted.isDeleted(name)) {
+
+	    final List<OCache.Delta> deltas = new ArrayList<>();
+	    tags = Tag.getTags(name);
+	    hitbox = Hitbox.hbfor(this);
+	    ui.sess.glob.gobhitmap.add(this);
+
+	    if ((tags.contains(Tag.HUMAN) || tags.contains(Tag.ANIMAL) || name.startsWith("gfx/kritter"))
+		    && !tags.contains(Tag.TAMED_ANIMAL)) {
+		deltas.add((gob) -> gob.setattr(new Speed(gob)));
+	    }
+
+	    Alerted.checkAlert(name, ui.gui.map.rlplgob, this, ui);
+
+	    //Target Sprite if targeted
+	    if (id == ui.gui.curtar) {
+		deltas.add((gob) -> gob.addol(new Overlay(gob, TargetSprite.id, new TargetSprite(gob))));
+	    }
+
+	    //Add monitors and informational stuff
+	    deltas.add((gob) -> gob.setattr(new HitboxMonitor(gob)));
+	    deltas.add((gob) -> gob.setattr(new HighlightMonitor(gob)));
+	    if (hasTag(Tag.HUMAN)) {
+		deltas.add((gob) -> gob.setattr(new Halo(gob)));
+		if (id == ui.gui.map.plgob) {
+		    deltas.add((gob) -> gob.setattr(new MyGobIndicator(gob)));
+		}
+	    }
+	    if (Growth.isGrowth(name)) {
+		deltas.add((gob) -> gob.setattr(new GrowthMonitor(gob, name)));
+	    }
+	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {
+		deltas.add((gob) -> gob.setattr(new ScreenLocation(gob)));
+	    }
+
+	    //Add mods if needed
+	    if (name.startsWith("gfx/terobjs/dframe")) {
+		deltas.add((gob) -> gob.setattr(new DryingFrameStatus(gob)));
+	    } else if (name.equals("gfx/terobjs/ttub")) {
+		deltas.add((gob) -> gob.setattr(new TanTubStatus(gob)));
+	    } else if (name.equals("gfx/terobjs/cupboard")) {
+		deltas.add((gob) -> gob.setattr(new CupboardStatus(gob)));
+	    } else if (name.equals("gfx/terobjs/cheeserack")) {
+		deltas.add((gob) -> gob.setattr(new CheeseRackStatus(gob)));
+	    }
+
+	    if (Hidden.isHidden(name)) {
+		deltas.add((gob) -> gob.setattr(new Hidden(gob)));
+	    }
+
+
+	    MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
+
+
+	    //If we have changes to Attrs they need to be done via the GobInfo thread
+	    queueDeltas(deltas);
+	} else {
+	    ui.sess.glob.oc.mbRemGobs.mail(new OCache.RemoveGobMsg(this.id));
+	}
     }
 }

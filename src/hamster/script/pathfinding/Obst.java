@@ -156,7 +156,7 @@ public class Obst extends Resource.Layer {
         return List.of(shapes[polygon]);
     }
 
-    public ObstMesh makeMesh(final Color col, final float h) {
+    public static ObstMesh makeMesh(final Coord2d[][] shapes, final Color col, final float h) {
         final int polygons = shapes.length;
         final float[] hiddencolor = Utils.c2fa(col);
         final FloatBuffer pa, na, cl;
@@ -199,6 +199,10 @@ public class Obst extends Resource.Layer {
                 new VertexBuf.NormalData(na),
                 new VertexBuf.ColorData(cl)),
                 sa);
+    }
+
+    public ObstMesh makeMesh(final Color col, final float h) {
+        return makeMesh(shapes, col, h);
     }
 
     @Override

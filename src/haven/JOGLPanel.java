@@ -518,7 +518,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    final Iterator<AddUIMessage> add = adduibox.mailqueue.iterator();
 	    while (add.hasNext()) {
 		final UI lui = add.next().lui;
-		//TODO: lui.setupMail(Thread.currentThread());
+		lui.setupMail(Thread.currentThread());
 
 		synchronized (sessions) {
 		    sessions.add(lui);

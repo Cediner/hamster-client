@@ -1,11 +1,15 @@
 package hamster.script.pathfinding;
 
+import hamster.gfx.ObstMesh;
 import hamster.util.ResHashMap;
 import haven.*;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +32,6 @@ public class Hitbox {
         hitboxes.put("gfx/terobjs/clue", NOHIT);
         hitboxes.put("gfx/terobjs/boostspeed", NOHIT);
         hitboxes.put("gfx/kritter/jellyfish/jellyfish", NOHIT);
-        //TODO: Knarrs need relooked at
-        //hitboxes.put("gfx/terobjs/vehicle/knarr", new Rectangular(new Coord2d(-4, -4), new Coord2d(8, 8)));
-        //hitboxes.put("gfx/terobjs/vehicle/snekkja", new Rectangular(new Coord2d(-32, -13), new Coord2d(64, 25)));
 
         //stone This looks wrong...
         //hitboxes.put("gfx/terobjs/bumlings", new Rectangular(new Coord2d(8, 8), new Coord2d(-16, -16)));
@@ -39,12 +40,12 @@ public class Hitbox {
         //hitboxes.put("gfx/terobjs/plants/trellis", new Rectangular(new Coord2d(-1, -5), new Coord2d(3, 11)));
 
         //animals
-        //hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
-        //hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
-        //hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
-        //hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
-        //hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
-        //hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+        hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
+        hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
+        hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
+        hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
+        hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+        hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
     }
 
     // These are your simple Neg based Hitboxes.
@@ -70,6 +71,35 @@ public class Hitbox {
         public Coord2d size() {
             return sz;
         }
+
+        @Override
+        public FastMesh mesh() {
+            final Coord2d[] verts = { off, off.add(sz.x, 0), off.add(sz), off.add(0, sz.y) };
+            final int vertsper = verts.length;
+            FloatBuffer pa = Utils.mkfbuf(vertsper * 3);
+            FloatBuffer na = Utils.mkfbuf(vertsper * 3);
+            FloatBuffer cl = Utils.mkfbuf(vertsper * 4);
+            ShortBuffer sa = Utils.mksbuf((int) Math.ceil(vertsper / 2.0) * 3);
+
+            for (final Coord2d off : verts) {
+                pa.put((float) off.x).put((float) off.y).put(1f);
+                na.put((float) off.x).put((float) off.y).put(0f);
+            }
+
+            short voff = 0;
+            for (int j = 0; j < (int) Math.ceil(vertsper / 2.0); ++j) {
+                short s1 = (short) ((voff * j % vertsper) + (vertsper));
+                short s2 = (short) (((voff * j + 1) % vertsper) + (vertsper));
+                short s3 = (short) (((voff * j + 2) % vertsper) + (vertsper));
+                sa.put(s1).put(s2).put(s3);
+                voff += 2;
+            }
+
+            return new ObstMesh(new VertexBuf(new VertexBuf.VertexData(pa),
+                    new VertexBuf.NormalData(na),
+                    new VertexBuf.ColorData(cl)),
+                    sa);
+        }
     }
 
     public static class Polygon extends Hitbox {
@@ -88,6 +118,11 @@ public class Hitbox {
 
                 hitbox.add(new Area(new java.awt.Polygon(xp, yp, verts.size())));
             }
+        }
+
+        @Override
+        public FastMesh mesh() {
+            return obst.makeMesh(Color.BLACK, 1f);
         }
     }
 
@@ -111,6 +146,10 @@ public class Hitbox {
         final var area = hitbox.createTransformedArea(AffineTransform.getRotateInstance(a));
         area.transform(AffineTransform.getTranslateInstance(c.x, c.y));
         return area.intersects(obj);
+    }
+
+    public FastMesh mesh() {
+        return null;
     }
 
     /**

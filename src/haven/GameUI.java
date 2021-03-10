@@ -75,6 +75,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
 
+    //Current village / Realm
+    public String curvil = "???";
+    public String currealm = "???";
+
+    //Current Gob Target for Combat / Marking
+    public long curtar = 0;
+
     //Calendar
     public final Cal cal;
 
@@ -764,7 +771,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		else if (slot <= 140)
 		    hotbar3.update(slot);
 		break;
-	    case "polowner":
+	    case "polowner": //This is for Villages and Realms, need to look at how they differ, if at all.
 		int id = (Integer) args[0];
 		String o = (String) args[1];
 		boolean n = ((Integer) args[2]) != 0;
@@ -774,8 +781,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		if (map != null) {
 		    if ((o != null) && (cur == null)) {
 			map.setpoltext(id, "Entering " + o);
+			curvil = o;
 		    } else if ((o == null) && (cur != null)) {
 			map.setpoltext(id, "Leaving " + cur);
+			curvil = "???";
 		    }
 		}
 		polowners.put(id, o);

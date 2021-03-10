@@ -29,7 +29,10 @@ package haven;
 import java.util.*;
 import java.util.function.Consumer;
 
+import hamster.gob.Hidden;
+import hamster.gob.Tag;
 import hamster.util.JobSystem;
+import hamster.util.MessageBus;
 import haven.render.Render;
 
 public class OCache implements Iterable<Gob> {
@@ -62,6 +65,94 @@ public class OCache implements Iterable<Gob> {
     private Glob glob;
     private final Collection<ChangeCallback> cbs = new WeakList<ChangeCallback>();
 
+    /*
+     * MailBox System Message
+     */
+    public MessageBus.MailBox<RemoveGobMsg> mbRemGobs;
+
+    public static class RemoveGobMsg extends MessageBus.Message {
+	public final long id;
+
+	public RemoveGobMsg(final long id) {
+	    this.id = id;
+	}
+    }
+
+    public MessageBus.MailBox<RefreshGob> mbRefreshGobs;
+
+    public static abstract class RefreshGob extends MessageBus.Message {
+	public abstract void apply(final OCache oc);
+    }
+
+    public static class RefreshGobByTag extends RefreshGob {
+	public final Tag tag;
+
+	public RefreshGobByTag(final Tag tag) {
+	    this.tag = tag;
+	}
+
+	public void apply(final OCache oc) {
+	    for (Gob g : oc) {
+		if (g.hasTag(tag)) {
+		    for (final ChangeCallback cb : oc.cbs) {
+			cb.removed(g);
+			cb.added(g);
+		    }
+		}
+	    }
+	}
+    }
+
+    public static class RefreshGobByObject extends RefreshGob {
+	public final Gob self;
+
+	public RefreshGobByObject(final Gob g) {
+	    this.self = g;
+	}
+
+	public void apply(final OCache oc) {
+	    for (final ChangeCallback cb : oc.cbs) {
+		cb.removed(self);
+		cb.added(self);
+	    }
+	}
+    }
+
+    public static class RefreshAllGobs extends RefreshGob {
+	public RefreshAllGobs() {
+	}
+
+	public void apply(final OCache oc) {
+	    for (final Gob g : oc) {
+		for (final ChangeCallback cb : oc.cbs) {
+		    cb.removed(g);
+		    cb.added(g);
+		}
+	    }
+	}
+    }
+
+    public static class RefreshGobByAttr extends RefreshGob {
+	public final Class<? extends GAttrib> attr;
+
+	public RefreshGobByAttr(final Class<? extends GAttrib> attr) {
+	    this.attr = attr;
+	}
+
+	@Override
+	public void apply(OCache oc) {
+	    for (final Gob g : oc) {
+		if (g.getattr(attr) != null) {
+		    for (final ChangeCallback cb : oc.cbs) {
+			cb.removed(g);
+			cb.added(g);
+		    }
+		}
+	    }
+	}
+    }
+
+
     public interface ChangeCallback {
 	public void added(Gob ob);
 	public void removed(Gob ob);
@@ -69,6 +160,82 @@ public class OCache implements Iterable<Gob> {
 
     public OCache(Glob glob) {
 	this.glob = glob;
+    }
+
+    public void attached(final UI ui) {
+	mbRemGobs = new MessageBus.MailBox<>(ui.office, this);
+	mbRefreshGobs = new MessageBus.MailBox<>(ui.office, this);
+    }
+
+    public void hideAll(final String name) {
+	ArrayList<Gob> copy = new ArrayList<>();
+	synchronized (this) {
+	    for (Gob ob : this)
+		copy.add(ob);
+	}
+
+	if (Config.par) {
+	    copy.parallelStream().forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			gob.setattr(new Hidden(gob));
+			for (final ChangeCallback cb : cbs) {
+			    cb.removed(gob);
+			    cb.added(gob);
+			}
+		    }
+		});
+	    });
+	} else {
+	    copy.forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			gob.setattr(new Hidden(gob));
+			for (final ChangeCallback cb : cbs) {
+			    cb.removed(gob);
+			    cb.added(gob);
+			}
+		    }
+		});
+	    });
+	}
+    }
+
+    public void unhideAll(final String name) {
+	ArrayList<Gob> copy = new ArrayList<>();
+	synchronized (this) {
+	    for (Gob ob : this)
+		copy.add(ob);
+	}
+	if (Config.par) {
+	    copy.parallelStream().forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			if (gob.getattr(Hidden.class) != null) {
+			    gob.delattr(Hidden.class);
+			    for (final ChangeCallback cb : cbs) {
+				cb.removed(gob);
+				cb.added(gob);
+			    }
+			}
+		    }
+		});
+	    });
+	} else {
+	    copy.forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			if (gob.getattr(Hidden.class) != null) {
+			    gob.delattr(Hidden.class);
+			    for (final ChangeCallback cb : cbs) {
+				cb.removed(gob);
+				cb.added(gob);
+			    }
+			}
+		    }
+		});
+	    });
+	}
     }
 
     public synchronized void callback(ChangeCallback cb) {
@@ -110,6 +277,22 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void ctick(double dt) {
+	if (mbRemGobs != null) {
+	    while (!mbRemGobs.mailqueue.isEmpty()) {
+		final RemoveGobMsg remgob = mbRemGobs.mailqueue.poll();
+		final Gob g = getgob(remgob.id);
+		if (g != null) {
+		    g.dispose();
+		    remove(g);
+		}
+	    }
+	}
+	if (mbRefreshGobs != null) {
+	    while (!mbRefreshGobs.mailqueue.isEmpty()) {
+		mbRefreshGobs.mailqueue.poll().apply(this);
+	    }
+	}
+
 	ArrayList<Gob> copy = new ArrayList<Gob>();
 	synchronized(this) {
 	    for(Gob g : this)
@@ -205,6 +388,12 @@ public class OCache implements Iterable<Gob> {
 	    super(OCache.this.glob, c, nextvirt.getAndDecrement());
 	    this.a = a;
 	    virtual = true;
+	}
+    }
+
+    public class ModdedGob extends Virtual {
+	public ModdedGob(Coord2d c, double a) {
+	    super(c, a);
 	}
     }
 
@@ -767,6 +956,15 @@ public class OCache implements Iterable<Gob> {
 		}
 	    }
 	}
+
+
+	@Override
+	public String toString() {
+	    return "GobInfo{" +
+		    "id=" + id +
+		    ", frame=" + frame +
+		    '}';
+	}
     }
 
     private final Map<Long, GobInfo> netinfo = new HashMap<>();
@@ -782,6 +980,13 @@ public class OCache implements Iterable<Gob> {
 		ng.checkdirty(true);
 	    }
 	    return(ng);
+	}
+    }
+
+
+    public GobInfo netget(long id) {
+	synchronized (netinfo) {
+	    return netinfo.get(id);
 	}
     }
 

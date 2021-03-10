@@ -58,7 +58,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private int view = 2;
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
     private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
-    public Camera camera = restorecam();
+    public Camera camera;
     private Loader.Future<Plob> placing = null;
     private Grabber grab;
     private Selector selection;
@@ -256,13 +256,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float elevorig, anglorig;
 
 	public void tick(double dt) {
-	    Coord3f cc = getcc();
+	    Coord3f cc = getcenter();
 	    cc.y = -cc.y;
 	    view = new haven.render.Camera(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
+	}
+
+	public Coord3f getcenter() {
+	    return getcc();
 	}
 	
 	public float angle() {
 	    return(angl);
+	}
+
+	public void setDist(final float d) {
+	    this.dist = d;
 	}
 	
 	public boolean click(Coord c) {
@@ -348,6 +356,189 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
     static {camtypes.put("bad", FreeCam.class);}
+
+    public class Fixator extends SimpleCam {
+	private Coord3f offset = new Coord3f(0, 0, 0);
+	private Coord doff;
+
+	@Override
+	public Coord3f getcenter() {
+	    return getcc().add(offset);
+	}
+
+	public boolean reset() {
+	    offset = new Coord3f(0, 0, 0);
+	    return true;
+	}
+
+	@Override
+	public boolean click(Coord c) {
+	    doff = c;
+	    return super.click(c);
+	}
+
+	public void drag(final Coord c) {
+	    if (ui.modctrl) {
+		offset = offset.add(new Coord3f(c.add(doff.inv())).rotate(-angle() + (float) (Math.PI / 2)));
+		doff = c;
+	    } else {
+		super.drag(c);
+	    }
+	}
+    }
+    static {
+	camtypes.put("fixator", Fixator.class);
+    }
+
+    public class FreeStyle extends SimpleCam {
+	private Coord3f plcc = null;
+	private Coord3f focus = null;
+	private Coord doff;
+
+	public FreeStyle() {
+	    setDist(250f);
+	}
+
+	@Override
+	public void tick(double dt) {
+	    super.tick(dt);
+	    final Coord3f nplcc = getcc();
+	    if (Math.abs(nplcc.dist(plcc)) > (30 * 11)) {
+		reset();
+	    }
+	    plcc = nplcc;
+	}
+
+	@Override
+	public Coord3f getcenter() {
+	    if (focus == null) {
+		focus = plcc = getcc();
+	    }
+	    return new Coord3f(focus);
+	}
+
+	public boolean reset() {
+	    focus = getcc();
+	    return true;
+	}
+
+	@Override
+	public boolean click(Coord c) {
+	    doff = c;
+	    return super.click(c);
+	}
+
+	public void drag(final Coord c) {
+	    if (ui.modflags() == 0) {
+		focus = focus.add(new Coord3f(c.add(doff.inv())).rotate(-angle() + (float) (Math.PI / 2)));
+		doff = c;
+	    } else {
+		super.drag(c);
+	    }
+	}
+    }
+    static {
+	camtypes.put("freestyle", FreeStyle.class);
+    }
+
+    public class TopDownCam extends Camera {
+	private Coord3f cc;
+	private final float dist = 500.0f;
+	private final float elev = (float) Math.toRadians(90);
+	protected float field = (float) (100 * Math.sqrt(2));
+	private float tfield = field;
+	private Coord dragorig = null;
+	private float angl = 0.0f;
+	private float tangl = angl;
+	private float anglorig;
+
+	private long lastwh = 0;
+	private float whz;
+
+	public TopDownCam() {
+	}
+
+	public void tick2(double dt) {
+	    Coord3f cc = getcc();
+	    cc.y = -cc.y;
+	    this.cc = cc;
+	}
+
+	public void tick(double dt) {
+	    tick2(dt);
+	    float aspect = ((float) sz.y) / ((float) sz.x);
+
+	    //Smooth transition for angle
+	    angl = angl + ((tangl - angl) * (1f - (float) Math.pow(500, -dt)));
+	    float pi2 = (float) (Math.PI * 2);
+	    while (angl > pi2) {
+		angl -= pi2;
+		tangl -= pi2;
+		anglorig -= pi2;
+	    }
+	    while (angl < 0) {
+		angl += pi2;
+		tangl += pi2;
+		anglorig += pi2;
+	    }
+	    if (Math.abs(tangl - angl) < 0.001)
+		angl = tangl;
+
+	    //Smooth transition for zoom in/out
+	    field = field + ((tfield - field) * (1f - (float) Math.pow(500, -dt)));
+	    if (Math.abs(tfield - field) < 0.1)
+		field = tfield;
+
+	    view = new haven.render.Camera(PointedCam.compute(cc.add(camoff).add(0.0f, 0.0f, 15f), dist, elev, angl));
+	    proj = new Projection(Projection.makeortho(new Matrix4f(), -field, field, -field * aspect, field * aspect, 1, 5000));
+	}
+
+	public float angle() {
+	    return (angl);
+	}
+
+	public boolean click(Coord c) {
+	    anglorig = angl;
+	    dragorig = c;
+	    return (true);
+	}
+
+	public void drag(Coord c) {
+	    tangl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
+	}
+
+	public void release() {
+	    tangl = (float) (Math.floor((tangl + Math.PI / 4) / (Math.PI / 2)) * Math.PI / 2);
+	}
+
+	private void chfield(float nf) {
+	    tfield = nf;
+	    tfield = Math.max(tfield, 50);
+	}
+
+	public boolean wheel(Coord c, int amount) {
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    chfield(tfield + whz);
+	    return (true);
+	}
+
+	public String toString() {
+	    return (String.format("%f", dist));
+	}
+    }
+
+    static {
+	camtypes.put("topdown", TopDownCam.class);
+    }
     
     public class OrthoCam extends Camera {
 	public boolean exact = true;
@@ -358,6 +549,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private Coord dragorig = null;
 	private float anglorig;
 	protected Coord3f cc, jc;
+
+	public OrthoCam(boolean exact) {
+	    this.exact = exact;
+	}
+
+	public OrthoCam() {this(false);}
 
 	public void tick2(double dt) {
 	    Coord3f cc = getcc();
@@ -410,6 +607,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float tfield = field;
 	private boolean isometric = true;
 	private final float pi2 = (float)(Math.PI * 2);
+	private boolean lock = true;
+
+	private long lastwh = 0;
+	private float whz;
+
+	public SOrthoCam(boolean exact, boolean lock) {
+	    super(exact);
+	    this.isometric = lock;
+	}
 
 	public SOrthoCam(String... args) {
 	    PosixArgs opt = PosixArgs.getopt(args, "enif");
@@ -478,8 +684,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    chfield(tfield + amount * 10);
-	    return(true);
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    chfield(tfield + whz);
+	    return (true);
 	}
 
 	@Override
@@ -532,6 +748,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.glob = glob;
 	this.cc = cc;
 	this.plgob = this.rlplgob = plgob;
+	this.camera = restorecam();
 	basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
@@ -2543,20 +2760,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if (ct != null) {
 	    camera = makecam(ct);
 	} else {
-	    camera = new SOrthoCam();
+	    camera = new SOrthoCam(true, false);
 	}
     }
 
     private Camera restorecam() {
-	Class<? extends Camera> ct = camtypes.get(Utils.getpref("defcam", null));
-	if(ct == null)
-	    return(new SOrthoCam());
-	String[] args = (String [])Utils.deserialize(Utils.getprefb("camargs", null));
-	if(args == null) args = new String[0];
-	try {
-	    return(makecam(ct, args));
-	} catch(Exception e) {
-	    return(new SOrthoCam());
+	final UI ui = glob.ui.get();
+	if(ui != null) {
+	    Class<? extends Camera> ct = camtypes.get(ui.gui.settings.CAMERA.get());
+	    if (ct != null) {
+		return makecam(ct);
+	    } else {
+		return new SOrthoCam(true, false);
+	    }
+	} else {
+	    return new SOrthoCam(true, false);
 	}
     }
 

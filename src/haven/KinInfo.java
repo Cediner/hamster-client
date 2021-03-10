@@ -52,6 +52,10 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 	this.type = type;
 	rnm = null;
     }
+
+    public boolean isVillager() {
+	return (type & 2) != 0;
+    }
     
     public Tex rendered() {
 	if(rnm == null) {

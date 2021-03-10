@@ -29,15 +29,20 @@ package haven;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
+
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeTex;
 import haven.ItemInfo.AttrCache;
 
 public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed {
     public static final Text.Foundry nfnd = new Text.Foundry(Text.dfont, 10);
     public static final Tex frame = Resource.loadtex("gfx/hud/buffs/frame");
     public static final Tex cframe = Resource.loadtex("gfx/hud/buffs/cframe");
+    public static final IndirThemeTex scframe = Theme.themetex("scframe");
     public static final Coord imgoff = UI.scale(new Coord(3, 3));
     public static final Coord ameteroff = UI.scale(new Coord(3, 37));
     public static final Coord ametersz = UI.scale(new Coord(32, 3));
+    public static final Coord sameteroff = UI.scale(new Coord(3, 27)), sametersz = UI.scale(new Coord(22, 2));
     public static final int textw = UI.scale(200);
     public Indir<Resource> res;
     public double cmeter = -1;
@@ -86,6 +91,10 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 	return(ntext);
     }
 
+    public int ameter() {
+	return this.ameter;
+    }
+
     public interface AMeterInfo {
 	public double ameter();
     }
@@ -107,6 +116,103 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private final AttrCache<Double> ameteri = new AttrCache<>(this::info, AttrCache.map1(AMeterInfo.class, minf -> minf::ameter));
     private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
     private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
+
+    private static final Map<String, Color> openings = new HashMap<String, Color>(4) {{
+	put("paginae/atk/dizzy", new Color(8, 103, 136));
+	put("paginae/atk/offbalance", new Color(8, 103, 1));
+	put("paginae/atk/cornered", new Color(221, 28, 26));
+	put("paginae/atk/reeling", new Color(203, 168, 6));
+    }};
+    private final Coord simpleOpeningSz = new Coord(32, 32);
+    private final Coord simpleOpeningSmallSz = new Coord(22, 21);
+
+    public boolean isOpening() {
+	try {
+	    final Resource res = this.res.get();
+	    final Color clr = openings.get(res.name);
+	    return clr != null;
+	} catch (Loading l) {
+	    return false;
+	}
+    }
+
+    /**
+     * Only for Fightview to see the buffs in the list, nothing fancy.
+     * Fight Buffs don't have meters aside from the ameter.
+     * Fight buffs also use the cframe always
+     */
+    public void fightdraw(final GOut g) {
+	final Coord sz = scframe.tex().sz();
+
+	try {
+	    final Resource res = this.res.get();
+	    final Color clr = openings.get(res.name);
+	    if (clr != null) {
+		g.chcolor(255, 255, 255, a);
+		Double ameter = (this.ameter >= 0) ? (this.ameter / 100.0) : ameteri.get();
+		if (ameter != null) {
+		    g.image(scframe.tex(), Coord.z);
+		    g.chcolor(0, 0, 0, a);
+		    g.frect(sameteroff, sametersz);
+		    g.chcolor(255, 255, 255, a);
+		    g.frect(sameteroff, new Coord((int) Math.floor(ameter * sametersz.x), sametersz.y));
+		}
+
+		g.chcolor(clr);
+		g.frect(imgoff, simpleOpeningSmallSz);
+		g.chcolor();
+
+		if (ameter != null) {
+		    final int width = FastText.textw(this.ameter + "");
+		    final Coord c = new Coord(sz.x / 2 - width / 2, sz.y / 2 - UI.scale(5));
+		    final Coord tc = c.sub(0, 3);
+		    final Coord tsz = new Coord(width, UI.scale(10));
+		    g.chcolor(new Color(64, 64, 64, 215));
+		    g.frect(c, tsz);
+		    g.chcolor();
+		    FastText.printf(g, tc, "%d", this.ameter);
+		}
+	    }
+	} catch (Loading ignore) { }
+    }
+
+    public void sessdraw(final GOut g, Coord bc) {
+	try {
+	    Resource res = this.res.get();
+	    Color clr = openings.get(res.name);
+	    if (clr == null) {
+		draw(g.reclip(bc, sz));
+		return;
+	    }
+
+	    if (ameter >= 0) {
+		g.image(Buff.cframe, bc);
+		g.chcolor(Color.BLACK);
+		g.frect(bc.add(Buff.ameteroff), Buff.ametersz);
+		g.chcolor(Color.WHITE);
+		g.frect(bc.add(Buff.ameteroff), new Coord((ameter * Buff.ametersz.x) / 100, Buff.ametersz.y));
+	    } else {
+		g.image(Buff.frame, bc);
+	    }
+
+	    bc.x += 3;
+	    bc.y += 3;
+
+	    g.chcolor(clr);
+	    g.frect(bc, simpleOpeningSz);
+
+	    g.chcolor(Color.WHITE);
+	    if (ameter() >= 0) {
+		final Coord asz = FastText.size(ameter + "");
+		bc.x = bc.x + simpleOpeningSz.x / 2 - asz.x / 2;
+		bc.y = bc.y + simpleOpeningSz.y / 2 - asz.y / 2;
+		FastText.printf(g, bc, "%d", ameter);
+	    }
+	    g.chcolor();
+	} catch (Loading l) {
+	    draw(g.reclip(bc, sz));
+	}
+    }
 
     public void draw(GOut g) {
 	g.chcolor(255, 255, 255, a);

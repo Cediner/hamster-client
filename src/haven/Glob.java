@@ -69,7 +69,7 @@ public class Glob {
 
     public void attach(final UI ui) {
 	this.ui = new WeakReference<>(ui);
-	//TODO: oc.attached(ui);
+	oc.attached(ui);
     }
 
     @Resource.PublishedCode(name = "wtr")

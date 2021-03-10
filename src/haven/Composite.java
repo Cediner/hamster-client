@@ -42,6 +42,7 @@ public class Composite extends Drawable {
     public List<MD> nmod;
     public List<ED> nequ;
     private Collection<ResData> nposes = null, tposes = null;
+    public Collection<ResData> oldposes = null, oldtposes;
     private boolean nposesold, retainequ = false;
     private float tptime;
     private WrapMode tpmode;
@@ -155,6 +156,7 @@ public class Composite extends Drawable {
 	if(tposes != null)
 	    tposes = null;
 	nposes = poses;
+	oldposes = poses;
 	nposesold = !interp;
     }
     
@@ -165,6 +167,7 @@ public class Composite extends Drawable {
 
     public void tposes(Collection<ResData> poses, WrapMode mode, float time) {
 	this.tposes = poses;
+	oldtposes = poses;
 	this.tpmode = mode;
 	this.tptime = time;
     }

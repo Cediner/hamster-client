@@ -38,6 +38,7 @@ import java.awt.image.BufferedImage;
 import static haven.Utils.el;
 
 import hamster.GlobalSettings;
+import hamster.util.MessageBus;
 import haven.render.Environment;
 import haven.render.Render;
 
@@ -63,6 +64,9 @@ public class UI {
     private boolean gprefsdirty = false;
     public ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
+
+    // UI MessageBus
+    public MessageBus.Office office;
     
     {
 	lastevent = lasttick = Utils.rtime();
@@ -177,6 +181,11 @@ public class UI {
 	    fun.init(this);
     }
 
+
+    public void setupMail(final Thread thr) {
+	office = new MessageBus.Office(thr);
+    }
+
     public void reset(final Coord sz, final Runner fun) {
 	final RootWidget oldroot = root;
 	destroy();
@@ -225,6 +234,7 @@ public class UI {
     }
 
     public void tick() {
+	office.processTransfers();
 	double now = Utils.rtime();
 	root.tick(now - lasttick);
 	lasttick = now;
