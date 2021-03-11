@@ -190,7 +190,7 @@ public class Obst extends Resource.Layer {
                 short s2 = (short) (((voff * j + 1) % vertsper) + (poly * vertsper));
                 short s3 = (short) (((voff * j + 2) % vertsper) + (poly * vertsper));
                 sa.put(s1).put(s2).put(s3);
-                voff += 3;
+                voff += 2;
             }
             voff = 0;
         }

@@ -26,8 +26,7 @@
 
 package haven;
 
-import static hamster.KeyBind.KB_TOGGLE_GRID;
-import static hamster.KeyBind.KB_TOGGLE_TIPS;
+import static hamster.KeyBind.*;
 import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
@@ -44,6 +43,7 @@ import java.lang.reflect.*;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.MouseBind;
+import hamster.gob.Hidden;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
 import haven.render.*;
@@ -760,6 +760,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.clickmap = new ClickMap();
 	clmaptree.add(clickmap);
 	setcanfocus(true);
+	setupKeyBinds();
     }
     
     protected void envdispose() {
@@ -2657,15 +2658,32 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	return(super.keydown(ev));
     }
 
-    public boolean globtype(char c, KeyEvent ev) {
-        final String bind = KeyBind.generateSequence(ev, ui);
-        if(KB_TOGGLE_GRID.match(bind)) {
-	    showgrid(gridlines == null);
-	    return true;
-	} else if(KB_TOGGLE_TIPS.match(bind)) {
+
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+    private void setupKeyBinds() {
+        binds.put(KB_TOGGLE_GRID, () -> { showgrid(gridlines == null); return true; });
+        binds.put(KB_TOGGLE_TIPS, () -> {
 	    ui.gui.settings.SHOWHOVERTOOLTIPS.set(!ui.gui.settings.SHOWHOVERTOOLTIPS.get());
+            return true;
+	});
+        binds.put(KB_TOGGLE_HIDDEN, () -> {
+	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
+	    //TODO: This can result in very buggy behavior and needs reexamined at some point
+	    ui.sess.glob.oc.mbRefreshGobs.mail(new OCache.RefreshGobByAttr(Hidden.class));
+            return true;
+	});
+        binds.put(KB_TOGGLE_HITBOXES, () -> {
+	    ui.gui.settings.SHOWHITBOX.set(!ui.gui.settings.SHOWHITBOX.get());
 	    return true;
-        }
+        });
+    }
+
+    public boolean globtype(char c, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
         return false;
     }
 

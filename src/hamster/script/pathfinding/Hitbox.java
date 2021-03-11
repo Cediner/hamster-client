@@ -1,6 +1,5 @@
 package hamster.script.pathfinding;
 
-import hamster.gfx.ObstMesh;
 import hamster.util.ResHashMap;
 import haven.*;
 
@@ -8,8 +7,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,31 +71,8 @@ public class Hitbox {
 
         @Override
         public FastMesh mesh() {
-            final Coord2d[] verts = { off, off.add(sz.x, 0), off.add(sz), off.add(0, sz.y) };
-            final int vertsper = verts.length;
-            FloatBuffer pa = Utils.mkfbuf(vertsper * 3);
-            FloatBuffer na = Utils.mkfbuf(vertsper * 3);
-            FloatBuffer cl = Utils.mkfbuf(vertsper * 4);
-            ShortBuffer sa = Utils.mksbuf((int) Math.ceil(vertsper / 2.0) * 3);
-
-            for (final Coord2d off : verts) {
-                pa.put((float) off.x).put((float) off.y).put(1f);
-                na.put((float) off.x).put((float) off.y).put(0f);
-            }
-
-            short voff = 0;
-            for (int j = 0; j < (int) Math.ceil(vertsper / 2.0); ++j) {
-                short s1 = (short) ((voff * j % vertsper) + (vertsper));
-                short s2 = (short) (((voff * j + 1) % vertsper) + (vertsper));
-                short s3 = (short) (((voff * j + 2) % vertsper) + (vertsper));
-                sa.put(s1).put(s2).put(s3);
-                voff += 2;
-            }
-
-            return new ObstMesh(new VertexBuf(new VertexBuf.VertexData(pa),
-                    new VertexBuf.NormalData(na),
-                    new VertexBuf.ColorData(cl)),
-                    sa);
+            final Coord2d[][] verts ={{ off, off.add(sz.x, 0), off.add(sz), off.add(0, sz.y) }};
+            return Obst.makeMesh(verts, Color.BLACK, 1f);
         }
     }
 
@@ -179,8 +153,8 @@ public class Hitbox {
                 }
 
                 if(neg != null) {
-                    Coord2d hsz = new Coord2d(Math.abs(neg.bc.x) + Math.abs(neg.bs.x) + 1,
-                            Math.abs(neg.bc.y) + Math.abs(neg.bs.y) + 1);
+                    Coord2d hsz = new Coord2d(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
+                            Math.abs(neg.bc.y) + Math.abs(neg.bs.y));
                     Coord2d hoff = new Coord2d(neg.bc);
                     final Hitbox hb = new Rectangular(hoff, hsz, true);
                     hitboxes.put(res.name, hb);

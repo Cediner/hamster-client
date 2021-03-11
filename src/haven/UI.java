@@ -188,14 +188,16 @@ public class UI {
 
     public void reset(final Coord sz, final Runner fun) {
 	final RootWidget oldroot = root;
-	destroy();
+	synchronized (this) {
+	    destroy();
+	    audio = new ActAudio.Root();
+	}
 	root = new RootWidget(this, sz);
 	widgets.put(0, root);
 	rwidgets.put(root, 0);
 	root.ggprof = oldroot.ggprof;
 	root.grprof = oldroot.grprof;
 	root.guprof = oldroot.guprof;
-	audio = new ActAudio.Root();
 	if(fun != null)
 	    fun.init(this);
     }

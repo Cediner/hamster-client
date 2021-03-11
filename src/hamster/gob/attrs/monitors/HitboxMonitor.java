@@ -5,6 +5,7 @@ import haven.GAttrib;
 import haven.Gob;
 import haven.UI;
 
+//TODO: When Hitbox color is changed it should refresh hitbox meshes in here as well.
 public class HitboxMonitor extends GAttrib {
     private boolean show;
 

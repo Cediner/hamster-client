@@ -69,7 +69,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     //A Gob can only be held by one thing
     private long heldby;
     //Account for this gob during hit checks or not in pathfinding
-    private boolean pathfinding_blackout = false;
     private Hitbox hitbox = null;
 
     public static class Overlay implements RenderTree.Node {
@@ -332,8 +331,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	this.rc = c;
 	this.a = a;
 	if(hitbox != null) {
-	    glob.gobhitmap.remove(this);
-	    glob.gobhitmap.add(this);
+	    glob.gobhitmap.update(this);
 	}
     }
 
@@ -923,11 +921,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
      * Pathfinding Related
      */
     public void updatePathfindingBlackout(final boolean val) {
-	this.pathfinding_blackout = val;
-    }
-
-    public boolean blackout() {
-        return this.pathfinding_blackout;
+	if(val) {
+	    glob.gobhitmap.remove(this);
+	} else {
+	    glob.gobhitmap.add(this);
+	}
     }
 
     public Hitbox hitbox() {
@@ -1134,28 +1132,40 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
      * its res name has been found
      */
     public void discover(final String name) {
+        //Ensure we have everything needed to do a discovery first
 	final UI ui = glob.ui.get();
-	if (ui == null || ui.gui == null || ui.gui.map == null || ui.gui.mapfile == null || ui.gui.map.rlplgob == -1
-		|| res().isEmpty()) {
+	final Optional<Resource> res = res();
+	if(ui == null || res.isEmpty()) {
 	    throw new JobSystem.DependencyNotMet();
 	}
+	final GameUI gui = ui.gui;
+	if(gui == null) {
+	    throw new JobSystem.DependencyNotMet();
+	}
+	final MapView map = gui.map;
+	final MapWnd mapfile = gui.mapfile;
+	if(map == null || mapfile == null) {
+	    throw new JobSystem.DependencyNotMet();
+	}
+	final long plgobid = map.rlplgob;
+
 
 	if (!Deleted.isDeleted(name)) {
 
 	    final List<OCache.Delta> deltas = new ArrayList<>();
 	    tags = Tag.getTags(name);
 	    hitbox = Hitbox.hbfor(this);
-	    ui.sess.glob.gobhitmap.add(this);
+	    glob.gobhitmap.add(this);
 
 	    if ((tags.contains(Tag.HUMAN) || tags.contains(Tag.ANIMAL) || name.startsWith("gfx/kritter"))
 		    && !tags.contains(Tag.TAMED_ANIMAL)) {
 		deltas.add((gob) -> gob.setattr(new Speed(gob)));
 	    }
 
-	    Alerted.checkAlert(name, ui.gui.map.rlplgob, this, ui);
+	    Alerted.checkAlert(name, plgobid, this, ui);
 
 	    //Target Sprite if targeted
-	    if (id == ui.gui.curtar) {
+	    if (id == gui.curtar) {
 		deltas.add((gob) -> gob.addol(new Overlay(gob, TargetSprite.id, new TargetSprite(gob))));
 	    }
 
@@ -1164,7 +1174,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    deltas.add((gob) -> gob.setattr(new HighlightMonitor(gob)));
 	    if (hasTag(Tag.HUMAN)) {
 		deltas.add((gob) -> gob.setattr(new Halo(gob)));
-		if (id == ui.gui.map.plgob) {
+		if (id == plgobid) {
 		    deltas.add((gob) -> gob.setattr(new MyGobIndicator(gob)));
 		}
 	    }
@@ -1191,7 +1201,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    }
 
 
-	    MarkerData.marker(name).ifPresent(mark -> ui.gui.mapfile.markobj(mark, rc));
+	    MarkerData.marker(name).ifPresent(mark -> mapfile.markobj(mark, rc));
 
 
 	    //If we have changes to Attrs they need to be done via the GobInfo thread

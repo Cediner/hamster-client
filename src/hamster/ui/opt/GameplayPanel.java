@@ -62,6 +62,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
             gob.pack();
         }
         { //Pathfinding
