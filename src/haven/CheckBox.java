@@ -70,6 +70,11 @@ public class CheckBox extends Widget {
 	this(lbl, false, onChange);
     }
 
+    public CheckBox(final String lbl, final Consumer<Boolean> onChange, final boolean val) {
+	this(lbl, false, onChange);
+	this.a = val;
+    }
+
     public CheckBox(String lbl, boolean lg) {
 	this(lbl, lg, null);
     }
