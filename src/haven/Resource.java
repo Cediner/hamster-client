@@ -26,7 +26,9 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.io.SQLResCache;
+import hamster.util.JobSystem;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -80,6 +82,8 @@ public class Resource implements Serializable {
 	    ret = (ret * 31) + ver;
 	    return(ret);
 	}
+
+	public String name() { return name; }
 
 	public String toString() {
 	    return(String.format("#<res-name %s v%d>", name, ver));
@@ -1000,6 +1004,10 @@ public class Resource implements Serializable {
 	    return(tex);
 	}
 
+	public TexI texi() {
+	    return (TexI) tex();
+	}
+
 	private boolean detectgay() {
 	    for(int y = 0; y < sz.y; y++) {
 		for(int x = 0; x < sz.x; x++) {
@@ -1041,11 +1049,15 @@ public class Resource implements Serializable {
     @LayerName("neg")
     public class Neg extends Layer {
 	public Coord cc;
+	public Coord bc, bs, sz;
 	public Coord[][] ep;
 		
 	public Neg(Message buf) {
 	    cc = cdec(buf);
-	    buf.skip(12);
+	    bc = cdec(buf);
+	    bs = cdec(buf);
+	    sz = cdec(buf);
+	    //buf.skip(12);
 	    ep = new Coord[8][0];
 	    int en = buf.uint8();
 	    for(int i = 0; i < en; i++) {
@@ -1172,8 +1184,67 @@ public class Resource implements Serializable {
 	public Code(Message buf) {
 	    name = buf.string();
 	    data = buf.bytes();
+	    if(GlobalSettings.DEBUG.get()) {
+		JobSystem.submit(() -> {
+		    final String resname = Resource.this.name;
+		    final String path = "data/dump/compiled/" + resname;
+		    final String fn = path + "/" + Code.this.name + ".class";
+		    final File file = new File(path);
+		    if (file.mkdirs()) {
+			try {
+			    final File cls = new File(fn);
+			    boolean exists = cls.exists();
+			    if (!exists)
+				exists = cls.createNewFile();
+			    if (exists) {
+				try (final FileOutputStream fos = new FileOutputStream(cls)) {
+				    fos.write(data);
+				    fos.flush();
+				}
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    }
 	}
 		
+	public void init() {}
+    }
+
+    @LayerName("src")
+    public class Source extends Layer {
+        public Source(final Message buf) {
+	    buf.uint8(); //not sure what this is for.
+            final String name = buf.string();
+	    final byte[] data = buf.bytes();
+	    if(GlobalSettings.DEBUG.get()) {
+		JobSystem.submit(() -> {
+		    final String resname = Resource.this.name;
+		    final String path = "data/dump/source/" + resname;
+		    final String fn = path + "/" + name;
+		    final File file = new File(path);
+		    if (file.mkdirs()) {
+			try {
+			    final File cls = new File(fn);
+			    boolean exists = cls.exists();
+			    if (!exists)
+				exists = cls.createNewFile();
+			    if (exists) {
+				try (final FileOutputStream fos = new FileOutputStream(cls)) {
+				    fos.write(data);
+				    fos.flush();
+				}
+			    }
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		    }
+		});
+	    }
+	}
+
 	public void init() {}
     }
 
@@ -1589,6 +1660,28 @@ public class Resource implements Serializable {
 
     public static Tex loadtex(String name) {
 	return(loadrimg(name).tex());
+    }
+
+    public static BufferedImage loadimg(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for (Image img : imgs) {
+	    if (img.id == id) {
+		return img.img;
+	    }
+	}
+	throw new RuntimeException("Failed to find img for " + name + " - id: " + id);
+    }
+
+    public static Tex loadtex(final String name, final int id) {
+	final Resource res = local().loadwait(name);
+	final Collection<Image> imgs = res.layers(imgc);
+	for (Image img : imgs) {
+	    if (img.id == id) {
+		return img.tex();
+	    }
+	}
+	throw new RuntimeException("Failed to find tex for " + name + " - id: " + id);
     }
 
     public String toString() {

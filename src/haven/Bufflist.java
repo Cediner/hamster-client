@@ -26,23 +26,24 @@
 
 package haven;
 
-import java.util.*;
-import java.awt.Color;
+import hamster.ui.core.MovableWidget;
 
-public class Bufflist extends Widget {
+import java.util.*;
+
+public class Bufflist extends MovableWidget {
     public static final int margin = UI.scale(2);
     public static final int num = 5;
 
     public interface Managed {
-	public void move(Coord c, double off);
+        void move(Coord c, double off);
     }
 
     public Bufflist() {
-        super(Buff.cframe.sz());
+        super(Buff.cframe.sz(), "Bufflist");
     }
 
     private void arrange(Widget imm) {
-	int i = 0, rn = 0, x = 0, y = 0, maxh = 0;
+	int rn = 0, x = 0, y = 0, maxh = 0;
 	Coord br = new Coord();
 	Collection<Pair<Managed, Coord>> mv = new ArrayList<>();
 	for(Widget wdg = child; wdg != null; wdg = wdg.next) {
@@ -54,7 +55,6 @@ public class Bufflist extends Widget {
 		wdg.c = c;
 	    else
 		mv.add(new Pair<>(ch, c));
-	    i++;
 	    x += wdg.sz.x + margin;
 	    maxh = Math.max(maxh, wdg.sz.y);
 	    if(++rn >= num) {
@@ -72,6 +72,17 @@ public class Bufflist extends Widget {
 	    p.a.move(p.b, coff);
 	    coff += off;
 	}
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	if (btn == 3 && ui.modmeta) {
+	    for (Widget wdg = child; wdg != null; wdg = wdg.next) {
+		if (c.isect(wdg.c, wdg.sz))
+		    return true;
+	    }
+	}
+	return false;
     }
 
     public void addchild(Widget child, Object... args) {

@@ -95,11 +95,11 @@ public class KeyMatch {
     public String name() {
 	StringBuilder buf = new StringBuilder();
 	if((modmatch & S) != 0)
-	    buf.append("Shift+");
+	    buf.append("S-");
 	if((modmatch & C) != 0)
-	    buf.append("Ctrl+");
+	    buf.append("C-");
 	if((modmatch & M) != 0)
-	    buf.append("Alt+");
+	    buf.append("M-");
 	buf.append(keyname);
 	return(buf.toString());
     }

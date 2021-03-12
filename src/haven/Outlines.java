@@ -28,13 +28,15 @@ package haven;
 
 import java.awt.Color;
 import java.util.*;
+
+import hamster.IndirSetting;
 import haven.render.*;
 import haven.render.sl.*;
 import static haven.render.sl.Cons.*;
 import static haven.render.sl.Type.*;
 
 public class Outlines implements RenderTree.Node {
-    private boolean symmetric;
+    private final IndirSetting<Boolean> symmetric;
 
     private final static Uniform snrm = new Uniform(SAMPLER2D, p -> ((Draw)p.get(RUtils.adhoc)).nrm, RUtils.adhoc);
     private final static Uniform sdep = new Uniform(SAMPLER2D, p -> ((Draw)p.get(RUtils.adhoc)).depth, RUtils.adhoc);
@@ -138,7 +140,7 @@ public class Outlines implements RenderTree.Node {
 	shaders[3] = shader(true,  true);
     }
 
-    public Outlines(boolean symmetric) {
+    public Outlines(IndirSetting<Boolean> symmetric) {
 	this.symmetric = symmetric;
     }
 
@@ -152,7 +154,7 @@ public class Outlines implements RenderTree.Node {
 		p.prep(Rendered.postfx);
 		p.put(RenderedNormals.slot, null);
 		p.put(DepthBuffer.slot, null);
-		p.prep(new Draw(shaders[(symmetric?2:0) | (ms?1:0)],
+		p.prep(new Draw(shaders[(symmetric.get()?2:0) | (ms?1:0)],
 				new Texture2D.Sampler2D((Texture2D)nbuf.img.tex),
 				new Texture2D.Sampler2D((Texture2D)((Texture.Image)dbuf.image).tex)));
 	    });

@@ -69,14 +69,39 @@ public class VMeter extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg.equals("set")) {
 	    amount = (Integer)args[0];
 	    if(args.length > 1)
 		cl = (Color)args[1];
-	} else if(msg == "col") {
+	} else if(msg.equals("col")) {
 	    cl = (Color)args[0];
 	} else {
 	    super.uimsg(msg, args);
+	}
+    }
+
+    /** For the Scripting API  **********************************************************/
+    @Override
+    protected void binded() {
+	super.binded();
+	ui.sess.details.attachVMeter(this);
+    }
+
+    @Override
+    protected void removed() {
+	ui.sess.details.removeVMeter(this);
+	super.removed();
+    }
+
+    public int amount() {
+	return amount;
+    }
+
+    public String owner() {
+	if(parent instanceof Window) {
+	    return ((Window) parent).cap.text;
+	} else {
+	    return "";
 	}
     }
 }

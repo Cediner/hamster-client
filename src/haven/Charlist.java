@@ -27,6 +27,7 @@
 package haven;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.*;
 
 public class Charlist extends Widget {
@@ -35,7 +36,7 @@ public class Charlist extends Widget {
     public static final int btnw = UI.scale(100);
     public int height, y, sel = 0;
     public IButton sau, sad;
-    public List<Char> chars = new ArrayList<Char>();
+    public final List<Char> chars = new ArrayList<>();
     Avaview avalink;
     
     public static class Char {
@@ -162,69 +163,71 @@ public class Charlist extends Widget {
 			wdgmsg("play", c.name);
 		}
 	    }
-	} else if(sender instanceof Avaview) {
-	} else {
+	} else if(!(sender instanceof Avaview)) {
 	    super.wdgmsg(sender, msg, args);
 	}
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "add") {
-	    Char c = new Char((String)args[0]);
-	    c.ava = add(new Avaview(Avaview.dasz, -1, "avacam"));
-	    c.ava.hide();
-	    if(args.length > 1) {
-		Object[] rawdesc = (Object[])args[1];
-		Collection<ResData> poses = new ArrayList<>();
-		Composited.Desc desc = Composited.Desc.decode(ui.sess, rawdesc);
-		Resource.Resolver map = new Resource.Resolver.ResourceMap(ui.sess, (Object[])args[2]);
-		if(rawdesc.length > 3) {
-		    Object[] rawposes = (Object[])rawdesc[3];
-		    for(int i = 0; i < rawposes.length; i += 2)
-			poses.add(new ResData(ui.sess.getres((Integer)rawposes[i]), new MessageBuf((byte[])rawposes[i + 1])));
+	switch (msg) {
+	    case "add" -> {
+		Char c = new Char((String) args[0]);
+		c.ava = add(new Avaview(Avaview.dasz, -1, "avacam"));
+		c.ava.hide();
+		if (args.length > 1) {
+		    Object[] rawdesc = (Object[]) args[1];
+		    Collection<ResData> poses = new ArrayList<>();
+		    Composited.Desc desc = Composited.Desc.decode(ui.sess, rawdesc);
+		    Resource.Resolver map = new Resource.Resolver.ResourceMap(ui.sess, (Object[]) args[2]);
+		    if (rawdesc.length > 3) {
+			Object[] rawposes = (Object[]) rawdesc[3];
+			for (int i = 0; i < rawposes.length; i += 2)
+			    poses.add(new ResData(ui.sess.getres((Integer) rawposes[i]), new MessageBuf((byte[]) rawposes[i + 1])));
+		    }
+		    c.ava(desc, map, poses);
 		}
-		c.ava(desc, map, poses);
-	    }
-	    c.plb = add(new Button(btnw, "Play"));
-	    c.plb.hide();
-	    synchronized(chars) {
-		int idx = chars.size();
-		chars.add(c);
-		if(chars.size() > height) {
-		    sau.show();
-		    sad.show();
-		}
-		if(idx == sel) {
-		    chsel(sel);
-		}
-	    }
-	} else if(msg == "ava") {
-	    String cnm = (String)args[0];
-	    Object[] rawdesc = (Object[])args[1];
-	    Collection<ResData> poses = new ArrayList<>();
-	    Composited.Desc ava = Composited.Desc.decode(ui.sess, rawdesc);
-	    Resource.Resolver map = new Resource.Resolver.ResourceMap(ui.sess, (Object[])args[2]);
-	    if(rawdesc.length > 3) {
-		Object[] rawposes = (Object[])rawdesc[3];
-		for(int i = 0; i < rawposes.length; i += 2)
-		    poses.add(new ResData(ui.sess.getres((Integer)rawposes[i]), new MessageBuf((byte[])rawposes[i + 1])));
-	    }
-	    synchronized(chars) {
-		for(Char c : chars) {
-		    if(c.name.equals(cnm)) {
-			c.ava(ava, map, poses);
-			break;
+		c.plb = add(new Button(btnw, "Play"));
+		c.plb.hide();
+		synchronized (chars) {
+		    int idx = chars.size();
+		    chars.add(c);
+		    if (chars.size() > height) {
+			sau.show();
+			sad.show();
+		    }
+		    if (idx == sel) {
+			chsel(sel);
 		    }
 		}
 	    }
-	} else if(msg == "biggu") {
-	    int id = (Integer)args[0];
-	    if(id < 0)
-		avalink = null;
-	    else
-		avalink = (Avaview)ui.getwidget(id);
-	} else {
-	    super.uimsg(msg, args);
+	    case "ava" -> {
+		String cnm = (String) args[0];
+		Object[] rawdesc = (Object[]) args[1];
+		Collection<ResData> poses = new ArrayList<>();
+		Composited.Desc ava = Composited.Desc.decode(ui.sess, rawdesc);
+		Resource.Resolver map = new Resource.Resolver.ResourceMap(ui.sess, (Object[]) args[2]);
+		if (rawdesc.length > 3) {
+		    Object[] rawposes = (Object[]) rawdesc[3];
+		    for (int i = 0; i < rawposes.length; i += 2)
+			poses.add(new ResData(ui.sess.getres((Integer) rawposes[i]), new MessageBuf((byte[]) rawposes[i + 1])));
+		}
+		synchronized (chars) {
+		    for (Char c : chars) {
+			if (c.name.equals(cnm)) {
+			    c.ava(ava, map, poses);
+			    break;
+			}
+		    }
+		}
+	    }
+	    case "biggu" -> {
+		int id = (Integer) args[0];
+		if (id < 0)
+		    avalink = null;
+		else
+		    avalink = (Avaview) ui.getwidget(id);
+	    }
+	    default -> super.uimsg(msg, args);
 	}
     }
 
@@ -248,13 +251,13 @@ public class Charlist extends Widget {
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {
-	if(ev.getKeyCode() == ev.VK_UP) {
+	if(ev.getKeyCode() == KeyEvent.VK_UP) {
 	    chsel(Math.max(sel - 1, 0));
 	    return(true);
-	} else if(ev.getKeyCode() == ev.VK_DOWN) {
+	} else if(ev.getKeyCode() == KeyEvent.VK_DOWN) {
 	    chsel(Math.min(sel + 1, chars.size() - 1));
 	    return(true);
-	} else if(ev.getKeyCode() == ev.VK_ENTER) {
+	} else if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
 	    if((sel >= 0) && (sel < chars.size())) {
 		chars.get(sel).plb.click();
 	    }
@@ -262,4 +265,19 @@ public class Charlist extends Widget {
 	}
 	return(false);
     }
+
+    /*****************************************************************************************
+     *  Character Listing
+     *****************************************************************************************/
+    @Override
+    protected void binded() {
+	ui.sess.details.attachCharlist(this);
+    }
+
+    @Override
+    protected void removed() {
+	super.removed();
+	ui.sess.details.removeCharlist();
+    }
+
 }

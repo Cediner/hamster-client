@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.script.SessionDetails;
+
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
@@ -65,11 +67,15 @@ public class Session implements Resource.Resolver {
     Map<Integer, PMessage> waiting = new TreeMap<Integer, PMessage>();
     LinkedList<RMessage> pending = new LinkedList<RMessage>();
     Map<Long, ObjAck> objacks = new TreeMap<Long, ObjAck>();
-    public String username;
     byte[] cookie;
     final Map<Integer, CachedRes> rescache = new TreeMap<Integer, CachedRes>();
     public final Glob glob;
     public byte[] sesskey;
+
+    //Additional Session details for scripts
+    public final SessionDetails details;
+    public final String username;
+
 
     @SuppressWarnings("serial")
     public static class MessageException extends RuntimeException {
@@ -103,7 +109,7 @@ public class Session implements Resource.Resolver {
 	}
     }
 
-    private static class CachedRes {
+    static class CachedRes {
 	private final Waitable.Queue wq = new Waitable.Queue();
 	private final int resid;
 	private String resnm = null;
@@ -114,7 +120,7 @@ public class Session implements Resource.Resolver {
 	    resid = id;
 	}
 	
-	private class Ref implements Indir<Resource> {
+	class Ref implements Indir<Resource> {
 	    private Resource res;
 		    
 	    public Resource get() {
@@ -123,6 +129,10 @@ public class Session implements Resource.Resolver {
 		if(res == null)
 		    res = Resource.remote().load(resnm, resver, 0).get();
 		return(res);
+	    }
+
+	    public String name() {
+		return resnm;
 	    }
 	
 	    public String toString() {
@@ -561,6 +571,7 @@ public class Session implements Resource.Resolver {
 
     public Session(SocketAddress server, String username, byte[] cookie, Object... args) {
 	this.server = server;
+	this.details = new SessionDetails(this);
 	this.username = username;
 	this.cookie = cookie;
 	this.args = args;

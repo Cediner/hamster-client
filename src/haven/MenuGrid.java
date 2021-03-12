@@ -30,10 +30,14 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+
+import hamster.KeyBind;
+import hamster.ui.core.MovableWidget;
 import haven.Resource.AButton;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class MenuGrid extends Widget implements KeyBinding.Bindable {
+public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
@@ -46,6 +50,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     private UI.Grab grab;
     private int curoff = 0;
     private boolean recons = true;
+    public final Map<String, CustomPagina> custompag = new HashMap<>();
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 	
     @RName("scm")
     public static class $_ implements Factory {
@@ -57,27 +63,27 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     public static class PagButton implements ItemInfo.Owner {
 	public final Pagina pag;
 	public final Resource res;
-	public final KeyBinding bind;
+	public final KeyBind kb;
 
 	public PagButton(Pagina pag) {
 	    this.pag = pag;
 	    this.res = pag.res();
-	    this.bind = binding();
+	    this.kb = binding();
 	}
 
 	public BufferedImage img() {return(res.layer(Resource.imgc).scaled());}
 	public String name() {return(res.layer(Resource.action).name);}
-	public KeyMatch hotkey() {
+	public String hotkey() {
 	    char hk = res.layer(Resource.action).hk;
 	    if(hk == 0)
-		return(KeyMatch.nil);
-	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0));
+		return "";
+	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0).name());
 	}
-	public KeyBinding binding() {
-	    return(KeyBinding.get("scm/" + res.name, hotkey()));
+	public KeyBind binding() {
+	    return KeyBind.getDynamicKB(res.name, "MenuGrid", hotkey());
 	}
 	public void use() {
-	    pag.scm.wdgmsg("act", (Object[])res.layer(Resource.action).ad);
+	    pag.use();
 	}
 
 	public String sortkey() {
@@ -101,17 +107,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	public BufferedImage rendertt(boolean withpg) {
 	    Resource.Pagina pg = res.layer(Resource.pagina);
 	    String tt = name();
-	    KeyMatch key = bind.key();
+	    final String key = kb.bind.get();
 	    int pos = -1;
-	    char vkey = key.chr;
-	    if((vkey == 0) && (key.keyname.length() == 1))
-		vkey = key.keyname.charAt(0);
-	    if((vkey != 0) && (key.modmatch == 0))
+	    char vkey = key.length() > 0 ? key.charAt(0) : '\0';
+	    if((vkey != 0) && (key.contains("-")))
 		pos = tt.toUpperCase().indexOf(Character.toUpperCase(vkey));
 	    if(pos >= 0)
 		tt = tt.substring(0, pos) + "$b{$col[255,128,0]{" + tt.charAt(pos) + "}}" + tt.substring(pos + 1);
-	    else if(key != KeyMatch.nil)
-		tt += " [$b{$col[255,128,0]{" + key.name() + "}}]";
+	    else if(!key.equals(""))
+		tt += " [$b{$col[255,128,0]{" + key + "}}]";
 	    BufferedImage ret = ttfnd.render(tt, UI.scale(300)).img;
 	    if(withpg) {
 		List<ItemInfo> info = info();
@@ -142,7 +146,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	    public String name() {return("More...");}
 
-	    public KeyBinding binding() {return(kb_next);}
+	    public KeyBind binding() {return(KeyBind.KB_SCM_NEXT);}
 	};
 
     public final PagButton bk = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-back").indir())) {
@@ -155,7 +159,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	    public String name() {return("Back");}
 
-	    public KeyBinding binding() {return(kb_back);}
+	    public KeyBind binding() {return(KeyBind.KB_SCM_BACK);}
 	};
 
     public static class Pagina {
@@ -166,6 +170,7 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	public Indir<Tex> img;
 	public int newp;
 	public Object[] rawinfo = {};
+	private final Consumer<Pagina> onUse;
 
 	public static enum State {
 	    ENABLED, DISABLED {
@@ -183,6 +188,14 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    this.scm = scm;
 	    this.res = res;
 	    state(State.ENABLED);
+	    this.onUse = (me) -> scm.wdgmsg("act", (Object[]) res().layer(Resource.action).ad);
+	}
+
+	public Pagina(MenuGrid scm, Indir<Resource> res, final Consumer<Pagina> onUse) {
+	    this.scm = scm;
+	    this.res = res;
+	    state(State.ENABLED);
+	    this.onUse = onUse;
 	}
 
 	public Resource res() {
@@ -191,6 +204,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 
 	public Resource.AButton act() {
 	    return(res().layer(Resource.action));
+	}
+
+	public void use() {
+	    onUse.accept(this);
 	}
 
 	private PagButton button = null;
@@ -209,6 +226,15 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	public void state(State st) {
 	    this.st = st;
 	    this.img = st.img(this);
+	}
+    }
+
+    public static class CustomPagina extends Pagina {
+	public final String key;
+
+	private CustomPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
+	    super(scm, res, onUse);
+	    this.key = key;
 	}
     }
 
@@ -270,7 +296,82 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
     }
 
     public MenuGrid() {
-	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
+	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)), "Menugrid");
+	//Custom Management Menu
+	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
+	//TODO: All the Custom window toggles
+	addCustom(new CustomPagina(this, "management::landmanager",
+		Resource.local().load("custom/paginae/default/wnd/selector"),
+		(pag) -> ui.gui.add(new MapMod(true))));
+	addCustom(new CustomPagina(this, "management::scripts",
+		Resource.local().load("custom/paginae/default/wnd/scripts"),
+		(pag) -> ui.gui.scripts.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::alerted",
+		Resource.local().load("custom/paginae/default/wnd/alerted"),
+		(pag) -> ui.gui.alerted.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::deleted",
+		Resource.local().load("custom/paginae/default/wnd/deleted"),
+		(pag) -> ui.gui.deleted.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::hidden",
+		Resource.local().load("custom/paginae/default/wnd/hidden"),
+		(pag) -> ui.gui.hidden.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::highlightmanager",
+		Resource.local().load("custom/paginae/default/wnd/highlight"),
+		(pag) -> ui.gui.highlighted.toggleVisiblity()));
+	//Hafen Window toggles
+	addCustom(new CustomPagina(this, "management::inv",
+		Resource.local().load("custom/paginae/default/wnd/inv"),
+		(pag) -> ui.gui.invwnd.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::char",
+		Resource.local().load("custom/paginae/default/wnd/char"),
+		(pag) -> ui.gui.chrwdg.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::equ",
+		Resource.local().load("custom/paginae/default/wnd/equ"),
+		(pag) -> ui.gui.equwnd.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::kithnkin",
+		Resource.local().load("custom/paginae/default/wnd/kithnkin"),
+		(pag) -> ui.gui.zerg.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::lmap",
+		Resource.local().load("custom/paginae/default/wnd/lmap"),
+		(pag) -> ui.gui.mapfile.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::opts",
+		Resource.local().load("custom/paginae/default/wnd/opts"),
+		(pag) -> ui.gui.opts.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::chat",
+		Resource.local().load("custom/paginae/default/wnd/chat"),
+		(pag) -> ui.gui.chatwnd.toggleVisiblity()));
+	//Keybinds
+	binds.put(KeyBind.KB_SCM_ROOT, () -> {
+	    if(this.cur != null) {
+		this.cur = null;
+		curoff = 0;
+		updlayout();
+		return true;
+	    } else {
+	        return false;
+	    }
+	});
+	binds.put(KeyBind.KB_SCM_BACK, () -> {
+	    if(this.cur != null) {
+	        use(bk, false);
+	        return true;
+	    } else {
+	        return false;
+	    }
+	});
+	binds.put(KeyBind.KB_SCM_NEXT, () -> {
+	    if((layout[gsz.x - 2][gsz.y - 1] == next)) {
+		use(next, false);
+		return true;
+	    } else {
+		return false;
+	    }
+	});
+    }
+
+    private void addCustom(final CustomPagina pag) {
+	paginae.add(pag);
+	custompag.put(pag.key, pag);
     }
 
     private void updlayout() {
@@ -402,13 +503,20 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    return(null);
     }
 
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return btn == 3 && c.isect(Coord.z, sz);
+    }
+
     public boolean mousedown(Coord c, int button) {
 	PagButton h = bhit(c);
 	if((button == 1) && (h != null)) {
 	    pressed = h;
 	    grab = ui.grabmouse(this);
+	    return (true);
+	} else {
+	    return super.mousedown(c, button);
 	}
-	return(true);
     }
 
     public void mousemove(Coord c) {
@@ -416,6 +524,8 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    PagButton h = bhit(c);
 	    if(h != pressed)
 		dragging = pressed.pag;
+	} else {
+	    super.mousemove(c);
 	}
     }
 
@@ -445,7 +555,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	PagButton h = bhit(c);
 	if((button == 1) && (grab != null)) {
 	    if(dragging != null) {
-		ui.dropthing(ui.root, ui.mc, dragging.res());
+	        if(!(dragging instanceof CustomPagina))
+	            ui.dropthing(ui.root, ui.mc, dragging.res());
+	        else
+	            ui.dropthing(ui.root, ui.mc, dragging);
 		pressed = null;
 		dragging = null;
 	    } else if(pressed != null) {
@@ -455,8 +568,10 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    }
 	    grab.remove();
 	    grab = null;
+	    return(true);
+	} else {
+	    return super.mouseup(c, button);
 	}
-	return(true);
     }
 
     public void uimsg(String msg, Object... args) {
@@ -501,30 +616,17 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	}
     }
 
-    public static final KeyBinding kb_root = KeyBinding.get("scm-root", KeyMatch.forcode(KeyEvent.VK_ESCAPE, 0));
-    public static final KeyBinding kb_back = KeyBinding.get("scm-back", KeyMatch.forcode(KeyEvent.VK_BACK_SPACE, 0));
-    public static final KeyBinding kb_next = KeyBinding.get("scm-next", KeyMatch.forchar('N', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S));
     public boolean globtype(char k, KeyEvent ev) {
-	if(kb_root.key().match(ev) && (this.cur != null)) {
-	    this.cur = null;
-	    curoff = 0;
-	    updlayout();
-	    return(true);
-	} else if(kb_back.key().match(ev) && (this.cur != null)) {
-	    use(bk, false);
-	    return(true);
-	} else if(kb_next.key().match(ev) && (layout[gsz.x - 2][gsz.y - 1] == next)) {
-	    use(next, false);
-	    return(true);
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
 	}
-	int cp = -1;
 	PagButton pag = null;
 	for(PagButton btn : curbtns) {
-	    if(btn.bind.key().match(ev)) {
-		int prio = btn.bind.set() ? 1 : 0;
-		if((pag == null) || (prio > cp)) {
+	    if(btn.kb.match(bind)) {
+		if((pag == null)) {
 		    pag = btn;
-		    cp = prio;
 		}
 	    }
 	}
@@ -533,10 +635,5 @@ public class MenuGrid extends Widget implements KeyBinding.Bindable {
 	    return(true);
 	}
 	return(false);
-    }
-
-    public KeyBinding getbinding(Coord cc) {
-	PagButton h = bhit(cc);
-	return((h == null) ? null : h.bind);
     }
 }

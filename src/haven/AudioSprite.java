@@ -27,6 +27,8 @@
 package haven;
 
 import java.util.*;
+
+import hamster.GlobalSettings;
 import haven.render.*;
 import haven.Audio.CS;
 
@@ -57,8 +59,8 @@ public class AudioSprite {
 		    ui = null;
 		}
 
-		// TODO: account for PAUSED / other settings
-		if (ui != null && !MainFrame.instance.p.isActiveUI(ui)) {
+		// TODO: account for  other settings
+		if (GlobalSettings.PAUSED.get() || (ui != null && !MainFrame.instance.p.isActiveUI(ui))) {
 		    return new IgnoreSprite(owner, res);
 		}
 		{

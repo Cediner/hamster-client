@@ -1193,6 +1193,7 @@ public class CharWnd extends Window {
 		}
 		sz.x += UI.scale(3);
 		resize(sz);
+		parent.pack();
 	    }
 
 	    public void draw(GOut g) {

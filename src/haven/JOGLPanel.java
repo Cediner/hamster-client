@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
+import hamster.GlobalSettings;
 import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
@@ -167,25 +168,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    cursmode = "awt";
     }
 
-    private boolean iswap() {
-        final UI ui = this.ui.get();
-        if(ui != null) {
-            return ui.gprefs.vsync.val;
-	} else {
-            return true;
-	}
-    }
-
     private double framedur() {
-	GSettings gp = this.ui.get().gprefs;
-	double hz = gp.hz.val, bghz = gp.bghz.val;
-	if(bgmode) {
-	    if(bghz != Double.POSITIVE_INFINITY)
-		return(1.0 / bghz);
-	}
-	if(hz == Double.POSITIVE_INFINITY)
-	    return(0.0);
-	return(1.0 / hz);
+        return (bgmode && (1.0 / GlobalSettings.BGFPS.get() > 0.0))
+		? 1.0 / GlobalSettings.BGFPS.get()
+		: 1.0 / GlobalSettings.FPS.get();
     }
 
     public void setupMail(final Thread owner) {
@@ -198,7 +184,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     private void initgl(GL gl) {
 	Collection<String> exts = Arrays.asList(gl.glGetString(GL.GL_EXTENSIONS).split(" "));
 	GLCapabilitiesImmutable caps = getChosenGLCapabilities();
-	gl.setSwapInterval((aswap = iswap()) ? 1 : 0);
+	gl.setSwapInterval((aswap = GlobalSettings.VSYNC.get()) ? 1 : 0);
 	if(exts.contains("GL_ARB_multisample") && caps.getSampleBuffers()) {
 	    /* Apparently, having sample buffers in the config enables
 	     * multisampling by default on some systems. */
@@ -282,7 +268,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
 	public void run(GL3 gl) {
 	    long start = System.nanoTime();
-	    boolean iswap = iswap();
+	    boolean iswap = GlobalSettings.VSYNC.get();
 	    if(debuggl)
 		haven.render.gl.GLException.checkfor(gl, null);
 	    if(iswap != aswap)
@@ -532,7 +518,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    final Iterator<AddUIMessage> add = adduibox.mailqueue.iterator();
 	    while (add.hasNext()) {
 		final UI lui = add.next().lui;
-		//TODO: lui.setupMail(Thread.currentThread());
+		lui.setupMail(Thread.currentThread());
 
 		synchronized (sessions) {
 		    sessions.add(lui);
@@ -592,11 +578,13 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	synchronized (sessions) {
 	    for (final UI lui : sessions) {
 		if (lui != ui) {
-		    if (lui.sess != null)
-			lui.sess.glob.ctick();
-		    lui.tick();
-		    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
-			lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		    synchronized (lui) {
+			if (lui.sess != null)
+			    lui.sess.glob.ctick();
+			lui.tick();
+			if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+			    lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		    }
 		}
 	    }
 	}
@@ -643,119 +631,131 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		        ui.env = this.env;
 		    }
 
-		    //
-		    GLEnvironment env = this.env;
-		    buf = env.render();
-		    Debug.cycle(ui.modflags());
-		    GSettings prefs = ui.gprefs;
-		    SyncMode syncmode = prefs.syncmode.val;
-		    CPUProfile.Frame curf = Config.profile ? uprof.new Frame() : null;
-		    GPUProfile.Frame curgf = Config.profilegpu ? gprof.new Frame(buf) : null;
-		    BufferBGL.Profile frameprof = false ? new BufferBGL.Profile() : null;
-		    if(frameprof != null) buf.submit(frameprof.start);
-		    buf.submit(new ProfileTick(rprofc, "wait"));
-		    Fence curframe = new Fence();
-		    if(syncmode == SyncMode.FRAME)
-			buf.submit(curframe);
+		    if(!GlobalSettings.PAUSED.get()) {
+			GLEnvironment env = this.env;
+			buf = env.render();
+			Debug.cycle(ui.modflags());
+			SyncMode syncmode = SyncMode.valueOf(GlobalSettings.FRAMESYNCMODE.get());
+			CPUProfile.Frame curf = Config.profile ? uprof.new Frame() : null;
+			GPUProfile.Frame curgf = Config.profilegpu ? gprof.new Frame(buf) : null;
+			BufferBGL.Profile frameprof = false ? new BufferBGL.Profile() : null;
+			if(frameprof != null) buf.submit(frameprof.start);
+			buf.submit(new ProfileTick(rprofc, "wait"));
+			Fence curframe = new Fence();
+			if(syncmode == SyncMode.FRAME)
+			    buf.submit(curframe);
 
-		    boolean tickwait = (syncmode == SyncMode.FRAME) || (syncmode == SyncMode.TICK);
-		    if(!tickwait) {
-			if(prevframe != null) {
-			    double now = Utils.rtime();
-			    prevframe.waitfor();
-			    prevframe = null;
-			    fwaited += Utils.rtime() - now;
+			boolean tickwait = (syncmode == SyncMode.FRAME) || (syncmode == SyncMode.TICK);
+			if(!tickwait) {
+			    if(prevframe != null) {
+				double now = Utils.rtime();
+				prevframe.waitfor();
+				prevframe = null;
+				fwaited += Utils.rtime() - now;
+			    }
+			    if(curf != null) curf.tick("dwait");
 			}
-			if(curf != null) curf.tick("dwait");
-		    }
 
-		    int cfno = frameno++;
-		    synchronized(ui) {
-			ed.dispatch(ui);
-			if(curf != null) curf.tick("dsp");
+			int cfno = frameno++;
+			synchronized(ui) {
+			    ed.dispatch(ui);
+			    if(curf != null) curf.tick("dsp");
 
-			if(ui.sess != null) {
-			    ui.sess.glob.ctick();
-			    ui.sess.glob.gtick(buf);
+			    if(ui.sess != null) {
+				ui.sess.glob.ctick();
+				ui.sess.glob.gtick(buf);
+			    }
+			    if(curf != null) curf.tick("stick");
+			    ui.tick();
+			    ui.gtick(buf);
+			    if((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+				ui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+			    if(curf != null) curf.tick("tick");
+			    buf.submit(new ProfileTick(rprofc, "tick"));
+			    if(curgf != null) curgf.tick(buf, "tick");
 			}
-			if(curf != null) curf.tick("stick");
-			ui.tick();
-			ui.gtick(buf);
-			if((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
-			    ui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
-			if(curf != null) curf.tick("tick");
-			buf.submit(new ProfileTick(rprofc, "tick"));
-			if(curgf != null) curgf.tick(buf, "tick");
-		    }
 
-		    if(tickwait) {
-			if(prevframe != null) {
-			    double now = Utils.rtime();
-			    prevframe.waitfor();
-			    prevframe = null;
-			    fwaited += Utils.rtime() - now;
+			if(tickwait) {
+			    if(prevframe != null) {
+				double now = Utils.rtime();
+				prevframe.waitfor();
+				prevframe = null;
+				fwaited += Utils.rtime() - now;
+			    }
+			    if(curf != null) curf.tick("dwait");
 			}
-			if(curf != null) curf.tick("dwait");
-		    }
 
-		    display(ui, buf);
-		    if(curf != null) curf.tick("draw");
-		    if(curgf != null) curgf.tick(buf, "draw");
-		    buf.submit(new ProfileTick(rprofc, "gl"));
-		    buf.submit(new BufferSwap(cfno));
-		    if(curgf != null) curgf.tick(buf, "swap");
-		    buf.submit(new ProfileTick(rprofc, "swap"));
-		    if(curgf != null) curgf.fin(buf);
-		    if(syncmode == SyncMode.FINISH) {
-			buf.submit(new GLFinish());
-			buf.submit(new ProfileTick(rprofc, "finish"));
-		    }
-		    if(syncmode != SyncMode.FRAME)
-			buf.submit(curframe);
-		    if(Config.profile)
-			buf.submit(rprofc = new ProfileCycle(rprof, rprofc, "aux"));
-		    else
-			rprofc = null;
-		    buf.submit(new FrameCycle());
-		    if(frameprof != null) {
-			buf.submit(frameprof.stop);
-			buf.submit(frameprof.dump(new java.io.File("frameprof")));
-		    }
-		    env.submit(buf);
-		    buf = null;
-		    if(curf != null) curf.tick("aux");
+			display(ui, buf);
+			if(curf != null) curf.tick("draw");
+			if(curgf != null) curgf.tick(buf, "draw");
+			buf.submit(new ProfileTick(rprofc, "gl"));
+			buf.submit(new BufferSwap(cfno));
+			if(curgf != null) curgf.tick(buf, "swap");
+			buf.submit(new ProfileTick(rprofc, "swap"));
+			if(curgf != null) curgf.fin(buf);
+			if(syncmode == SyncMode.FINISH) {
+			    buf.submit(new GLFinish());
+			    buf.submit(new ProfileTick(rprofc, "finish"));
+			}
+			if(syncmode != SyncMode.FRAME)
+			    buf.submit(curframe);
+			if(Config.profile)
+			    buf.submit(rprofc = new ProfileCycle(rprof, rprofc, "aux"));
+			else
+			    rprofc = null;
+			buf.submit(new FrameCycle());
+			if(frameprof != null) {
+			    buf.submit(frameprof.stop);
+			    buf.submit(frameprof.dump(new java.io.File("frameprof")));
+			}
+			env.submit(buf);
+			buf = null;
+			if(curf != null) curf.tick("aux");
 
-		    double now = Utils.rtime();
-		    double fd = framedur();
-		    if(then + fd > now) {
-			then += fd;
-			long nanos = (long)((then - now) * 1e9);
-			Thread.sleep(nanos / 1000000, (int)(nanos % 1000000));
+			double now = Utils.rtime();
+			double fd = framedur();
+			if(then + fd > now) {
+			    then += fd;
+			    long nanos = (long)((then - now) * 1e9);
+			    Thread.sleep(nanos / 1000000, (int)(nanos % 1000000));
+			} else {
+			    then = now;
+			}
+			fwaited += Utils.rtime() - now;
+			frames[framep] = now;
+			waited[framep] = fwaited;
+			{
+			    double twait = 0;
+			    int i = 0, ckf = framep;
+			    for(; i < frames.length - 1; i++) {
+				ckf = (ckf - 1 + frames.length) % frames.length;
+				twait += waited[ckf];
+				if(now - frames[ckf] > 1)
+				    break;
+			    }
+			    if(now > frames[ckf]) {
+				fps = (int)Math.round((i + 1) / (now - frames[ckf]));
+				uidle = twait / (now - frames[ckf]);
+			    }
+			}
+			framep = (framep + 1) % frames.length;
+			if(curf != null) curf.tick("wait");
+
+			if(curf != null) curf.fin();
+			prevframe = curframe;
 		    } else {
-			then = now;
-		    }
-		    fwaited += Utils.rtime() - now;
-		    frames[framep] = now;
-		    waited[framep] = fwaited;
-		    {
-			double twait = 0;
-			int i = 0, ckf = framep;
-			for(; i < frames.length - 1; i++) {
-			    ckf = (ckf - 1 + frames.length) % frames.length;
-			    twait += waited[ckf];
-			    if(now - frames[ckf] > 1)
-				break;
-			}
-			if(now > frames[ckf]) {
-			    fps = (int)Math.round((i + 1) / (now - frames[ckf]));
-			    uidle = twait / (now - frames[ckf]);
+			//Paused game
+			synchronized(ui) {
+			    ui.audio.amb.clear();
+			    ed.dispatch(ui);
+			    if (ui.sess != null) {
+				ui.sess.glob.ctick();
+			    }
+			    ui.tick();
+			    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+				ui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
 			}
 		    }
-		    framep = (framep + 1) % frames.length;
-		    if(curf != null) curf.tick("wait");
-
-		    if(curf != null) curf.fin();
-		    prevframe = curframe;
 
 		    //Update background UIs
 		    updateBackgroundSessions(ui);

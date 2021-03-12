@@ -167,6 +167,25 @@ public abstract class States {
 	public String toString() {return(String.format("#<linewidth %s>", w));}
     }
 
+    public static final Slot<PointSize> pointsize = new Slot<>(Slot.Type.GEOM, PointSize.class);
+    public static class PointSize extends Builtin {
+	public final float w;
+
+	public PointSize(final float w) {
+	    this.w = w;
+	}
+	public PointSize(final double w) {this((float)w);}
+	public PointSize(final int w) {this((float)w);}
+
+	public boolean equals(Object o) {
+	    return((o instanceof PointSize) && (((PointSize)o).w == this.w));
+	}
+
+	public void apply(Pipe p) {p.put(pointsize, this);}
+
+	public String toString() {return(String.format("#<pointsize %s>", w));}
+    }
+
     public static final Slot<DepthBias> depthbias = new Slot<DepthBias>(Slot.Type.GEOM, DepthBias.class);
     public static class DepthBias extends Builtin {
 	public final float factor, units;

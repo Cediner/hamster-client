@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.HashSet;
 
 public class HighlightData {
-    private static ObservableCollection<String> highlighted = new ObservableCollection<>(new HashSet<>());
+    private static final ObservableCollection<String> highlighted = new ObservableCollection<>(new HashSet<>());
 
     public static void init() {
         Storage.dynamic.ensure(sql -> {

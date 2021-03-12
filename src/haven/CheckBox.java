@@ -26,14 +26,17 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.util.function.Consumer;
 
 public class CheckBox extends Widget {
-    public static final Tex lbox = Resource.loadtex("gfx/hud/chkbox");
-    public static final Tex lmark = Resource.loadtex("gfx/hud/chkmark");
-    public static final Tex sbox = Resource.loadtex("gfx/hud/chkboxs");
-    public static final Tex smark = Resource.loadtex("gfx/hud/chkmarks");
-    public final Tex box, mark;
+    public static final IndirThemeTex lbox = Theme.themetex("chkbox/large", 0),
+	    lmark = Theme.themetex("chkbox/large", 1);
+    public static final IndirThemeTex sbox = Theme.themetex("chkbox/small", 0),
+	    smark = Theme.themetex("chkbox/small", 1);
+    public final IndirThemeTex box, mark;
     public final Coord loff;
     public boolean a = false;
     private final Consumer<Boolean> onChange;
@@ -59,7 +62,7 @@ public class CheckBox extends Widget {
 	    mark = smark;
 	    loff = new Coord(5, 0);
 	}
-	sz = new Coord(box.sz().x + 5 + this.lbl.sz().x, Math.max(box.sz().y, this.lbl.sz().y));
+	sz = new Coord(box.tex().sz().x + 5 + this.lbl.sz().x, Math.max(box.tex().sz().y, this.lbl.sz().y));
 	this.onChange = onChange;
     }
 
@@ -76,10 +79,10 @@ public class CheckBox extends Widget {
     }
 
     public void draw(GOut g) {
-        g.image(lbl.tex(), loff.add(box.sz().x, (sz.y - lbl.sz().y) / 2));
-        g.image(box, Coord.z.add(0, (sz.y - box.sz().y) / 2));
+        g.image(lbl.tex(), loff.add(box.tex().sz().x, (sz.y - lbl.sz().y) / 2));
+        g.image(box.tex(), Coord.z.add(0, (sz.y - box.tex().sz().y) / 2));
         if (a) {
-            g.image(mark, Coord.z.add(0, (sz.y - mark.sz().y) / 2));
+            g.image(mark.tex(), Coord.z.add(0, (sz.y - mark.tex().sz().y) / 2));
         }
         super.draw(g);
     }

@@ -26,13 +26,32 @@
 
 package haven;
 
-import java.awt.event.KeyEvent;
+import hamster.KeyBind;
+import hamster.ui.core.MovableWidget;
 
-public class Speedget extends Widget {
-    public static final Tex imgs[][];
-    public static final String tips[];
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Speedget extends MovableWidget {
+    public static final Tex[][] imgs;
+    public static final String[] tips;
     public static final Coord tsz;
     public int cur, max;
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+
+    public enum Speed {
+	CRAWL(0),
+	WALK(1),
+	RUN(2),
+	SPRINT(3);
+
+	final int id;
+
+	Speed(final int id) {
+	    this.id = id;
+	}
+    }
 
     static {
 	String[] names = {"crawl", "walk", "run", "sprint"};
@@ -61,9 +80,28 @@ public class Speedget extends Widget {
     }
 
     public Speedget(int cur, int max) {
-	super(tsz);
+	super(tsz, "Speedget");
 	this.cur = cur;
 	this.max = max;
+
+	binds.put(KeyBind.KB_CYCLE_SPEED, () -> {cyclespeed(); return true;});
+	binds.put(KeyBind.KB_CRAWL, () -> { setSpeed(Speed.CRAWL); return true; });
+	binds.put(KeyBind.KB_WALK, () -> { setSpeed(Speed.WALK); return true; });
+	binds.put(KeyBind.KB_RUN, () -> { setSpeed(Speed.RUN); return true; });
+	binds.put(KeyBind.KB_SPRINT, () -> { setSpeed(Speed.SPRINT); return true; });
+    }
+
+    @Override
+    public void toggleVisiblity() {
+	super.toggleVisiblity();
+	ui.gui.settings.SHOWSPEED.set(visible);
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	setVisible(ui.gui.settings.SHOWSPEED.get());
+	ui.gui.speed = this;
     }
 
     public void draw(GOut g) {
@@ -82,10 +120,15 @@ public class Speedget extends Widget {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "cur")
+	if(msg.equals("cur"))
 	    cur = (Integer)args[0];
-	else if(msg == "max")
+	else if(msg.equals("max"))
 	    max = (Integer)args[0];
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	return btn == 3 && c.isect(Coord.z, sz);
     }
 
     public void set(int s) {
@@ -94,14 +137,18 @@ public class Speedget extends Widget {
 
     public boolean mousedown(Coord c, int button) {
 	int x = 0;
-	for(int i = 0; i < 4; i++) {
-	    x += imgs[i][0].sz().x;
-	    if(c.x < x) {
-		set(i);
-		break;
+	if(button == 1) {
+	    for (int i = 0; i < 4; i++) {
+		x += imgs[i][0].sz().x;
+		if (c.x < x) {
+		    set(i);
+		    break;
+		}
 	    }
+	    return (true);
+	} else {
+	    return super.mousedown(c, button);
 	}
-	return(true);
     }
 
     public boolean mousewheel(Coord c, int amount) {
@@ -112,36 +159,47 @@ public class Speedget extends Widget {
 
     public Object tooltip(Coord c, Widget prev) {
 	if((cur >= 0) && (cur < tips.length))
-	    return(String.format("Selected speed: " + tips[cur]));
+	    return("Selected speed: " + tips[cur]);
 	return(null);
     }
 
-    public static final KeyBinding kb_speedup = KeyBinding.get("speed-up", KeyMatch.forchar('R', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.C));
-    public static final KeyBinding kb_speeddn = KeyBinding.get("speed-down", KeyMatch.forchar('R', KeyMatch.S | KeyMatch.C | KeyMatch.M, KeyMatch.S | KeyMatch.C));
-    public static final KeyBinding[] kb_speeds = {
-	KeyBinding.get("speed-set/0", KeyMatch.nil),
-	KeyBinding.get("speed-set/1", KeyMatch.nil),
-	KeyBinding.get("speed-set/2", KeyMatch.nil),
-	KeyBinding.get("speed-set/3", KeyMatch.nil),
-    };
     public boolean globtype(char key, KeyEvent ev) {
-	int dir = 0;
-	if(kb_speedup.key().match(ev))
-	    dir = 1;
-	else if(kb_speeddn.key().match(ev))
-	    dir = -1;
-	if(dir != 0) {
-	    if(max >= 0) {
-		set(Utils.clip(cur + dir, 0, max));
-	    }
-	    return(true);
-	}
-	for(int i = 0; i < kb_speeds.length; i++) {
-	    if(kb_speeds[i].key().match(ev)) {
-		set(i);
-		return(true);
-	    }
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
 	}
 	return(super.globtype(key, ev));
+    }
+
+    /*****************************************************************************************
+     *  Speedget Scripting API
+     *****************************************************************************************/
+    @Override
+    protected void binded() {
+	ui.sess.details.attachSpeedget(this);
+    }
+
+    @Override
+    protected void removed() {
+	ui.gui.speed = null;
+	ui.sess.details.removeSpeedget();
+    }
+
+    public void cyclespeed() {
+	if (max >= 0) {
+	    int n;
+	    if (cur > max)
+		n = max;
+	    else
+		n = (cur + 1) % (max + 1);
+	    set(n);
+	}
+    }
+
+    public void setSpeed(final Speed spd) {
+	if (max >= 0 && spd.id <= max) {
+	    set(spd.id);
+	}
     }
 }

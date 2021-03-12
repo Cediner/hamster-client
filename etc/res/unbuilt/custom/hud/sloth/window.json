@@ -105,7 +105,7 @@
       "tlc": "Coord{2, 24}",
       "brc": "Coord{2, 2}",
       "capc": "Coord{5, 0}",
-      "btnc": "Coord{5, 3}"
+      "btnc": "Coord{22, 3}"
     }
   ]
 }

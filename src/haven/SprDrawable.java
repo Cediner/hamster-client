@@ -58,4 +58,9 @@ public class SprDrawable extends Drawable {
     public Resource getres() {
 	return(null);
     }
+
+    @Override
+    public String getresname() {
+	return "";
+    }
 }

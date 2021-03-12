@@ -30,6 +30,7 @@ public class ItemData {
     private static final Map<String, Container> containers = new HashMap<>();
 
     public static void init(final Storage internal) {
+        /* TODO: Revisit this later on
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
                 try (final ResultSet res = stmt.executeQuery("SELECT name_key FROM item WHERE item_id in (SELECT item_id FROM item_equipable)")) {
@@ -45,6 +46,7 @@ public class ItemData {
                 }
             }
         });
+         */
     }
 
     public static boolean isEquipable(final String name) {
@@ -54,16 +56,12 @@ public class ItemData {
     public static double maxContent(final String name, final ContainerType type) {
         if (containers.containsKey(name.toUpperCase())) {
             final Container cont = containers.get(name.toUpperCase());
-            switch (type) {
-                case LIQUID:
-                    return cont.liquid_max;
-                case WEIGHT:
-                    return cont.weight_max;
-                case SEED:
-                    return cont.seed_max;
-                default:
-                    return 0;
-            }
+            return switch (type) {
+                case LIQUID -> cont.liquid_max;
+                case WEIGHT -> cont.weight_max;
+                case SEED -> cont.seed_max;
+                default -> 0;
+            };
         } else {
             return 0;
         }

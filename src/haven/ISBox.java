@@ -26,11 +26,18 @@
 
 package haven;
 
+import hamster.ui.core.NumberEntry;
+
 public class ISBox extends Widget implements DTarget {
     static Tex bg = Resource.loadtex("gfx/hud/bosq");
     static Text.Foundry lf;
-    private Indir<Resource> res;
+    private final Indir<Resource> res;
     private Text label;
+
+    private NumberEntry amt = null;
+    public int cur, total;
+
+
     static {
         lf = new Text.Foundry(Text.fraktur, 22, java.awt.Color.WHITE);
         lf.aa = true;
@@ -49,7 +56,11 @@ public class ISBox extends Widget implements DTarget {
     }
     
     private void setlabel(int rem, int av, int bi) {
-	if(bi < 0)
+	cur = rem;
+	total = av;
+	if (amt != null)
+	    amt.setMax(total);
+	if (bi < 0)
 	    label = lf.renderf("%d/%d", rem, av);
 	else
 	    label = lf.renderf("%d/%d/%d", rem, av, bi);
@@ -60,42 +71,89 @@ public class ISBox extends Widget implements DTarget {
         this.res = res;
         setlabel(rem, av, bi);
     }
-    
+
+    @Override
+    protected void added() {
+	super.added();
+    	if(parent instanceof Window && ((Window) parent).cap.text.equals("Stockpile")) {
+	    final Button add = add(new Button(50, "Add All", () -> addsome(total)), new Coord(bg.sz().x + 5, 0));
+	    add(new Button(50, "Take All", () -> takesome(total)), new Coord(bg.sz().x + 5, add.sz.y + 1));
+	    amt = add(new NumberEntry(bg.sz().x - 55, 0, 0, total), new Coord(0, bg.sz().y + 5));
+	    amt.canactivate = true;
+	    setfocus(amt);
+	    add(new Button(50, "Take", () -> takesome(amt.value())),
+		    new Coord(amt.sz.x + 5, amt.c.y));
+	    add(new Button(50, "Add", () -> addsome(amt.value())),
+		    new Coord(bg.sz().x + 5, amt.c.y));
+	    pack();
+	    parent.pack();
+	}
+    }
+
+    public void takesome(final int amt) {
+	for (int i = 0; i < amt; ++i) {
+	    wdgmsg("xfer2", -1, 1);
+	}
+    }
+
+    public void addsome(final int amt) {
+	for (int i = 0; i < amt; ++i) {
+	    wdgmsg("xfer2", 1, 1);
+	}
+    }
+
     public void draw(GOut g) {
         g.image(bg, Coord.z);
 	try {
             Tex t = res.get().layer(Resource.imgc).tex();
             Coord dc = new Coord(UI.scale(6), (bg.sz().y / 2) - (t.sz().y / 2));
             g.image(t, dc);
-        } catch(Loading e) {}
+        } catch(Loading ignored) {}
         g.image(label.tex(), new Coord(UI.scale(40), (bg.sz().y / 2) - (label.tex().sz().y / 2)));
+	super.draw(g);
     }
     
     public Object tooltip(Coord c, Widget prev) {
-	try {
-	    if(res.get().layer(Resource.tooltip) != null)
-		return(res.get().layer(Resource.tooltip).t);
-	} catch(Loading e) {}
-	return(null);
+	if (c.isect(Coord.z, bg.sz())) {
+	    try {
+		if (res.get().layer(Resource.tooltip) != null)
+		    return (res.get().layer(Resource.tooltip).t);
+		else
+		    return null;
+	    } catch (Loading e) {
+		return null;
+	    }
+	} else {
+	    return super.tooltip(c, prev);
+	}
     }
     
     public boolean mousedown(Coord c, int button) {
-        if(button == 1) {
-            if(ui.modshift)
-                wdgmsg("xfer");
-            else
-                wdgmsg("click");
-            return(true);
-        }
-        return(false);
+	if (c.isect(Coord.z, bg.sz())) {
+	    if (button == 1) {
+		if (ui.modshift)
+		    wdgmsg("xfer");
+		else
+		    wdgmsg("click");
+		return (true);
+	    } else {
+		return false;
+	    }
+	} else {
+	    return super.mousedown(c, button);
+	}
     }
     
     public boolean mousewheel(Coord c, int amount) {
-	if(amount < 0)
-	    wdgmsg("xfer2", -1, ui.modflags());
-	if(amount > 0)
-	    wdgmsg("xfer2", 1, ui.modflags());
-	return(true);
+	if (c.isect(Coord.z, bg.sz())) {
+	    if (amount < 0)
+		wdgmsg("xfer2", -1, ui.modflags());
+	    if (amount > 0)
+		wdgmsg("xfer2", 1, ui.modflags());
+	    return (true);
+	} else {
+	    return super.mousewheel(c, amount);
+	}
     }
     
     public boolean drop(Coord cc, Coord ul) {
@@ -109,10 +167,51 @@ public class ISBox extends Widget implements DTarget {
     }
     
     public void uimsg(String msg, Object... args) {
-        if(msg == "chnum") {
+        if(msg.equals("chnum")) {
             setlabel((Integer)args[0], (Integer)args[1], (Integer)args[2]);
         } else {
             super.uimsg(msg, args);
         }
+    }
+
+    /*****************************************************************************************
+     *  Stockpiles Scripting API
+     *****************************************************************************************/
+    @Override
+    protected void binded() {
+	super.binded();
+	ui.sess.details.attachISBox(this);
+    }
+
+    @Override
+    protected void removed() {
+	super.removed();
+	ui.sess.details.removeISBox(this);
+    }
+
+    @SuppressWarnings("unused")
+    public String materialName() {
+	try {
+	    if(res.get().layer(Resource.tooltip) != null)
+		return res.get().layer(Resource.tooltip).t;
+	    else
+		return "";
+	} catch (Loading e) {
+	    return "";
+	}
+    }
+
+    @SuppressWarnings("unused")
+    public void takeall() {
+	for (int i = 0; i < total; ++i) {
+	    wdgmsg("xfer2", -1, 1);
+	}
+    }
+
+    @SuppressWarnings("unused")
+    public void addall() {
+	for (int i = 0; i < total; ++i) {
+	    wdgmsg("xfer2", 1, 1);
+	}
     }
 }

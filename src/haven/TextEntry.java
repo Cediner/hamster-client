@@ -26,6 +26,11 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -35,13 +40,14 @@ import java.util.regex.Pattern;
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
     public static final Text.Foundry fnd = new Text.Foundry(Text.serif, 12).aa(true);
-    public static final BufferedImage lcap = Resource.loadsimg("gfx/hud/text/l");
-    public static final BufferedImage rcap = Resource.loadsimg("gfx/hud/text/r");
-    public static final BufferedImage mext = Resource.loadimg("gfx/hud/text/m");
+    private static final IndirThemeRes res = Theme.themeres("textedit");
+    public static final IndirThemeTex lcap = res.img(0);
+    public static final IndirThemeTex rcap = res.img(2);
+    public static final IndirThemeTex mext = res.img(1);
     public static final Tex caret = Resource.loadtex("gfx/hud/text/caret");
-    public static final int toffx = lcap.getWidth();
+    public static final Coord toff = new Coord(lcap.img().getWidth() - 1, 1);
     public static final Coord coff = UI.scale(new Coord(-3, 0));
-    public static final int wmarg = lcap.getWidth() + rcap.getWidth() + UI.scale(1);
+    public static final int wmarg = lcap.img().getWidth() + rcap.img().getWidth() + 1;
     public boolean dshow = false;
     public LineEdit buf;
     public int sx;
@@ -148,31 +154,40 @@ public class TextEntry extends SIWidget {
     public void draw(BufferedImage img) {
 	Graphics g = img.getGraphics();
 	String dtext = dtext();
-	tcache = fnd.render(dtext, (dshow && dirty)?dirtycol:defcol);
-	g.drawImage(mext, 0, 0, sz.x, sz.y, null);
+	tcache = fnd.render(dtext, (dshow && dirty) ? dirtycol : defcol);
 
-	g.drawImage(tcache.img, toffx - sx, (sz.y - tcache.img.getHeight()) / 2, null);
+	g.drawImage(lcap.img(), 0, 0, lcap.img().getWidth(), sz.y, null);
+	g.drawImage(mext.img(), lcap.img().getWidth(), 0,
+		sz.x - lcap.img().getWidth() - rcap.img().getWidth(), sz.y, null);
+	g.drawImage(rcap.img(), sz.x - rcap.img().getWidth(), 0, rcap.img().getWidth(), sz.y,  null);
 
-	g.drawImage(lcap, 0, 0, null);
-	g.drawImage(rcap, sz.x - rcap.getWidth(), 0, null);
+	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
 
 	g.dispose();
     }
 
     public void draw(GOut g) {
+	g.chcolor(GlobalSettings.TXBCOL.get());
 	super.draw(g);
-	if(hasfocus) {
+	g.chcolor();
+	if (hasfocus) {
 	    int cx = tcache.advance(buf.point);
 	    int lx = cx - sx + 1;
-	    if(cx < sx) {sx = cx; redraw();}
-	    if(cx > sx + (sz.x - wmarg)) {sx = cx - (sz.x - wmarg); redraw();}
-	    if(((Utils.rtime() - focusstart) % 1.0) < 0.5)
-		g.image(caret, coff.add(toffx + lx, (sz.y - tcache.img.getHeight()) / 2));
+	    if (cx < sx) {
+		sx = cx;
+		redraw();
+	    }
+	    if (cx > sx + (sz.x - wmarg)) {
+		sx = cx - (sz.x - wmarg);
+		redraw();
+	    }
+	    if (((Utils.rtime() - focusstart) % 1.0) < 0.5)
+		g.image(caret, toff.add(coff).add(lx, 0));
 	}
     }
 
     public TextEntry(final int w, final String deftext, final Consumer<String> onChange, final Consumer<String> onActivate) {
-	super(new Coord(w, UI.scale(mext.getHeight())));
+	super(new Coord(w, UI.scale(mext.img().getHeight())));
 	this.onChange = onChange;
 	this.onActivate = onActivate;
 	rsettext(deftext);

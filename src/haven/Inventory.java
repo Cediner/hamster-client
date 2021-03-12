@@ -26,15 +26,18 @@
 
 package haven;
 
+import hamster.script.SessionDetails;
+
 import java.util.*;
 import java.awt.image.WritableRaster;
 
 public class Inventory extends Widget implements DTarget {
     public static final Coord sqsz = UI.scale(new Coord(33, 33));
+    private SessionDetails.InventoryType type;
     public static final Tex invsq;
     public boolean dropul = true;
     public Coord isz;
-    Map<GItem, WItem> wmap = new HashMap<GItem, WItem>();
+    final Map<GItem, WItem> wmap = new HashMap<>();
 
     static {
 	Coord sz = sqsz.add(1, 1);
@@ -122,13 +125,124 @@ public class Inventory extends Widget implements DTarget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "sz") {
+	if(msg.equals("sz")) {
 	    isz = (Coord)args[0];
 	    resize(invsq.sz().add(UI.scale(new Coord(-1, -1))).mul(isz).add(UI.scale(new Coord(1, 1))));
-	} else if(msg == "mode") {
+	} else if(msg.equals("mode")) {
 	    dropul = (((Integer)args[0]) == 0);
 	} else {
 	    super.uimsg(msg, args);
+	}
+    }
+
+
+    /** For the Scripting API  **********************************************************/
+    @Override
+    protected void binded() {
+	super.binded();
+	if(parent instanceof Window) {
+	    final Window par = (Window) parent;
+	    if(par.cap != null) {
+		switch (par.cap.text) {
+		    case "Inventory" -> type = SessionDetails.InventoryType.MAIN;
+		    case "Belt" -> type = SessionDetails.InventoryType.BELT;
+		    default -> type = SessionDetails.InventoryType.SUPPLEMENTAL;
+		}
+	    } else {
+		type = SessionDetails.InventoryType.SUPPLEMENTAL;
+	    }
+	} else {
+	    //pretty sure this has to be the study
+	    type = SessionDetails.InventoryType.STUDY;
+	}
+
+	ui.sess.details.attachInventory(this, type);
+    }
+
+    @Override
+    protected void removed() {
+	ui.sess.details.removeInventory(this, type);
+    }
+
+    public String name() {
+	if(parent instanceof Window && ((Window) parent).cap != null) {
+	    return ((Window) parent).cap.text;
+	} else {
+	    return "";
+	}
+    }
+
+    @SuppressWarnings("unused")
+    public int totalSlots() {
+	return isz.x * isz.y;
+    }
+
+    @SuppressWarnings("unused")
+    public int usedSlots() {
+	int slots = 0;
+	synchronized (wmap) {
+	    for (final WItem wi : wmap.values()) {
+		slots += wi.size();
+	    }
+	}
+	return slots;
+    }
+
+    @SuppressWarnings("unused")
+    public WItem[][] itemmap() {
+	final WItem[][] map = new WItem[isz.x][isz.y];
+	synchronized (wmap) {
+	    for (WItem wi : wmap.values()) {
+		Coord wc = wi.c.div(invsq.sz().sub(1, 1));
+		Coord wsz = wi.sz.div(invsq.sz().sub(1, 1)).add(wc);
+		for (int x = wc.x; x < wsz.x; ++x) {
+		    if (x >= 0 && x < map.length) {
+			for (int y = wc.y; y < wsz.y; ++y) {
+			    if (y >= 0 && y < map[x].length) {
+				map[x][y] = wi;
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	return map;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean canDropAt(final Coord c) {
+	final Coord cc = c.mul(sqsz);
+	if (cc.between(Coord.z, sz)) {
+	    synchronized (wmap) {
+		for (WItem wi : wmap.values()) {
+		    if (cc.between(wi.c, wi.sz))
+			return false;
+		}
+	    }
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+    @SuppressWarnings("unused")
+    public GItem itemAt(final Coord c) {
+	final Coord cc = c.mul(sqsz);
+	synchronized (wmap) {
+	    for (WItem wi : wmap.values()) {
+		if (cc.between(wi.c, wi.sz))
+		    return wi.item;
+	    }
+	}
+	return null;
+    }
+
+    public GItem[] items() {
+	synchronized (wmap) {
+	    final List<GItem> items = new ArrayList<>();
+	    for (final WItem wi : wmap.values()) {
+		items.add(wi.item);
+	    }
+	    return items.toArray(new GItem[0]);
 	}
     }
 }

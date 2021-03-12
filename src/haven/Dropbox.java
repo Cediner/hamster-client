@@ -26,10 +26,13 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+
 import java.awt.Color;
 
+//TODO: Revisit this and theme it out
 public abstract class Dropbox<T> extends ListWidget<T> {
-    public static final Tex drop = Resource.loadtex("gfx/hud/drop");
+    public static final Tex drop = Theme.tex("drop");
     public final int listh;
     private final Coord dropc;
     private Droplist dl;

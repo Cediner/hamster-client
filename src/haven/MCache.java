@@ -29,11 +29,21 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 import java.lang.ref.*;
+import java.util.regex.Pattern;
+
+import hamster.script.pathfinding.Tile;
 import haven.render.*;
 
 /* XXX: This whole file is a bit of a mess and could use a bit of a
  * rewrite some rainy day. Synchronization especially is quite hairy. */
 public class MCache implements MapSource {
+    //All for hitmaps/pathfinding
+    private static final Pattern deepwater = Pattern.compile("(gfx/tiles/deep)|(gfx/tiles/odeep)|(gfx/tiles/odeeper)");
+    private static final Pattern shallowater = Pattern.compile("(gfx/tiles/water)|(gfx/tiles/owater)");
+    private static final Pattern cave = Pattern.compile("(gfx/tiles/cave)|(gfx/tiles/rocks/.+)");
+    private static final Pattern nil = Pattern.compile("(gfx/tiles/nil)");
+    private static final Tile[] id2tile = new Tile[256];
+    //
     public static final Coord2d tilesz = new Coord2d(11, 11);
     public static final Coord tilesz2 = tilesz.round(); /* XXX: Remove me in due time. */
     public static final Coord cmaps = new Coord(100, 100);
@@ -48,7 +58,7 @@ public class MCache implements MapSource {
     private final Reference<Tiler>[] tiles = new Reference[256];
     private final Waitable.Queue gridwait = new Waitable.Queue();
     Map<Coord, Request> req = new HashMap<Coord, Request>();
-    Map<Coord, Grid> grids = new HashMap<Coord, Grid>();
+    final Map<Coord, Grid> grids = new HashMap<>();
     Session sess;
     Set<Overlay> ols = new HashSet<Overlay>();
     public int olseq = 0;
@@ -207,6 +217,7 @@ public class MCache implements MapSource {
 	public final Coord gc, ul;
 	public final int tiles[] = new int[cmaps.x * cmaps.y];
 	public final float z[] = new float[cmaps.x * cmaps.y];
+	public final Tile[] hitmap = new Tile[cmaps.x * cmaps.y];
 	public Indir<Resource> ols[];
 	public boolean ol[][];
 	public long id;
@@ -242,6 +253,15 @@ public class MCache implements MapSource {
 	    cuts = new Cut[cutn.x * cutn.y];
 	    for(int i = 0; i < cuts.length; i++)
 		cuts[i] = new Cut();
+	}
+
+
+	public Tile gethitmap(Coord tc) {
+	    return hitmap[tc.x + (tc.y * cmaps.x)];
+	}
+
+	public void sethitmap(Coord tc, Tile t) {
+	    hitmap[tc.x + (tc.y * cmaps.x)] = t;
 	}
 
 	public int gettile(Coord tc) {
@@ -489,9 +509,22 @@ public class MCache implements MapSource {
 		String resnm = blob.string();
 		int resver = blob.uint16();
 		nsets[tileid] = new Resource.Spec(Resource.remote(), resnm, resver);
+
+		if (shallowater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.SHALLOWWATER;
+		} else if (deepwater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.DEEPWATER;
+		} else if (cave.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.CAVE;
+		} else if (nil.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.NIL;
+		}
 	    }
-	    for(int i = 0; i < tiles.length; i++)
+	    for(int i = 0; i < tiles.length; i++) {
 		tiles[i] = blob.uint8();
+		//we can figure out shallow vs deep hitmap from this info, ridges will come later
+		hitmap[i] = id2tile[tiles[i]];
+	    }
 	    for(int i = 0; i < z.length; i++)
 		z[i] = blob.int16();
 	    @SuppressWarnings("unchecked")
@@ -555,11 +588,23 @@ public class MCache implements MapSource {
 		String resnm = buf.string();
 		int resver = buf.uint16();
 		nsets[tileid] = new Resource.Spec(Resource.remote(), resnm, resver);
+
+		if (shallowater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.SHALLOWWATER;
+		} else if (deepwater.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.DEEPWATER;
+		} else if (cave.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.CAVE;
+		} else if (nil.matcher(resnm).matches()) {
+		    id2tile[tileid] = Tile.NIL;
+		}
 	    }
 	    for(int i = 0; i < tiles.length; i++) {
 		tiles[i] = buf.uint8();
+		//we can figure out shallow vs deep hitmap from this info, ridges will come later
+		hitmap[i] = id2tile[tiles[i]];
 		if(nsets[tiles[i]] == null)
-		    throw(new Message.FormatError(String.format("Got undefined tile: " + tiles[i])));
+		    throw(new Message.FormatError("Got undefined tile: " + tiles[i]));
 	    }
 	}
 
@@ -756,8 +801,60 @@ public class MCache implements MapSource {
 	}
     }
 
+    public Optional<Grid> getgrido(final Coord gc) {
+	synchronized (grids) {
+	    if ((cached == null) || !cached.gc.equals(gc)) {
+		cached = grids.get(gc);
+		if (cached == null) {
+		    request(gc);
+		    return Optional.empty();
+		}
+	    }
+	    return Optional.of(cached);
+	}
+    }
+
+    public Optional<Grid> getgrido(final long id) {
+	synchronized (grids) {
+	    if ((cached == null) || cached.id != id) {
+		for (Grid g : grids.values()) {
+		    if (g.id == id) {
+			cached = g;
+			return Optional.of(g);
+		    }
+		}
+		return Optional.empty();
+	    } else {
+		return Optional.of(cached);
+	    }
+	}
+    }
     public Grid getgridt(Coord tc) {
 	return(getgrid(tc.div(cmaps)));
+    }
+
+    public Optional<Grid> getgridto(Coord tc) {
+	return (getgrido(tc.div(cmaps)));
+    }
+
+    public Tile gethitmap(Coord tc) {
+	return getgridto(tc).map(grid -> grid.gethitmap(tc.sub(grid.ul))).orElse(null);
+    }
+
+    public void sethitmap(Coord tc, Tile t) {
+	getgridto(tc).ifPresent(g -> {
+	    g.sethitmap(tc.sub(g.ul), t);
+	});
+    }
+
+    public int gettile_safe(Coord tc) {
+	final Optional<Grid> grid = getgridto(tc);
+	if (grid.isPresent()) {
+	    final Grid g = grid.get();
+	    return g.gettile(tc.sub(g.ul));
+	} else {
+	    return 0;
+	}
     }
 
     public int gettile(Coord tc) {

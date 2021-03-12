@@ -36,6 +36,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import static haven.Utils.el;
+
+import hamster.GlobalSettings;
+import hamster.util.MessageBus;
 import haven.render.Environment;
 import haven.render.Render;
 
@@ -61,6 +64,9 @@ public class UI {
     private boolean gprefsdirty = false;
     public ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
+
+    // UI MessageBus
+    public MessageBus.Office office;
     
     {
 	lastevent = lasttick = Utils.rtime();
@@ -175,16 +181,23 @@ public class UI {
 	    fun.init(this);
     }
 
+
+    public void setupMail(final Thread thr) {
+	office = new MessageBus.Office(thr);
+    }
+
     public void reset(final Coord sz, final Runner fun) {
 	final RootWidget oldroot = root;
-	destroy();
+	synchronized (this) {
+	    destroy();
+	    audio = new ActAudio.Root();
+	}
 	root = new RootWidget(this, sz);
 	widgets.put(0, root);
 	rwidgets.put(root, 0);
 	root.ggprof = oldroot.ggprof;
 	root.grprof = oldroot.grprof;
 	root.guprof = oldroot.guprof;
-	audio = new ActAudio.Root();
 	if(fun != null)
 	    fun.init(this);
     }
@@ -197,6 +210,7 @@ public class UI {
 	synchronized(widgets) {
 	    widgets.put(id, w);
 	    rwidgets.put(w, id);
+	    w.binded();
 	}
     }
 
@@ -222,6 +236,7 @@ public class UI {
     }
 
     public void tick() {
+	office.processTransfers();
 	double now = Utils.rtime();
 	root.tick(now - lasttick);
 	lasttick = now;
@@ -302,6 +317,7 @@ public class UI {
     }
 
     private void removeid(Widget wdg) {
+	wdg.removed();
 	synchronized(widgets) {
 	    Integer id = rwidgets.get(wdg);
 	    if(id != null) {
@@ -571,7 +587,7 @@ public class UI {
     private static double loadscale() {
 	if(Config.uiscale != null)
 	    return(Config.uiscale);
-	double scale = Utils.getprefd("uiscale", 1.0);
+	double scale = GlobalSettings.UISCALE.get();
 	scale = Math.max(Math.min(scale, maxscale()), 1.0);
 	return(scale);
     }

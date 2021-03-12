@@ -26,76 +26,146 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+import hamster.KeyBind;
+import hamster.data.WindowData;
+import hamster.ui.core.MovableWidget;
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import static haven.PUtils.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
-public class Window extends Widget implements DTarget {
-    public static final Tex bg = Resource.loadtex("gfx/hud/wnd/lg/bg");
-    public static final Tex bgl = Resource.loadtex("gfx/hud/wnd/lg/bgl");
-    public static final Tex bgr = Resource.loadtex("gfx/hud/wnd/lg/bgr");
-    public static final Tex cl = Resource.loadtex("gfx/hud/wnd/lg/cl");
-    public static final TexI cm = new TexI(Resource.loadsimg("gfx/hud/wnd/lg/cm"));
-    public static final Tex cr = Resource.loadtex("gfx/hud/wnd/lg/cr");
-    public static final Tex tm = Resource.loadtex("gfx/hud/wnd/lg/tm");
-    public static final Tex tr = Resource.loadtex("gfx/hud/wnd/lg/tr");
-    public static final Tex lm = Resource.loadtex("gfx/hud/wnd/lg/lm");
-    public static final Tex lb = Resource.loadtex("gfx/hud/wnd/lg/lb");
-    public static final Tex rm = Resource.loadtex("gfx/hud/wnd/lg/rm");
-    public static final Tex bl = Resource.loadtex("gfx/hud/wnd/lg/bl");
-    public static final Tex bm = Resource.loadtex("gfx/hud/wnd/lg/bm");
-    public static final Tex br = Resource.loadtex("gfx/hud/wnd/lg/br");
-    public static final Tex sizer = Resource.loadtex("gfx/hud/wnd/sizer");
-    public static final Coord tlm = UI.scale(18, 30);
-    public static final Coord brm = UI.scale(13, 22);
-    public static final Coord cpo = UI.rscale(36, 16.4);
-    public static final int capo = 7, capio = 2;
-    public static final Coord dlmrgn = UI.scale(23, 14);
-    public static final Coord dsmrgn = UI.scale(9, 9);
+import static haven.PUtils.*;
+import static haven.Resource.cdec;
+
+public class Window extends MovableWidget implements DTarget {
+    @Resource.LayerName("windowconfig")
+    public static class WindowConfig extends Resource.Layer {
+	final Coord tlc;
+	final Coord brc;
+	final Coord capc;
+	final Coord btnc;
+
+	public WindowConfig(Resource res, Message buf) {
+	    res.super();
+	    tlc = cdec(buf);
+	    brc = cdec(buf);
+	    capc = cdec(buf);
+	    btnc = cdec(buf);
+	}
+
+	public void init() { }
+    }
+
+    private static final IndirThemeRes res = Theme.themeres("window");
+    //bg, left bg, right bg
+    public static final IndirThemeTex bg = res.tex(0);
+    public static final IndirThemeTex bgl = res.tex(1);
+    public static final IndirThemeTex bgr = res.tex(2);
+    //caption left, mid, right
+    public static final IndirThemeTex cl = res.tex(3);
+    public static final IndirThemeTex cm = res.tex(4);
+    public static final IndirThemeTex cr = res.tex(5);
+    // bottom left, right
+    public static final IndirThemeTex bl = res.tex(6);
+    public static final IndirThemeTex br = res.tex(7);
+    //left, right, bottom
+    public static final IndirThemeTex lm = res.tex(8);
+    public static final IndirThemeTex rm = res.tex(9);
+    public static final IndirThemeTex bm = res.tex(10);
+
+    //Large margin vs small margin
+    public static final Coord dlmrgn = UI.scale(23, 14), dsmrgn = UI.scale(3, 3);
+    //caption foundry
     public static final BufferedImage ctex = Resource.loadimg("gfx/hud/fonttex");
     public static final Text.Furnace cf = new Text.Imager(new PUtils.TexFurn(new Text.Foundry(Text.fraktur, 15).aa(true), ctex)) {
-	    protected BufferedImage proc(Text text) {
-		// return(rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
-		return(rasterimg(blurmask2(text.img.getRaster(), UI.rscale(0.75), UI.rscale(1.0), Color.BLACK)));
-	    }
-	};
-    public static final IBox wbox = new IBox("gfx/hud/wnd", "tl", "tr", "bl", "br", "extvl", "extvr", "extht", "exthb") {
-	    final Coord co = UI.scale(3, 3), bo = UI.scale(2, 2);
+	protected BufferedImage proc(Text text) {
+	    // return(rasterimg(blurmask2(text.img.getRaster(), 1, 1, Color.BLACK)));
+	    return(rasterimg(blurmask2(text.img.getRaster(), UI.rscale(0.75), UI.rscale(1.0), Color.BLACK)));
+	}
+    };
+    //Basic frame box
+    public static final IBox wbox = new IBox("frame") {
+	final Coord co = UI.scale(3, 3), bo = UI.scale(2, 2);
 
-	    public Coord btloff() {return(super.btloff().sub(bo));}
-	    public Coord ctloff() {return(super.ctloff().sub(co));}
-	    public Coord bisz() {return(super.bisz().sub(bo.mul(2)));}
-	    public Coord cisz() {return(super.cisz().sub(co.mul(2)));}
-	};
-    private static final BufferedImage[] cbtni = new BufferedImage[] {
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnu"),
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnd"),
-	Resource.loadsimg("gfx/hud/wnd/lg/cbtnh")};
-    public final Coord tlo, rbo, mrgn;
-    public final IButton cbtn;
+	public Coord btloff() {
+	    return (super.btloff().sub(bo));
+	}
+
+	public Coord ctloff() {
+	    return (super.ctloff().sub(co));
+	}
+
+	public Coord bisz() {
+	    return (super.bisz().sub(bo.mul(2)));
+	}
+
+	public Coord cisz() {
+	    return (super.cisz().sub(co.mul(2)));
+	}
+    };
+
+    //margin based off large or not
+    public final Coord mrgn;
+    //close button
+    public final IButton lbtn;
+    public final ArrayList<Widget> btns = new ArrayList<>();
+
     public boolean dt = false;
+    //Caption
     public Text cap;
-    public Coord wsz, ctl, csz, atl, asz, cptl, cpsz;
-    public int cmw;
-    private UI.Grab dm = null;
-    private Coord doff;
-    public boolean decohide = false;
+    //Window size, usable space top left, usable space size
+    public Coord wsz, atl, asz;
+    //close position, close size
+    public Coord ctl, csz;
+
+    // Removing the window deco when hidden if allowed
+    private boolean hidable = false, hidden;
+    private IButton hbtn;
+    // Removing the window content up to the top bar if allowed
+    private boolean folded = false;
+    private IButton fbtn;
+
 
     @RName("wnd")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
 	    Coord sz = UI.scale((Coord)args[0]);
 	    String cap = (args.length > 1) ? (String)args[1] : null;
-	    boolean lg = (args.length > 2) ? ((Integer)args[2] != 0) : false;
+	    boolean lg = args.length > 2 && ((Integer) args[2] != 0);
 	    return(new Window(sz, cap, lg, Coord.z, Coord.z));
 	}
     }
 
-    public Window(Coord sz, String cap, boolean lg, Coord tlo, Coord rbo) {
-	this.tlo = tlo;
-	this.rbo = rbo;
+
+    /* Added Constructors */
+    public Window(Coord sz, String cap, final String moveKey, boolean lg, Coord tlo, Coord rbo) {
+	super(moveKey);
 	this.mrgn = lg ? dlmrgn : dsmrgn;
-	cbtn = add(new IButton(cbtni[0], cbtni[1], cbtni[2]));
+	addBtn("buttons/close", null, this::close);
+	lbtn = addBtn("buttons/lock", null, this::toggleLock);
+	chcap(cap);
+	resize2(sz);
+	setfocustab(true);
+    }
+
+    public Window(Coord sz, String cap, String moveKey) {
+	this(sz, cap, moveKey, false, Coord.z, Coord.z);
+    }
+
+    public Window(Coord sz, String cap, String moveKey, boolean lg) {
+	this(sz, cap, moveKey, lg, Coord.z, Coord.z);
+    }
+
+    /* Default Base Client Constructors */
+    public Window(Coord sz, String cap, boolean lg, Coord tlo, Coord rbo) {
+	this.mrgn = lg ? dlmrgn : dsmrgn;
+	addBtn("buttons/close", null, this::close);
+	lbtn = null;
 	chcap(cap);
 	resize2(sz);
 	setfocustab(true);
@@ -110,7 +180,94 @@ public class Window extends Widget implements DTarget {
     }
 
     protected void added() {
+        super.added();
 	parent.setfocus(this);
+    	if(lbtn != null && locked()) {
+    	    lbtn.swap(IButton.Type.UP, IButton.Type.HOVER);
+	}
+    }
+
+    public void makeHidable() {
+	hbtn = addBtn("buttons/hide", null, this::toggleHide);
+	if (cap != null) {
+	    hidable = WindowData.shouldHide(cap.text);
+	    hidden = false;
+	    if (hidable) {
+		hbtn.swap(IButton.Type.DOWN, IButton.Type.UP);
+	    }
+	}
+    }
+
+    public void makeFoldable() {
+        fbtn = addBtn("buttons/fold", null, this::toggleFold);
+	if (cap != null) {
+	    folded = WindowData.shouldFold(cap.text);
+	    if (folded) {
+		fbtn.swap(IButton.Type.DOWN, IButton.Type.UP);
+	    }
+	}
+    }
+
+    public void toggleHide() {
+	hidable = !hidable;
+	hidden = false;
+	hbtn.swap(IButton.Type.DOWN, IButton.Type.UP);
+	if (cap != null) {
+	    WindowData.save(cap.text, hidable, folded);
+	}
+    }
+
+    public void toggleFold() {
+        folded = !folded;
+	fbtn.swap(IButton.Type.DOWN, IButton.Type.UP);
+	if (cap != null) {
+	    WindowData.save(cap.text, folded, hidable);
+	}
+    }
+
+    public IButton addBtn(final String res, final String tt, final Runnable action) {
+	final IButton btn = add(new IButton(res, tt, action));
+	btns.add(btn);
+	return btn;
+    }
+
+    public IButton addBtn(final String res, final String tt, final Runnable action, final Runnable laction) {
+	final IButton btn = add(new IButton(res, tt, action, laction));
+	btns.add(btn);
+	return btn;
+    }
+
+    public ICheckBox addBtn(final ICheckBox chk) {
+        add(chk);
+        btns.add(chk);
+        return chk;
+    }
+
+    @Override
+    public void toggleLock() {
+	lbtn.swap(IButton.Type.UP, IButton.Type.HOVER);
+	super.toggleLock();
+    }
+
+    @Override
+    protected boolean moveHit(Coord c, int btn) {
+	final TexI cl = Window.cl.tex(), cr = Window.cr.tex(), cm = Window.cm.tex();
+	Coord cpc = c.sub(cl.sz().x, 0);
+	Coord cprc = c.sub(sz.x - cr.sz().x, 0);
+	//content size
+	return c.isect(ctl, csz) ||
+		//or left caption
+		(c.isect(Coord.z, cl.sz()) && cl.back.getRaster().getSample(c.x, c.y, 3) >= 128) ||
+		//or right caption
+		(c.isect(new Coord(sz.x - cr.sz().x, 0), cr.sz()) &&
+			cr.back.getRaster().getSample(cprc.x % cr.back.getWidth(), cprc.y, 3) >= 128) ||
+		//or mid caption
+		(c.isect(new Coord(cl.sz().x, 0), new Coord(sz.x - cr.sz().x - cl.sz().x, cm.sz().y)) &&
+			(cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128));
+    }
+
+    public void close() {
+	wdgmsg("close");
     }
 
     public void chcap(String cap) {
@@ -123,75 +280,50 @@ public class Window extends Widget implements DTarget {
     public void cdraw(GOut g) {
     }
 
-    protected void drawbg(GOut g) {
-	Coord bgc = new Coord();
-	Coord cbr = ctl.add(csz);
-	for(bgc.y = ctl.y; bgc.y < cbr.y; bgc.y += bg.sz().y) {
-	    for(bgc.x = ctl.x; bgc.x < cbr.x; bgc.x += bg.sz().x)
-		g.image(bg, bgc, ctl, cbr);
-	}
-	bgc.x = ctl.x;
-	for(bgc.y = ctl.y; bgc.y < cbr.y; bgc.y += bgl.sz().y)
-	    g.image(bgl, bgc, ctl, cbr);
-	bgc.x = cbr.x - bgr.sz().x;
-	for(bgc.y = ctl.y; bgc.y < cbr.y; bgc.y += bgr.sz().y)
-	    g.image(bgr, bgc, ctl, cbr);
-    }
-
     protected void drawframe(GOut g) {
-	Coord mdo, cbr;
-	g.image(cl, tlo);
-	mdo = tlo.add(cl.sz().x, 0);
-	cbr = mdo.add(cmw, cm.sz().y);
-	for(int x = 0; x < cmw; x += cm.sz().x)
-	    g.image(cm, mdo.add(x, 0), Coord.z, cbr);
-	g.image(cr, tlo.add(cl.sz().x + cmw, 0));
-	g.image(cap.tex(), tlo.add(cpo));
-	mdo = tlo.add(cl.sz().x + cmw + cr.sz().x, 0);
-	cbr = tlo.add(wsz.add(-tr.sz().x, tm.sz().y));
-	for(; mdo.x < cbr.x; mdo.x += tm.sz().x)
-	    g.image(tm, mdo, Coord.z, cbr);
-	g.image(tr, tlo.add(wsz.x - tr.sz().x, 0));
+	g.chcolor(GlobalSettings.WNDCOL.get());
+	final Tex bgl = Window.bgl.tex(), bgr = Window.bgr.tex(), bg = Window.bg.tex();
+	final Tex cl = Window.cl.tex(), bl = Window.bl.tex(), br = Window.br.tex(), cr = Window.cr.tex();
+	final Tex lm = Window.lm.tex(), rm = Window.rm.tex(), bm = Window.bm.tex(), cm = Window.cm.tex();
+	final WindowConfig cfg = Window.res.layer(WindowConfig.class);
 
-	mdo = tlo.add(0, cl.sz().y);
-	cbr = tlo.add(lm.sz().x, wsz.y - bl.sz().y);
-	if(cbr.y - mdo.y >= lb.sz().y) {
-	    cbr.y -= lb.sz().y;
-	    g.image(lb, new Coord(tlo.x, cbr.y));
+	//draw background
+	g.rimagev(bgl, ctl, csz.y);
+	g.rimagev(bgr, ctl.add(csz.x - bgr.sz().x, 0), csz.y);
+	g.rimage(bg, ctl, csz);
+
+
+	//corners
+	g.image(cl, Coord.z);
+	g.image(bl, new Coord(0, sz.y - bl.sz().y));
+	g.image(br, sz.sub(br.sz()));
+	g.image(cr, new Coord(sz.x - cr.sz().x, 0));
+
+	//horizontal and vertical tiling of the long parts
+	g.rimagev(lm, new Coord(0, cl.sz().y), sz.y - bl.sz().y - cl.sz().y);
+	g.rimagev(rm, new Coord(sz.x - rm.sz().x, cr.sz().y), sz.y - br.sz().y - cr.sz().y);
+	g.rimageh(bm, new Coord(bl.sz().x, sz.y - bm.sz().y), sz.x - br.sz().x - bl.sz().x);
+	g.rimageh(cm, new Coord(cl.sz().x, 0), sz.x - cl.sz().x - cr.sz().x);
+	g.chcolor();
+
+	//caption if applies
+	if (cap != null) {
+	    g.image(cap.tex(), UI.scale(cfg.capc));
 	}
-	for(; mdo.y < cbr.y; mdo.y += lm.sz().y)
-	    g.image(lm, mdo, Coord.z, cbr);
-
-	mdo = tlo.add(wsz.x - rm.sz().x, tr.sz().y);
-	cbr = tlo.add(wsz.x, wsz.y - br.sz().y);
-	for(; mdo.y < cbr.y; mdo.y += rm.sz().y)
-	    g.image(rm, mdo, Coord.z, cbr);
-
-	g.image(bl, tlo.add(0, wsz.y - bl.sz().y));
-	mdo = tlo.add(bl.sz().x, wsz.y - bm.sz().y);
-	cbr = tlo.add(wsz.x - br.sz().x, wsz.y);
-	for(; mdo.x < cbr.x; mdo.x += bm.sz().x)
-	    g.image(bm, mdo, Coord.z, cbr);
-	g.image(br, tlo.add(wsz.sub(br.sz())));
-    }
-
-    protected void drawwnd(GOut g) {
-	if(!decohide)
-	    drawbg(g);
-	cdraw(g.reclip(atl, asz));
-	if(!decohide)
-	    drawframe(g);
     }
 
     public void draw(GOut g) {
-	drawwnd(g);
+	if (!hidden) {
+	    drawframe(g);
+	}
+	cdraw(g.reclip(atl, asz));
 	super.draw(g);
     }
 
     public Coord contentsz() {
 	Coord max = new Coord(0, 0);
 	for(Widget wdg = child; wdg != null; wdg = wdg.next) {
-	    if(wdg == cbtn)
+	    if(wdg instanceof IButton && btns.contains(wdg))
 		continue;
 	    if(!wdg.visible)
 		continue;
@@ -204,34 +336,44 @@ public class Window extends Widget implements DTarget {
 	return(max);
     }
 
+    private void placebtns() {
+	final WindowConfig cfg = Window.res.layer(WindowConfig.class);
+	final Coord c = new Coord(sz.x - atl.x - UI.scale(cfg.btnc.x), -atl.y + UI.scale(cfg.btnc.y));
+	for (final Widget btn : btns) {
+	    btn.c = c.copy();
+	    c.x -= btn.sz.x + UI.scale(5);
+	}
+    }
+
     private void resize2(Coord sz) {
-	asz = sz;
-	csz = asz.add(mrgn.mul(2));
-	wsz = csz.add(tlm).add(brm);
-	this.sz = wsz.add(tlo).add(rbo);
-	ctl = tlo.add(tlm);
+	final WindowConfig cfg = Window.res.layer(WindowConfig.class);
+	asz = sz; //usable size for content
+	csz = asz.add(mrgn.mul(2)); //add margin around usable size
+	wsz = csz.add(UI.scale(cfg.tlc)).add(UI.scale(cfg.brc)); //usable size + margin + frame size
+	//tlo, rbo = top left offset, bottom right offset usually 0 always...
+	//Basically same job as tlc, brc
+	this.sz = wsz;
+	//top left coordinate of inner content area
+	ctl = UI.scale(cfg.tlc);
+	//Top left coordinate of where usable space starts after accounting for margin
 	atl = ctl.add(mrgn);
-	cmw = (cap == null) ? 0 : cap.sz().x;
-	cmw = Math.max(cmw, wsz.x / 4);
-	cptl = new Coord(ctl.x, tlo.y);
-	cpsz = tlo.add(cpo.x + cmw, cm.sz().y).sub(cptl);
-	cmw = cmw - (cl.sz().x - cpo.x) - UI.scale(5);
-	cbtn.c = xlate(tlo.add(wsz.x - cbtn.sz.x, 0), false);
-	for(Widget ch = child; ch != null; ch = ch.next)
+	//Where the close button goes
+	for (Widget ch = child; ch != null; ch = ch.next)
 	    ch.presize();
+	placebtns();
     }
 
     public void resize(Coord sz) {
 	resize2(sz);
     }
 
+    @Deprecated
     public void decohide(boolean h) {
-	this.decohide = h;
-	cbtn.show(!h);
     }
 
+    @Deprecated
     public boolean decohide() {
-	return(decohide);
+	return(hidable);
     }
 
     public void uimsg(String msg, Object... args) {
@@ -254,70 +396,24 @@ public class Window extends Widget implements DTarget {
 	    return(c.sub(atl));
     }
 
-    public void drag(Coord off) {
-	dm = ui.grabmouse(this);
-	doff = off;
-    }
-
-    public boolean checkhit(Coord c) {
-	if(decohide)
-	    return(c.isect(atl, asz));
-	Coord cpc = c.sub(cptl);
-	return(c.isect(ctl, csz) || (c.isect(cptl, cpsz) && (cm.back.getRaster().getSample(cpc.x % cm.back.getWidth(), cpc.y, 3) >= 128)));
-    }
-
-    public boolean mousedown(Coord c, int button) {
-	if(super.mousedown(c, button)) {
-	    parent.setfocus(this);
-	    raise();
-	    return(true);
-	}
-	if(!decohide) {
-	    if(checkhit(c)) {
-		if(button == 1)
-		    drag(c);
-		parent.setfocus(this);
-		raise();
-		return(true);
+    public void mousemove(Coord c) {
+	if (hidable) {
+	    if (c.isect(Coord.z, sz) || moving()) {
+		hidden = false;
+		btns.forEach(btn -> btn.visible = true);
+	    } else {
+		hidden = true;
+		btns.forEach(btn -> btn.visible = false);
 	    }
 	}
-	return(false);
-    }
-
-    public boolean mouseup(Coord c, int button) {
-	if(dm != null) {
-	    dm.remove();
-	    dm = null;
-	} else {
-	    super.mouseup(c, button);
-	}
-	return(true);
-    }
-
-    public void mousemove(Coord c) {
-	if(dm != null) {
-	    this.c = this.c.add(c.add(doff.inv()));
-	} else {
-	    super.mousemove(c);
-	}
-    }
-
-    public void close() {
-	wdgmsg("close");
-    }
-
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == cbtn) {
-	    close();
-	} else {
-	    super.wdgmsg(sender, msg, args);
-	}
+	super.mousemove(c);
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
 	if(super.keydown(ev))
 	    return(true);
-	if(key_esc.match(ev)) {
+	if(kb_esc.match(bind)) {
 	    close();
 	    return(true);
 	}
@@ -340,10 +436,7 @@ public class Window extends Widget implements DTarget {
 	if(!checkhit(c))
 	    return(super.tooltip(c, prev));
 	Object ret = super.tooltip(c, prev);
-	if(ret != null)
-	    return(ret);
-	else
-	    return("");
+	return Objects.requireNonNullElse(ret, "");
     }
 
     public static void main(String[] args) {

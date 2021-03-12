@@ -26,14 +26,20 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+import hamster.KeyBind;
+import hamster.ui.ProfWnd;
 import hamster.ui.SessionDisplay;
 
 import java.awt.event.KeyEvent;
+import static hamster.KeyBind.*;
 
 public class RootWidget extends ConsoleHost {
     public static final Resource defcurs = Resource.local().loadwait("gfx/hud/curs/arw");
     Profile guprof, grprof, ggprof;
     boolean afk = false;
+    private char last_gk;
+    private long last_gk_time;
 
     public SessionDisplay sessionDisplay;
 	
@@ -46,24 +52,29 @@ public class RootWidget extends ConsoleHost {
     }
 	
     public boolean globtype(char key, KeyEvent ev) {
-	if(!super.globtype(key, ev)) {
-	    if(key == '`') {
-		GameUI gi = findchild(GameUI.class);
-		if(Config.profile) {
-		    add(new Profwnd(guprof, "UI profile"), UI.scale(100, 100));
-		    add(new Profwnd(grprof, "GL profile"), UI.scale(500, 100));
-		    /* XXXRENDER
-		    if((gi != null) && (gi.map != null))
-			add(new Profwnd(gi.map.prof, "Map profile"), UI.scale(100, 250));
-		    */
+        if(!super.globtype(key, ev)) {
+	    final String cmdstr = KeyBind.generateSequence(ev, ui);
+	    if(!KB_TOGGLE_PROFILER.check(cmdstr, () -> {
+		final Widget par = ui.gui != null ? ui.gui : ui.root;
+		final ProfWnd wnd = par.add(new ProfWnd());
+		if (Config.profile) {
+		    wnd.add(ui.root.guprof, "UI profile");
+		    wnd.add(ui.root.grprof, "GL profile");
 		}
-		if(Config.profilegpu) {
-		    add(new Profwnd(ggprof, "GPU profile"), UI.scale(500, 250));
+		if (Config.profilegpu) {
+		    wnd.add(ui.root.ggprof, "GPU profile");
 		}
-	    } else if(key == ':') {
-		entercmd();
-	    } else if(key != 0) {
-		wdgmsg("gk", (int)key);
+		return true;
+	    }) && !KB_TOGGLE_CMD.check(cmdstr, () -> {
+	        entercmd();
+		return true;
+	    }) && !KB_TOGGLE_PAUSE.check(cmdstr, () -> {
+		GlobalSettings.PAUSED.set(!GlobalSettings.PAUSED.get());
+		return true;
+	    }) && (key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500))) {
+		wdgmsg("gk", (int) key);
+		last_gk = key;
+		last_gk_time = System.currentTimeMillis();
 	    }
 	}
 	return(true);

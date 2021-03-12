@@ -41,7 +41,10 @@ public class Composite extends Drawable {
     public int pseq;
     public List<MD> nmod;
     public List<ED> nequ;
+    public List<MD> lastnmod;
+    public List<ED> lastnequ;
     private Collection<ResData> nposes = null, tposes = null;
+    public Collection<ResData> oldposes = null, oldtposes;
     private boolean nposesold, retainequ = false;
     private float tptime;
     private WrapMode tpmode;
@@ -87,6 +90,7 @@ public class Composite extends Drawable {
 	if(nmod != null) {
 	    try {
 		comp.chmod(nmod);
+		lastnmod = nmod;
 		nmod = null;
 	    } catch(Loading l) {
 	    }
@@ -94,6 +98,7 @@ public class Composite extends Drawable {
 	if(nequ != null) {
 	    try {
 		comp.chequ(nequ);
+		lastnequ = nequ;
 		nequ = null;
 	    } catch(Loading l) {
 	    }
@@ -135,7 +140,18 @@ public class Composite extends Drawable {
     public Resource getres() {
 	return(base.get());
     }
-    
+
+    @Override
+    public String getresname() {
+	if (base instanceof Session.CachedRes.Ref) {
+	    return ((Session.CachedRes.Ref) base).name();
+	} else if (base instanceof Resource.Named) {
+	    return ((Resource.Spec) base).name;
+	} else {
+	    return base.get().name;
+	}
+    }
+
     public Pose getpose() {
 	return(comp.pose);
     }
@@ -144,6 +160,7 @@ public class Composite extends Drawable {
 	if(tposes != null)
 	    tposes = null;
 	nposes = poses;
+	oldposes = poses;
 	nposesold = !interp;
     }
     
@@ -154,6 +171,7 @@ public class Composite extends Drawable {
 
     public void tposes(Collection<ResData> poses, WrapMode mode, float time) {
 	this.tposes = poses;
+	oldtposes = poses;
 	this.tpmode = mode;
 	this.tptime = time;
     }

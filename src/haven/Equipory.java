@@ -26,7 +26,17 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+import hamster.KeyBind;
+import hamster.ui.equip.EquipmentItem;
+import hamster.ui.equip.EquipmentType;
+import haven.res.ui.tt.wpn.Damage;
+
+import java.awt.event.KeyEvent;
 import java.util.*;
+
+import static hamster.KeyBind.*;
+import static hamster.KeyBind.KB_FOCUS_MAP;
 import static haven.Inventory.invsq;
 
 public class Equipory extends Widget implements DTarget {
@@ -36,25 +46,25 @@ public class Equipory extends Widget implements DTarget {
 	yo = Inventory.sqsz.y;
     public static final Coord bgc = new Coord(invsq.sz().x, 0);
     public static final Coord ecoords[] = {
-	new Coord( 0, 0 * yo),
-	new Coord( 0, 1 * yo),
-	new Coord( 0, 2 * yo),
-	new Coord(rx, 2 * yo),
-	new Coord( 0, 3 * yo),
-	new Coord(rx, 3 * yo),
-	new Coord( 0, 4 * yo),
-	new Coord(rx, 4 * yo),
-	new Coord( 0, 5 * yo),
-	new Coord(rx, 5 * yo),
-	new Coord( 0, 6 * yo),
-	new Coord(rx, 6 * yo),
-	new Coord( 0, 7 * yo),
-	new Coord(rx, 7 * yo),
-	new Coord( 0, 8 * yo),
-	new Coord(rx, 8 * yo),
-	new Coord(invsq.sz().x, 0 * yo),
-	new Coord(rx, 0 * yo),
-	new Coord(rx, 1 * yo),
+	new Coord( 0, 0 * yo), //head
+	new Coord( 0, 1 * yo), //main accessory
+	new Coord( 0, 2 * yo), //Shirt
+	new Coord(rx, 2 * yo),  //Torso Armor
+	new Coord( 0, 3 * yo), //Gloves
+	new Coord(rx, 3 * yo), //Belt
+	new Coord( 0, 4 * yo), //Left Hand
+	new Coord(rx, 4 * yo), //Right Hand
+	new Coord( 0, 5 * yo), //Left Hand Ring
+	new Coord(rx, 5 * yo), //Right Hand Ring
+	new Coord( 0, 6 * yo), //Cloaks & Robes
+	new Coord(rx, 6 * yo), //Back
+	new Coord( 0, 7 * yo), //Pants
+	new Coord(rx, 7 * yo), //Leg Armor
+	new Coord( 0, 8 * yo), //Cape
+	new Coord(rx, 8 * yo), //Shoes
+	new Coord(invsq.sz().x, 0 * yo), //Cosmetic Hat
+	new Coord(rx, 0 * yo), //Eyes
+	new Coord(rx, 1 * yo), //Mouth
     };
     public static final Tex[] ebgs = new Tex[ecoords.length];
     public static final Text[] etts = new Text[ecoords.length];
@@ -76,8 +86,11 @@ public class Equipory extends Widget implements DTarget {
 	    }
 	}
     }
+
+    private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
     Map<GItem, Collection<WItem>> wmap = new HashMap<>();
     private final Avaview ava;
+    private GItem lweap, rweap;
 
     @RName("epry")
     public static class $_ implements Factory {
@@ -111,18 +124,89 @@ public class Equipory extends Widget implements DTarget {
 		}
 
 		{
-		    basic.add(new Outlines(true));
+		    basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 		}
 
 		final FColor cc = new FColor(0, 0, 0, 0);
 		protected FColor clearcolor() {return(cc);}
 	    }, bgc);
 	ava.color = null;
+	setKeybinds();
+    }
+
+    private void setKeybinds() {
+    	binds.put(KB_EQ_HELD_INTO_LH, () -> {
+    	   if(!ui.gui.hand.isEmpty()) {
+    	       wdgmsg("drop", EquipmentType.LeftHand.slot);
+    	       return true;
+	   } else if(leftHand() != null) {
+    	       leftHand().wdgmsg("take", Coord.o);
+    	       return true;
+	   }
+    	   return false;
+	});
+	binds.put(KB_EQ_HELD_INTO_RH, () -> {
+	    if(!ui.gui.hand.isEmpty()) {
+		wdgmsg("drop", EquipmentType.RightHand.slot);
+		return true;
+	    } else if(leftHand() != null) {
+		rightHand().wdgmsg("take", Coord.o);
+		return true;
+	    }
+	    return false;
+	});
+    }
+
+    public boolean globtype(char key, KeyEvent ev) {
+	final String bind = KeyBind.generateSequence(ev, ui);
+	for(final var kb : binds.keySet()) {
+	    if(kb.check(bind, binds.get(kb)))
+		return true;
+	}
+	return(super.globtype(key, ev));
     }
 
     public static interface SlotInfo {
 	public int slots();
     }
+
+    public GItem getWeapon() {
+	if (lweap != null && lweap.getinfo(Damage.class).isPresent()) {
+	    return lweap;
+	} else if (rweap != null && rweap.getinfo(Damage.class).isPresent()) {
+	    return rweap;
+	} else {
+	    return null;
+	}
+    }
+
+    public GItem leftHand() {
+	return lweap;
+    }
+
+    public GItem rightHand() {
+	return rweap;
+    }
+
+    /*******************************************************************************
+     * For Scripting API only
+     */
+    public EquipmentItem[] getEquippedItems() {
+	final ArrayList<EquipmentItem> itms = new ArrayList<>();
+
+	for (final GItem itm : children(GItem.class)) {
+	    EquipmentType type = EquipmentType.Unknown;
+	    for (WItem witm : wmap.get(itm)) {
+		if (EquipmentType.eqmap.containsKey(witm.c)) {
+		    type = EquipmentType.eqmap.get(witm.c);
+		}
+	    }
+	    itms.add(new EquipmentItem(type, itm));
+	}
+
+	return itms.toArray(new EquipmentItem[0]);
+    }
+    /******************************************************************************/
 
     public void addchild(Widget child, Object... args) {
 	if(child instanceof GItem) {
@@ -133,6 +217,15 @@ public class Equipory extends Widget implements DTarget {
 		int ep = (Integer)args[i];
 		if(ep < ecoords.length)
 		    v.add(add(new WItem(g), ecoords[ep].add(1, 1)));
+		switch (ep) {
+		    case 5 -> {
+		        if(ui.gui.settings.SHOWBELTONLOGIN.get()) {
+		            g.delayediact = true;
+			}
+		    }
+		    case 6 -> lweap = g;
+		    case 7 -> rweap = g;
+		}
 	    }
 	    v.trimToSize();
 	    wmap.put(g, v);
