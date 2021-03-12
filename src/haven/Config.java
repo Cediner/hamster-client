@@ -56,6 +56,7 @@ public class Config {
     public static byte[] authck = null;
     public static String prefspec = "hafen";
     public static final String confid = "";
+    public static final double SERVER_TIME_RATIO = 3.29d;
     
     static {
 	String p;

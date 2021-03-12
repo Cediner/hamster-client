@@ -4,6 +4,7 @@ import com.google.common.flogger.FluentLogger;
 import hamster.io.Storage;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
+import haven.Config;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,13 +58,15 @@ public class TimerData extends Thread {
     public static class Timer {
         public final int id;
         public final String name;
-        public final long duration;
-        private ObservableCollection<TimerInstance> instances = new ObservableCollection<>(new ArrayList<>());
+        public final long duration; // IRL Time
+        public final double gduration; // Glob time
+        private final ObservableCollection<TimerInstance> instances = new ObservableCollection<>(new ArrayList<>());
 
         private Timer(int id, String n, long d) {
             this.id = id;
             name = n;
             duration = d;
+            gduration = duration * Config.SERVER_TIME_RATIO;
         }
 
         public void listen(final ObservableListener<TimerInstance> listener) {
@@ -75,15 +78,14 @@ public class TimerData extends Thread {
         }
 
         public void makeInstance(final long globtime) {
-            final long start = globtime;
             Storage.dynamic.write(sql -> {
                 final PreparedStatement stmt = Storage.dynamic.prepare("INSERT INTO timer_instance (timer_id, start) VALUES (?, ?)");
                 stmt.setInt(1, this.id);
-                stmt.setLong(2, start);
+                stmt.setLong(2, globtime);
                 stmt.executeUpdate();
                 try (final ResultSet keys = stmt.getGeneratedKeys()) {
                     if (keys.next()) {
-                        this.instances.add(new TimerInstance(keys.getInt(1), start));
+                        this.instances.add(new TimerInstance(keys.getInt(1), globtime));
                     }
                 }
             });
@@ -105,7 +107,7 @@ public class TimerData extends Thread {
 
     public static class TimerInstance {
         private final int id;
-        public long start;
+        public long start; //Glob time
 
         private TimerInstance(final int id, final long start) {
             this.id = id;

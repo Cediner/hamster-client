@@ -31,6 +31,7 @@ import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
+import hamster.ui.Timer.TimersWnd;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
@@ -112,6 +113,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     //Map Markers
     public MapMarkerWnd mapmarkers;
+
+    //Timers
+    public final TimersWnd timers;
 
     //Equipment
     public Equipory equ;
@@ -196,6 +200,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	alerted = new SoundManager();
 	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
 	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
+	timers = new TimersWnd();
+	timers.hide();
     }
 
     protected void attached() {
@@ -245,6 +251,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(alerted, new Coord(200, 200));
 	add(highlighted,  new Coord(200, 200));
 	add(lrhandview);
+	add(timers, new Coord(200, 200));
     }
 
     public void dispose() {

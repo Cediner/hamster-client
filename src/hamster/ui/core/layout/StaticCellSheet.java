@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class StaticCellSheet extends Scrollport {
     private final Map<Coord, Widget> cells = new HashMap<>();
-    private final Map<Widget, Coord> rcells = new HashMap<>();
     private Coord min = null, max = null;
 
     public StaticCellSheet(final Coord sz) {
@@ -20,10 +19,8 @@ public class StaticCellSheet extends Scrollport {
         if (cells.containsKey(c)) {
             final Widget owdg = cells.get(c);
             owdg.destroy();
-            rcells.remove(owdg);
         }
         cells.put(c, child);
-        rcells.put(child, c);
 
         if (min != null) {
             min = min.min(c);
@@ -45,28 +42,27 @@ public class StaticCellSheet extends Scrollport {
     }
 
     private void arrange() {
+        // Local maximums of row height and column width
         final Map<Integer, Integer> rowh = new HashMap<>();
         final Map<Integer, Integer> colw = new HashMap<>();
-        final Map<Integer, Integer> rowsy = new HashMap<>();
-        final Map<Integer, Integer> colsx = new HashMap<>();
+        // X / Y locations of the cells
+        final Map<Integer, Integer> colx = new HashMap<>();
+        final Map<Integer, Integer> rowy = new HashMap<>();
 
         for (final Coord c : cells.keySet()) {
             final Widget wdg = cells.get(c);
-            rowh.put(c.x, Math.max(rowh.getOrDefault(c.x, 0), wdg.sz.y));
-            colw.put(c.y, Math.max(colw.getOrDefault(c.y, 0), wdg.sz.x));
+            rowh.put(c.y, Math.max(rowh.getOrDefault(c.y, 0), wdg.sz.y));
+            colw.put(c.x, Math.max(colw.getOrDefault(c.x, 0), wdg.sz.x));
         }
 
-        for (int x = min.x; x <= max.x; ++x) {
-            rowsy.put(x, rowsy.getOrDefault(x - 1, 0) + rowh.getOrDefault(x - 1, 0));
-        }
-
-        for (int y = min.y; y <= max.y; ++y) {
-            colsx.put(y, colsx.getOrDefault(y - 1, 0) + colw.getOrDefault(y - 1, 0));
+        for(final Coord c : cells.keySet()) {
+            colx.put(c.x, colx.getOrDefault(c.x-1, 0) +  colw.getOrDefault(c.x-1, 0));
+            rowy.put(c.y, rowy.getOrDefault(0, c.y-1) +  rowh.getOrDefault(0, c.y-1));
         }
 
         for (final Coord c : cells.keySet()) {
             final Widget wdg = cells.get(c);
-            wdg.move(new Coord(rowsy.get(c.x), colsx.get(c.y)));
+            wdg.move(new Coord(colx.get(c.x), rowy.get(c.y)));
         }
     }
 
