@@ -200,6 +200,18 @@ public class MapViewExt {
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
             opts.add("Delete");
             opts.add("Delete this");
+            if (g.hasTag(Tag.HUMAN) && g.id != mv.plgob) {
+                if (!masters.contains(g.id))
+                    opts.add("Add as master");
+                else
+                    opts.add("Remove master");
+                if (!slaves.contains(g.id))
+                    opts.add("Add as slave");
+                else
+                    opts.add("Remove slave");
+            }
+            if (slaves.size() > 0)
+                opts.add("Slaves");
 
 
             final FlowerMenu modmenu = new FlowerMenu((selection) -> {

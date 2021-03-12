@@ -29,6 +29,7 @@ package haven;
 import com.google.common.flogger.FluentLogger;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
+import hamster.ui.ChatUtils;
 
 import java.util.*;
 import java.awt.Color;
@@ -40,6 +41,7 @@ import java.awt.image.BufferedImage;
 import java.text.*;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.net.URL;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.*;
@@ -841,12 +843,12 @@ public class ChatUI extends Widget {
     }
     
     public static class PartyChat extends MultiChat {
-        private final Map<Pattern, Consumer<Matcher>> chat_ext_mapping = new HashMap<>();
+        private final Map<Pattern, BiConsumer<Matcher, Long>> chat_ext_mapping = new HashMap<>();
 
 	public PartyChat() {
 	    super(false, "Party", 2);
 
-	    chat_ext_mapping.put(Mark.CHAT_FMT_PAT, (match) -> {
+	    chat_ext_mapping.put(Mark.CHAT_FMT_PAT, (match, senderid) -> {
 		final long gid = Long.parseLong(match.group(1));
 		final int life = Integer.parseInt(match.group(2));
 		final Gob g = ui.sess.glob.oc.getgob(gid);
@@ -854,7 +856,7 @@ public class ChatUI extends Widget {
 		    g.mark(life);
 		}
 	    });
-	    chat_ext_mapping.put(Mark.CHAT_TILE_FMT_PAT, (match) -> {
+	    chat_ext_mapping.put(Mark.CHAT_TILE_FMT_PAT, (match, senderid) -> {
 		final long gid = Long.parseLong(match.group(1));
 		final double offx = Double.parseDouble(match.group(2));
 		final double offy = Double.parseDouble(match.group(3));
@@ -867,7 +869,7 @@ public class ChatUI extends Widget {
 		    }, null);
 		});
 	    });
-	    chat_ext_mapping.put(TargetSprite.TARGET_PATTERN, (match) -> {
+	    chat_ext_mapping.put(TargetSprite.TARGET_PATTERN, (match, senderid) -> {
 		final long gid = Long.parseLong(match.group(1));
 		final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
 		if (old != null) {
@@ -882,7 +884,19 @@ public class ChatUI extends Widget {
 		if (g != null)
 		    g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
 	    });
-
+	    chat_ext_mapping.put(ChatUtils.CHAT_SEXT_MSG_PAT, (match, senderid) -> {
+		final long targetid = Long.parseLong(match.group(1));
+		if (ui.gui.map.plgob == targetid && ui.gui.map.ext.isMaster(senderid)) {
+		    final String subject = match.group(2);
+		    final String dargs = match.group(3);
+		    ChatUtils.parseExternalCommand(ui, true, this, subject, dargs);
+		}
+	    });
+	    chat_ext_mapping.put(ChatUtils.CHAT_EXT_MSG_PAT, (match, senderid) -> {
+		final String subject = match.group(1);
+		final String dargs = match.group(2);
+		ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
+	    });
 	}
 
 	@Override
@@ -903,7 +917,7 @@ public class ChatUI extends Widget {
 		    for(final var pat : chat_ext_mapping.keySet()) {
 		        final var match = pat.matcher(line);
 		        if(match.find()) {
-		            chat_ext_mapping.get(pat).accept(match);
+		            chat_ext_mapping.get(pat).accept(match, gobid);
 		            return;
 			}
 		    }
@@ -971,6 +985,17 @@ public class ChatUI extends Widget {
 		String t = (String)args[0];
 		String line = (String)args[1];
 		if(t.equals("in")) {
+		    try {
+			final Matcher dmatch = ChatUtils.CHAT_EXT_MSG_PAT.matcher(line);
+			if (dmatch.find()) {
+			    final String subject = dmatch.group(1);
+			    final String dargs = dmatch.group(2);
+			    ChatUtils.parseExternalCommand(ui, false, this, subject, dargs);
+			    return;
+			}
+		    } catch (Exception e) {
+		        logger.atWarning().withCause(e);
+		    }
 		    ui.sess.details.context.dispatchmsg(this, "priv-in-msg", line, name());
 		    Message cmsg = new InMessage(line, iw());
 		    append(cmsg);
