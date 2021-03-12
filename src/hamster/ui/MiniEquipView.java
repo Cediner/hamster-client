@@ -5,6 +5,7 @@ import hamster.ui.core.Theme;
 import haven.*;
 
 public class MiniEquipView extends MovableWidget {
+    private static final Coord spacer = UI.scale(new Coord(1,1));
     private static final Coord isz = new Coord(3, 9);
     private static final Coord[] ecoords = {
             new Coord( 0, 0), //head
@@ -50,7 +51,7 @@ public class MiniEquipView extends MovableWidget {
     private boolean hover;
 
     public MiniEquipView(final Equipory eq) {
-        super(isz.mul(State.USED.icon.sz().add(1, 1)).add(Window.wbox.bisz()), "mini-equ-view");
+        super(isz.mul(State.USED.icon.sz().add(spacer)).add(Window.wbox.bisz()), "mini-equ-view");
         inv = eq;
         hover = false;
     }
@@ -67,7 +68,7 @@ public class MiniEquipView extends MovableWidget {
     }
 
     public void draw(final GOut g) {
-        Coord csz = State.USED.icon.sz().add(1, 1);
+        Coord csz = State.USED.icon.sz().add(spacer);
         Coord ic;
         WItem wi;
         int i;

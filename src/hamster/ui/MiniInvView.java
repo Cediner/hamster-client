@@ -5,6 +5,7 @@ import hamster.ui.core.Theme;
 import haven.*;
 
 public class MiniInvView extends MovableWidget {
+    private static final Coord spacer = UI.scale(new Coord(1,1));
     private enum State {
         USED(Theme.tex("minv", 2)),
         NOTUSED(Theme.tex("minv", 0)),
@@ -26,7 +27,7 @@ public class MiniInvView extends MovableWidget {
     private boolean hover;
 
     public MiniInvView(final Inventory monitor) {
-        super(monitor.isz.mul(State.USED.icon.sz().add(1, 1)).add(Window.wbox.bisz()), "mini-player-inv");
+        super(monitor.isz.mul(State.USED.icon.sz().add(spacer)).add(Window.wbox.bisz()), "mini-player-inv");
         inv = monitor;
         hover = false;
         isz = inv.isz;
@@ -48,13 +49,13 @@ public class MiniInvView extends MovableWidget {
         super.tick(dt);
         if (!isz.equals(inv.isz)) {
             isz = inv.isz;
-            sz = isz.mul(State.USED.icon.sz().add(1, 1)).add(Window.wbox.bisz());
+            sz = isz.mul(State.USED.icon.sz().add(spacer)).add(Window.wbox.bisz());
         }
     }
 
     public void draw(GOut g) {
         Coord c = new Coord();
-        Coord csz = State.USED.icon.sz().add(1, 1);
+        Coord csz = State.USED.icon.sz().add(spacer);
         Coord ic;
         WItem wi;
         final WItem[][] map = inv.itemmap();

@@ -229,11 +229,11 @@ public class Equipory extends Widget implements DTarget {
 		    }
 		    case 6 -> {
 		        lweap = g;
-			ui.gui.lrhandview.additm(itm, new Coord(1, 1));
+			ui.gui.lrhandview.additm(itm, new Coord(0, 0));
 		    }
 		    case 7 -> {
 			rweap = g;
-			ui.gui.lrhandview.additm(itm, new Coord(2, 1));
+			ui.gui.lrhandview.additm(itm, new Coord(1, 0));
 		    }
 		}
 	    }

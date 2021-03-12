@@ -8,12 +8,13 @@ import haven.*;
  */
 public class IndirSlotView extends MovableWidget implements DTarget {
     private static final Tex invsq = Resource.loadtex("gfx/hud/invsq");
-    private static final Coord sqsz = new Coord(33, 33);
+    private static final Coord spacer = UI.scale(new Coord(1,1));
+    private static final Coord sqsz = UI.scale(new Coord(33, 33)).add(spacer);
     public final Coord isz;
     private final int[][] mapping;
 
     public IndirSlotView(final Coord isz, final String name, final int[][] mapping) {
-        super(invsq.sz().add(new Coord(-1, -1)).mul(isz).add(new Coord(1, 1)), name);
+        super(sqsz.mul(isz), name);
         this.isz = isz;
         this.mapping = mapping;
     }
@@ -29,7 +30,7 @@ public class IndirSlotView extends MovableWidget implements DTarget {
     }
 
     public void additm(final WItem itm, final Coord slot) {
-        add(new IndirWidget(itm), slot.sub(1, 1).mul(sqsz));
+        add(new IndirWidget(itm), slot.mul(sqsz));
     }
 
     public void remitm(final WItem itm) {
