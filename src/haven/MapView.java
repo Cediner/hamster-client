@@ -46,6 +46,7 @@ import hamster.MouseBind;
 import hamster.gob.Hidden;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
+import hamster.ui.MapViewExt;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -78,7 +79,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Tooltip info
     private String lasttt = "";
     private Object tt;
-
+    //Ext
+    public final MapViewExt ext = new MapViewExt(this);
     
     public interface Delayed {
 	public void run(GOut g);
@@ -2454,6 +2456,19 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    super(c);
 	    clickb = b;
 	}
+
+	private Optional<Gob> gobFromClick(final ClickData inf) {
+	    if (inf == null)
+		return Optional.empty();
+	    if (inf.ci instanceof Gob.GobClick) {
+		return Optional.of(((Gob.GobClick) inf.ci).gob);
+	    }
+	    if (inf.ci instanceof Composited.CompositeClick) {
+		return Optional.of(((Composited.CompositeClick) inf.ci).gi.gob);
+	    } else {
+		return Optional.empty();
+	    }
+	}
 	
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
 	    final String seq = MouseBind.generateSequence(ui, clickb);
@@ -2469,7 +2484,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	    Object[] clickargs = args;
 	    if (MV_SHOW_SPEC_MENU.match(seq)) {
-		//TODO: impl later
+		final Optional<Gob> gob = gobFromClick(inf);
+		if(gob.isPresent()) {
+		    ext.showSpecialMenu(gob.get());
+		} else {
+		    ext.showSpecialMenu(mc);
+		}
 	    } else if (MV_QUEUE_MOVE.match(seq)) {
 		movequeue.add(new Move(mc));
 	    } else if (MV_PATHFIND_MOVE.match(seq)) {
@@ -2669,7 +2689,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
         binds.put(KB_TOGGLE_HIDDEN, () -> {
 	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
 	    //TODO: This can result in very buggy behavior and needs reexamined at some point
-	    ui.sess.glob.oc.mbRefreshGobs.mail(new OCache.RefreshGobByAttr(Hidden.class));
+	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
             return true;
 	});
         binds.put(KB_TOGGLE_HITBOXES, () -> {

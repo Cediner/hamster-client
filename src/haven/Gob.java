@@ -255,12 +255,18 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	for(GAttrib a : attr.values())
 	    a.ctick(dt);
 	loadrattr();
+	final Hidden hidden = getattr(Hidden.class);
+	final UI ui = glob.ui.get();
+	final GameUI gui = ui != null ? ui.gui : null;
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.slots == null) {
-		try {
-		    ol.init();
-		} catch(Loading ignored) {}
+		if(hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get()) {
+		    try {
+			ol.init();
+		    } catch (Loading ignored) {
+		    }
+		}
 	    } else {
 		boolean done = ol.spr.tick(dt);
 		if((!ol.delign || (ol.spr instanceof Sprite.CDel)) && done) {
@@ -370,6 +376,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     private void setattr(Class<? extends GAttrib> ac, GAttrib a) {
+	final Hidden hidden = getattr(Hidden.class);
+	final UI ui = glob.ui.get();
+	final GameUI  gui = ui != null ? ui.gui : null;
 	GAttrib prev = attr.remove(ac);
 	if(prev != null) {
 	    if((prev instanceof RenderTree.Node) && (prev.slots != null))
@@ -378,7 +387,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		setupmods.remove(prev);
 	}
 	if(a != null) {
-	    if(a instanceof RenderTree.Node) {
+	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get())) {
 		try {
 		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
 		} catch(Loading l) {
@@ -395,6 +404,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		setupmods.add((SetupMod)a);
 	    attr.put(ac, a);
 	}
+
+	if(a instanceof Hidden) {
+	    //TODO: This can result in very buggy behavior and needs reexamined
+	    glob.oc.mailbox.mail(new OCache.RefreshGobByObject(this));
+	}
+
 	if(prev != null)
 	    prev.dispose();
     }
@@ -575,15 +590,35 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
     }
 
-    public void added(RenderTree.Slot slot) {
+    /* Loftar's original added for all Ol's and GAttribs */
+    public void _added(RenderTree.Slot slot) {
 	slot.ostate(curstate());
-	for(Overlay ol : ols) {
-	    if(ol.slots != null)
+	for (Overlay ol : ols) {
+	    if (ol.slots != null)
 		slot.add(ol);
 	}
-	for(GAttrib a : attr.values()) {
-	    if(a instanceof RenderTree.Node)
-		slot.add((RenderTree.Node)a);
+	for (GAttrib a : attr.values()) {
+	    if (a instanceof RenderTree.Node)
+		slot.add((RenderTree.Node) a);
+	}
+    }
+
+    /* this is basically the new `setup`, but only happens once */
+    public void added(RenderTree.Slot slot) {
+	if (!virtual)
+	    slot.ostate(curstate());
+	final UI ui = glob.ui.get();
+	if (ui != null && ui.gui != null) {
+	    slot.ostate(curstate());
+	    final Hidden hidden = getattr(Hidden.class);
+	    if (ui.gui.settings.SHOWHIDDEN.get() || hidden == null) {
+		_added(slot);
+	    } else {
+		slot.add(hidden);
+	    }
+	} else {
+	    //Do a normal added if ui/gui can't be retrieved.
+	    _added(slot);
 	}
 	slots.add(slot);
     }
@@ -1207,7 +1242,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    //If we have changes to Attrs they need to be done via the GobInfo thread
 	    queueDeltas(deltas);
 	} else {
-	    ui.sess.glob.oc.mbRemGobs.mail(new OCache.RemoveGobMsg(this.id));
+	    ui.sess.glob.oc.mailbox.mail(new OCache.RemoveGobById(this.id));
 	}
     }
 }

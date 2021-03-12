@@ -24,14 +24,14 @@ public class TargetSprite extends Sprite {
         final Coord2d offset = new Coord2d(10, 0);
         {
             shapes[0][0] = offset.rotate(Math.toRadians(35));
-            shapes[0][1] = offset.rotate(Math.toRadians(180 + 35));
-            shapes[0][2] = offset.rotate(Math.toRadians(55));
-            shapes[0][3] = offset.rotate(Math.toRadians(180 + 55));
+            shapes[0][1] = offset.rotate(Math.toRadians(180 + 55));
+            shapes[0][2] = offset.rotate(Math.toRadians(180 + 35));
+            shapes[0][3] = offset.rotate(Math.toRadians(55));
 
             shapes[1][0] = offset.rotate(Math.toRadians(125));
-            shapes[1][1] = offset.rotate(Math.toRadians(180 + 125));
-            shapes[1][2] = offset.rotate(Math.toRadians(145));
-            shapes[1][3] = offset.rotate(Math.toRadians(180 + 145));
+            shapes[1][1] = offset.rotate(Math.toRadians(180 + 145));
+            shapes[1][2] = offset.rotate(Math.toRadians(180 + 125));
+            shapes[1][3] = offset.rotate(Math.toRadians(145));
         }
         mesh = Obst.makeMesh(shapes, Color.RED, 3);
     }

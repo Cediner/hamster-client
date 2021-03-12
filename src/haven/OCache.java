@@ -68,49 +68,71 @@ public class OCache implements Iterable<Gob> {
     /*
      * MailBox System Message
      */
-    public MessageBus.MailBox<RemoveGobMsg> mbRemGobs;
+    public MessageBus.MailBox<OCMail> mailbox;
 
-    public static class RemoveGobMsg extends MessageBus.Message {
-	public final long id;
+    public static abstract class OCMail extends MessageBus.Message {
+	public abstract void apply(final OCache oc, final List<Gob> gobs);
+    }
+    public static class RemoveGobById extends OCMail {
+	private final long id;
 
-	public RemoveGobMsg(final long id) {
+	public RemoveGobById(final long id) {
 	    this.id = id;
+	}
+
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    final Gob g = oc.getgob(id);
+	    if (g != null) {
+		g.dispose();
+		oc.remove(g);
+	    }
 	}
     }
 
-    public MessageBus.MailBox<RefreshGob> mbRefreshGobs;
+    public static class RemoveGobByRes extends OCMail {
+	private final String name;
 
-    public static abstract class RefreshGob extends MessageBus.Message {
-	public abstract void apply(final OCache oc);
+        public RemoveGobByRes(final String res) {
+            this.name = res;
+	}
+
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(gob ->
+		    gob.res().ifPresent(res -> {
+			if (res.name.equals(name)) {
+			    oc.remove(gob);
+			}
+		    }));
+	}
     }
 
-    public static class RefreshGobByTag extends RefreshGob {
+    public static class RefreshGobByTag extends OCMail {
 	public final Tag tag;
 
 	public RefreshGobByTag(final Tag tag) {
 	    this.tag = tag;
 	}
 
-	public void apply(final OCache oc) {
-	    for (Gob g : oc) {
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(g -> {
 		if (g.hasTag(tag)) {
 		    for (final ChangeCallback cb : oc.cbs) {
 			cb.removed(g);
 			cb.added(g);
 		    }
 		}
-	    }
+	    });
 	}
     }
 
-    public static class RefreshGobByObject extends RefreshGob {
+    public static class RefreshGobByObject extends OCMail {
 	public final Gob self;
 
 	public RefreshGobByObject(final Gob g) {
 	    this.self = g;
 	}
 
-	public void apply(final OCache oc) {
+	public void apply(final OCache oc, final List<Gob> gobs) {
 	    for (final ChangeCallback cb : oc.cbs) {
 		cb.removed(self);
 		cb.added(self);
@@ -118,21 +140,21 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
-    public static class RefreshAllGobs extends RefreshGob {
+    public static class RefreshAllGobs extends OCMail {
 	public RefreshAllGobs() {
 	}
 
-	public void apply(final OCache oc) {
-	    for (final Gob g : oc) {
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(g -> {
 		for (final ChangeCallback cb : oc.cbs) {
 		    cb.removed(g);
 		    cb.added(g);
 		}
-	    }
+	    });
 	}
     }
 
-    public static class RefreshGobByAttr extends RefreshGob {
+    public static class RefreshGobByAttr extends OCMail {
 	public final Class<? extends GAttrib> attr;
 
 	public RefreshGobByAttr(final Class<? extends GAttrib> attr) {
@@ -140,15 +162,63 @@ public class OCache implements Iterable<Gob> {
 	}
 
 	@Override
-	public void apply(OCache oc) {
-	    for (final Gob g : oc) {
+	public void apply(OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(g -> {
 		if (g.getattr(attr) != null) {
 		    for (final ChangeCallback cb : oc.cbs) {
 			cb.removed(g);
 			cb.added(g);
 		    }
 		}
-	    }
+	    });
+	}
+    }
+
+    public static class HideGobsByName extends OCMail {
+	private final String name;
+
+	public HideGobsByName(final String res) {
+	    this.name = res;
+	}
+
+	@Override
+	public void apply(OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			gob.setattr(new Hidden(gob));
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(gob);
+			    cb.added(gob);
+			}
+		    }
+		});
+	    });
+	}
+    }
+
+    public static class UnhideGobsByName extends OCMail {
+	private final String name;
+
+	public UnhideGobsByName(final String res) {
+	    this.name = res;
+	}
+
+	@Override
+	public void apply(OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(gob -> {
+		gob.res().ifPresent(res -> {
+		    if (res.name.equals(name)) {
+			if (gob.getattr(Hidden.class) != null) {
+			    gob.delattr(Hidden.class);
+			    for (final ChangeCallback cb : oc.cbs) {
+				cb.removed(gob);
+				cb.added(gob);
+			    }
+			}
+		    }
+		});
+	    });
 	}
     }
 
@@ -163,79 +233,7 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void attached(final UI ui) {
-	mbRemGobs = new MessageBus.MailBox<>(ui.office, this);
-	mbRefreshGobs = new MessageBus.MailBox<>(ui.office, this);
-    }
-
-    public void hideAll(final String name) {
-	ArrayList<Gob> copy = new ArrayList<>();
-	synchronized (this) {
-	    for (Gob ob : this)
-		copy.add(ob);
-	}
-
-	if (Config.par) {
-	    copy.parallelStream().forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			gob.setattr(new Hidden(gob));
-			for (final ChangeCallback cb : cbs) {
-			    cb.removed(gob);
-			    cb.added(gob);
-			}
-		    }
-		});
-	    });
-	} else {
-	    copy.forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			gob.setattr(new Hidden(gob));
-			for (final ChangeCallback cb : cbs) {
-			    cb.removed(gob);
-			    cb.added(gob);
-			}
-		    }
-		});
-	    });
-	}
-    }
-
-    public void unhideAll(final String name) {
-	ArrayList<Gob> copy = new ArrayList<>();
-	synchronized (this) {
-	    for (Gob ob : this)
-		copy.add(ob);
-	}
-	if (Config.par) {
-	    copy.parallelStream().forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			if (gob.getattr(Hidden.class) != null) {
-			    gob.delattr(Hidden.class);
-			    for (final ChangeCallback cb : cbs) {
-				cb.removed(gob);
-				cb.added(gob);
-			    }
-			}
-		    }
-		});
-	    });
-	} else {
-	    copy.forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			if (gob.getattr(Hidden.class) != null) {
-			    gob.delattr(Hidden.class);
-			    for (final ChangeCallback cb : cbs) {
-				cb.removed(gob);
-				cb.added(gob);
-			    }
-			}
-		    }
-		});
-	    });
-	}
+	mailbox = new MessageBus.MailBox<>(ui.office, this);
     }
 
     public synchronized void callback(ChangeCallback cb) {
@@ -277,27 +275,13 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void ctick(double dt) {
-	if (mbRemGobs != null) {
-	    while (!mbRemGobs.mailqueue.isEmpty()) {
-		final RemoveGobMsg remgob = mbRemGobs.mailqueue.poll();
-		final Gob g = getgob(remgob.id);
-		if (g != null) {
-		    g.dispose();
-		    remove(g);
-		}
-	    }
-	}
-	if (mbRefreshGobs != null) {
-	    while (!mbRefreshGobs.mailqueue.isEmpty()) {
-		mbRefreshGobs.mailqueue.poll().apply(this);
-	    }
-	}
-
-	ArrayList<Gob> copy = new ArrayList<Gob>();
+        // Do our tick first
+	final ArrayList<Gob> copy = new ArrayList<>();
 	synchronized(this) {
 	    for(Gob g : this)
 		copy.add(g);
 	}
+
 	Consumer<Gob> task = g -> {
 	    synchronized(g) {
 		g.ctick(dt);
@@ -307,6 +291,13 @@ public class OCache implements Iterable<Gob> {
 	    copy.forEach(task);
 	else
 	    copy.parallelStream().forEach(task);
+
+	// Then apply ourselves and our gobs for this tick to any mail
+	if(mailbox != null) {
+	    while(!mailbox.mailqueue.isEmpty()) {
+	        mailbox.mailqueue.poll().apply(this, copy);
+	    }
+	}
     }
 
     public void gtick(Render g) {
