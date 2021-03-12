@@ -40,6 +40,7 @@ import java.util.function.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.MouseBind;
@@ -53,6 +54,7 @@ import haven.render.sl.Uniform;
 import haven.render.sl.Type;
 
 public class MapView extends PView implements DTarget, Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static boolean clickdb = false;
     public long plgob = -1;
     public long rlplgob = -1;
@@ -2482,7 +2484,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if (inf != null)
 		args = Utils.extend(args, inf.clickargs());
 
-	    Object[] clickargs = args;
+	    final Object[] clickargs = args;
 	    if (MV_SHOW_SPEC_MENU.match(seq)) {
 		final Optional<Gob> gob = gobFromClick(inf);
 		if(gob.isPresent()) {
@@ -2653,9 +2655,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     
     public boolean iteminteract(Coord cc, Coord ul) {
+        final var mods = ui.modflags();
 	new Hittest(cc) {
 	    public void hit(Coord pc, Coord2d mc, ClickData inf) {
-		Object[] args = {pc, mc.floor(posres), ui.modflags()};
+		Object[] args = {pc, mc.floor(posres), mods};
 		if(inf != null)
 		    args = Utils.extend(args, inf.clickargs());
 		wdgmsg("itemact", args);

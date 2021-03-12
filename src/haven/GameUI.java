@@ -31,6 +31,7 @@ import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
+import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 
@@ -54,7 +55,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Fightview fv;
     private Text lastmsg;
     private double msgtime;
-    public Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
+    public Window equwnd, makewnd, srchwnd, iconwnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -71,6 +72,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
+
+    //Inventories
+    public Window invwnd;
+    public MiniInvView mminv;
 
     //Current village / Realm
     public String curvil = "???";
@@ -110,6 +115,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     //Equipment
     public Equipory equ;
+    public MiniEquipView mmequ;
+    public final IndirSlotView lrhandview;
 
     //Script Management
     public final ScriptManager scripts;
@@ -187,6 +194,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	highlighted = new HighlightManager();
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
+	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
+	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
     }
 
     protected void attached() {
@@ -235,6 +244,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(deleted, new Coord(200, 200));
 	add(alerted, new Coord(200, 200));
 	add(highlighted,  new Coord(200, 200));
+	add(lrhandview);
     }
 
     public void dispose() {
@@ -496,6 +506,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		invwnd.pack();
 		if(!settings.SHOWINVONLOGIN.get())
 		    invwnd.hide();
+		mminv = new MiniInvView(maininv);
+		add(mminv, new Coord(100, 100));
 		add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	    }
 	    case "equ" -> {
@@ -503,6 +515,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		equwnd.add(equ = (Equipory) child, Coord.z);
 		equwnd.pack();
 		equwnd.hide();
+		mmequ = new MiniEquipView(equ);
+		add(mmequ, new Coord(400, 10));
 		add(equwnd, Utils.getprefc("wndc-equ", new Coord(400, 10)));
 	    }
 	    case "hand" -> {
