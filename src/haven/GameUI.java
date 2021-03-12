@@ -101,6 +101,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public IMeter hp, stam, energy;
     private final List<Widget> meters = new LinkedList<>();
 
+    //Forage helper
+    public final ForageHelperWnd foragehelper;
+
     //Windows for various Gob mods
     public final Window hidden, deleted, alerted, highlighted;
 
@@ -202,6 +205,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
 	timers = new TimersWnd();
 	timers.hide();
+	foragehelper = new ForageHelperWnd();
+	foragehelper.hide();
     }
 
     protected void attached() {
@@ -236,6 +241,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    });
 	Debug.log = ui.cons.out;
 	// Adding local widgets / custom stuff
+	final Coord stdloc = UI.scale(200, 200);
 	ui.root.sessionDisplay.unlink();
 	add(ui.root.sessionDisplay);
 	opts = add(new OptionsWnd(ui));
@@ -246,12 +252,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = add(new Bufflist(), UI.scale(new Coord(95, 65)));
     	add(cal, new Coord(sz.x / 2 - cal.sz.x / 2, 0));
     	add(scripts).hide();
-	add(hidden, new Coord(200, 200));
-	add(deleted, new Coord(200, 200));
-	add(alerted, new Coord(200, 200));
-	add(highlighted,  new Coord(200, 200));
-	add(lrhandview);
-	add(timers, new Coord(200, 200));
+	add(hidden, stdloc);
+	add(deleted, stdloc);
+	add(alerted, stdloc);
+	add(highlighted, stdloc);
+	add(lrhandview, stdloc);
+	add(timers, stdloc);
+	add(foragehelper, stdloc);
     }
 
     public void dispose() {

@@ -321,6 +321,9 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::timers",
 		Resource.local().load("custom/paginae/default/wnd/timers"),
 		(pag) -> ui.gui.timers.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::foragehelper",
+		Resource.local().load("custom/paginae/default/wnd/foragehelper"),
+		(pag) -> ui.gui.foragehelper.toggleVisiblity()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),
