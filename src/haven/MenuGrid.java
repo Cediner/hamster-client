@@ -305,50 +305,50 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.add(new MapMod(true))));
 	addCustom(new CustomPagina(this, "management::scripts",
 		Resource.local().load("custom/paginae/default/wnd/scripts"),
-		(pag) -> ui.gui.scripts.toggleVisiblity()));
+		(pag) -> ui.gui.scripts.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::alerted",
 		Resource.local().load("custom/paginae/default/wnd/alerted"),
-		(pag) -> ui.gui.alerted.toggleVisiblity()));
+		(pag) -> ui.gui.alerted.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::deleted",
 		Resource.local().load("custom/paginae/default/wnd/deleted"),
-		(pag) -> ui.gui.deleted.toggleVisiblity()));
+		(pag) -> ui.gui.deleted.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::hidden",
 		Resource.local().load("custom/paginae/default/wnd/hidden"),
-		(pag) -> ui.gui.hidden.toggleVisiblity()));
+		(pag) -> ui.gui.hidden.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::highlightmanager",
 		Resource.local().load("custom/paginae/default/wnd/highlight"),
-		(pag) -> ui.gui.highlighted.toggleVisiblity()));
+		(pag) -> ui.gui.highlighted.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::timers",
 		Resource.local().load("custom/paginae/default/wnd/timers"),
-		(pag) -> ui.gui.timers.toggleVisiblity()));
+		(pag) -> ui.gui.timers.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::foragehelper",
 		Resource.local().load("custom/paginae/default/wnd/foragehelper"),
-		(pag) -> ui.gui.foragehelper.toggleVisiblity()));
+		(pag) -> ui.gui.foragehelper.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::skillsncredo",
 		Resource.local().load("custom/paginae/default/wnd/skillsncredo"),
-		(pag) -> ui.gui.scwnd.toggleVisiblity()));
+		(pag) -> ui.gui.scwnd.toggleVisibility()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),
-		(pag) -> ui.gui.invwnd.toggleVisiblity()));
+		(pag) -> ui.gui.invwnd.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::char",
 		Resource.local().load("custom/paginae/default/wnd/char"),
-		(pag) -> ui.gui.chrwdg.toggleVisiblity()));
+		(pag) -> ui.gui.chrwdg.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::equ",
 		Resource.local().load("custom/paginae/default/wnd/equ"),
-		(pag) -> ui.gui.equwnd.toggleVisiblity()));
+		(pag) -> ui.gui.equwnd.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::kithnkin",
 		Resource.local().load("custom/paginae/default/wnd/kithnkin"),
-		(pag) -> ui.gui.zerg.toggleVisiblity()));
+		(pag) -> ui.gui.zerg.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::lmap",
 		Resource.local().load("custom/paginae/default/wnd/lmap"),
-		(pag) -> ui.gui.mapfile.toggleVisiblity()));
+		(pag) -> ui.gui.mapfile.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::opts",
 		Resource.local().load("custom/paginae/default/wnd/opts"),
-		(pag) -> ui.gui.opts.toggleVisiblity()));
+		(pag) -> ui.gui.opts.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
-		(pag) -> ui.gui.chatwnd.toggleVisiblity()));
+		(pag) -> ui.gui.chatwnd.toggleVisibility()));
 	//Keybinds
 	binds.put(KeyBind.KB_SCM_ROOT, () -> {
 	    if(this.cur != null) {

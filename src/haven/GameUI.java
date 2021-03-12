@@ -940,13 +940,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
     private void setKeybinds() {
         binds.put(KB_TOGGLE_CMD, () -> { entercmd(); return true; });
-        binds.put(KB_TOGGLE_CHAT, () -> { chatwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_CHAR, () -> { chrwdg.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_CHAT, () -> { chatwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_CHAR, () -> { chrwdg.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
     }

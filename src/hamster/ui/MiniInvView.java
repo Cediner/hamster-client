@@ -85,7 +85,7 @@ public class MiniInvView extends MovableWidget {
     @Override
     public boolean mousedown(Coord mc, int button) {
         if (button == 1) {
-            ui.gui.invwnd.toggleVisiblity();
+            ui.gui.invwnd.toggleVisibility();
             return true;
         } else {
             return super.mousedown(mc, button);

@@ -27,7 +27,6 @@
 package haven;
 
 import java.util.*;
-import java.util.function.*;
 import java.io.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -43,7 +42,6 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MiniMap.*;
-import haven.BuddyWnd.GroupSelector;
 
 import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
@@ -112,7 +110,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
 		.state(() -> ui.gui.settings.MMSHOWGRID.get())
 		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a));
-	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisiblity());
+	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisibility());
 	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
 	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
 	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));

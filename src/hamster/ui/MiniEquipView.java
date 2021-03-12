@@ -96,7 +96,7 @@ public class MiniEquipView extends MovableWidget {
     @Override
     public boolean mousedown(Coord mc, int button) {
         if (button == 1) {
-            ui.gui.equwnd.toggleVisiblity();
+            ui.gui.equwnd.toggleVisibility();
             return true;
         } else {
             return super.mousedown(mc, button);
