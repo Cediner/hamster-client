@@ -32,6 +32,7 @@ import hamster.data.BeltData;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
+import hamster.ui.chr.SkillnCredoWnd;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
@@ -73,6 +74,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
+
+    //Character related windows
+    public final SkillnCredoWnd scwnd;
 
     //Inventories
     public Window invwnd;
@@ -207,6 +211,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	timers.hide();
 	foragehelper = new ForageHelperWnd();
 	foragehelper.hide();
+	scwnd = new SkillnCredoWnd();
+	scwnd.hide();
     }
 
     protected void attached() {
@@ -259,6 +265,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(lrhandview, stdloc);
 	add(timers, stdloc);
 	add(foragehelper, stdloc);
+	add(scwnd, stdloc);
     }
 
     public void dispose() {
