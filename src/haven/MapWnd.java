@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 
 import hamster.IndirSetting;
 import hamster.KeyBind;
+import hamster.data.MarkerData;
 import hamster.script.pathfinding.Move;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
@@ -370,6 +371,85 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 
     protected void drawframe(GOut g) {
 	super.drawframe(g);
+    }
+
+    void markobj(MarkerData.Marker marker, Coord2d mc) {
+	if (marker instanceof MarkerData.LinkedMarker) {
+	    markobj((MarkerData.LinkedMarker) marker, mc);
+	} else {
+	    synchronized (deferred) {
+		deferred.add(() -> {
+		    final Coord tc = mc.floor(tilesz);
+		    MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
+		    if (!view.file.lock.writeLock().tryLock())
+			throw (new Loading());
+		    try {
+			MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
+			if (info == null)
+			    throw (new Loading());
+			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
+			//Check for duplicate
+			for (final Marker mark : view.file.markers) {
+			    if (marker.type == MarkerData.Type.SLOTH && mark instanceof MapFile.CustomMarker &&
+				    mark.seg == info.seg && sc.equals(mark.tc))
+				return; //Duplicate
+			    else if (marker.type == MarkerData.Type.REALM && mark instanceof MapFile.RealmMarker &&
+				    mark.seg == info.seg && sc.equals(mark.tc))
+				return; //Duplicate
+			    else if (marker.type == MarkerData.Type.VILLAGE && mark instanceof MapFile.VillageMarker &&
+				    mark.seg == info.seg && sc.equals(mark.tc))
+				return; //Duplicate
+			}
+
+			final Marker mark;
+			if (marker.type == MarkerData.Type.SLOTH) {
+			    mark = new MapFile.CustomMarker(info.seg, sc, marker.defname,
+				    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
+			} else if (marker.type == MarkerData.Type.REALM) {
+			    mark = new MapFile.RealmMarker(info.seg, sc, marker.defname,
+				    new Resource.Spec(Resource.remote(), marker.res),
+				    "???");
+			    //TODO: Auto name realm based off buff
+			} else {
+			    //Village
+			    mark = new MapFile.VillageMarker(info.seg, sc, marker.defname,
+				    new Resource.Spec(Resource.remote(), marker.res), ui.gui.curvil);
+			}
+			view.file.add(mark);
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		});
+	    }
+	}
+    }
+
+    private void markobj(MarkerData.LinkedMarker marker, Coord2d mc) {
+	synchronized (deferred) {
+	    deferred.add(() -> {
+		final Coord tc = mc.floor(tilesz);
+		MCache.Grid obg = ui.sess.glob.map.getgrid(tc.div(cmaps));
+		if (!view.file.lock.writeLock().tryLock())
+		    throw (new Loading());
+		try {
+		    MapFile.GridInfo info = view.file.gridinfo.get(obg.id);
+		    if (info == null)
+			throw (new Loading());
+		    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
+		    //Check for duplicate
+		    for (final Marker mark : view.file.markers) {
+			if (mark instanceof MapFile.LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
+			    return; //Duplicate
+		    }
+
+		    final Marker mark = new MapFile.LinkedMarker(info.seg, sc, marker.defname,
+			    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res), view.file.markerids.next(), marker.ltype);
+		    view.file.add(mark);
+		} finally {
+		    view.file.lock.writeLock().unlock();
+		}
+	    });
+	}
     }
 
     public void markobj(long gobid, long oid, Indir<Resource> resid, String nm) {

@@ -31,14 +31,14 @@ public class GameplayPanel extends Scrollport {
                 }
             });
             {
-                rgrp.add("Ortho Cam", "sortho"); //TODO
+                rgrp.add("Ortho Cam", "sortho");
                 rgrp.add("Angle Locked Ortho Cam", "ortho");
                 rgrp.add("Non-smoothed Free Cam", "worse");
                 rgrp.add("Smoothed Free Cam", "bad");
                 rgrp.add("Follow Cam", "follow");
-                rgrp.add("Top Down Cam", "topdown"); //TODO
-                rgrp.add("Fixator", "fixator"); //TODO
-                rgrp.add("Freestyle", "freestyle"); //TODO
+                rgrp.add("Top Down Cam", "topdown");
+                rgrp.add("Fixator", "fixator");
+                rgrp.add("Freestyle", "freestyle");
             }
             final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
             { //Free Cam Settings
@@ -62,6 +62,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
             gob.pack();
         }
         { //Pathfinding

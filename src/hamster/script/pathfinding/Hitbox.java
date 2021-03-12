@@ -3,6 +3,7 @@ package hamster.script.pathfinding;
 import hamster.util.ResHashMap;
 import haven.*;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -28,9 +29,6 @@ public class Hitbox {
         hitboxes.put("gfx/terobjs/clue", NOHIT);
         hitboxes.put("gfx/terobjs/boostspeed", NOHIT);
         hitboxes.put("gfx/kritter/jellyfish/jellyfish", NOHIT);
-        //TODO: Knarrs need relooked at
-        //hitboxes.put("gfx/terobjs/vehicle/knarr", new Rectangular(new Coord2d(-4, -4), new Coord2d(8, 8)));
-        //hitboxes.put("gfx/terobjs/vehicle/snekkja", new Rectangular(new Coord2d(-32, -13), new Coord2d(64, 25)));
 
         //stone This looks wrong...
         //hitboxes.put("gfx/terobjs/bumlings", new Rectangular(new Coord2d(8, 8), new Coord2d(-16, -16)));
@@ -39,12 +37,12 @@ public class Hitbox {
         //hitboxes.put("gfx/terobjs/plants/trellis", new Rectangular(new Coord2d(-1, -5), new Coord2d(3, 11)));
 
         //animals
-        //hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
-        //hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
-        //hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
-        //hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
-        //hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
-        //hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+        hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
+        hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
+        hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
+        hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
+        hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+        hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
     }
 
     // These are your simple Neg based Hitboxes.
@@ -70,6 +68,12 @@ public class Hitbox {
         public Coord2d size() {
             return sz;
         }
+
+        @Override
+        public FastMesh mesh() {
+            final Coord2d[][] verts ={{ off, off.add(sz.x, 0), off.add(sz), off.add(0, sz.y) }};
+            return Obst.makeMesh(verts, Color.BLACK, 1f);
+        }
     }
 
     public static class Polygon extends Hitbox {
@@ -88,6 +92,11 @@ public class Hitbox {
 
                 hitbox.add(new Area(new java.awt.Polygon(xp, yp, verts.size())));
             }
+        }
+
+        @Override
+        public FastMesh mesh() {
+            return obst.makeMesh(Color.BLACK, 1f);
         }
     }
 
@@ -111,6 +120,10 @@ public class Hitbox {
         final var area = hitbox.createTransformedArea(AffineTransform.getRotateInstance(a));
         area.transform(AffineTransform.getTranslateInstance(c.x, c.y));
         return area.intersects(obj);
+    }
+
+    public FastMesh mesh() {
+        return null;
     }
 
     /**
@@ -140,8 +153,8 @@ public class Hitbox {
                 }
 
                 if(neg != null) {
-                    Coord2d hsz = new Coord2d(Math.abs(neg.bc.x) + Math.abs(neg.bs.x) + 1,
-                            Math.abs(neg.bc.y) + Math.abs(neg.bs.y) + 1);
+                    Coord2d hsz = new Coord2d(Math.abs(neg.bc.x) + Math.abs(neg.bs.x),
+                            Math.abs(neg.bc.y) + Math.abs(neg.bs.y));
                     Coord2d hoff = new Coord2d(neg.bc);
                     final Hitbox hb = new Rectangular(hoff, hsz, true);
                     hitboxes.put(res.name, hb);

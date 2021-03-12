@@ -306,6 +306,18 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::scripts",
 		Resource.local().load("custom/paginae/default/wnd/scripts"),
 		(pag) -> ui.gui.scripts.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::alerted",
+		Resource.local().load("custom/paginae/default/wnd/alerted"),
+		(pag) -> ui.gui.alerted.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::deleted",
+		Resource.local().load("custom/paginae/default/wnd/deleted"),
+		(pag) -> ui.gui.deleted.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::hidden",
+		Resource.local().load("custom/paginae/default/wnd/hidden"),
+		(pag) -> ui.gui.hidden.toggleVisiblity()));
+	addCustom(new CustomPagina(this, "management::highlightmanager",
+		Resource.local().load("custom/paginae/default/wnd/highlight"),
+		(pag) -> ui.gui.highlighted.toggleVisiblity()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),

@@ -56,7 +56,11 @@ public class ISBox extends Widget implements DTarget {
     }
     
     private void setlabel(int rem, int av, int bi) {
-	if(bi < 0)
+	cur = rem;
+	total = av;
+	if (amt != null)
+	    amt.setMax(total);
+	if (bi < 0)
 	    label = lf.renderf("%d/%d", rem, av);
 	else
 	    label = lf.renderf("%d/%d/%d", rem, av, bi);
@@ -106,33 +110,50 @@ public class ISBox extends Widget implements DTarget {
             g.image(t, dc);
         } catch(Loading ignored) {}
         g.image(label.tex(), new Coord(UI.scale(40), (bg.sz().y / 2) - (label.tex().sz().y / 2)));
+	super.draw(g);
     }
     
     public Object tooltip(Coord c, Widget prev) {
-	try {
-	    if(res.get().layer(Resource.tooltip) != null)
-		return(res.get().layer(Resource.tooltip).t);
-	} catch(Loading ignored) {}
-	return(null);
+	if (c.isect(Coord.z, bg.sz())) {
+	    try {
+		if (res.get().layer(Resource.tooltip) != null)
+		    return (res.get().layer(Resource.tooltip).t);
+		else
+		    return null;
+	    } catch (Loading e) {
+		return null;
+	    }
+	} else {
+	    return super.tooltip(c, prev);
+	}
     }
     
     public boolean mousedown(Coord c, int button) {
-        if(button == 1) {
-            if(ui.modshift)
-                wdgmsg("xfer");
-            else
-                wdgmsg("click");
-            return(true);
-        }
-        return(false);
+	if (c.isect(Coord.z, bg.sz())) {
+	    if (button == 1) {
+		if (ui.modshift)
+		    wdgmsg("xfer");
+		else
+		    wdgmsg("click");
+		return (true);
+	    } else {
+		return false;
+	    }
+	} else {
+	    return super.mousedown(c, button);
+	}
     }
     
     public boolean mousewheel(Coord c, int amount) {
-	if(amount < 0)
-	    wdgmsg("xfer2", -1, ui.modflags());
-	if(amount > 0)
-	    wdgmsg("xfer2", 1, ui.modflags());
-	return(true);
+	if (c.isect(Coord.z, bg.sz())) {
+	    if (amount < 0)
+		wdgmsg("xfer2", -1, ui.modflags());
+	    if (amount > 0)
+		wdgmsg("xfer2", 1, ui.modflags());
+	    return (true);
+	} else {
+	    return super.mousewheel(c, amount);
+	}
     }
     
     public boolean drop(Coord cc, Coord ul) {

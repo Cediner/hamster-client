@@ -26,6 +26,10 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.gob.sprites.Mark;
+import hamster.gob.sprites.TargetSprite;
+
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -36,12 +40,17 @@ import java.awt.image.BufferedImage;
 import java.text.*;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.net.URL;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.*;
 import java.io.IOException;
 import java.awt.datatransfer.*;
 
+import static haven.MCache.tilesz;
+
 //TODO: A bit of scripting changes are needed in here
 public class ChatUI extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final RichText.Foundry fnd = new RichText.Foundry(new ChatParser(TextAttribute.FONT, Text.dfont.deriveFont(UI.scale(10f)), TextAttribute.FOREGROUND, Color.BLACK));
     public static final Text.Foundry qfnd = new Text.Foundry(Text.dfont, 12, new java.awt.Color(192, 255, 192));
     public static final int selw = UI.scale(130);
@@ -832,8 +841,48 @@ public class ChatUI extends Widget {
     }
     
     public static class PartyChat extends MultiChat {
+        private final Map<Pattern, Consumer<Matcher>> chat_ext_mapping = new HashMap<>();
+
 	public PartyChat() {
 	    super(false, "Party", 2);
+
+	    chat_ext_mapping.put(Mark.CHAT_FMT_PAT, (match) -> {
+		final long gid = Long.parseLong(match.group(1));
+		final int life = Integer.parseInt(match.group(2));
+		final Gob g = ui.sess.glob.oc.getgob(gid);
+		if (g != null) {
+		    g.mark(life);
+		}
+	    });
+	    chat_ext_mapping.put(Mark.CHAT_TILE_FMT_PAT, (match) -> {
+		final long gid = Long.parseLong(match.group(1));
+		final double offx = Double.parseDouble(match.group(2));
+		final double offy = Double.parseDouble(match.group(3));
+		ui.sess.glob.map.getgrido(gid).ifPresent(grid -> {
+		    final Coord2d mc = new Coord2d(grid.ul).add(offx, offy).mul(tilesz);
+		    ui.sess.glob.loader.defer(() -> {
+			final Gob g = ui.sess.glob.oc.new ModdedGob(mc, 0);
+			g.addol(new Gob.Overlay(g, Mark.id, new Mark(2000)));
+			ui.sess.glob.oc.add(g);
+		    }, null);
+		});
+	    });
+	    chat_ext_mapping.put(TargetSprite.TARGET_PATTERN, (match) -> {
+		final long gid = Long.parseLong(match.group(1));
+		final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
+		if (old != null) {
+		    final Gob.Overlay ol = old.findol(TargetSprite.id);
+		    if (ol != null) {
+			((TargetSprite) ol.spr).rem();
+		    }
+		}
+
+		ui.gui.curtar = gid;
+		final Gob g = ui.sess.glob.oc.getgob(gid);
+		if (g != null)
+		    g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+	    });
+
 	}
 
 	@Override
@@ -849,6 +898,19 @@ public class ChatUI extends Widget {
 		long gobid = Utils.uint32((Integer)args[1]);
 		String line = (String)args[2];
 		Color col = Color.WHITE;
+
+		try { // Handle any extensions from party chat that we can parse out
+		    for(final var pat : chat_ext_mapping.keySet()) {
+		        final var match = pat.matcher(line);
+		        if(match.find()) {
+		            chat_ext_mapping.get(pat).accept(match);
+		            return;
+			}
+		    }
+		} catch (Exception e) {
+		    logger.atWarning().withCause(e);
+		}
+
 		synchronized(ui.sess.glob.party.memb) {
 		    Party.Member pm = ui.sess.glob.party.memb.get(gobid);
 		    if(pm != null)

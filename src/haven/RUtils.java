@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.function.*;
 import java.nio.ByteBuffer;
 import java.awt.image.BufferedImage;
+
+import com.google.common.flogger.FluentLogger;
 import haven.render.*;
 import haven.render.RenderTree.Node;
 import haven.render.RenderTree.Slot;
@@ -39,6 +41,7 @@ import haven.render.TextureCube.CubeImage;
 import haven.render.sl.ShaderMacro;
 
 public class RUtils {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static Collection<Slot> multiadd(Collection<Slot> slots, Node node) {
 	Collection<Slot> added = new ArrayList<>(slots.size());
 	try {

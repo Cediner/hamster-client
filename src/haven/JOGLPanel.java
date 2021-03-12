@@ -518,7 +518,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    final Iterator<AddUIMessage> add = adduibox.mailqueue.iterator();
 	    while (add.hasNext()) {
 		final UI lui = add.next().lui;
-		//TODO: lui.setupMail(Thread.currentThread());
+		lui.setupMail(Thread.currentThread());
 
 		synchronized (sessions) {
 		    sessions.add(lui);
@@ -578,11 +578,13 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	synchronized (sessions) {
 	    for (final UI lui : sessions) {
 		if (lui != ui) {
-		    if (lui.sess != null)
-			lui.sess.glob.ctick();
-		    lui.tick();
-		    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
-			lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		    synchronized (lui) {
+			if (lui.sess != null)
+			    lui.sess.glob.ctick();
+			lui.tick();
+			if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+			    lui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
+		    }
 		}
 	    }
 	}
@@ -743,14 +745,16 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 			prevframe = curframe;
 		    } else {
 			//Paused game
-			ui.audio.amb.clear();
-			ed.dispatch(ui);
-			if (ui.sess != null) {
-			    ui.sess.glob.ctick();
+			synchronized(ui) {
+			    ui.audio.amb.clear();
+			    ed.dispatch(ui);
+			    if (ui.sess != null) {
+				ui.sess.glob.ctick();
+			    }
+			    ui.tick();
+			    if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
+				ui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
 			}
-			ui.tick();
-			if ((ui.root.sz.x != (shape.br.x - shape.ul.x)) || (ui.root.sz.y != (shape.br.y - shape.ul.y)))
-			    ui.root.resize(new Coord(shape.br.x - shape.ul.x, shape.br.y - shape.ul.y));
 		    }
 
 		    //Update background UIs

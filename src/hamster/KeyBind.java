@@ -90,7 +90,7 @@ public class KeyBind {
 	{ // Gameplay Keybinds
 	    final String GP_GRP = "Gameplay";
 	    KB_TOGGLE_GRID = addKB("Toggle Grid Lines", GP_GRP, "C-G");
-	    KB_TOGGLE_TIPS = addKB("Toggle Hovertips", GP_GRP, "C-Q"); //TODO
+	    KB_TOGGLE_TIPS = addKB("Toggle Hovertips", GP_GRP, "C-Q");
 	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H"); //TODO
 	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G"); //TODO
 	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root

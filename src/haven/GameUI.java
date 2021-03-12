@@ -30,10 +30,7 @@ import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.io.SQLResCache;
-import hamster.ui.BeltWnd;
-import hamster.ui.ChatWnd;
-import hamster.ui.MapMarkerWnd;
-import hamster.ui.QuestWnd;
+import hamster.ui.*;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 
@@ -75,6 +72,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
 
+    //Current village / Realm
+    public String curvil = "???";
+    public String currealm = "???";
+
+    //Current Gob Target for Combat / Marking
+    public long curtar = 0;
+
     //Calendar
     public final Cal cal;
 
@@ -90,6 +94,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Speedget speed;
     public IMeter hp, stam, energy;
     private final List<Widget> meters = new LinkedList<>();
+
+    //Windows for various Gob mods
+    public final Window hidden, deleted, alerted, highlighted;
 
     //Hotbars
     public final BeltWnd hotbar1, hotbar2, hotbar3;
@@ -176,6 +183,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	setKeybinds();
 	//Custom Wdgs
 	scripts = new ScriptManager();
+	hidden = new HiddenManager();
+	highlighted = new HighlightManager();
+	deleted = new DeletedManager();
+	alerted = new SoundManager();
     }
 
     protected void attached() {
@@ -220,6 +231,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = add(new Bufflist(), UI.scale(new Coord(95, 65)));
     	add(cal, new Coord(sz.x / 2 - cal.sz.x / 2, 0));
     	add(scripts).hide();
+	add(hidden, new Coord(200, 200));
+	add(deleted, new Coord(200, 200));
+	add(alerted, new Coord(200, 200));
+	add(highlighted,  new Coord(200, 200));
     }
 
     public void dispose() {
@@ -764,7 +779,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		else if (slot <= 140)
 		    hotbar3.update(slot);
 		break;
-	    case "polowner":
+	    case "polowner": //This is for Villages and Realms, need to look at how they differ, if at all.
 		int id = (Integer) args[0];
 		String o = (String) args[1];
 		boolean n = ((Integer) args[2]) != 0;
@@ -774,8 +789,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		if (map != null) {
 		    if ((o != null) && (cur == null)) {
 			map.setpoltext(id, "Entering " + o);
+			curvil = o;
 		    } else if ((o == null) && (cur != null)) {
 			map.setpoltext(id, "Leaving " + cur);
+			curvil = "???";
 		    }
 		}
 		polowners.put(id, o);
