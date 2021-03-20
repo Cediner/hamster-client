@@ -149,33 +149,35 @@ public class CustomPointer extends Widget {
     }
 
     private void updtt() {
-	final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
-	if (me != null) {
-	    final Coord2d ltc;
-	    if(gobid != -1) {
-		final Gob ot = ui.sess.glob.oc.getgob(gobid);
-		if(ot != null) {
-		    ltc = tc = ot.rc;
+        if(ui.gui.map != null) {
+	    final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+	    if (me != null) {
+		final Coord2d ltc;
+		if (gobid != -1) {
+		    final Gob ot = ui.sess.glob.oc.getgob(gobid);
+		    if (ot != null) {
+			ltc = tc = ot.rc;
+		    } else {
+			ltc = tc;
+		    }
 		} else {
 		    ltc = tc;
 		}
-	    } else {
-		ltc = tc;
-	    }
 
-	    if(ltc != null) {
-		final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
-		if (cdist != dist) {
-		    dist = cdist;
-		    final String extra;
-		    if (dist >= 1000) {
-			extra = " - May be further than the client can see";
-		    } else {
-			extra = "";
+		if (ltc != null) {
+		    final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
+		    if (cdist != dist) {
+			dist = cdist;
+			final String extra;
+			if (dist >= 1000) {
+			    extra = " - May be further than the client can see";
+			} else {
+			    extra = "";
+			}
+			if (tt != null && tt.tex() != null)
+			    tt.tex().dispose();
+			tt = Text.render(data.name() + " - Distance: " + dist + extra);
 		    }
-		    if (tt != null && tt.tex() != null)
-			tt.tex().dispose();
-		    tt = Text.render(data.name() + " - Distance: " + dist + extra);
 		}
 	    }
 	}
