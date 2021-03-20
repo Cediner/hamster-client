@@ -75,6 +75,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
 
+    // Delay adding of widgets to GameUI to be part of UI thread
+    private final List<Widget> delayedAdd = new ArrayList<>();
+
+    //Scent Tracking
+    public final List<DowseWnd> dowsewnds = new ArrayList<>();
+
     //Character related windows
     public final SkillnCredoWnd scwnd;
 
@@ -778,6 +784,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    afk = false;
 	}
 	mapfiletick();
+	synchronized (delayedAdd) {
+	    for(final var chd : delayedAdd) {
+	        add(chd);
+	    }
+	    delayedAdd.clear();
+	}
     }
     
     public void uimsg(String msg, Object... args) {
@@ -929,6 +941,25 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private void fitwdg(Widget wdg) {
 	wdg.c = fitwdg(wdg, wdg.c);
+    }
+
+    public <T extends Widget> T dadd(T child) {
+        synchronized (delayedAdd) {
+	    delayedAdd.add(child);
+	}
+    	return child;
+    }
+
+    public void makeDowseWnd(final DowseWnd wnd) {
+	synchronized (dowsewnds) {
+	    dowsewnds.add(dadd(wnd));
+	}
+    }
+
+    public void remDowseWnd(final DowseWnd wnd) {
+	synchronized (dowsewnds) {
+	    dowsewnds.removeIf(wdg -> wdg == wnd);
+	}
     }
 
     public boolean wndstate(Window wnd) {

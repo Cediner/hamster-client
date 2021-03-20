@@ -41,6 +41,10 @@ public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
 	this(c.x, c.y);
     }
 
+    public Coord2d(final Coord2d ot) {
+        this(ot.x, ot.y);
+    }
+
     public Coord2d(Coord3f c) {
 	this(c.x, c.y);
     }
