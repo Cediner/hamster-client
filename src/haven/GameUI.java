@@ -78,6 +78,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     // Delay adding of widgets to GameUI to be part of UI thread
     private final List<Widget> delayedAdd = new ArrayList<>();
 
+    //movement pointers
+    public final CustomPointer pointer;
+
     //Scent Tracking
     public final List<DowseWnd> dowsewnds = new ArrayList<>();
 
@@ -219,6 +222,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	foragehelper.hide();
 	scwnd = new SkillnCredoWnd();
 	scwnd.hide();
+	pointer = new CustomPointer("Queued Move");
     }
 
     protected void attached() {
@@ -272,6 +276,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(timers, stdloc);
 	add(foragehelper, stdloc);
 	add(scwnd, stdloc);
+	add(pointer);
     }
 
     public void dispose() {

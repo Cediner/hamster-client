@@ -48,6 +48,10 @@ public class CustomPointer extends Widget {
 	this(name, CustomPointer.icon, -1, tc);
     }
 
+    public CustomPointer(final String name) {
+	this(name, CustomPointer.icon, -1, null);
+    }
+
     // Gob based pointers
     public CustomPointer(final String name, final Resource icon, final Gob g) {
 	this(name, icon, g.id, g.rc);
@@ -159,18 +163,20 @@ public class CustomPointer extends Widget {
 		ltc = tc;
 	    }
 
-	    final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
-	    if (cdist != dist) {
-		dist = cdist;
-		final String extra;
-		if (dist >= 1000) {
-		    extra = " - May be further than the client can see";
-		} else {
-		    extra = "";
+	    if(ltc != null) {
+		final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
+		if (cdist != dist) {
+		    dist = cdist;
+		    final String extra;
+		    if (dist >= 1000) {
+			extra = " - May be further than the client can see";
+		    } else {
+			extra = "";
+		    }
+		    if (tt != null && tt.tex() != null)
+			tt.tex().dispose();
+		    tt = Text.render(data.name() + " - Distance: " + dist + extra);
 		}
-		if (tt != null && tt.tex() != null)
-		    tt.tex().dispose();
-		tt = Text.render(data.name() + " - Distance: " + dist + extra);
 	    }
 	}
     }

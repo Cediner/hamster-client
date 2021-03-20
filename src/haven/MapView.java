@@ -2018,8 +2018,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	synchronized (movequeue) {
 	    movequeue.clear();
 	    movingto = null;
-	    //TODO: Pointer
-	    //ui.gui.pointer.update(null);
+	    ui.gui.pointer.updatetc(null);
 	}
     }
 
@@ -2153,8 +2152,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
 		movingto = movequeue.poll();
 		if (movingto != null) {
-		    //TODO: Pointer
-		    //ui.gui.pointer.update(movingto.dest());
+		    ui.gui.pointer.updatetc(movingto.dest());
 		    movingto.apply(this);
 		    lastMove = System.currentTimeMillis();
 		}
