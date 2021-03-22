@@ -1,9 +1,11 @@
 package hamster.ui.script;
 
+import hamster.script.LispScript;
 import hamster.script.Script;
 import hamster.ui.core.TabManager;
 import hamster.ui.core.indir.IndirLabel;
 import hamster.ui.core.layout.LinearGrouping;
+import hamster.util.JobSystem;
 import hamster.util.ObservableMapListener;
 import haven.*;
 
@@ -25,6 +27,25 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         String name();
 
         void run(final UI ui);
+    }
+
+
+    private static class LispScriptItm implements ScriptItm {
+        final String name;
+
+        public LispScriptItm(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String name() {
+            return "[Lisp]" + name;
+        }
+
+        @Override
+        public void run(final UI ui) {
+            ui.sess.details.context.launchLispScript(name, ui.sess.details);
+        }
     }
 
     private static class LuaScriptItm implements ScriptItm {
@@ -105,7 +126,9 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
                         && !name.startsWith("_config"));
                 if (files != null) {
                     for (final File f : files) {
-                        if (f.getName().endsWith(".lua")) {
+                        if (f.getName().endsWith(".lisp")) {
+                            scripts.add(new LispScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lisp"))));
+                        } else if (f.getName().endsWith(".lua")) {
                             scripts.add(new LuaScriptItm(f.getName().substring(0, f.getName().lastIndexOf(".lua"))));
                         }
                     }
@@ -125,7 +148,8 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
 
         Coord c = new Coord(0, 0);
         managertab = new Widget();
-        scripts = managertab.add(new LinearGrouping("Running Scripts", 5), c.copy());
+        c.y += managertab.add(new Button(300, "Reload Config", () -> JobSystem.submit(LispScript::reloadConfig))).sz.y + UI.scale(5);
+        scripts = managertab.add(new LinearGrouping("Running Scripts", UI.scale(5)), c.copy());
         managertab.pack();
     }
 

@@ -91,6 +91,18 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 	return(ntext);
     }
 
+    public Optional<Resource> res() {
+	try {
+	    if (res != null) {
+		return Optional.of(res.get());
+	    } else {
+		return Optional.empty();
+	    }
+	} catch (Loading e) {
+	    return Optional.empty();
+	}
+    }
+
     public int ameter() {
 	return this.ameter;
     }

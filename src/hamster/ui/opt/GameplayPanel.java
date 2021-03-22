@@ -55,6 +55,7 @@ public class GameplayPanel extends Scrollport {
         { //Gob
             gob.add(new IndirCheckBox("Show halo on players", ui.gui.settings.SHOWGOBHALO));
             gob.add(new IndirCheckBox("Show halo on players on hearth", ui.gui.settings.SHOWGOBHALOONHEARTH));
+            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", ui.gui.settings.COLORIZEAGGRO));
             gob.add(new IndirCheckBox("Colorize Drying Frames", ui.gui.settings.COLORFULFARMES));
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));

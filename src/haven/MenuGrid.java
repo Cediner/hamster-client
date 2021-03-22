@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
+import hamster.util.ObservableCollection;
 import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
@@ -42,7 +43,7 @@ public class MenuGrid extends MovableWidget {
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
     private static Coord gsz = new Coord(4, 4);
-    public final Set<Pagina> paginae = new HashSet<Pagina>();
+    public final ObservableCollection<Pagina> paginae = new ObservableCollection<>(new HashSet<>());
     public Pagina cur;
     private Pagina dragging;
     private Collection<PagButton> curbtns = Collections.emptyList();
@@ -327,6 +328,15 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::skillsncredo",
 		Resource.local().load("custom/paginae/default/wnd/skillsncredo"),
 		(pag) -> ui.gui.scwnd.toggleVisibility()));
+	addCustom(new CustomPagina(this, "management::crafting",
+		Resource.local().load("custom/paginae/default/wnd/crafting"),
+		(pag) -> ui.gui.makewnd.toggleVisibility()));
+	addCustom(new CustomPagina(this, "management::search",
+		Resource.local().load("custom/paginae/default/wnd/search"),
+		(pag) -> ui.gui.paginasearch.toggleVisibility()));
+	addCustom(new CustomPagina(this, "management::studyreport",
+		Resource.local().load("custom/paginae/default/wnd/study"),
+		(pag) -> ui.gui.study.toggleVisibility()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),

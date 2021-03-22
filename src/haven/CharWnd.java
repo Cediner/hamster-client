@@ -31,6 +31,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
+
+import hamster.ui.chr.StudyWnd;
 import haven.resutil.FoodInfo;
 import haven.resutil.Curiosity;
 import static haven.PUtils.*;
@@ -71,6 +73,8 @@ public class CharWnd extends Window {
     private final Tabs.Tab sattr, fgt;
     private final Coord studyc;
     private int scost;
+
+    public FightWnd fight;
 
     public static class FoodMeter extends Widget {
 	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm");
@@ -2134,11 +2138,14 @@ public class CharWnd extends Window {
     public void addchild(Widget child, Object... args) {
 	String place = (args[0] instanceof String)?(((String)args[0]).intern()):null;
 	if(place == "study") {
+	    ui.gui.study = ui.gui.add(new StudyWnd(child));
+	    /*
 	    sattr.add(child, studyc.add(wbox.btloff()));
 	    Widget f = Frame.around(sattr, Collections.singletonList(child));
 	    Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
-	    Frame.around(sattr, Collections.singletonList(inf));
+	    Frame.around(sattr, Collections.singletonList(inf));*/
 	} else if(place == "fmg") {
+	    fight = (FightWnd) child;
 	    fgt.add(child, 0, 0);
 	} else if(place == "wound") {
 	    this.wound = (Wound.Info)child;

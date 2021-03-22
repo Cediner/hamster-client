@@ -13,9 +13,13 @@ public class Grouping extends Widget {
     private Coord ctl;
     private Coord capy = new Coord(0, 0);
 
-    public Grouping(final String cap, final boolean showbox) {
-        this.cap = Text.renderstroked(cap, Color.WHITE, Color.BLACK, Text.std16);
+    public Grouping(final String cap, final boolean showbox, final Text.Foundry foundry) {
+        this.cap = cap != null ? Text.renderstroked(cap, Color.WHITE, Color.BLACK, foundry) : null;
         this.showbox = showbox;
+    }
+
+    public Grouping(final String cap, final boolean showbox) {
+        this(cap, showbox, Text.std16);
     }
 
     public Grouping(final String cap) {

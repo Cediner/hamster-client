@@ -27,8 +27,8 @@
 package haven.resutil;
 
 import haven.*;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
 public class Curiosity extends ItemInfo.Tip {
     public final int exp, mw, enc, time;
@@ -39,6 +39,10 @@ public class Curiosity extends ItemInfo.Tip {
 	this.mw = mw;
 	this.enc = enc;
 	this.time = time;
+    }
+
+    public double lpperhour() {
+	return exp / (time / 3.0f) * TimeUnit.HOURS.toSeconds(1);
     }
 
     static String[] units = {"s", "m", "h", "d"};
@@ -70,6 +74,13 @@ public class Curiosity extends ItemInfo.Tip {
 	    buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time)));
 	if(mw > 0)
 	    buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
+	if (exp > 0 && time > 0) {
+	    final double lph = lpperhour();
+	    buf.append(String.format("LP/hour: $col[255,192,255]{%.2f}\n", lph));
+	    if (mw > 0) {
+		buf.append(String.format("LP/hour/weight: $col[255,192,255]{%.2f}\n", lph / mw));
+	    }
+	}
 	if(enc > 0)
 	    buf.append(String.format("Experience cost: $col[255,255,192]{%d}\n", enc));
 	return(RichText.render(buf.toString(), 0).img);

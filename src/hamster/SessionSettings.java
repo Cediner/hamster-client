@@ -10,7 +10,6 @@ import java.awt.*;
  */
 public class SessionSettings {
     ////Display / Graphical
-    public final IndirSetting<Boolean> COLORIZEAGGRO;
     public final IndirSetting<Boolean> SHOWPCLAIM;
     public final IndirSetting<Boolean> SHOWVCLAIM;
     public final IndirSetting<Boolean> SHOWKCLAIM;
@@ -101,6 +100,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> QUICKFLMENU;
     public final IndirSetting<Boolean> KEEPFLOPEN;
     //Combat UI
+    public final IndirSetting<Boolean> COLORIZEAGGRO;
 
 
     ////Temporary, non-saved, settings

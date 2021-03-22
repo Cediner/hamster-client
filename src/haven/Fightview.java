@@ -26,11 +26,17 @@
 
 package haven;
 
+import hamster.gob.sprites.AggroMark;
+import hamster.gob.sprites.GobCombatSprite;
+import hamster.ui.core.Theme;
+import hamster.ui.fight.*;
+
+import java.awt.*;
 import java.util.*;
 import static haven.Utils.uint32;
 
 public class Fightview extends Widget {
-    public static final Tex bg = Resource.loadtex("gfx/hud/bosq");
+    static Tex bg = Theme.tex("bosq");
     public static final int height = 5;
     public static final int ymarg = UI.scale(5);
     public static final int width = UI.scale(165);
@@ -49,6 +55,12 @@ public class Fightview extends Widget {
     private GiveButton curgive;
     private Avaview curava;
     private Button curpurs;
+
+    // Enhanced Combat UI
+    public Maneuver maneuver;
+    public double maneuvermeter;
+    public final Map<DefenseType, Double> defweights = new HashMap<>();
+    //
     
     public class Relation {
         public final long gobid;
@@ -61,17 +73,29 @@ public class Fightview extends Widget {
 	public Indir<Resource> lastact = null;
 	public double lastuse = 0;
 	public boolean invalid = false;
+
+	//Enhanced Combat UI
+	public Maneuver maneuver;
+	public double maneuvermeter;
+	public final Map<DefenseType, Double> preweights = new HashMap<>();
+	public final Map<DefenseType, Double> defweights = new HashMap<>();
+	public double estimatedBlockWeight = 0;
+	//
         
         public Relation(long gobid) {
             this.gobid = gobid;
             add(this.ava = new Avaview(avasz, gobid, "avacam")).canactivate = true;
 	    add(this.give = new GiveButton(0, UI.scale(new Coord(15, 15))));
 	    add(this.purs = new Button(70, "Pursue"));
+	    for (DefenseType type : DefenseType.values()) {
+		defweights.put(type, 0.0);
+		preweights.put(type, 0.0);
+	    }
         }
 	
 	public void give(int state) {
 	    if(this == current)
-		curgive.state = state;
+		current.give.state = state;
 	    this.give.state = state;
 	}
 	
@@ -94,6 +118,125 @@ public class Fightview extends Widget {
 	    lastact = act;
 	    lastuse = Utils.rtime();
 	}
+
+	private void updateDefWeights() {
+	    final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
+	    for (Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
+		if (wdg instanceof Buff) {
+		    final Buff b = (Buff) wdg;
+		    b.res().ifPresent(res -> {
+			final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
+			if (type != null) {
+			    preweights.put(type, defweights.get(type));
+			    defweights.put(type, b.ameter() / 100.0);
+			    notfound.remove(type);
+			} else if (Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
+			    maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
+			    maneuvermeter = b.ameter() / 100.0;
+			}
+		    });
+		}
+	    }
+
+	    for (final DefenseType zero : notfound) {
+		//no longer has this defense.
+		defweights.put(zero, 0.0);
+	    }
+	}
+
+	public void tick() {
+	    updateDefWeights();
+	    if (ui.gui.settings.COLORIZEAGGRO.get()) {
+		final Gob g = ui.sess.glob.oc.getgob(gobid);
+		if (g != null && g.findol(AggroMark.id) == null) {
+		    g.daddol(AggroMark.id, new AggroMark());
+		}
+	    } else {
+		final Gob g = ui.sess.glob.oc.getgob(gobid);
+		if (g != null) {
+		    final Gob.Overlay ol = g.findol(AggroMark.id);
+		    final AggroMark mark = ol != null ? (AggroMark) ol.spr : null;
+		    if(mark != null) {
+		        mark.rem();
+		    }
+		}
+	    }
+	}
+
+	public void destroy() {
+	    final Gob g = ui.sess.glob.oc.getgob(gobid);
+	    if (g != null) {
+		final Gob.Overlay ol = g.findol(AggroMark.id);
+		if (ol != null) {
+		    final AggroMark am = (AggroMark) ol.spr;
+		    if (am != null) {
+			am.rem();
+		    }
+		}
+	    }
+	}
+
+	void checkWeight() {
+	    final double SMOOTHED_ALPHA = 0.9;
+	    updateDefWeights();
+	    //Now use pre/post to determine block weight based off what we did to them
+	    try {
+		if (Fightview.this.lastact != null) {
+		    final Card c = Cards.lookup.getOrDefault(Fightview.this.lastact.get().layer(Resource.tooltip).t, Cards.unknown);
+		    final double blockweight;
+		    if (c instanceof Attack || c == Cards.flex) {
+			final Attacks atk = (Attacks) c;
+			final int ua = ui.sess.glob.getcattr("unarmed").comp;
+			final int mc = ui.sess.glob.getcattr("melee").comp;
+			final int cards = ui.gui.chrwdg.fight.cards(Fightview.this.lastact.get().name);
+			if (maneuver == Cards.oakstance) {
+			    final double atkweight = atk.getAttackweight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards);
+			    final double estblockweight = estimatedBlockWeight == 0 ? atkweight : estimatedBlockWeight;
+			    final Map<DefenseType, Double> expected = atk.calculateEnemyDefWeights(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, estblockweight);
+			    DefenseType max = DefenseType.GREEN;
+			    double maxv = 0;
+			    for (DefenseType type : DefenseType.values()) {
+				if (expected.get(type) > maxv) {
+				    max = type;
+				    maxv = expected.get(type);
+				}
+			    }
+
+			    //Factor back in the 0.05% taken away
+			    expected.put(DefenseType.GREEN, defweights.get(DefenseType.GREEN));
+			    expected.put(DefenseType.BLUE, defweights.get(DefenseType.BLUE));
+			    expected.put(DefenseType.YELLOW, defweights.get(DefenseType.YELLOW));
+			    expected.put(DefenseType.RED, defweights.get(DefenseType.RED));
+			    //Stats are no longer relevant for maneuvers, and the effects of maneuvers are always constant.
+			    maxv = expected.get(max) + (expected.get(max) * 0.05);
+			    expected.put(max, maxv);
+			    //figuring our the weight from an oakstance hit that goes past 50% starts to cause issues and ruins the estimation
+			    blockweight = maxv < 0.50 ? atk.guessEnemyBlockWeight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, expected) : Double.POSITIVE_INFINITY;
+			} else {
+			    blockweight = atk.guessEnemyBlockWeight(Fightview.this.maneuver, Fightview.this.maneuvermeter, ua, mc, cards, preweights, defweights);
+			}
+
+			if (!Double.isInfinite(blockweight)) {
+			    estimatedBlockWeight = estimatedBlockWeight != 0 ? (SMOOTHED_ALPHA * estimatedBlockWeight) + ((1 - SMOOTHED_ALPHA) * blockweight) : blockweight;
+			}
+		    }
+		}
+	    } catch (Loading l) {
+		//Ignore, but really should never hit here
+	    }
+	}
+
+
+	/*******************************************************************************
+	 * For Scripting API only
+	 */
+	@SuppressWarnings("unused")
+	public void peace(){
+	    //if not peaced, peace
+	    if(give.state != 1){
+		give.wdgmsg("click", 1);
+	    }
+	}
     }
 
     public void use(Indir<Resource> act) {
@@ -110,6 +253,8 @@ public class Fightview extends Widget {
     
     public Fightview() {
         super(new Coord(width, (bg.sz().y + ymarg) * height));
+	for (DefenseType type : DefenseType.values())
+	    defweights.put(type, 0.0);
     }
 
     public void addchild(Widget child, Object... args) {
@@ -161,23 +306,22 @@ public class Fightview extends Widget {
     }
 
     private void setcur(Relation rel) {
-	if((current == null) && (rel != null)) {
-	    add(curgive = new GiveButton(0), cgivec);
-	    add(curava = new Avaview(Avaview.dasz, rel.gobid, "avacam"), cavac).canactivate = true;
-	    add(curpurs = new Button(UI.scale(70), "Pursue"), cpursc);
-	    curgive.state = rel.give.state;
-	} else if((current != null) && (rel == null)) {
-	    ui.destroy(curgive);
-	    ui.destroy(curava);
-	    ui.destroy(curpurs);
-	    curgive = null;
-	    curava = null;
-	    curpurs = null;
-	} else if((current != null) && (rel != null)) {
-	    curgive.state = rel.give.state;
-	    curava.avagob = rel.gobid;
-	}
 	current = rel;
+    }
+
+    public void scroll(final int amount) {
+	if (current != null) {
+	    final int idx = lsrel.indexOf(current);
+	    final Relation rel;
+	    if (idx + amount < 0)
+		rel = lsrel.get(lsrel.size() - 1);
+	    else
+		rel = lsrel.get((idx + amount) % lsrel.size());
+
+	    if (rel != null) {
+		wdgmsg("bump", (int) rel.gobid);
+	    }
+	}
     }
     
     public void destroy() {
@@ -192,23 +336,88 @@ public class Fightview extends Widget {
 	    if(inf != null)
 		inf.tick(dt);
 	}
+	for (Relation rel : lsrel) {
+	    rel.tick();
+	    Widget inf = obinfo(rel.gobid, false);
+	    if (inf != null)
+		inf.tick(dt);
+	    final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
+	    if (gob != null) {
+		final Gob.Overlay ol = gob.findol(GobCombatSprite.id);
+		if (ol != null) {
+		    ((GobCombatSprite) ol.spr).update(rel);
+		} else {
+		    gob.daddol(GobCombatSprite.id, new GobCombatSprite(gob, rel));
+		}
+	    }
+	}
+
+	final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
+	for (Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
+	    if (wdg instanceof Buff) {
+		final Buff b = (Buff) wdg;
+		b.res().ifPresent(res -> {
+		    final DefenseType type = DefenseType.lookup.getOrDefault(res.name, null);
+		    if (type != null) {
+			defweights.put(type, b.ameter() / 100.0);
+			notfound.remove(type);
+		    } else if (Cards.lookup.get(res.layer(Resource.tooltip).t) instanceof Maneuver) {
+			maneuver = (Maneuver) Cards.lookup.get(res.layer(Resource.tooltip).t);
+			maneuvermeter = b.ameter() / 100.0;
+		    }
+		});
+	    }
+	}
+
+	for (final DefenseType zero : notfound) {
+	    //no longer has this defense.
+	    defweights.put(zero, 0.0);
+	}
     }
 
     public void draw(GOut g) {
         int y = UI.scale(10);
-	if(curava != null)
-	    y = curava.c.y + curava.sz.y + UI.scale(10);
 	int x = width - bg.sz().x - UI.scale(10);
         for(Relation rel : lsrel) {
-            if(rel == current) {
-		rel.show(false);
-                continue;
+	    if (rel == current) {
+		g.chcolor(Color.YELLOW);
+		g.image(bg, new Coord(x, y));
+		g.chcolor();
+	    } else {
+		g.image(bg, new Coord(x, y));
 	    }
-            g.image(bg, new Coord(x, y));
-            rel.ava.c = new Coord(x + UI.scale(25), ((bg.sz().y - rel.ava.sz.y) / 2) + y);
-	    rel.give.c = new Coord(x + UI.scale(5), UI.scale(4) + y);
-	    rel.purs.c = new Coord(rel.ava.c.x + rel.ava.sz.x + UI.scale(5), UI.scale(4) + y);
+
+	    // Top Row
+            rel.ava.c = new Coord(UI.scale(12), y + UI.scale(3));
+	    rel.purs.c = new Coord(rel.ava.c.x + rel.ava.sz.x + UI.scale(2), y + UI.scale(3));
+	    rel.give.c = new Coord(rel.purs.c.x + rel.purs.sz.x + UI.scale(2), y + UI.scale(3));
+	    // Mid Row
 	    rel.show(true);
+	    g.chcolor(Color.GREEN);
+	    final String rip = String.format("IP %d", rel.ip);
+	    FastText.print(g, new Coord(UI.scale(12), y + UI.scale(32)), rip);
+	    g.chcolor(Color.RED);
+	    final String roip = String.format("IP %d", rel.ip);
+	    FastText.print(g, new Coord(UI.scale(12), y + UI.scale(44)), roip);
+	    final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
+	    if (gob != null){
+		g.chcolor(Color.WHITE);
+		FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(32)), "Speed: %.2f", gob.getv());
+		FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(44)), "Distance: %.2f",
+			gob.getc().dist(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc()) / 11.0);
+	    }
+	    // Bottom Row
+	    g.chcolor();
+	    final Coord c = new Coord(UI.scale(12), y + UI.scale(64));
+	    for (Widget wdg = rel.buffs.child; wdg != null; wdg = wdg.next) {
+		if (!(wdg instanceof Buff))
+		    continue;
+		final Buff buf = (Buff) wdg;
+		if (buf.ameter >= 0 && buf.isOpening()) {
+		    buf.fightdraw(g.reclip(c.copy(), Buff.scframe.tex().sz()));
+		    c.x += Buff.scframe.tex().sz().x + 2;
+		}
+	    }
             y += bg.sz().y + ymarg;
         }
         super.draw(g);
@@ -264,55 +473,84 @@ public class Fightview extends Widget {
     }
 
     public void uimsg(String msg, Object... args) {
-        if(msg == "new") {
-            Relation rel = new Relation(uint32((Integer)args[0]));
-	    rel.give((Integer)args[1]);
-	    rel.ip = (Integer)args[2];
-	    rel.oip = (Integer)args[3];
-            lsrel.addFirst(rel);
-            return;
-        } else if(msg == "del") {
-            Relation rel = getrel(uint32((Integer)args[0]));
-	    rel.remove();
-            lsrel.remove(rel);
-	    if(rel == current)
-		setcur(null);
-            return;
-        } else if(msg == "upd") {
-            Relation rel = getrel(uint32((Integer)args[0]));
-	    rel.give((Integer)args[1]);
-	    rel.ip = (Integer)args[2];
-	    rel.oip = (Integer)args[3];
-            return;
-	} else if(msg == "used") {
-	    use((args[0] == null)?null:ui.sess.getres((Integer)args[0]));
-	    return;
-	} else if(msg == "ruse") {
-	    Relation rel = getrel(uint32((Integer)args[0]));
-	    rel.use((args[1] == null)?null:ui.sess.getres((Integer)args[1]));
-	    return;
-        } else if(msg == "cur") {
-            try {
-                Relation rel = getrel(uint32((Integer)args[0]));
-                lsrel.remove(rel);
-                lsrel.addFirst(rel);
-		setcur(rel);
-            } catch(Notfound e) {
-		setcur(null);
+	switch (msg) {
+	    case "new" -> {
+		Relation rel = new Relation(uint32((Integer) args[0]));
+		rel.give((Integer) args[1]);
+		rel.ip = (Integer) args[2];
+		rel.oip = (Integer) args[3];
+		lsrel.addFirst(rel);
+		return;
 	    }
-            return;
-	} else if(msg == "atkc") {
-	    atkcs = Utils.rtime();
-	    atkct = atkcs + (((Number)args[0]).doubleValue() * 0.06);
-	    return;
-	} else if(msg == "blk") {
-	    blk = n2r((Integer)args[0]);
-	    return;
-	} else if(msg == "atk") {
-	    batk = n2r((Integer)args[0]);
-	    iatk = n2r((Integer)args[1]);
-	    return;
+	    case "del" -> {
+		Relation rel = getrel(uint32((Integer) args[0]));
+		rel.remove();
+		rel.destroy();
+		lsrel.remove(rel);
+		if (rel == current)
+		    setcur(null);
+		final Gob g = ui.sess.glob.oc.getgob(rel.gobid);
+		if (g != null) {
+		    final Gob.Overlay ol = g.findol(GobCombatSprite.id);
+		    if (ol != null) {
+			((GobCombatSprite) ol.spr).update(null);
+		    }
+		}
+		return;
+	    }
+	    case "upd" -> {
+		Relation rel = getrel(uint32((Integer) args[0]));
+		rel.give((Integer) args[1]);
+		rel.ip = (Integer) args[2];
+		rel.oip = (Integer) args[3];
+		return;
+	    }
+	    case "used" -> {
+		use((args[0] == null) ? null : ui.sess.getres((Integer) args[0]));
+		if (current != null)
+		    current.checkWeight();
+		return;
+	    }
+	    case "ruse" -> {
+		Relation rel = getrel(uint32((Integer) args[0]));
+		rel.use((args[1] == null) ? null : ui.sess.getres((Integer) args[1]));
+		return;
+	    }
+	    case "cur" -> {
+		try {
+		    Relation rel = getrel(uint32((Integer) args[0]));
+		    lsrel.remove(rel);
+		    lsrel.addFirst(rel);
+		    setcur(rel);
+		} catch (Notfound e) {
+		    setcur(null);
+		}
+		return;
+	    }
+	    case "atkc" -> {
+		atkcs = Utils.rtime();
+		atkct = atkcs + (((Number) args[0]).doubleValue() * 0.06);
+		return;
+	    }
+	    case "blk" -> {
+		blk = n2r((Integer) args[0]);
+		return;
+	    }
+	    case "atk" -> {
+		batk = n2r((Integer) args[0]);
+		iatk = n2r((Integer) args[1]);
+		return;
+	    }
 	}
         super.uimsg(msg, args);
     }
+
+    /*******************************************************************************
+     * For Scripting API only
+     */
+    @SuppressWarnings("unused")
+    public Relation[] getrelations(){
+	return lsrel.toArray(new Relation[0]);
+    }
+
 }

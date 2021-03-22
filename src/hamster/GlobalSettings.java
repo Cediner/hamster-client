@@ -9,8 +9,10 @@ import hamster.gob.Deleted;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
 import hamster.io.Storage;
+import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
+import hamster.util.JobSystem;
 import haven.JOGLPanel;
 
 import java.awt.*;
@@ -25,12 +27,10 @@ public class GlobalSettings {
     private static final Settings tmp = new Settings("gtmp", false);
 
     public static void init() {
+        //preload lisp scripting config
+        JobSystem.submit(LispScript::reloadConfig);
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
-            //logger.atInfo().log("Loading growth");
-            //Growth.init(optint.get());
-            //logger.atInfo().log("Loading range");
-            //Range.init(optint.get());
             logger.atInfo().log("Loading alerted");
             Alerted.init(optint.get());
             logger.atInfo().log("Loading deleted");

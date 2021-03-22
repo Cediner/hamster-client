@@ -27,14 +27,16 @@
 package haven;
 
 import hamster.KeyBind;
+import hamster.ui.fight.*;
 import haven.render.*;
+import haven.res.ui.tt.q.qbuff.Quality;
+import haven.res.ui.tt.wpn.Armpen;
+
 import java.util.*;
 import java.awt.Color;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import static hamster.KeyBind.*;
-import static hamster.KeyBind.KB_FOCUS_MAP;
 
 public class Fightsess extends Widget {
     private static final Coord off = new Coord(UI.scale(32), UI.scale(32));
@@ -47,19 +49,55 @@ public class Fightsess extends Widget {
     public static final Coord indbframeo = (indframe.sz().sub(off)).div(2);
     public static final Tex useframe = Resource.loadtex("gfx/hud/combat/lastframe");
     public static final Coord useframeo = (useframe.sz().sub(off)).div(2);
-    public static final int actpitch = UI.scale(50);
+    public static final int actpitchx = UI.scale(75);
+    public static final int actpitchy = UI.scale(75);
     public final Action[] actions;
     public int use = -1, useb = -1;
     public Coord pcc;
     public int pho;
     private Fightview fv;
 
+    // Enhanced Combat UI
+    private Coord actionAnchor;
+    private Coord enemyBuffAnchor;
+    private Coord enemyIPAnchor;
+    private Coord enemyLastMoveAnchor;
+    private Coord buffAnchor;
+    private Coord IPAnchor;
+    private Coord lastMoveAnchor;
+    private Coord cooldownAnchor;
+    //
+
     public static class Action {
 	public final Indir<Resource> res;
 	public double cs, ct;
 
-	public Action(Indir<Resource> res) {
+	// Enhanced Combat UI
+	public final int id;
+	public Card card;
+	public int cards;
+	private boolean discovered;
+	//
+
+	public Action(Indir<Resource> res, final int id) {
 	    this.res = res;
+	    this.id = id;
+	}
+
+	public boolean isDiscovered() {
+	    return discovered;
+	}
+
+	void tick(final UI ui) {
+	    if (!discovered) {
+		try {
+		    card = Cards.lookup.getOrDefault(res.get().layer(Resource.tooltip).t, Cards.unknown);
+		    cards = ui.gui.chrwdg.fight.cards(res.get().name);
+		    discovered = true;
+		} catch (Loading l) {
+		    //ignore
+		}
+	    }
 	}
     }
 
@@ -71,7 +109,6 @@ public class Fightsess extends Widget {
 	}
     }
 
-    @SuppressWarnings("unchecked")
     public Fightsess(int nact) {
 	pho = -UI.scale(40);
 	this.actions = new Action[nact];
@@ -86,6 +123,15 @@ public class Fightsess extends Widget {
     public void presize() {
 	resize(parent.sz);
 	pcc = sz.div(2);
+	final Coord center = sz.div(2);
+	actionAnchor = center.add(0, center.y / 2);
+	cooldownAnchor = center.sub(0, (int) (center.y / 1.5f));
+	enemyBuffAnchor = cooldownAnchor.add(50, 0);
+	enemyIPAnchor = cooldownAnchor.add(75, 15);
+	enemyLastMoveAnchor = cooldownAnchor.add(50, 50);
+	buffAnchor = cooldownAnchor.sub(50, 0);
+	IPAnchor = cooldownAnchor.add(-75, 15);
+	lastMoveAnchor = cooldownAnchor.add(-50, 50);
     }
 
     private void updatepos() {
@@ -97,7 +143,7 @@ public class Fightsess extends Widget {
 	if(raw == null)
 	    return;
 	pcc = map.screenxf(raw).round2();
-	pho = (int)(map.screenxf(raw.add(0, 0, UI.scale(20))).round2().sub(pcc).y) - UI.scale(20);
+	pho = (map.screenxf(raw.add(0, 0, UI.scale(20))).round2().sub(pcc).y) - UI.scale(20);
     }
 
     private static class Effect implements RenderTree.Node {
@@ -155,6 +201,11 @@ public class Fightsess extends Widget {
 		fx.spr.tick(dt);
 	    }
 	}
+	for (final var action : actions) {
+	    if (action != null) {
+		action.tick(ui);
+	    }
+	}
     }
 
     public void destroy() {
@@ -178,12 +229,10 @@ public class Fightsess extends Widget {
 
     private static Coord actc(int i) {
 	int rl = 5;
-	return(new Coord((actpitch * (i % rl)) - (((rl - 1) * actpitch) / 2), UI.scale(125) + ((i / rl) * actpitch)));
+	return(new Coord((actpitchx * (i % rl)) - (((rl - 1) * actpitchx) / 2),
+		UI.scale(125) + ((i / rl) * actpitchy)));
     }
 
-    private static final Coord cmc = UI.scale(new Coord(0, 67));
-    private static final Coord usec1 = UI.scale(new Coord(-65, 67));
-    private static final Coord usec2 = UI.scale(new Coord(65, 67));
     private Indir<Resource> lastact1 = null, lastact2 = null;
     private Text lastacttip1 = null, lastacttip2 = null;
     private Effect curtgtfx;
@@ -191,29 +240,48 @@ public class Fightsess extends Widget {
 	updatepos();
 	double now = Utils.rtime();
 
-	for(Buff buff : fv.buffs.children(Buff.class))
-	    buff.draw(g.reclip(pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
-	if(fv.current != null) {
-	    for(Buff buff : fv.current.buffs.children(Buff.class))
-		buff.draw(g.reclip(pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y), buff.sz));
+	for (Buff buff : fv.buffs.children(Buff.class)) {
+	    buff.sessdraw(g, buffAnchor.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20),
+		    buff.c.y - Buff.cframe.sz().y));
+	}
 
-	    g.aimage(ip.get().tex(), pcc.add(-UI.scale(75), 0), 1, 0.5);
-	    g.aimage(oip.get().tex(), pcc.add(UI.scale(75), 0), 0, 0.5);
+	if(fv.current != null) {
+	    for (Buff buff : fv.current.buffs.children(Buff.class)) {
+		buff.sessdraw(g, enemyBuffAnchor.add(buff.c.x + 20, buff.c.y - Buff.cframe.sz().y));
+	    }
+
+	    g.aimage(ip.get().tex(), IPAnchor, 1, 0.5);
+	    g.aimage(oip.get().tex(), enemyIPAnchor, 0, 0.5);
 
 	    if(fv.lsrel.size() > 1)
 		curtgtfx = fxon(fv.current.gobid, tgtfx, curtgtfx);
 	}
 
 	{
-	    Coord cdc = pcc.add(cmc);
-	    if(now < fv.atkct) {
+	    Coord cdc = cooldownAnchor;
+	    if (now < fv.atkct) {
 		double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 		g.chcolor(255, 0, 128, 224);
-		g.fellipse(cdc, UI.scale(new Coord(24, 24)), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)), Math.PI / 2);
+		g.fellipse(cdc, new Coord(24, 24), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)),
+			Math.PI / 2);
 		g.chcolor();
 	    }
 	    g.image(cdframe, cdc.sub(cdframe.sz().div(2)));
+	    if (fv.current != null && fv.current.estimatedBlockWeight != 0) {
+		final int stat;
+		final WeightType type;
+		if (fv.current.maneuver != null) {
+		    stat = (int) fv.current.maneuver.calculateStat(fv.current.estimatedBlockWeight);
+		    type = fv.current.maneuver.type;
+		} else {
+		    //An animal, just assume blockweight -> UA
+		    type = WeightType.UA;
+		    stat = (int) fv.current.estimatedBlockWeight;
+		}
+		FastText.aprintf(g, cdc.add(0, -50), 0.5, 0.0, "%s: %d", type, stat);
+	    }
 	}
+
 	try {
 	    Indir<Resource> lastact = fv.lastact;
 	    if(lastact != this.lastact1) {
@@ -223,7 +291,7 @@ public class Fightsess extends Widget {
 	    double lastuse = fv.lastuse;
 	    if(lastact != null) {
 		Tex ut = lastact.get().layer(Resource.imgc).tex();
-		Coord useul = pcc.add(usec1).sub(ut.sz().div(2));
+		Coord useul = lastMoveAnchor.sub(ut.sz().div(2));
 		g.image(ut, useul);
 		g.image(useframe, useul.sub(useframeo));
 		double a = now - lastuse;
@@ -234,8 +302,7 @@ public class Fightsess extends Widget {
 		    g.chcolor();
 		}
 	    }
-	} catch(Loading l) {
-	}
+	} catch(Loading ignored) { }
 	if(fv.current != null) {
 	    try {
 		Indir<Resource> lastact = fv.current.lastact;
@@ -246,7 +313,7 @@ public class Fightsess extends Widget {
 		double lastuse = fv.current.lastuse;
 		if(lastact != null) {
 		    Tex ut = lastact.get().layer(Resource.imgc).tex();
-		    Coord useul = pcc.add(usec2).sub(ut.sz().div(2));
+		    Coord useul = enemyLastMoveAnchor.sub(ut.sz().div(2));
 		    g.image(ut, useul);
 		    g.image(useframe, useul.sub(useframeo));
 		    double a = now - lastuse;
@@ -257,42 +324,106 @@ public class Fightsess extends Widget {
 			g.chcolor();
 		    }
 		}
-	    } catch(Loading l) {
-	    }
+	    } catch(Loading ignored) { }
 	}
-	for(int i = 0; i < actions.length; i++) {
-	    Coord ca = pcc.add(actc(i));
+
+	//My cards
+	final GItem weapon = weap();
+	final int weapq;
+	final int weapdmg;
+	final double weappen;
+	if (weapon != null) {
+	    weapq = weapon.getinfo(Quality.class).map(quality -> (int) quality.q).orElse(10);
+	    weapdmg = Weapons.lookup.getOrDefault(weapon.name().orElse(""), 0);
+	    weappen = weapon.getinfo(Armpen.class).orElse(Armpen.NOPEN).deg;
+	} else {
+	    weapq = weapdmg = 0;
+	    weappen = 0.0;
+	}
+	for (int i = 0; i < actions.length; i++) {
+	    Coord ca = actionAnchor.add(actc(i));
 	    Action act = actions[i];
 	    try {
-		if(act != null) {
+		if (act != null) {
 		    Resource res = act.res.get();
 		    Tex img = res.layer(Resource.imgc).tex();
 		    Coord ic = ca.sub(img.sz().div(2));
 		    g.image(img, ic);
-		    if(now < act.ct) {
+		    if (now < act.ct) {
+			//This is from an era when moves had their own cooldown
 			double a = (now - act.cs) / (act.ct - act.cs);
 			g.chcolor(0, 0, 0, 128);
 			g.prect(ca, ic.sub(ca), ic.add(img.sz()).sub(ca), (1.0 - a) * Math.PI * 2);
 			g.chcolor();
 		    }
-		    if(i == use) {
+		    if (i == use) {
 			g.image(indframe, ic.sub(indframeo));
-		    } else if(i == useb) {
+		    } else if (i == useb) {
 			g.image(indbframe, ic.sub(indbframeo));
 		    } else {
 			g.image(actframe, ic.sub(actframeo));
 		    }
+
+		    if (fv.current != null) {
+			if (act.card instanceof Attack) {
+			    final Attack atk = (Attack) act.card;
+			    final Pair<Double, Double> dmg = atk.calculateDamage(weapdmg, weapq, weappen,
+				    str(), fv.current.defweights);
+			    FastText.printf(g, ic.add(0, UI.scale(35)), "%d/%d", Math.round(dmg.a), Math.round(dmg.b));
+			    final int ua = ui.sess.glob.getcattr("unarmed").comp;
+			    final int mc = ui.sess.glob.getcattr("melee").comp;
+
+			    final Map<DefenseType, Double> newWeights = atk.calculateEnemyDefWeights(fv.maneuver, fv.maneuvermeter,
+				    ua, mc, act.cards,
+				    fv.current.defweights, fv.current.estimatedBlockWeight);
+			    FastText.printf(g, ic.add(0, UI.scale(45)), "%d/%d/%d/%d",
+				    Math.round(newWeights.get(DefenseType.RED) * 100),
+				    Math.round(newWeights.get(DefenseType.GREEN) * 100),
+				    Math.round(newWeights.get(DefenseType.BLUE) * 100),
+				    Math.round(newWeights.get(DefenseType.YELLOW) * 100));
+			} else if (act.card instanceof Restoration) {
+			    final Restoration restro = (Restoration) act.card;
+			    final Map<DefenseType, Double> newWeights = restro.getFutureWeights(act.cards, fv.defweights);
+			    FastText.printf(g, ic.add(0, UI.scale(35)), "%d/%d/%d/%d",
+				    Math.round(newWeights.get(DefenseType.RED) * 100),
+				    Math.round(newWeights.get(DefenseType.GREEN) * 100),
+				    Math.round(newWeights.get(DefenseType.BLUE) * 100),
+				    Math.round(newWeights.get(DefenseType.YELLOW) * 100));
+			    if (act.card == Cards.flex) {
+				final int ua = ui.sess.glob.getcattr("unarmed").comp;
+				final int mc = ui.sess.glob.getcattr("melee").comp;
+
+				final Map<DefenseType, Double> enemyWeights = restro.calculateEnemyDefWeights(fv.maneuver,
+					fv.maneuvermeter,
+					ua, mc, act.cards,
+					fv.current.defweights, fv.current.estimatedBlockWeight);
+				FastText.printf(g, ic.add(0, UI.scale(45)), "%d/%d/%d/%d",
+					Math.round(enemyWeights.get(DefenseType.RED) * 100),
+					Math.round(enemyWeights.get(DefenseType.GREEN) * 100),
+					Math.round(enemyWeights.get(DefenseType.BLUE) * 100),
+					Math.round(enemyWeights.get(DefenseType.YELLOW) * 100));
+			    }
+			}
+		    }
 		}
-	    } catch(Loading l) {}
+	    } catch (Loading ignored) { }
 	}
+    }
+
+    private GItem weap() {
+	return ui.gui.equ != null ? ui.gui.equ.getWeapon() : null;
+    }
+
+    private int str() {
+	final Glob.CAttr strattr = ui.sess.glob.getcattr("str");
+	return strattr.comp;
     }
 
     private Widget prevtt = null;
     private Text acttip = null;
-    public static final String[] keytips = {"1", "2", "3", "4", "5", "Shift+1", "Shift+2", "Shift+3", "Shift+4", "Shift+5"};
     public Object tooltip(Coord c, Widget prev) {
 	for(Buff buff : fv.buffs.children(Buff.class)) {
-	    Coord dc = pcc.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+	    Coord dc = buffAnchor.add(-buff.c.x - Buff.cframe.sz().x - UI.scale(20), buff.c.y - Buff.cframe.sz().y);
 	    if(c.isect(dc, buff.sz)) {
 		Object ret = buff.tooltip(c.sub(dc), prevtt);
 		if(ret != null) {
@@ -303,7 +434,7 @@ public class Fightsess extends Widget {
 	}
 	if(fv.current != null) {
 	    for(Buff buff : fv.current.buffs.children(Buff.class)) {
-		Coord dc = pcc.add(buff.c.x + UI.scale(20), buff.c.y + pho - Buff.cframe.sz().y);
+		Coord dc = enemyBuffAnchor.add(buff.c.x + UI.scale(20), buff.c.y - Buff.cframe.sz().y);
 		if(c.isect(dc, buff.sz)) {
 		    Object ret = buff.tooltip(c.sub(dc), prevtt);
 		    if(ret != null) {
@@ -313,9 +444,8 @@ public class Fightsess extends Widget {
 		}
 	    }
 	}
-	final int rl = 5;
 	for(int i = 0; i < actions.length; i++) {
-	    Coord ca = pcc.add(actc(i));
+	    Coord ca = actionAnchor.add(actc(i));
 	    Indir<Resource> act = (actions[i] == null) ? null : actions[i].res;
 	    try {
 		if(act != null) {
@@ -329,55 +459,63 @@ public class Fightsess extends Widget {
 			return(acttip);
 		    }
 		}
-	    } catch(Loading l) {}
+	    } catch(Loading ignored) {}
 	}
 	try {
 	    Indir<Resource> lastact = this.lastact1;
 	    if(lastact != null) {
 		Coord usesz = lastact.get().layer(Resource.imgc).sz;
-		Coord lac = pcc.add(usec1);
+		Coord lac = lastMoveAnchor;
 		if(c.isect(lac.sub(usesz.div(2)), usesz)) {
 		    if(lastacttip1 == null)
 			lastacttip1 = Text.render(lastact.get().layer(Resource.tooltip).t);
 		    return(lastacttip1);
 		}
 	    }
-	} catch(Loading l) {}
+	} catch(Loading ignored) {}
 	try {
 	    Indir<Resource> lastact = this.lastact2;
 	    if(lastact != null) {
 		Coord usesz = lastact.get().layer(Resource.imgc).sz;
-		Coord lac = pcc.add(usec2);
+		Coord lac = enemyLastMoveAnchor;
 		if(c.isect(lac.sub(usesz.div(2)), usesz)) {
 		    if(lastacttip2 == null)
 			lastacttip2 = Text.render(lastact.get().layer(Resource.tooltip).t);
 		    return(lastacttip2);
 		}
 	    }
-	} catch(Loading l) {}
+	} catch(Loading ignored) {}
 	return(null);
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "act") {
-	    int n = (Integer)args[0];
-	    if(args.length > 1) {
-		Indir<Resource> res = ui.sess.getres((Integer)args[1]);
-		actions[n] = new Action(res);
-	    } else {
-		actions[n] = null;
+	switch (msg) {
+	    case "act": {
+		int n = (Integer) args[0];
+		if (args.length > 1) {
+		    Indir<Resource> res = ui.sess.getres((Integer) args[1]);
+		    actions[n] = new Action(res, n);
+		} else {
+		    actions[n] = null;
+		}
+		break;
 	    }
-	} else if(msg == "acool") {
-	    int n = (Integer)args[0];
-	    double now = Utils.rtime();
-	    actions[n].cs = now;
-	    actions[n].ct = now + (((Number)args[1]).doubleValue() * 0.06);
-	} else if(msg == "use") {
-	    this.use = (Integer)args[0];
-	    this.useb = (args.length > 1) ? ((Integer)args[1]) : -1;
-	} else if(msg == "used") {
-	} else {
-	    super.uimsg(msg, args);
+	    case "acool": {
+		int n = (Integer) args[0];
+		double now = Utils.rtime();
+		actions[n].cs = now;
+		actions[n].ct = now + (((Number) args[1]).doubleValue() * 0.06);
+		break;
+	    }
+	    case "use":
+		this.use = (Integer) args[0];
+		this.useb = (args.length > 1) ? ((Integer) args[1]) : -1;
+		break;
+	    case "used":
+		break;
+	    default:
+		super.uimsg(msg, args);
+		break;
 	}
     }
 
@@ -478,7 +616,6 @@ public class Fightsess extends Widget {
     public boolean keyup(KeyEvent ev) {
 	final String bind = KeyBind.generateSequence(ev, ui);
 	if((holdgrab != null) && (KB_FIGHT_MOVE[held].match(bind))) {
-	    MapView map = getparent(GameUI.class).map;
 	    new Release(held);
 	    holdgrab.remove();
 	    holdgrab = null;
