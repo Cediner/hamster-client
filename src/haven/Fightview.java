@@ -498,6 +498,8 @@ public class Fightview extends Widget {
 	    }
 	    case "used" -> {
 		use((args[0] == null) ? null : ui.sess.getres((Integer) args[0]));
+		if (current != null)
+		    current.checkWeight();
 		return;
 	    }
 	    case "ruse" -> {
