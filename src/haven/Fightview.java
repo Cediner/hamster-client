@@ -151,6 +151,15 @@ public class Fightview extends Widget {
 		if (g != null && g.findol(AggroMark.id) == null) {
 		    g.daddol(AggroMark.id, new AggroMark());
 		}
+	    } else {
+		final Gob g = ui.sess.glob.oc.getgob(gobid);
+		if (g != null) {
+		    final Gob.Overlay ol = g.findol(AggroMark.id);
+		    final AggroMark mark = ol != null ? (AggroMark) ol.spr : null;
+		    if(mark != null) {
+		        mark.rem();
+		    }
+		}
 	    }
 	}
 
