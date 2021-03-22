@@ -72,6 +72,8 @@ public class CharWnd extends Window {
     private final Coord studyc;
     private int scost;
 
+    public FightWnd fight;
+
     public static class FoodMeter extends Widget {
 	public static final Tex frame =  Resource.loadtex("gfx/hud/chr/foodm");
 	public static final Coord marg = new Coord(5, 5), trmg = new Coord(10, 10);
@@ -2139,6 +2141,7 @@ public class CharWnd extends Window {
 	    Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
 	    Frame.around(sattr, Collections.singletonList(inf));
 	} else if(place == "fmg") {
+	    fight = (FightWnd) child;
 	    fgt.add(child, 0, 0);
 	} else if(place == "wound") {
 	    this.wound = (Wound.Info)child;

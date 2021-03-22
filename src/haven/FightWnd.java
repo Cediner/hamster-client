@@ -54,6 +54,19 @@ public class FightWnd extends Widget {
 	public void draw(BufferedImage img, Graphics g);
     }
 
+    public int cards(final String name) {
+	for (final Action act : acts) {
+	    try {
+		if (act.res.get().name.equals(name)) {
+		    return act.u;
+		}
+	    } catch (Loading l) {
+		//ignore
+	    }
+	}
+	return 1;
+    }
+
     private static final OwnerContext.ClassResolver<FightWnd> actxr = new OwnerContext.ClassResolver<FightWnd>()
 	.add(Glob.class, wdg -> wdg.ui.sess.glob)
 	.add(Session.class, wdg -> wdg.ui.sess);

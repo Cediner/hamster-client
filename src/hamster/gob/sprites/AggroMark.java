@@ -26,15 +26,13 @@ public class AggroMark extends SkelSprite implements Gob.SetupMod {
 
 
     public void rem() {
-        final Gob g = ((Gob)owner);
-        if(g != null) {
-            g.queueDeltas(Collections.singletonList((gob) -> {
-                final Gob.Overlay ol = gob.findol(id);
-                if (ol != null) {
-                    ol.remove();
-                }
-            }));
-        }
+        alive = false;
+    }
+
+    @Override
+    public boolean tick(double ddt) {
+        super.tick(ddt);
+        return !alive;
     }
 
     @Override

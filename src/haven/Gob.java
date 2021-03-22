@@ -278,7 +278,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	//This is to avoid Iterator state conflicts of adding overlays while in an overlay tick
 	for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
 	    Overlay ol = i.next();
-	    ols.add(ol);
+	    addol(ol);
 	    i.remove();
 	}
 	updstate();
