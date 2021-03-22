@@ -76,6 +76,22 @@ public class GlobalSettings {
     public static final IndirSetting<Double> UISCALE = new IndirSetting<>(global, "display.ui-scale", 1.0);
     public static final IndirSetting<String> FRAMESYNCMODE = new IndirSetting<>(global, "display.frame-sync-mode", JOGLPanel.SyncMode.FRAME.name());
 
+    // Map options
+    public final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "map.skip-loading", false); // TODO
+    public final IndirSetting<Integer> DRAWGRIDRADIUS = new IndirSetting<>(global, "map.drag-grid-radius", 2); //TODO
+    public final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true); // TODO
+    public final IndirSetting<Boolean> SHOWMAP = new IndirSetting<>(global, "map.show-map", true); //TODO
+    public final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true); //TODO
+    public final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false); //TODO
+    public final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true); //TODO
+
+    // Lighting
+    public static final IndirSetting<Boolean> NIGHTVISION = new IndirSetting<>(global, "lighting.nightvision", false); //TODO
+    public static final IndirSetting<Color> NVAMBIENTCOL = new IndirSetting<>(global, "lighting.nv-ambient-col", Color.WHITE); //TODO
+    public static final IndirSetting<Color> NVDIFFUSECOL = new IndirSetting<>(global, "lighting.nv-diffuse-col", Color.WHITE); //TODO
+    public static final IndirSetting<Color> NVSPECCOC = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE); //TODO
+    public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false); //TODO
+
     //Theme options
     public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");
     public static final IndirSetting<Color> WNDCOL =

@@ -13,6 +13,9 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWPCLAIM;
     public final IndirSetting<Boolean> SHOWVCLAIM;
     public final IndirSetting<Boolean> SHOWKCLAIM;
+    public final IndirSetting<Boolean> COLORFULDUST; //TODO
+    public final IndirSetting<Boolean> KEEPGOBS; //TODO
+    public final IndirSetting<Boolean> KEEPGRIDS;  //TODO
 
     ////Minimap
     public final IndirSetting<Boolean> SHOWMMGOBS;
@@ -37,7 +40,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> MMSHOWVIEW;
     public final IndirSetting<Color> MMPATHCOL;
 
-
     ////Gob
     public final IndirSetting<Integer> BADKIN;
     public final IndirSetting<Boolean> COLORFULFARMES;
@@ -50,6 +52,13 @@ public class SessionSettings {
     public final IndirSetting<BaseColor> GOBHITBOXCOL;
     public final IndirSetting<Boolean> SHOWGOBHALO;
     public final IndirSetting<Boolean> SHOWGOBHALOONHEARTH;
+    public final IndirSetting<Boolean> SHOWGOBHP; //TODO
+    public final IndirSetting<Boolean> SHOWGOBPATH; //TODO
+    public final IndirSetting<Boolean> SHOWANIMALPATH; //TODO
+    public final IndirSetting<Boolean> SHOWANIMALRADIUS; //TODO
+    public final IndirSetting<Color> GOBPATHCOL; //TODO
+    public final IndirSetting<Color> ANIMALPATHCOL; //TODO
+    public final IndirSetting<Color> VEHPATHCOL; //TODO
 
     ////Audio
     public final IndirSetting<Double> TIMERVOL;
@@ -96,6 +105,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWITEMCONT;
     public final IndirSetting<Boolean> ALWAYSITEMLONGTIPS;
     public final IndirSetting<Boolean> AUTOEQUIP;
+    public final IndirSetting<Boolean> WATERDROPITEMCTRL; //TODO
     //Flowermenu UI
     public final IndirSetting<Boolean> QUICKFLMENU;
     public final IndirSetting<Boolean> KEEPFLOPEN;
@@ -117,7 +127,9 @@ public class SessionSettings {
         SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
         SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
         SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
-
+        COLORFULDUST = new IndirSetting<>(local, "display.colorful-dust", false);
+        KEEPGOBS = new IndirSetting<>(local, "display.keep-gobs", false);
+        KEEPGRIDS = new IndirSetting<>(local, "display.keep-grids", false);
 
         //Minimap
         SHOWMMGOBS = new IndirSetting<>(local, "minimap.show-gobs", true);
@@ -154,6 +166,13 @@ public class SessionSettings {
         GOBHITBOXCOL = new IndirSetting<>(local, "gob.hitbox-col", new BaseColor(Color.WHITE));
         SHOWGOBHALO = new IndirSetting<>(local, "gob.show-gob-halo", false);
         SHOWGOBHALOONHEARTH = new IndirSetting<>(local, "gob.show-gob-halo-on-hearth", true);
+        SHOWGOBHP = new IndirSetting<>(local, "gob.show-gob-hp", true);
+        SHOWGOBPATH = new IndirSetting<>(local, "gob.show-gob-path", false);
+        SHOWANIMALPATH = new IndirSetting<>(local, "gob.show-animal-path", false);
+        SHOWANIMALRADIUS = new IndirSetting<>(local, "gob.show-animal-radius", false);
+        GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", Color.GREEN);
+        ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", Color.RED);
+        VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", Color.ORANGE);
 
         //Audio
         TIMERVOL = new IndirSetting<>(local,"audio.timer-volume", 1.0);
@@ -200,6 +219,7 @@ public class SessionSettings {
         SHOWITEMCONT = new IndirSetting<>(local, "ui.inv.show-item-cont", true);
         ALWAYSITEMLONGTIPS = new IndirSetting<>(local, "ui.inv.always-show-longtip", true);
         AUTOEQUIP = new IndirSetting<>(local, "ui.inv.auto-equip", true);
+        WATERDROPITEMCTRL = new IndirSetting<>(local, "ui.dont-drop-item-over-water", false);
 
         QUICKFLMENU = new IndirSetting<>(local, "ui.flowermenu.quick-menu", false);
         KEEPFLOPEN = new IndirSetting<>(local, "ui.flowermenu.never-close-on-click", false);
