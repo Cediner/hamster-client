@@ -156,13 +156,9 @@
     <exec executable="git" outputproperty="gitrev" failifexecutionfails="false">
       <arg line="rev-parse HEAD"/>
     </exec>
-    <echo file="update/run.bat">mkdir logs
-java -Xmx1024m -Dhttp.agent="curl/7.51.0" -jar hafen-updater.jar update https://gitlab.com/Boshaw/hamster-client/raw/master/update/ -Djava.util.logging.config.file=logging.properties -Xmx1024M -jar hafen.jar</echo>
-    <java jar="update/hafen-updater.jar" fork="true">
+    <java jar="update/hamster-client-updater.jar" fork="true" dir="update/">
       <arg value="hash"/>
-      <arg value="update/"/>
       <arg value="${gitrev}"/>
     </java>
-    <move file="ver" todir="update"/>
   </target>
 </project>
