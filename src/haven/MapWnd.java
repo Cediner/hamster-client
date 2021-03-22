@@ -105,25 +105,6 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	toolbar.pack();
 
 	makeHidable();
-	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
-		.state(() -> ui.gui.settings.MMSHOWVIEW.get())
-		.changed(a -> ui.gui.settings.MMSHOWVIEW.set(a));
-	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
-		.state(() -> ui.gui.settings.MMSHOWGRID.get())
-		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a));
-	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisibility());
-	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
-	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("cplot", a));
-	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
-	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("realm", a));
-
-	addBtn("buttons/wnd/two", "2nd remembered window size",
-		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
-		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
-	addBtn("buttons/wnd/one", "1st remembered window size",
-		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
-		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
-
 
 	binds.put(KB_RECALL_MAP_ONE, () -> { recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE); return true; });
 	binds.put(KB_RECALL_MAP_TWO, () -> { recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO); return true; });
@@ -133,6 +114,32 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	binds.put(KB_MAP_COMPACT, () -> {toggleHide(); return true;});
 
 	resize(sz);
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
+		.state(() -> ui.gui.settings.MMSHOWVIEW.get())
+		.changed(a -> ui.gui.settings.MMSHOWVIEW.set(a))
+		.set(ui.gui.settings.MMSHOWVIEW.get());
+	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
+		.state(() -> ui.gui.settings.MMSHOWGRID.get())
+		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a))
+		.set(ui.gui.settings.MMSHOWGRID.get());
+	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisibility());
+	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
+	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("realm", a));
+	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
+	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("cplot", a));
+
+	addBtn("buttons/wnd/two", "2nd remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
+		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
+	addBtn("buttons/wnd/one", "1st remembered window size",
+		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
+		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
+	pack();
     }
 
     private void toggleol(String tag, boolean a) {
