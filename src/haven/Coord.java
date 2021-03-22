@@ -118,6 +118,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	return(new Coord(x * fx, y * fy));
     }
 
+    public Coord mul(float fx, float fy) {
+	return(new Coord(x * fx, y * fy));
+    }
+
     public Coord mul(double f) {
 	return(new Coord((int)Math.round(x * f), (int)Math.round(y * f)));
     }
@@ -144,6 +148,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 
     public Coord div(double d) {
         return(new Coord((int)Math.round(x / d), (int)Math.round(y / d)));
+    }
+
+    public Coord div(double dx, double dy) {
+	return new Coord((int)Math.round(x / dx), (int)Math.round(y / dy));
     }
 
     public Coord mod(Coord d) {
@@ -321,4 +329,5 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
     public int area() {
 	return x * y;
     }
+
 }

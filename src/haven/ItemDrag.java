@@ -96,6 +96,23 @@ public class ItemDrag extends WItem {
 	    }
 	})) || (MouseBind.HITM_IACT_OBJ.check(bind, () -> {
 	    if(!locked()) {
+	        ui.setmods(false, false, false);
+		interact(parent, c.add(this.c));
+		return true;
+	    } else {
+		return false;
+	    }
+	})) || (MouseBind.HITM_TRANS_OBJ_SHIFT.check(bind, () -> {
+	    if(!locked()) {
+		ui.setmods(true, false, false);
+		interact(parent, c.add(this.c));
+		return true;
+	    } else {
+		return false;
+	    }
+	})) || (MouseBind.HITM_TRANS_ALL_OBJ.check(bind, () -> {
+	    if(!locked()) {
+		ui.setmods(true, true, false);
 		interact(parent, c.add(this.c));
 		return true;
 	    } else {

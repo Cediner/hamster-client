@@ -426,8 +426,8 @@ public class BeltWnd extends MovableWidget {
     }
 
     @Override
-    public void toggleVisiblity() {
-        super.toggleVisiblity();
+    public void toggleVisibility() {
+        super.toggleVisibility();
         visible_s.set(visible);
     }
 }

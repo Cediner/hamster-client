@@ -31,6 +31,9 @@ import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
+import hamster.ui.Timer.TimersWnd;
+import hamster.ui.chr.SkillnCredoWnd;
+import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 
@@ -54,7 +57,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Fightview fv;
     private Text lastmsg;
     private double msgtime;
-    public Window invwnd, equwnd, makewnd, srchwnd, iconwnd;
+    public Window equwnd, makewnd, srchwnd, iconwnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -71,6 +74,22 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
+
+    // Delay adding of widgets to GameUI to be part of UI thread
+    private final List<Widget> delayedAdd = new ArrayList<>();
+
+    //movement pointers
+    public final CustomPointer pointer;
+
+    //Scent Tracking
+    public final List<DowseWnd> dowsewnds = new ArrayList<>();
+
+    //Character related windows
+    public final SkillnCredoWnd scwnd;
+
+    //Inventories
+    public Window invwnd;
+    public MiniInvView mminv;
 
     //Current village / Realm
     public String curvil = "???";
@@ -95,6 +114,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public IMeter hp, stam, energy;
     private final List<Widget> meters = new LinkedList<>();
 
+    //Forage helper
+    public final ForageHelperWnd foragehelper;
+
     //Windows for various Gob mods
     public final Window hidden, deleted, alerted, highlighted;
 
@@ -108,8 +130,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     //Map Markers
     public MapMarkerWnd mapmarkers;
 
+    //Timers
+    public final TimersWnd timers;
+
     //Equipment
     public Equipory equ;
+    public MiniEquipView mmequ;
+    public final IndirSlotView lrhandview;
 
     //Script Management
     public final ScriptManager scripts;
@@ -187,6 +214,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	highlighted = new HighlightManager();
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
+	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
+	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
+	timers = new TimersWnd();
+	timers.hide();
+	foragehelper = new ForageHelperWnd();
+	foragehelper.hide();
+	scwnd = new SkillnCredoWnd();
+	scwnd.hide();
+	pointer = new CustomPointer("Queued Move");
     }
 
     protected void attached() {
@@ -221,6 +257,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    });
 	Debug.log = ui.cons.out;
 	// Adding local widgets / custom stuff
+	final Coord stdloc = UI.scale(200, 200);
 	ui.root.sessionDisplay.unlink();
 	add(ui.root.sessionDisplay);
 	opts = add(new OptionsWnd(ui));
@@ -231,10 +268,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	buffs = add(new Bufflist(), UI.scale(new Coord(95, 65)));
     	add(cal, new Coord(sz.x / 2 - cal.sz.x / 2, 0));
     	add(scripts).hide();
-	add(hidden, new Coord(200, 200));
-	add(deleted, new Coord(200, 200));
-	add(alerted, new Coord(200, 200));
-	add(highlighted,  new Coord(200, 200));
+	add(hidden, stdloc);
+	add(deleted, stdloc);
+	add(alerted, stdloc);
+	add(highlighted, stdloc);
+	add(lrhandview, stdloc);
+	add(timers, stdloc);
+	add(foragehelper, stdloc);
+	add(scwnd, stdloc);
+	add(pointer);
     }
 
     public void dispose() {
@@ -496,6 +538,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		invwnd.pack();
 		if(!settings.SHOWINVONLOGIN.get())
 		    invwnd.hide();
+		mminv = new MiniInvView(maininv);
+		add(mminv, new Coord(100, 100));
 		add(invwnd, Utils.getprefc("wndc-inv", new Coord(100, 100)));
 	    }
 	    case "equ" -> {
@@ -503,6 +547,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		equwnd.add(equ = (Equipory) child, Coord.z);
 		equwnd.pack();
 		equwnd.hide();
+		mmequ = new MiniEquipView(equ);
+		add(mmequ, new Coord(400, 10));
 		add(equwnd, Utils.getprefc("wndc-equ", new Coord(400, 10)));
 	    }
 	    case "hand" -> {
@@ -743,6 +789,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    afk = false;
 	}
 	mapfiletick();
+	synchronized (delayedAdd) {
+	    for(final var chd : delayedAdd) {
+	        add(chd);
+	    }
+	    delayedAdd.clear();
+	}
     }
     
     public void uimsg(String msg, Object... args) {
@@ -896,6 +948,25 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	wdg.c = fitwdg(wdg, wdg.c);
     }
 
+    public <T extends Widget> T dadd(T child) {
+        synchronized (delayedAdd) {
+	    delayedAdd.add(child);
+	}
+    	return child;
+    }
+
+    public void makeDowseWnd(final DowseWnd wnd) {
+	synchronized (dowsewnds) {
+	    dowsewnds.add(dadd(wnd));
+	}
+    }
+
+    public void remDowseWnd(final DowseWnd wnd) {
+	synchronized (dowsewnds) {
+	    dowsewnds.removeIf(wdg -> wdg == wnd);
+	}
+    }
+
     public boolean wndstate(Window wnd) {
 	if(wnd == null)
 	    return(false);
@@ -905,13 +976,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
     private void setKeybinds() {
         binds.put(KB_TOGGLE_CMD, () -> { entercmd(); return true; });
-        binds.put(KB_TOGGLE_CHAT, () -> { chatwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_CHAR, () -> { chrwdg.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisiblity(); return true; });
-        binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisiblity(); return true; });
+        binds.put(KB_TOGGLE_CHAT, () -> { chatwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_CHAR, () -> { chrwdg.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
     }

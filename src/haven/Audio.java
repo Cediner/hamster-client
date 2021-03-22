@@ -582,6 +582,18 @@ public class Audio {
 	    });
     }
 
+    public static void play(final Resource clip, final float vol) {
+	queue(new Runnable() {
+	    public void run() {
+		try {
+		    play(new Audio.VolAdjust(fromres(clip), vol));
+		} catch (Loading e) {
+		    queue(this);
+		}
+	    }
+	});
+    }
+
     public static void play(final Indir<Resource> clip, final float vol) {
 	queue(new Runnable() {
 	    public void run() {

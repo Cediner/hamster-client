@@ -88,6 +88,7 @@ public class Equipory extends Widget implements DTarget {
     }
 
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+    public final WItem[] slots = new WItem[ecoords.length];
     Map<GItem, Collection<WItem>> wmap = new HashMap<>();
     private final Avaview ava;
     private GItem lweap, rweap;
@@ -213,18 +214,27 @@ public class Equipory extends Widget implements DTarget {
 	    add(child);
 	    GItem g = (GItem)child;
 	    ArrayList<WItem> v = new ArrayList<>();
-	    for(int i = 0; i < args.length; i++) {
-		int ep = (Integer)args[i];
-		if(ep < ecoords.length)
-		    v.add(add(new WItem(g), ecoords[ep].add(1, 1)));
+	    for (Object arg : args) {
+		int ep = (Integer) arg;
+		final var itm = new WItem(g);
+		if (ep < ecoords.length) {
+		    v.add(add(itm, ecoords[ep].add(1, 1)));
+		    slots[ep] = itm;
+		}
 		switch (ep) {
 		    case 5 -> {
-		        if(ui.gui.settings.SHOWBELTONLOGIN.get()) {
-		            g.delayediact = true;
+			if (ui.gui.settings.SHOWBELTONLOGIN.get()) {
+			    g.delayediact = true;
 			}
 		    }
-		    case 6 -> lweap = g;
-		    case 7 -> rweap = g;
+		    case 6 -> {
+		        lweap = g;
+			ui.gui.lrhandview.additm(itm, new Coord(0, 0));
+		    }
+		    case 7 -> {
+			rweap = g;
+			ui.gui.lrhandview.additm(itm, new Coord(1, 0));
+		    }
 		}
 	    }
 	    v.trimToSize();
@@ -238,8 +248,24 @@ public class Equipory extends Widget implements DTarget {
 	super.cdestroy(w);
 	if(w instanceof GItem) {
 	    GItem i = (GItem)w;
-	    for(WItem v : wmap.remove(i))
+	    final Collection<WItem> witms = wmap.remove(i);
+	    for(WItem v : witms) {
 		ui.destroy(v);
+		for (int s = 0; s < slots.length; ++s) {
+		    if (slots[s] == v) {
+			slots[s] = null;
+		    }
+		}
+	    }
+	    if (lweap == i) {
+		lweap = null;
+		for (WItem v : witms)
+		    ui.gui.lrhandview.remitm(v);
+	    } else if (rweap == i) {
+		rweap = null;
+		for (WItem v : witms)
+		    ui.gui.lrhandview.remitm(v);
+	    }
 	}
     }
 

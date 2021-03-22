@@ -375,7 +375,14 @@ public class UI {
 	    throw(new UIException("Uimsg to non-existent widget " + id, msg, args));
 	}
     }
-	
+
+    // This is for overriding mod flags with mousebinds / keybinds
+    public void setmods(final boolean shift, final boolean ctrl, final boolean meta) {
+        modshift = shift;
+        modctrl = ctrl;
+        modmeta = meta;
+    }
+
     private void setmods(InputEvent ev) {
 	int mod = ev.getModifiersEx();
 	modshift = (mod & InputEvent.SHIFT_DOWN_MASK) != 0;

@@ -9,6 +9,8 @@ import hamster.gob.Deleted;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
 import hamster.io.Storage;
+import hamster.ui.chr.CredoTree;
+import hamster.ui.chr.SkillTree;
 import haven.JOGLPanel;
 
 import java.awt.*;
@@ -43,10 +45,10 @@ public class GlobalSettings {
             ItemData.init(optint.get());
             logger.atInfo().log("Loading foragables");
             ForagableData.init(optint.get());
-            //logger.atInfo().log("Loading Skill Data");
-            //SkillTree.init(optint.get());
-            //logger.atInfo().log("Loading Credo Data");
-            //CredoTree.init(optint.get());
+            logger.atInfo().log("Loading Skill Data");
+            SkillTree.init(optint.get());
+            logger.atInfo().log("Loading Credo Data");
+            CredoTree.init(optint.get());
             //Internal lookups are no longer needed
             optint.get().close();
         } else {

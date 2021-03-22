@@ -15,6 +15,10 @@ public class GridGrouping extends Grouping {
         this.maxy = maxy;
     }
 
+    public GridGrouping(final String cap, final int spacer, final int maxy) {
+        this(cap, new Coord(spacer, spacer), 0, maxy, false);
+    }
+
     @Override
     public void pack() {
         int y = 0;

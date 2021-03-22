@@ -31,8 +31,9 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox("Show Hotbar 1", ui.gui.settings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Hotbar 2", ui.gui.settings.SHOWHOTBAR2, (val) -> ui.gui.hotbar2.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Hotbar 3", ui.gui.settings.SHOWHOTBAR3, (val) -> ui.gui.hotbar3.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Mini Inventory", ui.gui.settings.SHOWMINIINV));
-            visibility.add(new IndirCheckBox("Show Mini Equipment", ui.gui.settings.SHOWMINIEQU));
+            visibility.add(new IndirCheckBox("Show Mini Inventory", ui.gui.settings.SHOWMINIINV, val -> ui.gui.mminv.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Mini Equipment", ui.gui.settings.SHOWMINIEQU, val -> ui.gui.mmequ.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", ui.gui.settings.SHOWLRSLOTS, val -> ui.gui.lrhandview.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Study Window", ui.gui.settings.SHOWSTUDY));
             visibility.add(new IndirCheckBox("Show Inventory on Login", ui.gui.settings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox("Show Belt on Login", ui.gui.settings.SHOWBELTONLOGIN));

@@ -92,8 +92,8 @@ public class Speedget extends MovableWidget {
     }
 
     @Override
-    public void toggleVisiblity() {
-	super.toggleVisiblity();
+    public void toggleVisibility() {
+	super.toggleVisibility();
 	ui.gui.settings.SHOWSPEED.set(visible);
     }
 

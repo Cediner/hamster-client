@@ -1293,6 +1293,15 @@ public class Utils {
 		((float)c.getAlpha() / 255.0f)
 	    });
     }
+
+    public static byte[] c2ba(final Color c) {
+        return new byte[] {
+		(byte)c.getRed(),
+		(byte)c.getGreen(),
+		(byte)c.getBlue(),
+		(byte)c.getAlpha()
+	};
+    }
     
     @SuppressWarnings("unchecked")
     public static <T> T[] mkarray(Class<T> cl, int len) {

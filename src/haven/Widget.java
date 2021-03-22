@@ -1449,7 +1449,7 @@ public class Widget {
     }
 
 
-    public void toggleVisiblity() {
+    public void toggleVisibility() {
 	if (visible)
 	    hide();
 	else

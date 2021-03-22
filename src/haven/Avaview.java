@@ -111,8 +111,8 @@ public class Avaview extends PView {
     }
 
     @Override
-    public void toggleVisiblity() {
-	super.toggleVisiblity();
+    public void toggleVisibility() {
+	super.toggleVisibility();
 	if(type == Type.PLAYER)
 	    ui.gui.settings.SHOWPLAVA.set(visible);
     }
