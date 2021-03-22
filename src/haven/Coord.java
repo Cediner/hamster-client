@@ -324,6 +324,10 @@ public class Coord implements Comparable<Coord>, java.io.Serializable {
 	return new Coord(Math.max(x, d.x), Math.max(y, d.y));
     }
 
+    public Coord max(int x, int i) {
+	return new Coord(Math.max(this.x, x), Math.max(this.y, y));
+    }
+
     public Coord copy() { return new Coord(x, y); }
 
     public int area() {

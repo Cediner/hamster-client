@@ -34,7 +34,7 @@ public class IndirLabel extends Widget {
         final String ntext = render.get();
         if (!ntext.equals(text.text)) {
             text = fnd.render(ntext);
-            sz = text.sz();
+            resize(text.sz());
         }
     }
 }

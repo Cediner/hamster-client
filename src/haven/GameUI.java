@@ -57,7 +57,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public Fightview fv;
     private Text lastmsg;
     private double msgtime;
-    public Window equwnd, makewnd, srchwnd, iconwnd;
+    public Window equwnd, srchwnd, iconwnd;
     private Coord makewndc = Utils.getprefc("makewndc", new Coord(400, 200));
     public Inventory maininv;
     public CharWnd chrwdg;
@@ -74,6 +74,12 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
+
+    //Crafting
+    public Window makewnd;
+
+    //Menu Searching
+    public ActWnd paginasearch;
 
     // Delay adding of widgets to GameUI to be part of UI thread
     private final List<Widget> delayedAdd = new ArrayList<>();
@@ -525,6 +531,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
 		add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
 		add(hotbar3, new Coord(20, 500)).setVisible(ui.gui.settings.SHOWHOTBAR3.get());
+
+		paginasearch = add(new ActWnd("Menu Search"));
+		paginasearch.hide();
+		makewnd = add(new MakeWnd());
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
 	    case "fsess", "abt" -> add(child, Coord.z);
@@ -562,36 +572,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		chrwdg.hide();
 	    }
 	    case "craft" -> {
-		String cap = "";
-		Widget mkwdg = child;
-		if (mkwdg instanceof Makewindow)
-		    cap = ((Makewindow) mkwdg).rcpnm;
-		if (cap.equals(""))
-		    cap = "Crafting";
-		makewnd = new Window(Coord.z, cap, true) {
-		    public void wdgmsg(Widget sender, String msg, Object... args) {
-			if ((sender == this) && msg.equals("close")) {
-			    mkwdg.wdgmsg("close");
-			    return;
-			}
-			super.wdgmsg(sender, msg, args);
-		    }
-
-		    public void cdestroy(Widget w) {
-			if (w == mkwdg) {
-			    ui.destroy(this);
-			    makewnd = null;
-			}
-		    }
-
-		    public void destroy() {
-			Utils.setprefc("makewndc", makewndc = this.c);
-			super.destroy();
-		    }
-		};
-		makewnd.add(mkwdg, Coord.z);
+		makewnd.add(child, new Coord(MakeWnd.WIDTH + 10, 0));
 		makewnd.pack();
-		fitwdg(add(makewnd, makewndc));
+		makewnd.show();
 	    }
 	    case "buddy" -> zerg.ntab(buddies = (BuddyWnd) child, zerg.kin);
 	    case "pol" -> {
