@@ -34,7 +34,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox("Show Mini Inventory", ui.gui.settings.SHOWMINIINV, val -> ui.gui.mminv.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Mini Equipment", ui.gui.settings.SHOWMINIEQU, val -> ui.gui.mmequ.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", ui.gui.settings.SHOWLRSLOTS, val -> ui.gui.lrhandview.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Study Window", ui.gui.settings.SHOWSTUDY));
+            visibility.add(new IndirCheckBox("Show Study Window", ui.gui.settings.SHOWSTUDY, val -> ui.gui.study.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Inventory on Login", ui.gui.settings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox("Show Belt on Login", ui.gui.settings.SHOWBELTONLOGIN));
             visibility.pack();
@@ -47,7 +47,7 @@ public class UIPanel extends Scrollport {
             minimap.add(new IndirCheckBox("Show Small Markers", ui.gui.settings.SMALLMMMARKERS));
             minimap.add(new IndirCheckBox("Show Placed Markers", ui.gui.settings.SHOWPMARKERS));
             minimap.add(new IndirCheckBox("Show Natural Markers", ui.gui.settings.SHOWNMARKERS));
-            minimap.add(new IndirCheckBox("Show Custom MArkers", ui.gui.settings.SHOWCMARKERS));
+            minimap.add(new IndirCheckBox("Show Custom Markers", ui.gui.settings.SHOWCMARKERS));
             minimap.add(new IndirCheckBox("Show Linked Markers", ui.gui.settings.SHOWLMARKERS));
             minimap.add(new IndirCheckBox("Show Kingdom Markers", ui.gui.settings.SHOWKMARKERS));
             minimap.add(new IndirCheckBox("Show Kingdom Radius", ui.gui.settings.SHOWKMARKERRAD));

@@ -334,6 +334,9 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::search",
 		Resource.local().load("custom/paginae/default/wnd/search"),
 		(pag) -> ui.gui.paginasearch.toggleVisibility()));
+	addCustom(new CustomPagina(this, "management::studyreport",
+		Resource.local().load("custom/paginae/default/wnd/study"),
+		(pag) -> ui.gui.study.toggleVisibility()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),

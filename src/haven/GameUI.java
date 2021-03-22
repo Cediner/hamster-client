@@ -33,6 +33,7 @@ import hamster.io.SQLResCache;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
 import hamster.ui.chr.SkillnCredoWnd;
+import hamster.ui.chr.StudyWnd;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
@@ -74,6 +75,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public BeltSlot[] belt = new BeltSlot[144];
     public final Map<Integer, String> polowners = new HashMap<>();
     public Bufflist buffs;
+
+    //Character related windows
+    public StudyWnd study;
 
     //Crafting
     public Window makewnd;
