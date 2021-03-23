@@ -60,7 +60,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public long rlplgob = -1;
     public Coord2d cc;
     private final Glob glob;
-    private int view = 2;
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
     private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
     public Camera camera;
@@ -986,6 +985,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	     * loop. Probably not a big deal, but still. */
 	    try {
 		Coord cc = new Coord2d(getcc()).floor(tilesz).div(MCache.cutsz);
+		final int view = GlobalSettings.DRAWGRIDRADIUS.get();
 		area = new Area(cc.sub(view, view), cc.add(view, view).add(1, 1));
 		lastload = null;
 	    } catch(Loading l) {
@@ -1935,8 +1935,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    undelay(delayed2, g);
 	    poldraw(g);
 	    partydraw(g);
-	    glob.map.reqarea(cc.floor(tilesz).sub(MCache.cutsz.mul(view + 1)),
-			     cc.floor(tilesz).add(MCache.cutsz.mul(view + 1)));
+	    glob.map.reqarea(cc.floor(tilesz).sub(MCache.cutsz.mul(GlobalSettings.DRAWGRIDRADIUS.get() + 1)),
+			     cc.floor(tilesz).add(MCache.cutsz.mul(GlobalSettings.DRAWGRIDRADIUS.get() + 1)));
 	} catch(Loading e) {
 	    lastload = e;
 	    String text = e.getMessage();

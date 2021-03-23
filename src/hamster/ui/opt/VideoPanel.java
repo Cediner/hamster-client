@@ -98,6 +98,8 @@ public class VideoPanel extends Scrollport {
             lighting.pack();
         }
         { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
+            map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Show Flavor Objects (Requires reload of nearby grids)", SHOWFLAVOBJS));
             map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
             map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));

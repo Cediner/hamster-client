@@ -78,8 +78,8 @@ public class GlobalSettings {
 
     // Map options
     public static final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "map.skip-loading", false); // TODO
-    public static final IndirSetting<Integer> DRAWGRIDRADIUS = new IndirSetting<>(global, "map.drag-grid-radius", 2); //TODO
-    public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true); // TODO
+    public static final IndirSetting<Integer> DRAWGRIDRADIUS = new IndirSetting<>(global, "map.drag-grid-radius", 2);
+    public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true);
     public static final IndirSetting<Boolean> SHOWMAP = new IndirSetting<>(global, "map.show-map", true); //TODO
     public static final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true); //TODO
     public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false); //TODO - Needs alot of work, especially with swaying trees...
