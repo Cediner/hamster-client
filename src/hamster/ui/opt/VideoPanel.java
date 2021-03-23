@@ -98,6 +98,7 @@ public class VideoPanel extends Scrollport {
             lighting.pack();
         }
         { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+            map.add(new IndirCheckBox("Show Flavor Objects (Requires reload of nearby grids)", SHOWFLAVOBJS));
             map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
             map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
             map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart)", DEEPWATERCOL));

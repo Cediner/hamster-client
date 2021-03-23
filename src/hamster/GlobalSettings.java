@@ -88,11 +88,11 @@ public class GlobalSettings {
     public static final IndirSetting<Color> DEEPWATERCOL = new IndirSetting<>(global, "map.deep-ocean-color", new Color(128, 7, 7));
 
     // Lighting
-    public static final IndirSetting<Boolean> NIGHTVISION = new IndirSetting<>(global, "lighting.nightvision", false); //TODO
-    public static final IndirSetting<Color> NVAMBIENTCOL = new IndirSetting<>(global, "lighting.nv-ambient-col", Color.WHITE); //TODO
-    public static final IndirSetting<Color> NVDIFFUSECOL = new IndirSetting<>(global, "lighting.nv-diffuse-col", Color.WHITE); //TODO
-    public static final IndirSetting<Color> NVSPECCOL = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE); //TODO
-    public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false); //TODO
+    public static final IndirSetting<Boolean> NIGHTVISION = new IndirSetting<>(global, "lighting.nightvision", false);
+    public static final IndirSetting<Color> NVAMBIENTCOL = new IndirSetting<>(global, "lighting.nv-ambient-col", Color.WHITE);
+    public static final IndirSetting<Color> NVDIFFUSECOL = new IndirSetting<>(global, "lighting.nv-diffuse-col", Color.WHITE);
+    public static final IndirSetting<Color> NVSPECCOL = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE);
+    public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false);
 
     //Theme options
     public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");
