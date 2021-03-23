@@ -82,8 +82,8 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true); // TODO
     public static final IndirSetting<Boolean> SHOWMAP = new IndirSetting<>(global, "map.show-map", true); //TODO
     public static final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true); //TODO
-    public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false); //TODO
-    public static final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true); //TODO
+    public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false); //TODO - Needs alot of work, especially with swaying trees...
+    public static final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true);
     public static final IndirSetting<Boolean> COLORIZEDEEPWATER = new IndirSetting<>(global, "map.colorize-deep-ocean", true);
     public static final IndirSetting<Color> DEEPWATERCOL = new IndirSetting<>(global, "map.deep-ocean-color", new Color(128, 7, 7));
 
