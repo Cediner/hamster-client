@@ -3,10 +3,14 @@ package hamster.ui.opt;
 import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
+import hamster.ui.core.indir.IndirHSlider;
+import hamster.ui.core.indir.IndirLabel;
 import hamster.ui.core.indir.IndirRadioGroup;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
+
+import static hamster.GlobalSettings.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
@@ -14,6 +18,8 @@ public class GameplayPanel extends Scrollport {
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);
+        final Grouping lighting = new LinearGrouping("Light Settings (Global)", spacer, false);
+        final Grouping map = new LinearGrouping("Map Settings (Global)", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
         final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
         final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
@@ -22,6 +28,27 @@ public class GameplayPanel extends Scrollport {
             sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
             sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
             sys.pack();
+        }
+        { // Lights
+            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient", NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse", NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular", NVSPECCOL));
+            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
+            lighting.pack();
+        }
+        { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+            map.add(new IndirCheckBox("Show map (Not implemented)", SHOWMAP));
+            map.add(new IndirCheckBox("Show gobs (Not implemented)", SHOWGOBS));
+            map.add(new IndirCheckBox("Skip loading (Not implemented)", SKIPLOADING));
+            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
+            map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
+            map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
+            map.add(new IndirCheckBox("Show Flavor Objects (Requires reload of nearby grids)", SHOWFLAVOBJS));
+            map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart)", DEEPWATERCOL));
+            map.pack();
         }
         { //Camera
             final Coord c = new Coord(0, 0);
@@ -81,6 +108,8 @@ public class GameplayPanel extends Scrollport {
         int y = 0;
 
         y += add(sys, new Coord(0, y)).sz.y + spacer.y;
+        y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
+        y += add(map, new Coord(0, y)).sz.y + spacer.y;
         y += add(cam, new Coord(0, y)).sz.y + spacer.y;
         y += add(gob, new Coord(0, y)).sz.y + spacer.y;
         y += add(pf, new Coord(0, y)).sz.y + spacer.y;

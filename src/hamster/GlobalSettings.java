@@ -77,12 +77,12 @@ public class GlobalSettings {
     public static final IndirSetting<String> FRAMESYNCMODE = new IndirSetting<>(global, "display.frame-sync-mode", JOGLPanel.SyncMode.FRAME.name());
 
     // Map options
-    public static final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "map.skip-loading", false); // TODO
+    public static final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "map.skip-loading", false);
     public static final IndirSetting<Integer> DRAWGRIDRADIUS = new IndirSetting<>(global, "map.drag-grid-radius", 2);
     public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true);
-    public static final IndirSetting<Boolean> SHOWMAP = new IndirSetting<>(global, "map.show-map", true); //TODO
-    public static final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true); //TODO
-    public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false); //TODO - Needs alot of work, especially with swaying trees...
+    public static final IndirSetting<Boolean> SHOWMAP = new IndirSetting<>(global, "map.show-map", true);
+    public static final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true);
+    public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false);
     public static final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true);
     public static final IndirSetting<Boolean> COLORIZEDEEPWATER = new IndirSetting<>(global, "map.colorize-deep-ocean", true);
     public static final IndirSetting<Color> DEEPWATERCOL = new IndirSetting<>(global, "map.deep-ocean-color", new Color(128, 7, 7));
