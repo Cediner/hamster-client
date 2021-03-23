@@ -1347,7 +1347,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void amblight() {
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-		amblight = new DirLight(glob.lightamb, glob.lightdif, glob.lightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+		final boolean darkmode = GlobalSettings.DARKMODE.get();
+		final boolean nightvision = GlobalSettings.NIGHTVISION.get();
+		final Color lamb = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVAMBIENTCOL.get() : glob.lightamb;
+		final Color ldif = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVDIFFUSECOL.get() : glob.lightdif;
+		final Color lspc = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVSPECCOL.get() : glob.lightspc;
+
+		amblight = new DirLight(lamb, ldif, lspc,
+			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
 		amblight.prio(100);
 	    } else {
 		amblight = null;

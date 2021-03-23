@@ -20,6 +20,8 @@ public class VideoPanel extends Scrollport {
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping disp = new LinearGrouping("Display Settings", spacer, false);
+        final Grouping lighting = new LinearGrouping("Light Settings", spacer, false);
+        final Grouping map = new LinearGrouping("Map Settings", spacer, false);
         final Grouping shadow = new LinearGrouping("Shadow Settings", spacer, false);
         final Grouping ol = new LinearGrouping("Outline Settings", spacer, false);
 
@@ -87,6 +89,19 @@ public class VideoPanel extends Scrollport {
             }
             disp.pack();
         }
+        { // Lights
+            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient", NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse", NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular", NVSPECCOL));
+            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
+            lighting.pack();
+        }
+        { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart)", DEEPWATERCOL));
+            map.pack();
+        }
         { //Shadow
             final Consumer<Integer> resetshadows = val -> {
                 if (ui.gui != null && ui.gui.map != null) {
@@ -123,8 +138,10 @@ public class VideoPanel extends Scrollport {
 
         int y = 0;
         y += add(disp, new Coord(0, y)).sz.y + spacer.y;
+        y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
         y += add(shadow, new Coord(0, y)).sz.y + spacer.y;
         y += add(ol, new Coord(0, y)).sz.y + spacer.y;
+        y += add(map, new Coord(0, y)).sz.y + spacer.y;
         pack();
     }
 }

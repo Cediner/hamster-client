@@ -29,6 +29,8 @@ package haven.resutil;
 import java.util.*;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
+
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.*;
 import haven.render.sl.*;
@@ -300,18 +302,26 @@ public class WaterTile extends Tiler {
 		}
 	    };
 
-	private final ShaderMacro shader = prog -> {
-	    FragColor.fragcol(prog.fctx).mod(in -> rgbmix.call(in, mfogcolor, min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
-	};
+	private final ShaderMacro shader;
+
+	private BottomFog(final Color fog) {
+	    super(Slot.Type.DRAW);
+	    shader = prog -> {
+		FragColor.fragcol(prog.fctx).mod(in ->
+			rgbmix.call(in, col3(fog), min(div(fragd.ref(), l(maxdepth)), l(1.0))), 1000);
+	    };
+	}
 
 	private BottomFog() {
-	    super(Slot.Type.DRAW);
+	    this(fogcolor);
 	}
 
 	public ShaderMacro shader() {return(shader);}
     }
     public static final BottomFog waterfog = new BottomFog();
+    public static final BottomFog deepfog = new BottomFog(new Color(128, 7, 7));
     private static final Pipe.Op botmat = Pipe.Op.compose(waterfog, new States.DepthBias(4, 4));
+    private static final Pipe.Op dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
 
     public static final Pipe.Op obfog = new State.StandAlone(State.Slot.Type.DRAW) {
 	    {
@@ -331,7 +341,8 @@ public class WaterTile extends Tiler {
 	    };
 
 	final ShaderMacro shader = prog -> {
-	    FragColor.fragcol(prog.fctx).mod(in -> BottomFog.rgbmix.call(in, BottomFog.mfogcolor, clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
+	    FragColor.fragcol(prog.fctx).mod(in -> BottomFog.rgbmix.call(in, BottomFog.mfogcolor,
+		    clamp(div(fragd.ref(), l(BottomFog.maxdepth)), l(0.0), l(1.0))), 1000);
 	};
 	public ShaderMacro shader() {return(shader);}
     };
@@ -356,10 +367,13 @@ public class WaterTile extends Tiler {
 	}
     }
 
+    private final Pipe.Op fog;
+
     public WaterTile(int id, Tiler.MCons bottom, int depth) {
 	super(id);
 	this.bottom = bottom;
 	this.depth = depth;
+	this.fog = obfog;
     }
 
     @Deprecated
@@ -369,14 +383,16 @@ public class WaterTile extends Tiler {
 
     public void lay(MapMesh m, Random rnd, Coord lc, Coord gc) {
 	MapMesh.MapSurface ms = m.data(MapMesh.gnd);
-	SModel smod = SModel.get(m, surfmat, VertFactory.id);
-	MPart d = MPart.splitquad(lc, gc, ms.fortilea(lc), ms.split[ms.ts.o(lc)]);
-	MeshVertex[] v = smod.get(d);
-	smod.new Face(v[d.f[0]], v[d.f[1]], v[d.f[2]]);
-	smod.new Face(v[d.f[3]], v[d.f[4]], v[d.f[5]]);
+	if(!GlobalSettings.DARKMODE.get()) {
+	    SModel smod = SModel.get(m, surfmat, VertFactory.id);
+	    MPart d = MPart.splitquad(lc, gc, ms.fortilea(lc), ms.split[ms.ts.o(lc)]);
+	    MeshVertex[] v = smod.get(d);
+	    smod.new Face(v[d.f[0]], v[d.f[1]], v[d.f[2]]);
+	    smod.new Face(v[d.f[3]], v[d.f[4]], v[d.f[5]]);
+	}
 	Bottom b = m.data(Bottom.id);
 	MPart bd = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-	bd.mat = botmat;
+	bd.mat = GlobalSettings.COLORIZEDEEPWATER.get() && id == 188 ? dbotmat : botmat;
 	bottom.faces(m, bd);
     }
 
@@ -388,7 +404,7 @@ public class WaterTile extends Tiler {
 		MapMesh.MapSurface ms = m.data(MapMesh.gnd);
 		Bottom b = m.data(Bottom.id);
 		MPart d = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-		d.mat = botmat;
+		d.mat = GlobalSettings.COLORIZEDEEPWATER.get() && id == 188 ? dbotmat : botmat;
 		((CTrans)bottom).tcons(z, bmask, cmask).faces(m, d);
 	    }
 	} else {
@@ -403,6 +419,6 @@ public class WaterTile extends Tiler {
 	    return(obfog);
 	return(null);
 	*/
-	return(obfog);
+	return(fog);
     }
 }

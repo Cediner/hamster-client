@@ -28,6 +28,8 @@ package haven;
 
 import java.util.*;
 import java.awt.Color;
+
+import hamster.GlobalSettings;
 import haven.render.*;
 import haven.render.RenderList;
 import haven.render.sl.ShaderMacro;
@@ -153,25 +155,42 @@ public abstract class Light implements RenderTree.Node {
 
     @Material.ResName("col")
     public static class PhongLight extends State {
+	public static final FColor defdark = new FColor(0f, 0f, 0f);
+	public static final FColor defamb = new FColor(0.2f, 0.2f, 0.2f);
+	public static final FColor defdif = new FColor(0.8f, 0.8f, 0.8f);
+	public static final FColor defspc = new FColor(0.0f, 0.0f, 0.0f);
+	public static final FColor defemi = new FColor(0.0f, 0.0f, 0.0f);
+	private static final Object[] darkmodemat = new Object[]{ defemi, defdark, defdark, defdark, 0f};
 	private static final Uniform.Data<Object[]> getlights = new Uniform.Data<Object[]>(p -> {
 		Lights l = p.get(clights);
 		return((l == null) ? new Object[0][] : l.lights);
 	    }, clights);
 	public static final ShaderMacro vlight = prog -> new Phong(prog.vctx, getlights,
-								   new Uniform.Data<>(p -> p.get(lighting).material, lighting));
+								   new Uniform.Data<>(p -> {
+								       if(!GlobalSettings.DARKMODE.get()) {
+									   return p.get(lighting).material;
+								       } else {
+								           return darkmodemat;
+								       }
+								   }, lighting));
 	public static final ShaderMacro flight = prog -> new Phong(prog.fctx, getlights,
-								   new Uniform.Data<>(p -> p.get(lighting).material, lighting));
+								   new Uniform.Data<>(p -> {
+								       if(!GlobalSettings.DARKMODE.get()) {
+									   return p.get(lighting).material;
+								       } else {
+									   return darkmodemat;
+								       }
+								   }, lighting));
 	private final ShaderMacro shader;
 	private final Object[] material;
 
-	public static final FColor defamb = new FColor(0.2f, 0.2f, 0.2f);
-	public static final FColor defdif = new FColor(0.8f, 0.8f, 0.8f);
-	public static final FColor defspc = new FColor(0.0f, 0.0f, 0.0f);
-	public static final FColor defemi = new FColor(0.0f, 0.0f, 0.0f);
-
 	public PhongLight(boolean frag, FColor amb, FColor dif, FColor spc, FColor emi, float shine) {
 	    this.shader = frag ? flight : vlight;
-	    this.material = new Object[] {emi, amb, dif, spc, shine};
+	    if (!GlobalSettings.DARKMODE.get()) {
+		this.material = new Object[]{emi, amb, dif, spc, shine};
+	    } else {
+	        this.material = new Object[]{defemi, defdark, defdark, defdark, shine};
+	    }
 	}
 
 	public PhongLight(boolean frag, Color amb, Color dif, Color spc, Color emi, float shine) {
@@ -192,7 +211,9 @@ public abstract class Light implements RenderTree.Node {
 
 	public ShaderMacro shader() {return(shader);}
 
-	public void apply(Pipe p) {p.put(lighting, this);}
+	public void apply(Pipe p) {
+	    p.put(lighting, this);
+	}
     }
 
     @Material.ResName("light")
