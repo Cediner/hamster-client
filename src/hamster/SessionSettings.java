@@ -13,9 +13,11 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWPCLAIM;
     public final IndirSetting<Boolean> SHOWVCLAIM;
     public final IndirSetting<Boolean> SHOWKCLAIM;
-    public final IndirSetting<Boolean> COLORFULDUST; //TODO
-    public final IndirSetting<Boolean> KEEPGOBS; //TODO
-    public final IndirSetting<Boolean> KEEPGRIDS;  //TODO
+    public final IndirSetting<Boolean> SHORTCAVEWALLS;
+    public final IndirSetting<Boolean> LONGLIVINGDUST;
+    public final IndirSetting<Boolean> COLORFULDUST;
+    public final IndirSetting<Boolean> KEEPGOBS;
+    public final IndirSetting<Boolean> KEEPGRIDS;
 
     ////Minimap
     public final IndirSetting<Boolean> SHOWMMGOBS;
@@ -52,13 +54,13 @@ public class SessionSettings {
     public final IndirSetting<BaseColor> GOBHITBOXCOL;
     public final IndirSetting<Boolean> SHOWGOBHALO;
     public final IndirSetting<Boolean> SHOWGOBHALOONHEARTH;
-    public final IndirSetting<Boolean> SHOWGOBHP; //TODO
-    public final IndirSetting<Boolean> SHOWGOBPATH; //TODO
-    public final IndirSetting<Boolean> SHOWANIMALPATH; //TODO
-    public final IndirSetting<Boolean> SHOWANIMALRADIUS; //TODO
-    public final IndirSetting<Color> GOBPATHCOL; //TODO
-    public final IndirSetting<Color> ANIMALPATHCOL; //TODO
-    public final IndirSetting<Color> VEHPATHCOL; //TODO
+    public final IndirSetting<Boolean> SHOWGOBHP;
+    public final IndirSetting<Boolean> SHOWGOBPATH;
+    public final IndirSetting<Boolean> SHOWANIMALPATH;
+    public final IndirSetting<Boolean> SHOWANIMALRADIUS;
+    public final IndirSetting<BaseColor> GOBPATHCOL;
+    public final IndirSetting<BaseColor> ANIMALPATHCOL;
+    public final IndirSetting<BaseColor> VEHPATHCOL;
 
     ////Audio
     public final IndirSetting<Double> TIMERVOL;
@@ -105,7 +107,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWITEMCONT;
     public final IndirSetting<Boolean> ALWAYSITEMLONGTIPS;
     public final IndirSetting<Boolean> AUTOEQUIP;
-    public final IndirSetting<Boolean> WATERDROPITEMCTRL; //TODO
+    public final IndirSetting<Boolean> WATERDROPITEMCTRL;
     //Flowermenu UI
     public final IndirSetting<Boolean> QUICKFLMENU;
     public final IndirSetting<Boolean> KEEPFLOPEN;
@@ -127,6 +129,8 @@ public class SessionSettings {
         SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
         SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
         SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
+        SHORTCAVEWALLS = new IndirSetting<>(local, "display.short-cave-walls", false);
+        LONGLIVINGDUST = new IndirSetting<>(local, "display.long-living-dust", false);
         COLORFULDUST = new IndirSetting<>(local, "display.colorful-dust", false);
         KEEPGOBS = new IndirSetting<>(local, "display.keep-gobs", false);
         KEEPGRIDS = new IndirSetting<>(local, "display.keep-grids", false);
@@ -170,9 +174,9 @@ public class SessionSettings {
         SHOWGOBPATH = new IndirSetting<>(local, "gob.show-gob-path", false);
         SHOWANIMALPATH = new IndirSetting<>(local, "gob.show-animal-path", false);
         SHOWANIMALRADIUS = new IndirSetting<>(local, "gob.show-animal-radius", false);
-        GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", Color.GREEN);
-        ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", Color.RED);
-        VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", Color.ORANGE);
+        GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", new BaseColor(Color.GREEN));
+        ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", new BaseColor(Color.RED));
+        VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
 
         //Audio
         TIMERVOL = new IndirSetting<>(local,"audio.timer-volume", 1.0);

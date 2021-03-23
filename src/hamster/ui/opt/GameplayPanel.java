@@ -38,16 +38,23 @@ public class GameplayPanel extends Scrollport {
             lighting.pack();
         }
         { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+            //Display related
             map.add(new IndirCheckBox("Show map (Not implemented)", SHOWMAP));
             map.add(new IndirCheckBox("Show gobs (Not implemented)", SHOWGOBS));
+            map.add(new IndirCheckBox("Keep gobs forever (Not implemented)", ui.gui.settings.KEEPGOBS));
+            map.add(new IndirCheckBox("Keep grids forever (Not implemented)", ui.gui.settings.KEEPGRIDS));
             map.add(new IndirCheckBox("Skip loading (Not implemented)", SKIPLOADING));
             map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
+            //Grid related
             map.add(new IndirCheckBox("Show Flavor Objects (Requires reload of nearby grids)", SHOWFLAVOBJS));
             map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
+            //Ocean related
             map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart)", DEEPWATERCOL));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart): ", DEEPWATERCOL));
+            //Cave related
+            map.add(new IndirCheckBox("Short cave walls (Not implemented)", ui.gui.settings.SHORTCAVEWALLS));
             map.pack();
         }
         { //Camera
@@ -87,10 +94,19 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
             gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
+            gob.add(new IndirCheckBox("Colorize Cave dust (Not implemented)", ui.gui.settings.COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer (Not implemented)", ui.gui.settings.LONGLIVINGDUST));
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Player HP/Armor damage (Not implemented)", ui.gui.settings.SHOWGOBPATH));
+            gob.add(new IndirCheckBox("Show Player Paths (Not implemented)", ui.gui.settings.SHOWGOBPATH));
+            gob.add(new IndirCheckBox("Show Animal Paths (Not implemented)", ui.gui.settings.SHOWANIMALPATH));
+            gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color: ", ui.gui.settings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal color: ", ui.gui.settings.ANIMALPATHCOL));
             gob.pack();
         }
         { //Pathfinding
