@@ -27,12 +27,15 @@
 package haven.resutil;
 
 import java.util.*;
+
+import hamster.GlobalSettings;
 import haven.*;
 import haven.MapMesh.Scan;
 import haven.Surface.Vertex;
 
 public class CaveTile extends Tiler {
     public static final float h = 16;
+    private static final float sh = 7f;
     public final Material wtex;
     public final Tiler ground;
 
@@ -51,15 +54,9 @@ public class CaveTile extends Tiler {
 
 	public Vertex[] fortile(Coord tc) {
 	    if(wv[cs.o(tc)] == null) {
-		Random rnd = m.grnd(tc.add(m.ul));
-		Vertex[] buf = wv[cs.o(tc)] = new Vertex[4];
-		buf[0] = ms.new Vertex(ms.fortile(tc));
-		for(int i = 1; i < buf.length; i++) {
-		    buf[i] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + (i * h / (buf.length - 1)));
-		    buf[i].x += (rnd.nextFloat() - 0.5f) * 3.0f;
-		    buf[i].y += (rnd.nextFloat() - 0.5f) * 3.0f;
-		    buf[i].z += (rnd.nextFloat() - 0.5f) * 3.5f;
-		}
+		Vertex[] buf = wv[cs.o(tc)] = new Vertex[2];
+		buf[0] = ms.fortile(tc);
+		buf[1] = ms.new Vertex(buf[0].x, buf[0].y, buf[0].z + (GlobalSettings.SHORTCAVEWALLS.get() ? sh : h));
 	    }
 	    return(wv[cs.o(tc)]);
 	}

@@ -13,9 +13,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWPCLAIM;
     public final IndirSetting<Boolean> SHOWVCLAIM;
     public final IndirSetting<Boolean> SHOWKCLAIM;
-    public final IndirSetting<Boolean> SHORTCAVEWALLS;
-    public final IndirSetting<Boolean> LONGLIVINGDUST;
-    public final IndirSetting<Boolean> COLORFULDUST;
     public final IndirSetting<Boolean> KEEPGOBS;
     public final IndirSetting<Boolean> KEEPGRIDS;
 
@@ -129,9 +126,6 @@ public class SessionSettings {
         SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
         SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
         SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
-        SHORTCAVEWALLS = new IndirSetting<>(local, "display.short-cave-walls", false);
-        LONGLIVINGDUST = new IndirSetting<>(local, "display.long-living-dust", false);
-        COLORFULDUST = new IndirSetting<>(local, "display.colorful-dust", false);
         KEEPGOBS = new IndirSetting<>(local, "display.keep-gobs", false);
         KEEPGRIDS = new IndirSetting<>(local, "display.keep-grids", false);
 

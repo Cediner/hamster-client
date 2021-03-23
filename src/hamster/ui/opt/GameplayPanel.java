@@ -31,9 +31,9 @@ public class GameplayPanel extends Scrollport {
         }
         { // Lights
             lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient", NVAMBIENTCOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse", NVDIFFUSECOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular", NVSPECCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient: ", NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse: ", NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
             lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
             lighting.pack();
         }
@@ -54,7 +54,7 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
             map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart): ", DEEPWATERCOL));
             //Cave related
-            map.add(new IndirCheckBox("Short cave walls (Not implemented)", ui.gui.settings.SHORTCAVEWALLS));
+            map.add(new IndirCheckBox("Short cave walls (Requires reload of nearby grids)", GlobalSettings.SHORTCAVEWALLS));
             map.pack();
         }
         { //Camera
@@ -94,8 +94,8 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
             gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
-            gob.add(new IndirCheckBox("Colorize Cave dust (Not implemented)", ui.gui.settings.COLORFULDUST));
-            gob.add(new IndirCheckBox("Cave dust last longer (Not implemented)", ui.gui.settings.LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Colorize Cave dust (Global)(Not implemented)", GlobalSettings.COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer (Global)(Not implemented)", GlobalSettings.LONGLIVINGDUST));
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(new IndirCheckBox("Show Player HP/Armor damage (Not implemented)", ui.gui.settings.SHOWGOBPATH));
