@@ -2592,13 +2592,22 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     
     public boolean mousedown(Coord c, int button) {
+	final String seq = MouseBind.generateSequence(ui, button);
 	parent.setfocus(this);
 	Loader.Future<Plob> placing_l = this.placing;
-	if(button == 2) {
+	if(MV_LOCK_PLACING_OBJ.match(seq) && placing_l != null && placing_l.done()) {
+	    final Plob placing = placing_l.get();
+	    if(placing.getattr(hamster.gob.attrs.draw2d.Locked.class) != null) {
+	        placing.delattr(hamster.gob.attrs.draw2d.Locked.class);
+	    } else {
+	        placing.setattr(new hamster.gob.attrs.draw2d.Locked(placing));
+	    }
+	} else if(button == 2) {
 	    if(((Camera)camera).click(c)) {
 		camdrag = ui.grabmouse(this);
 	    }
-	} else if((placing_l != null) && placing_l.done()) {
+	} else if((placing_l != null) && placing_l.done()
+		&& placing_l.get().getattr(hamster.gob.attrs.draw2d.Locked.class) == null) {
 	    Plob placing = placing_l.get();
 	    if(placing.lastmc != null)
 		wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
