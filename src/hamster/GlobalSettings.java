@@ -86,9 +86,10 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true);
     public static final IndirSetting<Boolean> COLORIZEDEEPWATER = new IndirSetting<>(global, "map.colorize-deep-ocean", true);
     public static final IndirSetting<Color> DEEPWATERCOL = new IndirSetting<>(global, "map.deep-ocean-color", new Color(128, 7, 7));
-    public static final IndirSetting<Boolean> SHORTCAVEWALLS = new IndirSetting<>(global, "map.short-cave-walls", false);;
-    public static final IndirSetting<Boolean> LONGLIVINGDUST = new IndirSetting<>(global, "map.long-living-cave-dust", false);;
-    public static final IndirSetting<Boolean> COLORFULDUST = new IndirSetting<>(global, "map.colorful-cave-dust", false);;
+    public static final IndirSetting<Boolean> SHORTCAVEWALLS = new IndirSetting<>(global, "map.short-cave-walls", false);
+    public static final IndirSetting<Boolean> LONGLIVINGDUST = new IndirSetting<>(global, "map.long-living-cave-dust", false);
+    public static final IndirSetting<Boolean> COLORFULDUST = new IndirSetting<>(global, "map.colorful-cave-dust", false);
+    public static final IndirSetting<Boolean> LARGEDUSTSIZE = new IndirSetting<>(global, "map.large-cave-dust", false);
 
     // Lighting
     public static final IndirSetting<Boolean> NIGHTVISION = new IndirSetting<>(global, "lighting.nightvision", false);

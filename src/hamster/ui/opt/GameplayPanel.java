@@ -94,8 +94,9 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
             gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
-            gob.add(new IndirCheckBox("Colorize Cave dust (Global)(Not implemented)", GlobalSettings.COLORFULDUST));
-            gob.add(new IndirCheckBox("Cave dust last longer (Global)(Not implemented)", GlobalSettings.LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Colorize Cave dust (Global)", COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer (Global)", LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(new IndirCheckBox("Show Player HP/Armor damage (Not implemented)", ui.gui.settings.SHOWGOBPATH));
