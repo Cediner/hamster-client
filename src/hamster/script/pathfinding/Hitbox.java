@@ -71,8 +71,17 @@ public class Hitbox {
 
         @Override
         public FastMesh mesh() {
-            final Coord2d[][] verts ={{ off, off.add(sz.x, 0), off.add(sz), off.add(0, sz.y) }};
-            return Obst.makeMesh(verts, Color.BLACK, 1f);
+            final Coord3f off = new Coord3f((float)this.off.x, (float)this.off.y, 1f);
+            final Coord3f sz = new Coord3f((float)this.sz.x, (float)this.sz.y, 0f);
+
+            final Coord3f[][] verts ={
+                    { off, off.add(sz.x, 0, 0), off.add(sz), off.add(0, sz.y, 0) }, //Top
+                    { off, off.add(sz.x, 0, 0), off.add(sz.x, 0, -1f), off.add(0, 0, -1f) }, //Side
+                    { off, off.add(0, sz.y, 0), off.add(0, sz.y, -1f), off.add(0, 0, -1f) }, //Side
+                    { off.add(sz), off.add(0, sz.y, 0), off.add(0, sz.y, -1f), off.add(sz.x, sz.y, -1f) }, //Side
+                    { off.add(sz), off.add(sz.x, 0, 0), off.add(sz.x, 0, -1f), off.add(sz.x, sz.y, -1f) }, //Side
+            };
+            return Obst.makeMesh(verts, Color.BLACK);
         }
     }
 
