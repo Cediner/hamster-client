@@ -1956,23 +1956,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void updateSpeed(final double dt) {
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
 	if (pl != null) {
-	    final Coord2d plc = new Coord2d(pl.getc());
-	    if (lastrc != null) {
-		totaldist += plc.dist(lastrc);
-		totaldt += dt;
-		if(totaldt >= 1) {
-		    mspeedavg = totaldist/totaldt;
-		    totaldt = 0;
+	    try {
+		final Coord2d plc = new Coord2d(pl.getc());
+		if (lastrc != null) {
+		    totaldist += plc.dist(lastrc);
+		    totaldt += dt;
+		    if (totaldt >= 1) {
+			mspeedavg = totaldist / totaldt;
+			totaldt = 0;
+			totaldist = 0;
+		    }
+		    mspeed = plc.dist(lastrc) / dt;
+		} else {
+		    mspeedavg = 0;
 		    totaldist = 0;
+		    totaldt = 0;
+		    mspeed = 0;
 		}
-		mspeed = plc.dist(lastrc) / dt;
-	    } else {
-		mspeedavg = 0;
-		totaldist = 0;
-		totaldt = 0;
-		mspeed = 0;
-	    }
-	    lastrc = plc;
+		lastrc = plc;
+	    } catch (Loading ignore) {}
 	}
     }
 
@@ -2158,6 +2160,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if((placing != null) && placing.done())
 	    placing.get().ctick(dt);
 
+	updateSpeed(dt);
 	synchronized (movequeue) {
 	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
 		movingto = movequeue.poll();
