@@ -2079,8 +2079,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    String text = e.getMessage();
 	    if(text == null)
 		text = "Loading...";
-	    g.chcolor(Color.BLACK);
-	    g.frect(Coord.z, sz);
+	    if(!GlobalSettings.SKIPLOADING.get()) {
+		g.chcolor(Color.BLACK);
+		g.frect(Coord.z, sz);
+	    } else {
+	        //Should never actually get here with SKIPLOADING on so this is mainly
+		// for debugging to where we're still getting loading thrown
+		logger.atWarning().withCause(e).log(text);
+	    }
 	    g.chcolor(Color.WHITE);
 	    g.atext(text, sz.div(2), 0.5, 0.5);
 	    if(e instanceof Resource.Loading) {

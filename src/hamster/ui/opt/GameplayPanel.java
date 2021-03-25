@@ -43,7 +43,7 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
             map.add(new IndirCheckBox("Keep gobs forever (Not implemented)", ui.gui.settings.KEEPGOBS));
             map.add(new IndirCheckBox("Keep grids forever (Not implemented)", ui.gui.settings.KEEPGRIDS));
-            map.add(new IndirCheckBox("Skip loading (Not implemented)", SKIPLOADING));
+            map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
             map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));

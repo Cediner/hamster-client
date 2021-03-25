@@ -891,9 +891,24 @@ public class MCache implements MapSource {
 	return(g.getz(tc.sub(g.ul)));
     }
 
+    public double getfz_safe(final Coord tc) {
+	final Optional<Grid> grid = getgridto(tc);
+	if (grid.isPresent()) {
+	    final Grid g = grid.get();
+	    return g.getz(tc.sub(g.ul));
+	} else {
+	    return 0;
+	}
+    }
+
     @Deprecated
     public int getz(Coord tc) {
 	return((int)Math.round(getfz(tc)));
+    }
+
+    @Deprecated
+    public int getz_safe(Coord tc) {
+        return (int)Math.round(getfz_safe(tc));
     }
 
     public double getcz(double px, double py) {
@@ -901,8 +916,8 @@ public class MCache implements MapSource {
 	Coord ul = new Coord(Utils.floordiv(px, tw), Utils.floordiv(py, th));
 	double sx = Utils.floormod(px, tw) / tw;
 	double sy = Utils.floormod(py, th) / th;
-	return(((1.0f - sy) * (((1.0f - sx) * getfz(ul)) + (sx * getfz(ul.add(1, 0))))) +
-	       (sy * (((1.0f - sx) * getfz(ul.add(0, 1))) + (sx * getfz(ul.add(1, 1))))));
+	return(((1.0f - sy) * (((1.0f - sx) * getfz_safe(ul)) + (sx * getfz_safe(ul.add(1, 0))))) +
+	       (sy * (((1.0f - sx) * getfz_safe(ul.add(0, 1))) + (sx * getfz_safe(ul.add(1, 1))))));
     }
 
     public double getcz(Coord2d pc) {
