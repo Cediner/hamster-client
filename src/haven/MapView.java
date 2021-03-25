@@ -48,6 +48,7 @@ import hamster.gob.Hidden;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
 import hamster.ui.MapViewExt;
+import hamster.util.JobSystem;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -2221,10 +2222,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public PlobAdjust adjust = new StdPlace();
 	Coord lastmc = null;
 	RenderTree.Slot slot;
+	private final List<OCache.Delta> deltas = new ArrayList<>();
 
 	private Plob(Indir<Resource> res, Message sdt) {
 	    super(MapView.this.glob, MapView.this.cc);
-	    setattr(new ResDrawable(this, res, sdt));
+	    final ResDrawable rd = new ResDrawable(this, res, sdt);
+	    setattr(rd);
+	    final String name = rd.getresname();
+	    JobSystem.submit(() -> this.discover(name));
 	}
 
 	public MapView mv() {return(MapView.this);}
@@ -2246,6 +2251,41 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(ui.mc.isect(rootpos(), sz))
 		new Adjust(ui.mc.sub(rootpos()), 0).run();
 	    this.slot = basic.add(this.placed);
+	}
+
+	void refresh() {
+	    if(this.slot != null)
+		try {
+		    this.slot.remove();
+		} catch (RenderTree.SlotRemoved ignore) {}
+	    this.slot = basic.add(this.placed);
+	}
+
+	@Override
+	public void ctick(double dt) {
+	    //Apply any deltas during a tick
+	    synchronized (deltas) {
+		if (deltas.size() > 0) {
+		    for (final var delta : this.deltas) {
+			delta.apply(this);
+		    }
+		    this.deltas.clear();
+		    // We now need to signal to MapView to re-add this plob to the render graph
+		    refresh();
+		}
+	    }
+	    super.ctick(dt);
+	}
+
+	@Override
+	public void queueDeltas(List<OCache.Delta> deltas) {
+	    //Need a custom way to perform deltas as Plob don't work the same way as Gobs
+	    // Can't do it here so we need to just offload it to the tick thread
+	    synchronized (this.deltas) {
+		this.deltas.addAll(deltas);
+	    }
+	    //don't advertise this to the hitmap
+	    updatePathfindingBlackout(true);
 	}
 
 	private class Adjust extends Maptest {
@@ -2289,6 +2329,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
 			ob.slot.remove();
+			ob.dispose();
 		    }
 		}
 		this.placing = null;
@@ -2329,6 +2370,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
 			ob.slot.remove();
+			ob.dispose();
 		    }
 		}
 		this.placing = null;
@@ -2713,6 +2755,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
 	    //TODO: This can result in very buggy behavior and needs reexamined at some point
 	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
+	    if(this.placing != null && this.placing.done()) {
+	        final var plob = this.placing.get();
+	        plob.refresh();
+	    }
             return true;
 	});
         binds.put(KB_TOGGLE_HITBOXES, () -> {

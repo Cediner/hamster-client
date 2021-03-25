@@ -75,7 +75,7 @@ public class GameplayPanel extends Scrollport {
                 rgrp.add("Freestyle", "freestyle");
             }
             final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
-            { //Free Cam Settings
+            { //Free Cam Settings TODO
                 freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", ui.gui.settings.FREECAMREXAXIS));
                 freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", ui.gui.settings.FREECAMREYAXIS));
                 freeg.add(new IndirCheckBox("Free Cam lock elevation", ui.gui.settings.FREECAMLOCKELAV));
