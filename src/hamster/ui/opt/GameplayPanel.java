@@ -39,8 +39,8 @@ public class GameplayPanel extends Scrollport {
         }
         { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
             //Display related
-            map.add(new IndirCheckBox("Show map (Not implemented)", SHOWMAP));
-            map.add(new IndirCheckBox("Show gobs (Not implemented)", SHOWGOBS));
+            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
+            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
             map.add(new IndirCheckBox("Keep gobs forever (Not implemented)", ui.gui.settings.KEEPGOBS));
             map.add(new IndirCheckBox("Keep grids forever (Not implemented)", ui.gui.settings.KEEPGRIDS));
             map.add(new IndirCheckBox("Skip loading (Not implemented)", SKIPLOADING));
@@ -48,7 +48,7 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
             //Grid related
-            map.add(new IndirCheckBox("Show Flavor Objects (Requires reload of nearby grids)", SHOWFLAVOBJS));
+            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
             map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
             //Ocean related
             map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));

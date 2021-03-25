@@ -117,7 +117,11 @@ public class VideoPanel extends Scrollport {
             shadow.pack();
         }
         { //Outlines
-            ol.add(new IndirCheckBox("Symmetric Outlines", SYMMETRICOUTLINES));
+            ol.add(new IndirCheckBox("Symmetric Outlines", SYMMETRICOUTLINES, (val) -> {
+                if(ui.gui != null && ui.gui.map != null) {
+                    ui.gui.map.toggleOutlines(val);
+                }
+            }));
             ol.pack();
         }
 

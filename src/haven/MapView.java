@@ -83,6 +83,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Object tt;
     //Ext
     public final MapViewExt ext = new MapViewExt(this);
+    private final Outlines outlines;
     
     public interface Delayed {
 	public void run(GOut g);
@@ -869,7 +870,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.cc = cc;
 	this.plgob = this.rlplgob = plgob;
 	this.camera = restorecam();
-	basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
+	basic.add(this.outlines = new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
 	this.clickmap = new ClickMap();
@@ -1114,6 +1115,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public final Terrain terrain;
     public class Terrain extends MapRaster {
+        RenderTree.Slot slot;
+	RenderTree.Slot flavslot;
+
 	final Grid main = new Grid<MapMesh>() {
 		MapMesh getcut(Coord cc) {
 		    return(map.getcut(cc));
@@ -1133,15 +1137,36 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(area != null) {
 		main.tick();
 		if(GlobalSettings.SHOWFLAVOBJS.get())
-			flavobjs.tick();
+		    flavobjs.tick();
 	    }
 	}
 
 	public void added(RenderTree.Slot slot) {
+	    this.slot = slot;
 	    slot.add(main);
 	    if(GlobalSettings.SHOWFLAVOBJS.get())
-	        slot.add(flavobjs);
+	        flavslot = slot.add(flavobjs);
+	    else
+	        flavslot = null;
 	    super.added(slot);
+	}
+
+	@Override
+	public void removed(RenderTree.Slot slot) {
+	    super.removed(slot);
+	    this.slot = null;
+	}
+
+	public void toggleFlav(final boolean show) {
+	    if(show) {
+	        flavslot = slot.add(flavobjs);
+	    } else {
+	        flavslot.remove();
+	    }
+	}
+
+	public void remove() {
+	    this.slot.remove();
 	}
 
 	public Loading loading() {
@@ -2242,6 +2267,30 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	return movequeue.iterator();
     }
     /*****/
+
+    public void toggleGobs(final boolean show) {
+        if(show) {
+            basic.add(gobs);
+	} else {
+            gobs.slot.remove();
+	}
+    }
+
+    public void toggleMap(final boolean show) {
+	if(show) {
+	    basic.add(terrain);
+	} else {
+	    terrain.remove();
+	}
+    }
+
+    public void toggleOutlines(final boolean show) {
+        if(show) {
+            basic.add(outlines);
+	} else {
+            outlines.remove();
+	}
+    }
 
     public void tick(double dt) {
 	super.tick(dt);
