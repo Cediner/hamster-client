@@ -264,6 +264,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private Coord dragorig = null;
 	private float elevorig, anglorig;
 
+	private long lastwh = 0;
+	private float whz;
+
 	public void tick(double dt) {
 	    Coord3f cc = getcenter();
 	    cc.y = -cc.y;
@@ -290,17 +293,33 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	public void drag(Coord c) {
-	    elev = elevorig - ((float)(c.y - dragorig.y) / 100.0f);
-	    if(elev < 0.0f) elev = 0.0f;
-	    if(elev > (Math.PI / 2.0)) elev = (float)Math.PI / 2.0f;
-	    angl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
-	    angl = angl % ((float)Math.PI * 2.0f);
+	    if (ui.gui.settings.FREECAMREXAXIS.get())
+		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
+	    if (ui.gui.settings.FREECAMREYAXIS.get())
+		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
+	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
+		if (elev < 0.0f) elev = 0.0f;
+		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+	    }
+	    angl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
+	    angl = angl % ((float) Math.PI * 2.0f);
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    float d = dist + (amount * 25);
-	    if(d < 5)
-		d = 5;
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    float d = dist + whz;
+	    if (d < 20)
+		d = 20;
 	    dist = d;
 	    return(true);
 	}
@@ -315,6 +334,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float elevorig, anglorig;
 	private final float pi2 = (float)(Math.PI * 2);
 	private Coord3f cc = null;
+
+	private long lastwh = 0;
+	private float whz;
 
 	public void tick(double dt) {
 	    float cf = (1f - (float)Math.pow(500, -dt * 3));
@@ -350,16 +372,32 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public void drag(Coord c) {
-	    telev = elevorig - ((float)(c.y - dragorig.y) / 100.0f);
-	    if(telev < 0.0f) telev = 0.0f;
-	    if(telev > (Math.PI / 2.0)) telev = (float)Math.PI / 2.0f;
-	    tangl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
+	    if (ui.gui.settings.FREECAMREXAXIS.get())
+		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
+	    if (ui.gui.settings.FREECAMREYAXIS.get())
+		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
+	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+		telev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
+		if (telev < 0.0f) elev = 0.0f;
+		if (telev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+	    }
+	    tangl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    float d = tdist + (amount * 25);
-	    if(d < 5)
-		d = 5;
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    float d = tdist + whz;
+	    if (d < 20)
+		d = 20;
 	    tdist = d;
 	    return(true);
 	}
