@@ -137,6 +137,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	caps.setRedBits(8);
 	caps.setGreenBits(8);
 	caps.setBlueBits(8);
+	caps.setStencilBits(8);
+	caps.setSampleBuffers(true);
+	caps.setNumSamples(4);
 	return(caps);
     }
 

@@ -13,8 +13,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWPCLAIM;
     public final IndirSetting<Boolean> SHOWVCLAIM;
     public final IndirSetting<Boolean> SHOWKCLAIM;
-    public final IndirSetting<Boolean> KEEPGOBS;
-    public final IndirSetting<Boolean> KEEPGRIDS;
 
     ////Minimap
     public final IndirSetting<Boolean> SHOWMMGOBS;
@@ -126,8 +124,6 @@ public class SessionSettings {
         SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
         SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
         SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
-        KEEPGOBS = new IndirSetting<>(local, "display.keep-gobs", false);
-        KEEPGRIDS = new IndirSetting<>(local, "display.keep-grids", false);
 
         //Minimap
         SHOWMMGOBS = new IndirSetting<>(local, "minimap.show-gobs", true);

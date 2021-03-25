@@ -77,6 +77,8 @@ public class GlobalSettings {
     public static final IndirSetting<String> FRAMESYNCMODE = new IndirSetting<>(global, "display.frame-sync-mode", JOGLPanel.SyncMode.FRAME.name());
 
     // Map options
+    public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "map.keep-gobs", false);
+    public static final IndirSetting<Boolean> KEEPGRIDS = new IndirSetting<>(global, "map.keep-grids", false);
     public static final IndirSetting<Boolean> SKIPLOADING = new IndirSetting<>(global, "map.skip-loading", false);
     public static final IndirSetting<Integer> DRAWGRIDRADIUS = new IndirSetting<>(global, "map.drag-grid-radius", 2);
     public static final IndirSetting<Boolean> SHOWFLAVOBJS = new IndirSetting<>(global, "map.show-flav-objs", true);
