@@ -2,6 +2,7 @@ package hamster.ui.chr;
 
 import hamster.ui.core.TabManager;
 import haven.Coord;
+import haven.UI;
 import haven.Widget;
 import haven.Window;
 
@@ -11,7 +12,7 @@ public class SkillnCredoWnd extends Window {
 
     public SkillnCredoWnd() {
         super(Coord.z, "Skills and Credos", "skills-and-credos");
-        final TabManager tabs = add(new TabManager());
+        final TabManager tabs = add(new TabManager(UI.scale(400)));
         credos = new CredoTree();
         skills = new SkillTree();
         tabs.addtab(skills, "Skills");
