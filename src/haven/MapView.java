@@ -323,6 +323,31 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    dist = d;
 	    return(true);
 	}
+
+	protected boolean zoomin() {
+	    dist -= 20;
+	    return true;
+	}
+	protected boolean zoomout() {
+	    dist += 20;
+	    return true;
+	}
+	protected boolean turnleft() {
+	    angl -= Math.PI / 8D;
+	    angl = angl % ((float) Math.PI * 2.0f);
+	    return true;
+	}
+	protected boolean turnright() {
+	    angl += Math.PI / 8D;
+	    angl = angl % ((float) Math.PI * 2.0f);
+	    return true;
+	}
+	protected boolean reset() {
+	    dist = 50.0f;
+	    elev = (float)Math.PI / 4.0f;
+	    angl = 0.0f;
+	    return true;
+	}
     }
     static {camtypes.put("worse", SimpleCam.class);}
 
@@ -401,6 +426,29 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    tdist = d;
 	    return(true);
 	}
+
+	protected boolean zoomin() {
+	    tdist -= 20;
+	    return true;
+	}
+	protected boolean zoomout() {
+	    tdist += 20;
+	    return true;
+	}
+	protected boolean turnleft() {
+	    tangl -= Math.PI / 8D;
+	    return true;
+	}
+	protected boolean turnright() {
+	    tangl += Math.PI / 8D;
+	    return true;
+	}
+	protected boolean reset() {
+	    tdist = 50.0f;
+	    telev = (float)Math.PI / 4.0f;
+	    tangl = 0.0f;
+	    return true;
+	}
     }
     static {camtypes.put("bad", FreeCam.class);}
 
@@ -414,6 +462,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean reset() {
+	    super.reset();
 	    offset = new Coord3f(0, 0, 0);
 	    return true;
 	}
@@ -465,6 +514,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean reset() {
+	    super.reset();
 	    focus = getcc();
 	    return true;
 	}
@@ -576,6 +626,29 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	    chfield(tfield + whz);
 	    return (true);
+	}
+
+
+	protected boolean zoomin() {
+	    chfield(tfield-20);
+	    return true;
+	}
+	protected boolean zoomout() {
+	    chfield(tfield+20);
+	    return true;
+	}
+	protected boolean turnleft() {
+	    tangl -= Math.PI / 2D;
+	    return true;
+	}
+	protected boolean turnright() {
+	    tangl += Math.PI / 2D;
+	    return true;
+	}
+	protected boolean reset() {
+	    chfield( (float) (100 * Math.sqrt(2)));
+	    tangl = 0.0f;
+	    return true;
 	}
 
 	public String toString() {
