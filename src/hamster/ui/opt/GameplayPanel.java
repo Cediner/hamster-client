@@ -37,7 +37,7 @@ public class GameplayPanel extends Scrollport {
             lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
             lighting.pack();
         }
-        { // Map related - TODO: probably makes more sense to be in Gameplay as i can attempt to trigger reload of grids, etc
+        { // Map related
             //Display related
             map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
             map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
@@ -49,12 +49,19 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
             //Grid related
             map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
-            map.add(new IndirCheckBox("Show Transition tiles (Requires reload of nearby grids)", SHOWTRANTILES));
+            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
             //Ocean related
-            map.add(new IndirCheckBox("Colorize Deep Ocean tiles (Requires reload of nearby grids)", COLORIZEDEEPWATER));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color (Requires client restart): ", DEEPWATERCOL));
+            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
             //Cave related
-            map.add(new IndirCheckBox("Short cave walls (Requires reload of nearby grids)", GlobalSettings.SHORTCAVEWALLS));
+            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
             map.pack();
         }
         { //Camera

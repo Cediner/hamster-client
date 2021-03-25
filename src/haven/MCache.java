@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import hamster.script.pathfinding.Tile;
 import haven.render.*;
+import haven.resutil.WaterTile;
 
 /* XXX: This whole file is a bit of a mess and could use a bit of a
  * rewrite some rainy day. Synchronization especially is quite hairy. */
@@ -227,8 +228,10 @@ public class MCache implements MapSource {
 	private Flavobjs[] fo = new Flavobjs[cutn.x * cutn.y];
 
 	private class Cut {
+	    //Basic visible textured mapmesh
 	    MapMesh mesh;
 	    Defer.Future<MapMesh> dmesh;
+	    //Overlays for the mapmesh
 	    Map<OverlayInfo, RenderTree.Node> ols = new HashMap<>();
 	    Map<OverlayInfo, RenderTree.Node> olols = new HashMap<>();
 	}
@@ -761,6 +764,27 @@ public class MCache implements MapSource {
 	}
 	for(Grid gr : copy)
 	    gr.gtick(g);
+    }
+
+    public void updateWaterTiles() {
+        synchronized (tiles) {
+            for(final var ref : tiles) {
+                if(ref != null) {
+		    final var tile = ref.get();
+		    if (tile instanceof WaterTile) {
+			((WaterTile) tile).updateMat();
+		    }
+		}
+	    }
+	}
+    }
+
+    public void invalidateAll() {
+	synchronized (grids) {
+	    for (final Grid g : grids.values()) {
+		g.invalidate();
+	    }
+	}
     }
 
     public void invalidate(Coord cc) {

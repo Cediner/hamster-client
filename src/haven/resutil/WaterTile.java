@@ -38,6 +38,9 @@ import haven.MapMesh.Scan;
 import haven.Surface.Vertex;
 import haven.Surface.MeshVertex;
 import haven.render.TextureCube.SamplerCube;
+
+import static hamster.GlobalSettings.DEEPWATERCOL;
+import static hamster.GlobalSettings.SHOWWATERSURF;
 import static haven.render.sl.Cons.*;
 
 public class WaterTile extends Tiler {
@@ -319,9 +322,23 @@ public class WaterTile extends Tiler {
 	public ShaderMacro shader() {return(shader);}
     }
     public static final BottomFog waterfog = new BottomFog();
-    public static final BottomFog deepfog = new BottomFog(new Color(128, 7, 7));
     private static final Pipe.Op botmat = Pipe.Op.compose(waterfog, new States.DepthBias(4, 4));
-    private static final Pipe.Op dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
+    public static Color deepfogcol = DEEPWATERCOL.get();
+    public static BottomFog deepfog = new BottomFog(deepfogcol);
+    private static Pipe.Op dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
+
+    public static Pipe.Op getBottomMat(final int tileid) {
+        if(GlobalSettings.COLORIZEDEEPWATER.get() && tileid == 188) {
+	    if (DEEPWATERCOL.get() != deepfogcol) {
+		deepfogcol = DEEPWATERCOL.get();
+		deepfog = new BottomFog(deepfogcol);
+		dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));;
+	    }
+	    return dbotmat;
+	} else {
+            return botmat;
+	}
+    }
 
     public static final Pipe.Op obfog = new State.StandAlone(State.Slot.Type.DRAW) {
 	    {
@@ -367,12 +384,14 @@ public class WaterTile extends Tiler {
 	}
     }
 
-    private final Pipe.Op fog;
+    private Pipe.Op fog;
+    private Pipe.Op mat;
 
     public WaterTile(int id, Tiler.MCons bottom, int depth) {
 	super(id);
 	this.bottom = bottom;
 	this.depth = depth;
+	this.mat = getBottomMat(id);
 	this.fog = obfog;
     }
 
@@ -381,9 +400,14 @@ public class WaterTile extends Tiler {
 	this(id, new GroundTile(0, set), depth);
     }
 
+    public void updateMat() {
+	this.mat = getBottomMat(id);
+	this.fog = obfog;
+    }
+
     public void lay(MapMesh m, Random rnd, Coord lc, Coord gc) {
 	MapMesh.MapSurface ms = m.data(MapMesh.gnd);
-	if(!GlobalSettings.DARKMODE.get()) {
+	if(!GlobalSettings.DARKMODE.get() && SHOWWATERSURF.get()) {
 	    SModel smod = SModel.get(m, surfmat, VertFactory.id);
 	    MPart d = MPart.splitquad(lc, gc, ms.fortilea(lc), ms.split[ms.ts.o(lc)]);
 	    MeshVertex[] v = smod.get(d);
@@ -392,7 +416,7 @@ public class WaterTile extends Tiler {
 	}
 	Bottom b = m.data(Bottom.id);
 	MPart bd = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-	bd.mat = GlobalSettings.COLORIZEDEEPWATER.get() && id == 188 ? dbotmat : botmat;
+	bd.mat = mat;
 	bottom.faces(m, bd);
     }
 
@@ -404,7 +428,7 @@ public class WaterTile extends Tiler {
 		MapMesh.MapSurface ms = m.data(MapMesh.gnd);
 		Bottom b = m.data(Bottom.id);
 		MPart d = MPart.splitquad(lc, gc, b.fortilea(lc), ms.split[ms.ts.o(lc)]);
-		d.mat = GlobalSettings.COLORIZEDEEPWATER.get() && id == 188 ? dbotmat : botmat;
+		d.mat = mat;
 		((CTrans)bottom).tcons(z, bmask, cmask).faces(m, d);
 	    }
 	} else {

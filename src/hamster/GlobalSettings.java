@@ -84,6 +84,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWGOBS = new IndirSetting<>(global, "map.show-gobs", true);
     public static final IndirSetting<Boolean> FLATWORLD = new IndirSetting<>(global, "map.flat-world", false);
     public static final IndirSetting<Boolean> SHOWTRANTILES = new IndirSetting<>(global, "map.show-tran-tiles", true);
+    public static final IndirSetting<Boolean> SHOWWATERSURF = new IndirSetting<>(global, "map.show-water-surface", true);
     public static final IndirSetting<Boolean> COLORIZEDEEPWATER = new IndirSetting<>(global, "map.colorize-deep-ocean", true);
     public static final IndirSetting<Color> DEEPWATERCOL = new IndirSetting<>(global, "map.deep-ocean-color", new Color(128, 7, 7));
     public static final IndirSetting<Boolean> SHORTCAVEWALLS = new IndirSetting<>(global, "map.short-cave-walls", false);
