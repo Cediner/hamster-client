@@ -15,7 +15,7 @@
 
 (defun prompt-for-discord-info ()
   (msg-listen)
-  (widget-add (gui) (jnew "hamster.ui.DiscordHelper") (coord 50 50))
+  (widget-add (gui) (jnew "hamster.ui.script.DiscordHelper") (coord 50 50))
   (let ((token nil)
         (role nil))
     (loop
