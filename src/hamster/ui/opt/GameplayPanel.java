@@ -106,7 +106,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
-            gob.add(new IndirCheckBox("Show Player HP/Armor damage (Not implemented)", ui.gui.settings.SHOWGOBPATH));
+            gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
             gob.add(new IndirCheckBox("Show Player Paths (Not implemented)", ui.gui.settings.SHOWGOBPATH));
             gob.add(new IndirCheckBox("Show Animal Paths (Not implemented)", ui.gui.settings.SHOWANIMALPATH));
             gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
