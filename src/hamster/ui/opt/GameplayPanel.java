@@ -2,10 +2,7 @@ package hamster.ui.opt;
 
 import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
-import hamster.ui.core.indir.IndirCheckBox;
-import hamster.ui.core.indir.IndirHSlider;
-import hamster.ui.core.indir.IndirLabel;
-import hamster.ui.core.indir.IndirRadioGroup;
+import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
@@ -94,6 +91,8 @@ public class GameplayPanel extends Scrollport {
             cam.pack();
         }
         { //Gob
+            gob.add(new Label("Bad Kin Group:"));
+            gob.add(new IndirGroupSelector(ui.gui.settings.BADKIN, BuddyWnd.gc));
             gob.add(new IndirCheckBox("Show halo on players", ui.gui.settings.SHOWGOBHALO));
             gob.add(new IndirCheckBox("Show halo on players on hearth", ui.gui.settings.SHOWGOBHALOONHEARTH));
             gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", ui.gui.settings.COLORIZEAGGRO));
@@ -107,14 +106,16 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
-            gob.add(new IndirCheckBox("Show Player Paths (Not implemented)", ui.gui.settings.SHOWGOBPATH));
-            gob.add(new IndirCheckBox("Show Animal Paths (Not implemented)", ui.gui.settings.SHOWANIMALPATH));
+            gob.add(new IndirCheckBox("Show Player Paths", ui.gui.settings.SHOWGOBPATH));
+            gob.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
             gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
+            gob.add(new IndirLabel(() -> String.format("Path Width: %d", ui.gui.settings.PATHWIDTH.get()), Text.std));
+            gob.add(new IndirHSlider(200, 1, 8, ui.gui.settings.PATHWIDTH));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", ui.gui.settings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color: ", ui.gui.settings.GOBPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal color: ", ui.gui.settings.ANIMALPATHCOL));
             gob.pack();
         }
         { //Pathfinding

@@ -67,7 +67,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     //A Gob can be holding many things (see: boats)
     private final Set<Long> holding = new HashSet<>();
     //A Gob can only be held by one thing
-    private long heldby;
+    private long heldby = -1;
     //Account for this gob during hit checks or not in pathfinding
     private Hitbox hitbox = null;
 
@@ -1218,6 +1218,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    }
 	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {
 		deltas.add((gob) -> gob.setattr(new ScreenLocation(gob)));
+	    }
+	    if(hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL) || hasTag(Tag.VEHICLE)) {
+		deltas.add((gob) -> gob.setattr(new PathMonitor(gob)));
 	    }
 
 	    //Add mods if needed

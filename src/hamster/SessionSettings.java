@@ -50,6 +50,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWGOBHALO;
     public final IndirSetting<Boolean> SHOWGOBHALOONHEARTH;
     public final IndirSetting<Boolean> SHOWGOBHP;
+    public final IndirSetting<Integer> PATHWIDTH;
     public final IndirSetting<Boolean> SHOWGOBPATH;
     public final IndirSetting<Boolean> SHOWANIMALPATH;
     public final IndirSetting<Boolean> SHOWANIMALRADIUS;
@@ -153,6 +154,7 @@ public class SessionSettings {
         SHOWGOBHALO = new IndirSetting<>(local, "gob.show-gob-halo", false);
         SHOWGOBHALOONHEARTH = new IndirSetting<>(local, "gob.show-gob-halo-on-hearth", true);
         SHOWGOBHP = new IndirSetting<>(local, "gob.show-gob-hp", true);
+        PATHWIDTH = new IndirSetting<>(local, "gob.path-width", 4);
         SHOWGOBPATH = new IndirSetting<>(local, "gob.show-gob-path", false);
         SHOWANIMALPATH = new IndirSetting<>(local, "gob.show-animal-path", false);
         SHOWANIMALRADIUS = new IndirSetting<>(local, "gob.show-animal-radius", false);
