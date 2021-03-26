@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.MouseBind;
+import haven.resutil.WaterTile;
 
 public class ItemDrag extends WItem {
     public Coord doff;
@@ -88,11 +89,18 @@ public class ItemDrag extends WItem {
 	    setLock(!locked());
 	    return true;
 	})) || (MouseBind.HITM_DROP.check(bind, () -> {
-	    if(!locked()) {
+	    if(!locked() && !ui.gui.settings.WATERDROPITEMCTRL.get()) {
 		dropon(parent, c.add(this.c));
 		return true;
 	    } else {
 	        return false;
+	    }
+	})) || (MouseBind.HITM_DROP_WATER.check(bind, () -> {
+	    if(!locked()) {
+		dropon(parent, c.add(this.c));
+		return true;
+	    } else {
+		return false;
 	    }
 	})) || (MouseBind.HITM_IACT_OBJ.check(bind, () -> {
 	    if(!locked()) {

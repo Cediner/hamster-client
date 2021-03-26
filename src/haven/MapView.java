@@ -48,6 +48,7 @@ import hamster.gob.Hidden;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
 import hamster.ui.MapViewExt;
+import hamster.util.JobSystem;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -60,7 +61,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public long rlplgob = -1;
     public Coord2d cc;
     private final Glob glob;
-    private int view = 2;
     private Collection<Delayed> delayed = new LinkedList<Delayed>();
     private Collection<Delayed> delayed2 = new LinkedList<Delayed>();
     public Camera camera;
@@ -83,6 +83,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Object tt;
     //Ext
     public final MapViewExt ext = new MapViewExt(this);
+    private final Outlines outlines;
     
     public interface Delayed {
 	public void run(GOut g);
@@ -139,7 +140,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void resized() {
 	    float field = 0.5f;
 	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 5000));
+	    //TODO: Probably should make far into a setting?  Make it scale with draw distance?
+	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 10000));
 	}
 
 	public void apply(Pipe p) {
@@ -264,6 +266,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private Coord dragorig = null;
 	private float elevorig, anglorig;
 
+	private long lastwh = 0;
+	private float whz;
+
 	public void tick(double dt) {
 	    Coord3f cc = getcenter();
 	    cc.y = -cc.y;
@@ -290,19 +295,60 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	public void drag(Coord c) {
-	    elev = elevorig - ((float)(c.y - dragorig.y) / 100.0f);
-	    if(elev < 0.0f) elev = 0.0f;
-	    if(elev > (Math.PI / 2.0)) elev = (float)Math.PI / 2.0f;
-	    angl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
-	    angl = angl % ((float)Math.PI * 2.0f);
+	    if (ui.gui.settings.FREECAMREXAXIS.get())
+		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
+	    if (ui.gui.settings.FREECAMREYAXIS.get())
+		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
+	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
+		if (elev < 0.0f) elev = 0.0f;
+		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+	    }
+	    angl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
+	    angl = angl % ((float) Math.PI * 2.0f);
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    float d = dist + (amount * 25);
-	    if(d < 5)
-		d = 5;
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    float d = dist + whz;
+	    if (d < 20)
+		d = 20;
 	    dist = d;
 	    return(true);
+	}
+
+	protected boolean zoomin() {
+	    dist -= 20;
+	    return true;
+	}
+	protected boolean zoomout() {
+	    dist += 20;
+	    return true;
+	}
+	protected boolean turnleft() {
+	    angl -= Math.PI / 8D;
+	    angl = angl % ((float) Math.PI * 2.0f);
+	    return true;
+	}
+	protected boolean turnright() {
+	    angl += Math.PI / 8D;
+	    angl = angl % ((float) Math.PI * 2.0f);
+	    return true;
+	}
+	protected boolean reset() {
+	    dist = 50.0f;
+	    elev = (float)Math.PI / 4.0f;
+	    angl = 0.0f;
+	    return true;
 	}
     }
     static {camtypes.put("worse", SimpleCam.class);}
@@ -315,6 +361,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float elevorig, anglorig;
 	private final float pi2 = (float)(Math.PI * 2);
 	private Coord3f cc = null;
+
+	private long lastwh = 0;
+	private float whz;
 
 	public void tick(double dt) {
 	    float cf = (1f - (float)Math.pow(500, -dt * 3));
@@ -350,18 +399,57 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public void drag(Coord c) {
-	    telev = elevorig - ((float)(c.y - dragorig.y) / 100.0f);
-	    if(telev < 0.0f) telev = 0.0f;
-	    if(telev > (Math.PI / 2.0)) telev = (float)Math.PI / 2.0f;
-	    tangl = anglorig + ((float)(c.x - dragorig.x) / 100.0f);
+	    if (ui.gui.settings.FREECAMREXAXIS.get())
+		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
+	    if (ui.gui.settings.FREECAMREYAXIS.get())
+		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
+	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+		telev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
+		if (telev < 0.0f) elev = 0.0f;
+		if (telev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+	    }
+	    tangl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
 	}
 
 	public boolean wheel(Coord c, int amount) {
-	    float d = tdist + (amount * 25);
-	    if(d < 5)
-		d = 5;
+	    if (whz < 0 && amount > 0)
+		whz = 0;
+	    else if (whz > 0 && amount < 0)
+		whz = 0;
+	    else if ((System.currentTimeMillis() - lastwh) < 1000)
+		whz += amount * 5;
+	    else
+		whz = amount * 5;
+	    lastwh = System.currentTimeMillis();
+
+	    float d = tdist + whz;
+	    if (d < 20)
+		d = 20;
 	    tdist = d;
 	    return(true);
+	}
+
+	protected boolean zoomin() {
+	    tdist -= 20;
+	    return true;
+	}
+	protected boolean zoomout() {
+	    tdist += 20;
+	    return true;
+	}
+	protected boolean turnleft() {
+	    tangl -= Math.PI / 8D;
+	    return true;
+	}
+	protected boolean turnright() {
+	    tangl += Math.PI / 8D;
+	    return true;
+	}
+	protected boolean reset() {
+	    tdist = 50.0f;
+	    telev = (float)Math.PI / 4.0f;
+	    tangl = 0.0f;
+	    return true;
 	}
     }
     static {camtypes.put("bad", FreeCam.class);}
@@ -376,6 +464,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean reset() {
+	    super.reset();
 	    offset = new Coord3f(0, 0, 0);
 	    return true;
 	}
@@ -427,6 +516,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public boolean reset() {
+	    super.reset();
 	    focus = getcc();
 	    return true;
 	}
@@ -538,6 +628,29 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	    chfield(tfield + whz);
 	    return (true);
+	}
+
+
+	protected boolean zoomin() {
+	    chfield(tfield-20);
+	    return true;
+	}
+	protected boolean zoomout() {
+	    chfield(tfield+20);
+	    return true;
+	}
+	protected boolean turnleft() {
+	    tangl -= Math.PI / 2D;
+	    return true;
+	}
+	protected boolean turnright() {
+	    tangl += Math.PI / 2D;
+	    return true;
+	}
+	protected boolean reset() {
+	    chfield( (float) (100 * Math.sqrt(2)));
+	    tangl = 0.0f;
+	    return true;
 	}
 
 	public String toString() {
@@ -758,7 +871,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	this.cc = cc;
 	this.plgob = this.rlplgob = plgob;
 	this.camera = restorecam();
-	basic.add(new Outlines(GlobalSettings.SYMMETRICOUTLINES));
+	basic.add(this.outlines = new Outlines(GlobalSettings.SYMMETRICOUTLINES));
 	basic.add(this.gobs = new Gobs());
 	basic.add(this.terrain = new Terrain());
 	this.clickmap = new ClickMap();
@@ -986,6 +1099,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	     * loop. Probably not a big deal, but still. */
 	    try {
 		Coord cc = new Coord2d(getcc()).floor(tilesz).div(MCache.cutsz);
+		final int view = GlobalSettings.DRAWGRIDRADIUS.get();
 		area = new Area(cc.sub(view, view), cc.add(view, view).add(1, 1));
 		lastload = null;
 	    } catch(Loading l) {
@@ -1002,6 +1116,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public final Terrain terrain;
     public class Terrain extends MapRaster {
+        RenderTree.Slot slot;
+	RenderTree.Slot flavslot;
+
 	final Grid main = new Grid<MapMesh>() {
 		MapMesh getcut(Coord cc) {
 		    return(map.getcut(cc));
@@ -1020,14 +1137,37 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    super.tick();
 	    if(area != null) {
 		main.tick();
-		flavobjs.tick();
+		if(GlobalSettings.SHOWFLAVOBJS.get())
+		    flavobjs.tick();
 	    }
 	}
 
 	public void added(RenderTree.Slot slot) {
+	    this.slot = slot;
 	    slot.add(main);
-	    slot.add(flavobjs);
+	    if(GlobalSettings.SHOWFLAVOBJS.get())
+	        flavslot = slot.add(flavobjs);
+	    else
+	        flavslot = null;
 	    super.added(slot);
+	}
+
+	@Override
+	public void removed(RenderTree.Slot slot) {
+	    super.removed(slot);
+	    this.slot = null;
+	}
+
+	public void toggleFlav(final boolean show) {
+	    if(show) {
+	        flavslot = slot.add(flavobjs);
+	    } else {
+	        flavslot.remove();
+	    }
+	}
+
+	public void remove() {
+	    this.slot.remove();
 	}
 
 	public Loading loading() {
@@ -1036,8 +1176,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		return(ret);
 	    if((ret = main.lastload) != null)
 		return(ret);
-	    if((ret = flavobjs.lastload) != null)
-		return(ret);
+	    if(GlobalSettings.SHOWFLAVOBJS.get())
+		if((ret = flavobjs.lastload) != null)
+		    return(ret);
 	    return(null);
 	}
     }
@@ -1347,7 +1488,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void amblight() {
 	synchronized(glob) {
 	    if(glob.lightamb != null) {
-		amblight = new DirLight(glob.lightamb, glob.lightdif, glob.lightspc, Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
+		final boolean darkmode = GlobalSettings.DARKMODE.get();
+		final boolean nightvision = GlobalSettings.NIGHTVISION.get();
+		final Color lamb = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVAMBIENTCOL.get() : glob.lightamb;
+		final Color ldif = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVDIFFUSECOL.get() : glob.lightdif;
+		final Color lspc = darkmode ? Color.BLACK : nightvision ? GlobalSettings.NVSPECCOL.get() : glob.lightspc;
+
+		amblight = new DirLight(lamb, ldif, lspc,
+			Coord3f.o.sadd((float)glob.lightelev, (float)glob.lightang, 1f));
 		amblight.prio(100);
 	    } else {
 		amblight = null;
@@ -1925,15 +2073,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    undelay(delayed2, g);
 	    poldraw(g);
 	    partydraw(g);
-	    glob.map.reqarea(cc.floor(tilesz).sub(MCache.cutsz.mul(view + 1)),
-			     cc.floor(tilesz).add(MCache.cutsz.mul(view + 1)));
+	    glob.map.reqarea(cc.floor(tilesz).sub(MCache.cutsz.mul(GlobalSettings.DRAWGRIDRADIUS.get() + 1)),
+			     cc.floor(tilesz).add(MCache.cutsz.mul(GlobalSettings.DRAWGRIDRADIUS.get() + 1)));
 	} catch(Loading e) {
 	    lastload = e;
 	    String text = e.getMessage();
 	    if(text == null)
 		text = "Loading...";
-	    g.chcolor(Color.BLACK);
-	    g.frect(Coord.z, sz);
+	    if(!GlobalSettings.SKIPLOADING.get()) {
+		g.chcolor(Color.BLACK);
+		g.frect(Coord.z, sz);
+	    } else {
+	        //Should never actually get here with SKIPLOADING on so this is mainly
+		// for debugging to where we're still getting loading thrown
+		logger.atWarning().withCause(e).log(text);
+	    }
 	    g.chcolor(Color.WHITE);
 	    g.atext(text, sz.div(2), 0.5, 0.5);
 	    if(e instanceof Resource.Loading) {
@@ -1946,23 +2100,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void updateSpeed(final double dt) {
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
 	if (pl != null) {
-	    final Coord2d plc = new Coord2d(pl.getc());
-	    if (lastrc != null) {
-		totaldist += plc.dist(lastrc);
-		totaldt += dt;
-		if(totaldt >= 1) {
-		    mspeedavg = totaldist/totaldt;
-		    totaldt = 0;
+	    try {
+		final Coord2d plc = new Coord2d(pl.getc());
+		if (lastrc != null) {
+		    totaldist += plc.dist(lastrc);
+		    totaldt += dt;
+		    if (totaldt >= 1) {
+			mspeedavg = totaldist / totaldt;
+			totaldt = 0;
+			totaldist = 0;
+		    }
+		    mspeed = plc.dist(lastrc) / dt;
+		} else {
+		    mspeedavg = 0;
 		    totaldist = 0;
+		    totaldt = 0;
+		    mspeed = 0;
 		}
-		mspeed = plc.dist(lastrc) / dt;
-	    } else {
-		mspeedavg = 0;
-		totaldist = 0;
-		totaldt = 0;
-		mspeed = 0;
-	    }
-	    lastrc = plc;
+		lastrc = plc;
+	    } catch (Loading ignore) {}
 	}
     }
 
@@ -2119,6 +2275,30 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     /*****/
 
+    public void toggleGobs(final boolean show) {
+        if(show) {
+            basic.add(gobs);
+	} else {
+            gobs.slot.remove();
+	}
+    }
+
+    public void toggleMap(final boolean show) {
+	if(show) {
+	    basic.add(terrain);
+	} else {
+	    terrain.remove();
+	}
+    }
+
+    public void toggleOutlines(final boolean show) {
+        if(show) {
+            basic.add(outlines);
+	} else {
+            outlines.remove();
+	}
+    }
+
     public void tick(double dt) {
 	super.tick(dt);
 	glob.map.sendreqs();
@@ -2148,6 +2328,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	if((placing != null) && placing.done())
 	    placing.get().ctick(dt);
 
+	updateSpeed(dt);
 	synchronized (movequeue) {
 	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
 		movingto = movequeue.poll();
@@ -2208,10 +2389,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public PlobAdjust adjust = new StdPlace();
 	Coord lastmc = null;
 	RenderTree.Slot slot;
+	private final List<OCache.Delta> deltas = new ArrayList<>();
 
 	private Plob(Indir<Resource> res, Message sdt) {
 	    super(MapView.this.glob, MapView.this.cc);
-	    setattr(new ResDrawable(this, res, sdt));
+	    final ResDrawable rd = new ResDrawable(this, res, sdt);
+	    setattr(rd);
+	    final String name = rd.getresname();
+	    JobSystem.submit(() -> this.discover(name));
 	}
 
 	public MapView mv() {return(MapView.this);}
@@ -2233,6 +2418,41 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if(ui.mc.isect(rootpos(), sz))
 		new Adjust(ui.mc.sub(rootpos()), 0).run();
 	    this.slot = basic.add(this.placed);
+	}
+
+	void refresh() {
+	    if(this.slot != null)
+		try {
+		    this.slot.remove();
+		} catch (RenderTree.SlotRemoved ignore) {}
+	    this.slot = basic.add(this.placed);
+	}
+
+	@Override
+	public void ctick(double dt) {
+	    //Apply any deltas during a tick
+	    synchronized (deltas) {
+		if (deltas.size() > 0) {
+		    for (final var delta : this.deltas) {
+			delta.apply(this);
+		    }
+		    this.deltas.clear();
+		    // We now need to signal to MapView to re-add this plob to the render graph
+		    refresh();
+		}
+	    }
+	    super.ctick(dt);
+	}
+
+	@Override
+	public void queueDeltas(List<OCache.Delta> deltas) {
+	    //Need a custom way to perform deltas as Plob don't work the same way as Gobs
+	    // Can't do it here so we need to just offload it to the tick thread
+	    synchronized (this.deltas) {
+		this.deltas.addAll(deltas);
+	    }
+	    //don't advertise this to the hitmap
+	    updatePathfindingBlackout(true);
 	}
 
 	private class Adjust extends Maptest {
@@ -2276,6 +2496,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
 			ob.slot.remove();
+			ob.dispose();
 		    }
 		}
 		this.placing = null;
@@ -2316,6 +2537,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
 			ob.slot.remove();
+			ob.dispose();
 		    }
 		}
 		this.placing = null;
@@ -2582,13 +2804,22 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     
     public boolean mousedown(Coord c, int button) {
+	final String seq = MouseBind.generateSequence(ui, button);
 	parent.setfocus(this);
 	Loader.Future<Plob> placing_l = this.placing;
-	if(button == 2) {
+	if(MV_LOCK_PLACING_OBJ.match(seq) && placing_l != null && placing_l.done()) {
+	    final Plob placing = placing_l.get();
+	    if(placing.getattr(hamster.gob.attrs.draw2d.Locked.class) != null) {
+	        placing.delattr(hamster.gob.attrs.draw2d.Locked.class);
+	    } else {
+	        placing.setattr(new hamster.gob.attrs.draw2d.Locked(placing));
+	    }
+	} else if(button == 2) {
 	    if(((Camera)camera).click(c)) {
 		camdrag = ui.grabmouse(this);
 	    }
-	} else if((placing_l != null) && placing_l.done()) {
+	} else if((placing_l != null) && placing_l.done()
+		&& placing_l.get().getattr(hamster.gob.attrs.draw2d.Locked.class) == null) {
 	    Plob placing = placing_l.get();
 	    if(placing.lastmc != null)
 		wdgmsg("place", placing.rc.floor(posres), (int)Math.round(placing.a * 32768 / Math.PI), button, ui.modflags());
@@ -2691,6 +2922,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
 	    //TODO: This can result in very buggy behavior and needs reexamined at some point
 	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
+	    if(this.placing != null && this.placing.done()) {
+	        final var plob = this.placing.get();
+	        plob.refresh();
+	    }
             return true;
 	});
         binds.put(KB_TOGGLE_HITBOXES, () -> {

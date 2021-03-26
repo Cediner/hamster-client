@@ -20,7 +20,8 @@ public class MouseBind {
         ITM_AUTO_EQUIP_RH;
     //Held Item Related
     public static final MouseBind
-        HITM_TOGGLE_LOCK, HITM_DROP, HITM_IACT_OBJ, HITM_TRANS_OBJ_SHIFT, HITM_TRANS_ALL_OBJ, HITM_IACT;
+        HITM_TOGGLE_LOCK, HITM_DROP, HITM_IACT_OBJ, HITM_TRANS_OBJ_SHIFT, HITM_TRANS_ALL_OBJ, HITM_IACT,
+        HITM_DROP_WATER;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
         final MouseBind mb = new MouseBind(name, group,
@@ -56,7 +57,8 @@ public class MouseBind {
         //Held Item related
         final String HITM_GRP = "Held Item";
         HITM_TOGGLE_LOCK = addMB("Toggle lock on held item", HITM_GRP, "C-B3");
-        HITM_DROP = addMB("Drop Held Item ", HITM_GRP, "B1");
+        HITM_DROP = addMB("Drop Held Item", HITM_GRP, "B1");
+        HITM_DROP_WATER = addMB("Drop Held Item into Water", HITM_GRP, "C-B1");
         HITM_IACT_OBJ = addMB("Interact Held Item with Object", HITM_GRP, "B3");
         HITM_TRANS_OBJ_SHIFT = addMB("Transfer Held Item with Object", HITM_GRP, "S-B3");
         HITM_TRANS_ALL_OBJ = addMB("Transfer Held Item and alike items with Object", HITM_GRP, "S-C-B3");

@@ -66,6 +66,7 @@ public class UIPanel extends Scrollport {
             inv.add(new IndirCheckBox("Show Item Wear Bar", ui.gui.settings.SHOWITEMWEAR));
             inv.add(new IndirCheckBox("Show Item Contents Bar", ui.gui.settings.SHOWITEMCONT));
             inv.add(new IndirCheckBox("Always show longtip on items", ui.gui.settings.ALWAYSITEMLONGTIPS));
+            inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", ui.gui.settings.WATERDROPITEMCTRL));
             inv.pack();
         }
         { //Flowermenu

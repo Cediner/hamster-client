@@ -37,7 +37,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> MMSHOWVIEW;
     public final IndirSetting<Color> MMPATHCOL;
 
-
     ////Gob
     public final IndirSetting<Integer> BADKIN;
     public final IndirSetting<Boolean> COLORFULFARMES;
@@ -50,14 +49,14 @@ public class SessionSettings {
     public final IndirSetting<BaseColor> GOBHITBOXCOL;
     public final IndirSetting<Boolean> SHOWGOBHALO;
     public final IndirSetting<Boolean> SHOWGOBHALOONHEARTH;
-
-    ////Audio
-    public final IndirSetting<Double> TIMERVOL;
-    public final IndirSetting<Double> ALERTVOL;
-    public final IndirSetting<Double> POPUPMSGVOL;
-
-    public final IndirSetting<Boolean> SOUNDONPOPUPMSG;
-    public final IndirSetting<Boolean> NOGOBAUDIO;
+    public final IndirSetting<Boolean> SHOWGOBHP;
+    public final IndirSetting<Integer> PATHWIDTH;
+    public final IndirSetting<Boolean> SHOWGOBPATH;
+    public final IndirSetting<Boolean> SHOWANIMALPATH;
+    public final IndirSetting<Boolean> SHOWANIMALRADIUS;
+    public final IndirSetting<BaseColor> GOBPATHCOL;
+    public final IndirSetting<BaseColor> ANIMALPATHCOL;
+    public final IndirSetting<BaseColor> VEHPATHCOL;
 
     ////Camera
     public final IndirSetting<String> CAMERA;
@@ -96,6 +95,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWITEMCONT;
     public final IndirSetting<Boolean> ALWAYSITEMLONGTIPS;
     public final IndirSetting<Boolean> AUTOEQUIP;
+    public final IndirSetting<Boolean> WATERDROPITEMCTRL;
     //Flowermenu UI
     public final IndirSetting<Boolean> QUICKFLMENU;
     public final IndirSetting<Boolean> KEEPFLOPEN;
@@ -117,7 +117,6 @@ public class SessionSettings {
         SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
         SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
         SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
-
 
         //Minimap
         SHOWMMGOBS = new IndirSetting<>(local, "minimap.show-gobs", true);
@@ -154,13 +153,14 @@ public class SessionSettings {
         GOBHITBOXCOL = new IndirSetting<>(local, "gob.hitbox-col", new BaseColor(Color.WHITE));
         SHOWGOBHALO = new IndirSetting<>(local, "gob.show-gob-halo", false);
         SHOWGOBHALOONHEARTH = new IndirSetting<>(local, "gob.show-gob-halo-on-hearth", true);
-
-        //Audio
-        TIMERVOL = new IndirSetting<>(local,"audio.timer-volume", 1.0);
-        ALERTVOL = new IndirSetting<>(local, "audio.alert-volume", 1.0);
-        POPUPMSGVOL = new IndirSetting<>(local, "audio.popup-message-volume", 1.0);
-        SOUNDONPOPUPMSG = new IndirSetting<>(local, "audio.sound-on-popup", false);
-        NOGOBAUDIO = new IndirSetting<>(local, "audio.no-gob-audio", false);
+        SHOWGOBHP = new IndirSetting<>(local, "gob.show-gob-hp", true);
+        PATHWIDTH = new IndirSetting<>(local, "gob.path-width", 4);
+        SHOWGOBPATH = new IndirSetting<>(local, "gob.show-gob-path", false);
+        SHOWANIMALPATH = new IndirSetting<>(local, "gob.show-animal-path", false);
+        SHOWANIMALRADIUS = new IndirSetting<>(local, "gob.show-animal-radius", false);
+        GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", new BaseColor(Color.GREEN));
+        ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", new BaseColor(Color.RED));
+        VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
 
         //Camera
         CAMERA = new IndirSetting<>(local, "camera.camera-type", "sortho");
@@ -200,6 +200,7 @@ public class SessionSettings {
         SHOWITEMCONT = new IndirSetting<>(local, "ui.inv.show-item-cont", true);
         ALWAYSITEMLONGTIPS = new IndirSetting<>(local, "ui.inv.always-show-longtip", true);
         AUTOEQUIP = new IndirSetting<>(local, "ui.inv.auto-equip", true);
+        WATERDROPITEMCTRL = new IndirSetting<>(local, "ui.dont-drop-item-over-water", false);
 
         QUICKFLMENU = new IndirSetting<>(local, "ui.flowermenu.quick-menu", false);
         KEEPFLOPEN = new IndirSetting<>(local, "ui.flowermenu.never-close-on-click", false);

@@ -46,7 +46,7 @@
 
 (defun get-data ()
   (msg-listen)
-  (widget-add (gui) (jnew "haven.sloth.gui.ForageWizardWnd") (coord 50 50))
+  (widget-add (gui) (jnew "hamster.ui.script.ForageWizardWnd") (coord 50 50))
   (let ((done nil)
         (new nil)
         (radius 45)

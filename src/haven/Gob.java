@@ -67,7 +67,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     //A Gob can be holding many things (see: boats)
     private final Set<Long> holding = new HashSet<>();
     //A Gob can only be held by one thing
-    private long heldby;
+    private long heldby = -1;
     //Account for this gob during hit checks or not in pathfinding
     private Hitbox hitbox = null;
 
@@ -405,7 +405,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    attr.put(ac, a);
 	}
 
-	if(a instanceof Hidden) {
+	if(a instanceof Hidden && !(this instanceof MapView.Plob)) {
 	    //TODO: This can result in very buggy behavior and needs reexamined
 	    glob.oc.mailbox.mail(new OCache.RefreshGobByObject(this));
 	}
@@ -1219,6 +1219,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {
 		deltas.add((gob) -> gob.setattr(new ScreenLocation(gob)));
 	    }
+	    if(hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL) || hasTag(Tag.VEHICLE)) {
+		deltas.add((gob) -> gob.setattr(new PathMonitor(gob)));
+	    }
 
 	    //Add mods if needed
 	    if (name.startsWith("gfx/terobjs/dframe")) {
@@ -1235,6 +1238,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new Hidden(gob)));
 	    }
 
+	    if(RangeMonitor.hasRange(name)) {
+	        deltas.add((gob) -> gob.setattr(new RangeMonitor(gob)));
+	    }
 
 	    MarkerData.marker(name).ifPresent(mark -> mapfile.markobj(mark, rc));
 

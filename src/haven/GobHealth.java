@@ -26,10 +26,16 @@
 
 package haven;
 
-import java.awt.Color;
 import haven.render.*;
 
-public class GobHealth extends GAttrib implements Gob.SetupMod {
+import java.awt.*;
+
+public class GobHealth extends GAttrib implements Gob.SetupMod, RenderTree.Node, PView.Render2D {
+    private static final Tex[] gobhp = new Tex[]{
+	    Text.renderstroked("25%", Color.WHITE, Color.BLACK, Text.std16).tex(),
+	    Text.renderstroked("50%", Color.WHITE, Color.BLACK, Text.std16).tex(),
+	    Text.renderstroked("75%", Color.WHITE, Color.BLACK, Text.std16).tex()
+    };
     public final int hp;
     public final MixColor fx;
     
@@ -37,6 +43,16 @@ public class GobHealth extends GAttrib implements Gob.SetupMod {
 	super(g);
 	this.hp = hp;
 	this.fx = new MixColor(255, 0, 0, 128 - ((hp * 128) / 4));
+    }
+
+    public void draw(GOut g, Pipe state) {
+	final UI ui = gob.glob.ui.get();
+	if(ui != null && ui.gui != null && ui.gui.settings.SHOWGOBHP.get() && hp < 4) {
+	    Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 5), state, Area.sized(g.sz())).round2();
+	    if (sc.isect(Coord.z, g.sz())) {
+		g.aimage(gobhp[hp-1], sc, 0.5, 1.0);
+	    }
+	}
     }
     
     public Pipe.Op gobstate() {

@@ -1,6 +1,7 @@
 package hamster.gob;
 
 import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.io.Storage;
 import hamster.util.ObservableMap;
 import hamster.util.ObservableMapListener;
@@ -90,7 +91,7 @@ public class Alerted {
     public static void checkAlert(final String name, final long plgob, final Gob g, final UI ui) {
         if (sfxmap.containsKey(name)) {
             if (!name.equals("gfx/borka/body")) {
-                Audio.play(sfxmap.get(name), ui.gui.settings.ALERTVOL.get().floatValue());
+                Audio.play(sfxmap.get(name),  (GlobalSettings.ALERTVOL.get() / 1000f));
                 g.glob.lastAlert = System.currentTimeMillis();
             } else if (plgob != -1 && g.id != plgob) {
                 //For bodies only play on unknown or RED or village/realm member that you don't have kinned
@@ -98,7 +99,7 @@ public class Alerted {
                 final GobHealth hp = g.getattr(GobHealth.class);
                 if ( hp == null && (kin == null || kin.group == ui.gui.settings.BADKIN.get() ||
                         (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" "))))) {
-                    Audio.play(sfxmap.get(name), ui.gui.settings.ALERTVOL.get().floatValue());
+                    Audio.play(sfxmap.get(name), (GlobalSettings.ALERTVOL.get() / 1000f));
                     g.glob.lastAlert = System.currentTimeMillis();
                 }
             }

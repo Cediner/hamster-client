@@ -38,6 +38,7 @@ public abstract class Listbox<T> extends ListWidget<T> {
 	super(new Coord(w, h * itemh), itemh);
 	this.h = h;
 	this.sb = adda(new Scrollbar(sz.y, 0, 0), sz.x, 0, 1, 0);
+	selindex = -1;
     }
 
     protected void drawsel(GOut g) {
@@ -127,11 +128,15 @@ public abstract class Listbox<T> extends ListWidget<T> {
     public boolean mousedown(Coord c, int button) {
 	if(super.mousedown(c, button))
 	    return(true);
-	T item = itemat(c);
-	if((item == null) && (button == 1))
-	    change(null);
-	else if(item != null)
+	final Optional<Integer> idx = itemato(c);
+	if (idx.isPresent()) {
+	    selindex = idx.get();
+	    T item = listitem(selindex);
 	    itemclick(item, button);
+	} else if (button == 1) {
+	    change(null);
+	    selindex = -1;
+	}
 	return(true);
     }
 

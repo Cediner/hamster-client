@@ -37,6 +37,7 @@ import static haven.render.sl.Type.*;
 
 public class Outlines implements RenderTree.Node {
     private final IndirSetting<Boolean> symmetric;
+    private RenderTree.Slot slot;
 
     private final static Uniform snrm = new Uniform(SAMPLER2D, p -> ((Draw)p.get(RUtils.adhoc)).nrm, RUtils.adhoc);
     private final static Uniform sdep = new Uniform(SAMPLER2D, p -> ((Draw)p.get(RUtils.adhoc)).depth, RUtils.adhoc);
@@ -145,6 +146,7 @@ public class Outlines implements RenderTree.Node {
     }
 
     public void added(RenderTree.Slot slot) {
+        this.slot = slot;
 	RenderedNormals.get(slot.state());
 	slot.add(new Rendered.ScreenQuad(false), p -> {
 		FrameConfig fb = p.get(FrameConfig.slot);
@@ -162,5 +164,11 @@ public class Outlines implements RenderTree.Node {
 
     public void removed(RenderTree.Slot slot) {
 	RenderedNormals.put(slot.state());
+	this.slot = null;
+    }
+
+    public void remove() {
+        if(slot != null)
+            slot.remove();
     }
 }

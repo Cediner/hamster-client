@@ -1013,8 +1013,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void error(String msg) {
 	msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
 	double now = Utils.rtime();
-	if(now - lasterrsfx > 0.1) {
-	    Audio.play(errsfx);
+	if(SOUNDONERRORMSG.get() && now - lasterrsfx > 0.1) {
+	    Audio.play(errsfx, ERRORMSGVOL.get() / 1000f);
 	    lasterrsfx = now;
 	}
     }
@@ -1024,8 +1024,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public void msg(String msg) {
 	msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();
-	if(now - lastmsgsfx > 0.1) {
-	    Audio.play(msgsfx);
+	if(SOUNDONPOPUPMSG.get() && now - lastmsgsfx > 0.1) {
+	    Audio.play(msgsfx, POPUPMSGVOL.get() / 1000f);
 	    lastmsgsfx = now;
 	}
     }

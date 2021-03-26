@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.Consumer;
 
+import hamster.GlobalSettings;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
 import hamster.util.JobSystem;
@@ -257,19 +258,21 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void remove(Gob ob) {
-	Gob old;
-	Collection<ChangeCallback> cbs;
-	synchronized(this) {
-	    old = objs.remove(ob.id, ob);
-	    if((old != null) && (old != ob))
-		throw(new RuntimeException(String.format("object %d removed wrong object", ob.id)));
-	    cbs = new ArrayList<>(this.cbs);
-	}
-	if(old != null) {
-	    synchronized(old) {
-		for(ChangeCallback cb : cbs)
-		    cb.removed(old);
-		old.dispose();
+	if (!GlobalSettings.KEEPGOBS.get()) {
+	    Gob old;
+	    Collection<ChangeCallback> cbs;
+	    synchronized (this) {
+		old = objs.remove(ob.id, ob);
+		if ((old != null) && (old != ob))
+		    throw (new RuntimeException(String.format("object %d removed wrong object", ob.id)));
+		cbs = new ArrayList<>(this.cbs);
+	    }
+	    if (old != null) {
+		synchronized (old) {
+		    for (ChangeCallback cb : cbs)
+			cb.removed(old);
+		    old.dispose();
+		}
 	    }
 	}
     }

@@ -59,8 +59,8 @@ public class AudioSprite {
 		    ui = null;
 		}
 
-		// TODO: account for  other settings
-		if (GlobalSettings.PAUSED.get() || (ui != null && !MainFrame.instance.p.isActiveUI(ui))) {
+		if (!GlobalSettings.SHOWGOBS.get() || !GlobalSettings.SOUNDONGOBAUDIO.get() ||
+			GlobalSettings.PAUSED.get() || (ui != null && !MainFrame.instance.p.isActiveUI(ui))) {
 		    return new IgnoreSprite(owner, res);
 		}
 		{

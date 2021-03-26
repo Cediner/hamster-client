@@ -31,8 +31,10 @@ import java.util.function.*;
 import java.lang.ref.*;
 import java.util.regex.Pattern;
 
+import hamster.GlobalSettings;
 import hamster.script.pathfinding.Tile;
 import haven.render.*;
+import haven.resutil.WaterTile;
 
 /* XXX: This whole file is a bit of a mess and could use a bit of a
  * rewrite some rainy day. Synchronization especially is quite hairy. */
@@ -227,8 +229,10 @@ public class MCache implements MapSource {
 	private Flavobjs[] fo = new Flavobjs[cutn.x * cutn.y];
 
 	private class Cut {
+	    //Basic visible textured mapmesh
 	    MapMesh mesh;
 	    Defer.Future<MapMesh> dmesh;
+	    //Overlays for the mapmesh
 	    Map<OverlayInfo, RenderTree.Node> ols = new HashMap<>();
 	    Map<OverlayInfo, RenderTree.Node> olols = new HashMap<>();
 	}
@@ -763,6 +767,27 @@ public class MCache implements MapSource {
 	    gr.gtick(g);
     }
 
+    public void updateWaterTiles() {
+        synchronized (tiles) {
+            for(final var ref : tiles) {
+                if(ref != null) {
+		    final var tile = ref.get();
+		    if (tile instanceof WaterTile) {
+			((WaterTile) tile).updateMat();
+		    }
+		}
+	    }
+	}
+    }
+
+    public void invalidateAll() {
+	synchronized (grids) {
+	    for (final Grid g : grids.values()) {
+		g.invalidate();
+	    }
+	}
+    }
+
     public void invalidate(Coord cc) {
 	synchronized(req) {
 	    if(req.get(cc) == null)
@@ -867,9 +892,24 @@ public class MCache implements MapSource {
 	return(g.getz(tc.sub(g.ul)));
     }
 
+    public double getfz_safe(final Coord tc) {
+	final Optional<Grid> grid = getgridto(tc);
+	if (grid.isPresent()) {
+	    final Grid g = grid.get();
+	    return g.getz(tc.sub(g.ul));
+	} else {
+	    return 0;
+	}
+    }
+
     @Deprecated
     public int getz(Coord tc) {
 	return((int)Math.round(getfz(tc)));
+    }
+
+    @Deprecated
+    public int getz_safe(Coord tc) {
+        return (int)Math.round(getfz_safe(tc));
     }
 
     public double getcz(double px, double py) {
@@ -877,8 +917,8 @@ public class MCache implements MapSource {
 	Coord ul = new Coord(Utils.floordiv(px, tw), Utils.floordiv(py, th));
 	double sx = Utils.floormod(px, tw) / tw;
 	double sy = Utils.floormod(py, th) / th;
-	return(((1.0f - sy) * (((1.0f - sx) * getfz(ul)) + (sx * getfz(ul.add(1, 0))))) +
-	       (sy * (((1.0f - sx) * getfz(ul.add(0, 1))) + (sx * getfz(ul.add(1, 1))))));
+	return(((1.0f - sy) * (((1.0f - sx) * getfz_safe(ul)) + (sx * getfz_safe(ul.add(1, 0))))) +
+	       (sy * (((1.0f - sx) * getfz_safe(ul.add(0, 1))) + (sx * getfz_safe(ul.add(1, 1))))));
     }
 
     public double getcz(Coord2d pc) {
@@ -1067,25 +1107,27 @@ public class MCache implements MapSource {
     }
 
     public void trim(Coord ul, Coord lr) {
-	synchronized(grids) {
-	    synchronized(req) {
-		for(Iterator<Map.Entry<Coord, Grid>> i = grids.entrySet().iterator(); i.hasNext();) {
-		    Map.Entry<Coord, Grid> e = i.next();
-		    Coord gc = e.getKey();
-		    Grid g = e.getValue();
-		    if((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y)) {
-			g.dispose();
-			i.remove();
+        if(!GlobalSettings.KEEPGRIDS.get()) {
+	    synchronized (grids) {
+		synchronized (req) {
+		    for (Iterator<Map.Entry<Coord, Grid>> i = grids.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<Coord, Grid> e = i.next();
+			Coord gc = e.getKey();
+			Grid g = e.getValue();
+			if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y)) {
+			    g.dispose();
+			    i.remove();
+			}
 		    }
+		    for (Iterator<Coord> i = req.keySet().iterator(); i.hasNext(); ) {
+			Coord gc = i.next();
+			if ((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y))
+			    i.remove();
+		    }
+		    cached = null;
 		}
-		for(Iterator<Coord> i = req.keySet().iterator(); i.hasNext();) {
-		    Coord gc = i.next();
-		    if((gc.x < ul.x) || (gc.y < ul.y) || (gc.x > lr.x) || (gc.y > lr.y))
-			i.remove();
-		}
-		cached = null;
+		gridwait.wnotify();
 	    }
-	    gridwait.wnotify();
 	}
     }
 

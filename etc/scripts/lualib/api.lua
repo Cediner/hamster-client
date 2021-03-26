@@ -391,7 +391,7 @@ api.discord = {
     local token
     local role
 
-    api.core.gui().add(luajava.newInstance("haven.sloth.gui.DiscordHelper"),
+    api.core.gui().add(luajava.newInstance("hamster.ui.script.DiscordHelper"),
                        api.coord.coord2i(50, 50))
 
     repeat

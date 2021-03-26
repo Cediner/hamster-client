@@ -2,11 +2,12 @@ package hamster.ui.opt;
 
 import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
-import hamster.ui.core.indir.IndirCheckBox;
-import hamster.ui.core.indir.IndirRadioGroup;
+import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
+
+import static hamster.GlobalSettings.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
@@ -14,6 +15,8 @@ public class GameplayPanel extends Scrollport {
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);
+        final Grouping lighting = new LinearGrouping("Light Settings (Global)", spacer, false);
+        final Grouping map = new LinearGrouping("Map Settings (Global)", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
         final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
         final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
@@ -22,6 +25,41 @@ public class GameplayPanel extends Scrollport {
             sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
             sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
             sys.pack();
+        }
+        { // Lights
+            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient: ", NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse: ", NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
+            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
+            lighting.pack();
+        }
+        { // Map related
+            //Display related
+            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
+            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
+            map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
+            map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
+            map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
+            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
+            map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
+            map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
+            //Grid related
+            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
+            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
+            //Ocean related
+            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
+            //Cave related
+            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.pack();
         }
         { //Camera
             final Coord c = new Coord(0, 0);
@@ -53,6 +91,8 @@ public class GameplayPanel extends Scrollport {
             cam.pack();
         }
         { //Gob
+            gob.add(new Label("Bad Kin Group:"));
+            gob.add(new IndirGroupSelector(ui.gui.settings.BADKIN, BuddyWnd.gc));
             gob.add(new IndirCheckBox("Show halo on players", ui.gui.settings.SHOWGOBHALO));
             gob.add(new IndirCheckBox("Show halo on players on hearth", ui.gui.settings.SHOWGOBHALOONHEARTH));
             gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", ui.gui.settings.COLORIZEAGGRO));
@@ -60,8 +100,20 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
             gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
+            gob.add(new IndirCheckBox("Colorize Cave dust (Global)", COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer (Global)", LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
+            gob.add(new IndirCheckBox("Show Player Paths", ui.gui.settings.SHOWGOBPATH));
+            gob.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
+            gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
+            gob.add(new IndirLabel(() -> String.format("Path Width: %d", ui.gui.settings.PATHWIDTH.get()), Text.std));
+            gob.add(new IndirHSlider(200, 1, 8, ui.gui.settings.PATHWIDTH));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", ui.gui.settings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
             gob.pack();
@@ -81,6 +133,8 @@ public class GameplayPanel extends Scrollport {
         int y = 0;
 
         y += add(sys, new Coord(0, y)).sz.y + spacer.y;
+        y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
+        y += add(map, new Coord(0, y)).sz.y + spacer.y;
         y += add(cam, new Coord(0, y)).sz.y + spacer.y;
         y += add(gob, new Coord(0, y)).sz.y + spacer.y;
         y += add(pf, new Coord(0, y)).sz.y + spacer.y;

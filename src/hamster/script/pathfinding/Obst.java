@@ -156,6 +156,51 @@ public class Obst extends Resource.Layer {
         return List.of(shapes[polygon]);
     }
 
+    public static ObstMesh makeMesh(final Coord3f[][] shapes, final Color col) {
+        final int polygons = shapes.length;
+        final float[] hiddencolor = Utils.c2fa(col);
+        final FloatBuffer pa, na, cl;
+        final ShortBuffer sa;
+
+        {
+            int verts = 0, inds = 0;
+            for (Coord3f[] shape : shapes) {
+                verts += shape.length;
+                inds += (int) (Math.ceil(shape.length / 3.0));
+            }
+            pa = Utils.mkfbuf(verts * 3);
+            na = Utils.mkfbuf(verts * 3);
+            cl = Utils.mkfbuf(verts * 4);
+            sa = Utils.mksbuf(inds * 3);
+        }
+
+        for (Coord3f[] shape : shapes) {
+            for (final Coord3f off : shape) {
+                pa.put(off.x).put(off.y).put(off.z);
+                na.put(off.x).put(off.y).put(0f);
+                cl.put(hiddencolor[0]).put(hiddencolor[1]).put(hiddencolor[2]).put(hiddencolor[3]);
+            }
+        }
+
+        short voff = 0;
+        for (int poly = 0; poly < polygons; ++poly) {
+            final int vertsper = shapes[poly].length;
+            for (int j = 0; j < (int) Math.ceil(vertsper / 3.0); ++j) {
+                short s1 = (short) ((voff * j % vertsper) + (poly * vertsper));
+                short s2 = (short) (((voff * j + 1) % vertsper) + (poly * vertsper));
+                short s3 = (short) (((voff * j + 2) % vertsper) + (poly * vertsper));
+                sa.put(s1).put(s2).put(s3);
+                voff += 2;
+            }
+            voff = 0;
+        }
+
+        return new ObstMesh(new VertexBuf(new VertexBuf.VertexData(pa),
+                new VertexBuf.NormalData(na),
+                new VertexBuf.ColorData(cl)),
+                sa);
+    }
+
     public static ObstMesh makeMesh(final Coord2d[][] shapes, final Color col, final float h) {
         final int polygons = shapes.length;
         final float[] hiddencolor = Utils.c2fa(col);
@@ -202,7 +247,29 @@ public class Obst extends Resource.Layer {
     }
 
     public ObstMesh makeMesh(final Color col, final float h) {
-        return makeMesh(shapes, col, h);
+        //TODO: revisit this as it should be simple to add side walls to everything given 2 points
+        if (shapes.length == 1 && shapes[0].length == 4) { // simple shapes have side walls
+            final var tops = new Coord3f[]{
+                    new Coord3f(shapes[0][0], 1f), new Coord3f(shapes[0][1], 1f),
+                    new Coord3f(shapes[0][2], 1f), new Coord3f(shapes[0][3], 1f)
+            };
+            final var bots = new Coord3f[]{
+                    new Coord3f(shapes[0][0], 0f), new Coord3f(shapes[0][1], 0f),
+                    new Coord3f(shapes[0][2], 0f), new Coord3f(shapes[0][3], 0f)
+            };
+
+            final Coord3f[][] verts ={
+                    { tops[0], tops[1], tops[2], tops[3] },
+                    { tops[0], tops[1], bots[1], bots[0] },
+                    { tops[0], tops[3], bots[3], bots[0] },
+                    { tops[2], tops[1], bots[1], bots[2] },
+                    { tops[2], tops[3], bots[3], bots[2] }
+            };
+            return Obst.makeMesh(verts, col);
+        } else {
+            //'Complex' ones for now do not.
+            return makeMesh(shapes, col, h);
+        }
     }
 
     @Override

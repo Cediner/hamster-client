@@ -36,6 +36,7 @@ import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
 import hamster.GlobalSettings;
+import hamster.util.JobSystem;
 import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
@@ -93,6 +94,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     private boolean aswap;
     private int fps, framelag;
     private volatile int frameno;
+    long last_sess_upd = System.currentTimeMillis();
+    long ssent = 0, srecv = 0, sretran = 0;
+    long sent = 0, recv = 0, retran = 0;
     private double uidle = 0.0, ridle = 0.0;
     private final Dispatcher ed;
     private GLEnvironment env = null;
@@ -133,6 +137,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	caps.setRedBits(8);
 	caps.setGreenBits(8);
 	caps.setBlueBits(8);
+	caps.setStencilBits(8);
+	caps.setSampleBuffers(true);
+	caps.setNumSamples(4);
 	return(caps);
     }
 
@@ -496,6 +503,30 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    FastText.aprintf(g, new Coord(10, y -= dy), 0, 1, "RQ depth: %d (%d)", rqd, Resource.local().numloaded() + Resource.remote().numloaded());
     }
 
+    private void drawsimplestats(final UI ui, final GOut g) {
+        if(ui.sess != null) {
+	    if ((System.currentTimeMillis() - last_sess_upd) >= 1000) {
+		sent = ui.sess.sent - ssent;
+		recv = ui.sess.recv - srecv;
+		retran = ui.sess.retran - sretran;
+		ssent = ui.sess.sent;
+		srecv = ui.sess.recv;
+		sretran = ui.sess.retran;
+		last_sess_upd = System.currentTimeMillis();
+	    }
+
+	    if (GlobalSettings.SHOWSTATS.get()) {
+		final int w = getWidth();
+		FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
+		FastText.aprintf(g, new Coord(w, 15), 1, 0, "S: %d | R: %d | P: %d | RT: %d", sent, recv, ui.sess.pend, retran);
+		FastText.aprintf(g, new Coord(getWidth(), 30), 1, 0, "JS: %s", JobSystem.status());
+		if (ui.gui != null && ui.gui.map != null) {
+		    FastText.aprintf(g, new Coord(w, 45), 1, 0, "%.2f units/s | %.2f units/s", ui.gui.map.speed(), ui.gui.map.rspeed());
+		}
+	    }
+	}
+    }
+
     private void display(UI ui, GLRender buf) {
 	buf.clear(wnd, FragColor.fragcol, FColor.BLACK);
 	Pipe state = wnd.copy();
@@ -506,6 +537,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
 	if(Config.dbtext)
 	    drawstats(ui, g, buf);
+	drawsimplestats(ui, g);
 	drawtooltip(ui, g);
 	drawcursor(ui, g);
     }

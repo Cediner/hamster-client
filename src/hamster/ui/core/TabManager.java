@@ -3,9 +3,9 @@ package hamster.ui.core;
 import hamster.GlobalSettings;
 import hamster.ui.core.indir.IndirThemeRes;
 import hamster.ui.core.indir.IndirThemeTex;
+import hamster.ui.core.layout.GridGrouping;
 import haven.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TabManager extends Widget {
@@ -57,27 +57,17 @@ public class TabManager extends Widget {
 
     private final HashMap<String, TabButton> namemap = new HashMap<>();
     private final HashMap<Widget, Tabs.Tab> tabmap = new HashMap<>();
-    private final ArrayList<TabButton> btns = new ArrayList<>();
     public final Tabs tabs;
+    private final GridGrouping gridtabs;
     public final int height;
     private TabButton last;
-    private int nextx = 0, nexty = 0;
-    public int count = 0;
-    private final int fsz;
 
     public TabManager(int w) {
         super(Coord.z);
-        this.fsz = w;
         height = tabMid.tex().sz().y + 2;
         tabs = new Tabs(new Coord(0, height), Coord.z, this);
-    }
-
-    public TabManager() {
-        this(-1);
-    }
-
-    public int size() {
-        return btns.size();
+        gridtabs = new GridGrouping(null, new Coord(0, 0), 0, w, false, GridGrouping.Direction.HORIZONTAL);
+        add(gridtabs);
     }
 
     public void addtab(Widget ch, String name, boolean show) {
@@ -92,12 +82,10 @@ public class TabManager extends Widget {
                 TabManager.this.wdgmsg("select-tab", ch);
             }
         }, tabs.c);
-        add(btn, new Coord(nextx, nexty));
+        gridtabs.add(btn);
         tab.add(ch, Coord.z);
-        tabs.indpack();
-        nextx += btn.sz.x;
+        pack();
 
-        btns.add(btn);
         namemap.put(name, btn);
         tabmap.put(btn, tab);
 
@@ -108,9 +96,6 @@ public class TabManager extends Widget {
         } else if (show) {
             changetab(tab, btn);
         }
-
-        arrange();
-        count++;
     }
 
 
@@ -119,6 +104,10 @@ public class TabManager extends Widget {
     }
 
     public void pack() {
+        gridtabs.pack();
+        tabs.c = new Coord(0, gridtabs.sz.y);
+        for(final var tab : tabmap.values())
+            tab.move(tabs.c);
         tabs.indpack();
         super.pack();
         parent.pack();
@@ -130,26 +119,9 @@ public class TabManager extends Widget {
         tab.destroy();
         btn.destroy();
 
-        btns.remove(btn);
         namemap.remove(name);
         tabmap.remove(btn);
-
-        if (tabs.curtab == tab && btns.size() > 0) {
-            changetab(tabmap.get(btns.get(0)), btns.get(0));
-        }
-
-        tabs.indpack();
-        arrange();
-        count--;
-    }
-
-    public void changetab(String tab) {
-        for (TabButton tb : btns) {
-            if (tb.text.text.equals(tab)) {
-                changetab(tabmap.get(tb), tb);
-                return;
-            }
-        }
+        pack();
     }
 
     public void changetab(Tabs.Tab tab, TabButton btn) {
@@ -164,23 +136,6 @@ public class TabManager extends Widget {
             pack();
             parent.pack();
         }
-    }
-
-    public void arrange() {
-        nextx = 0;
-        nexty = 0;
-        int bw = fsz > 0 ? fsz / btns.size() : -1;
-        for (TabButton btn : btns) {
-            btn.c = new Coord(nextx, nexty);
-            if (bw >= 0) {
-                btn.sz = new Coord(bw, btn.sz.y);
-            } else {
-                btn.sz = new Coord(btn.sz);
-            }
-            btn.setup();
-            nextx += btn.sz.x;
-        }
-        pack();
     }
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
