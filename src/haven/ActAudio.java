@@ -29,6 +29,9 @@ package haven;
 import java.util.*;
 import java.io.*;
 import java.lang.ref.WeakReference;
+
+import hamster.GlobalSettings;
+import hamster.IndirSetting;
 import haven.render.*;
 import haven.Audio.CS;
 import haven.Audio.VolAdjust;
@@ -100,9 +103,9 @@ public class ActAudio extends State {
 	private Audio.VolAdjust volc = null;
 	private Audio.Mixer mixer = null;
 
-	private RootChannel(String name) {
+	private RootChannel(String name, final IndirSetting<Integer> volume) {
 	    this.name = name;
-	    this.volume = Double.parseDouble(Utils.getpref("sfxvol-" + name, "1.0"));
+	    this.volume = volume.get() / 1000d;
 	}
 
 	public Audio.Mixer mixer() {
@@ -123,7 +126,6 @@ public class ActAudio extends State {
 	    if(volc != null)
 		volc.vol = volume;
 	    this.volume = volume;
-	    Utils.setpref("sfxvol-" + name, Double.toString(volume));
 	}
 
 	public void clear() {
@@ -155,8 +157,8 @@ public class ActAudio extends State {
     }
 
     public static class Root {
-	public final RootChannel pos = new RootChannel("pos");
-	public final RootChannel amb = new RootChannel("amb");
+	public final RootChannel pos = new RootChannel("pos", GlobalSettings.EVENTVOL);
+	public final RootChannel amb = new RootChannel("amb", GlobalSettings.AMBIENTVOL);
 
 	public void clear() {
 	    pos.clear();

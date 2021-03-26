@@ -64,6 +64,19 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
     public static final IndirSetting<Boolean> SHOWSTATS = new IndirSetting<>(global, "system.show-stats", false);
 
+    //Audio options
+    public static final IndirSetting<Integer> MASTERVOL = new IndirSetting<>(global, "audio.master-volume", 1000);
+    public static final IndirSetting<Integer> EVENTVOL = new IndirSetting<>(global, "audio.event-volume", 1000);
+    public static final IndirSetting<Integer> AMBIENTVOL = new IndirSetting<>(global, "audio.ambient-volume", 1000);    ////Audio
+    public static final IndirSetting<Integer> TIMERVOL = new IndirSetting<>(global,"audio.timer-volume", 1000);
+    public static final IndirSetting<Integer> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume", 1000);
+    public static final IndirSetting<Integer> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-message-volume", 1000);
+    public static final IndirSetting<Integer> ERRORMSGVOL = new IndirSetting<>(global, "audio.error-message-volume", 1000);
+
+    public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
+    public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);
+    public static final IndirSetting<Boolean> SOUNDONGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio", true);
+
     //Display options
     public static final IndirSetting<Boolean> VSYNC = new IndirSetting<>(global, "display.vsync", true);
     public static final IndirSetting<Integer> FPS = new IndirSetting<>(global, "display.fps", 60);

@@ -30,21 +30,21 @@ import java.util.*;
 import java.io.*;
 import javax.sound.sampled.*;
 import dolda.xiphutil.*;
+import hamster.GlobalSettings;
 
 public class Audio {
     public static boolean enabled = true;
     private static Player player;
     public static final AudioFormat fmt = new AudioFormat(44100, 16, 2, true, false);
     private static int bufsize = 4096;
-    public static double volume = 1.0;
+    public static double volume;
     
     static {
-	volume = Double.parseDouble(Utils.getpref("sfxvol", "1.0"));
+	volume = GlobalSettings.MASTERVOL.get() / 1000.0d;
     }
     
     public static void setvolume(double volume) {
 	Audio.volume = volume;
-	Utils.setpref("sfxvol", Double.toString(volume));
     }
 
     public interface CS {

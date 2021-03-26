@@ -57,14 +57,6 @@ public class SessionSettings {
     public final IndirSetting<BaseColor> ANIMALPATHCOL;
     public final IndirSetting<BaseColor> VEHPATHCOL;
 
-    ////Audio
-    public final IndirSetting<Double> TIMERVOL;
-    public final IndirSetting<Double> ALERTVOL;
-    public final IndirSetting<Double> POPUPMSGVOL;
-
-    public final IndirSetting<Boolean> SOUNDONPOPUPMSG;
-    public final IndirSetting<Boolean> NOGOBAUDIO;
-
     ////Camera
     public final IndirSetting<String> CAMERA;
     public final IndirSetting<Boolean> FREECAMREXAXIS;
@@ -167,13 +159,6 @@ public class SessionSettings {
         GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", new BaseColor(Color.GREEN));
         ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", new BaseColor(Color.RED));
         VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
-
-        //Audio
-        TIMERVOL = new IndirSetting<>(local,"audio.timer-volume", 1.0);
-        ALERTVOL = new IndirSetting<>(local, "audio.alert-volume", 1.0);
-        POPUPMSGVOL = new IndirSetting<>(local, "audio.popup-message-volume", 1.0);
-        SOUNDONPOPUPMSG = new IndirSetting<>(local, "audio.sound-on-popup", false);
-        NOGOBAUDIO = new IndirSetting<>(local, "audio.no-gob-audio", false);
 
         //Camera
         CAMERA = new IndirSetting<>(local, "camera.camera-type", "sortho");

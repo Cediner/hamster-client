@@ -1,5 +1,6 @@
 package hamster.ui.Timer;
 
+import hamster.GlobalSettings;
 import hamster.data.TimerData;
 import hamster.util.ObservableListener;
 import haven.*;
@@ -38,7 +39,7 @@ public class TimerWdg extends Widget implements ObservableListener<TimerData.Tim
             lastTime = gtime;
             if (timeLeft <= 0) {
                 ui.gui.add(new TimerDoneWindow(time.name), new Coord(50, 50));
-                Audio.play(timersfx, (float) (ui.gui.settings.TIMERVOL.get() / 1000f));
+                Audio.play(timersfx, (GlobalSettings.TIMERVOL.get() / 1000f));
                 time.finish(inst);
             }
             super.tick(dt);
