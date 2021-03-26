@@ -293,6 +293,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	savewndpos();
 	Debug.log = new java.io.PrintWriter(System.err);
 	ui.cons.clearout();
+	ui.gui = null;
 	super.dispose();
     }
 

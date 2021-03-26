@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.security.AccountManagement;
+import hamster.ui.login.AccountManager;
 import hamster.ui.opt.OptionsWnd;
 
 import java.awt.*;
@@ -36,7 +37,6 @@ public class LoginScreen extends Widget {
     public final static Text.Foundry textfs = new Text.Foundry(Text.sans, 14).aa(true);
     static final Tex bg = Resource.loadtex("gfx/loginscr");
     private final AccountManagement accdb;
-    private final Listbox<AccountManagement.Account> accounts;
     private final TextEntry username;
     private final TextEntry password;
     private final Label error, progress;
@@ -47,33 +47,6 @@ public class LoginScreen extends Widget {
 	setfocustab(true);
 	this.accdb = accdb;
 
-	accounts = new Listbox<>(UI.scale(275), 24, UI.scale(20)) {
-	    final Coord offset = new Coord(UI.scale(5), UI.scale(1));
-
-	    @Override
-	    protected AccountManagement.Account listitem(int i) {
-		return accdb.get(i);
-	    }
-
-	    @Override
-	    protected int listitems() {
-		return accdb.size();
-	    }
-
-	    @Override
-	    protected void drawitem(GOut g, AccountManagement.Account item, int i) {
-		g.text(item.username, offset);
-	    }
-
-	    @Override
-	    public void change(AccountManagement.Account item) {
-		if (item != null) {
-		    username.settext(item.username);
-		    password.settext(item.password);
-		}
-		super.change(item);
-	    }
-	};
 	username = new TextEntry(UI.scale(150), "", null, text -> login());
 	password = new TextEntry(UI.scale(150), "", null, text -> login());
 	password.pw = true;
@@ -84,12 +57,6 @@ public class LoginScreen extends Widget {
 	progress = new Label("");
 	final Label userlbl = new Label("Username");
 	final Label passlbl = new Label("Password");
-	if (accdb.size() > 0) {
-	    final AccountManagement.Account acc = accdb.get(0);
-	    accounts.sel = acc;
-	    username.settext(acc.username);
-	    password.settext(acc.password);
-	}
 
 	final int spacer = UI.scale(5);
 	add(new Img(bg), Coord.z);
@@ -102,7 +69,6 @@ public class LoginScreen extends Widget {
 		Audio.play(Button.lbtup.stream());
 	    }
 	}, UI.scale(419), UI.scale(520), 0.5, 0.5);
-	add(accounts, new Coord(UI.scale(25), UI.scale(25)));
 	add(error, new Coord(UI.scale(420) - username.sz.x / 2, UI.scale(300)));
 	add(progress, new Coord(UI.scale(420) - username.sz.x / 2, error.c.y + error.sz.y + spacer));
 	add(userlbl, new Coord(UI.scale(420) - username.sz.x / 2, progress.c.y + progress.sz.y + spacer));
@@ -110,8 +76,6 @@ public class LoginScreen extends Widget {
 	add(passlbl, new Coord(UI.scale(420) - username.sz.x / 2, username.c.y + username.sz.y + spacer));
 	add(password, new Coord(UI.scale(420) - password.sz.x / 2, passlbl.c.y + passlbl.sz.y + spacer));
 	add(showPassword, new Coord(password.c.x, password.c.y + password.sz.y + spacer));
-	adda(new Button(UI.scale(100), "Save", this::save), new Coord(UI.scale(420), showPassword.c.y + showPassword.sz.y + spacer), 0.5, 0);
-	add(new Button(UI.scale(275), "New Account", this::newAccount), new Coord(accounts.c.x, accounts.c.y + accounts.sz.y + spacer));
     }
 
     public Object[] data() {
@@ -121,27 +85,6 @@ public class LoginScreen extends Widget {
     private void login() {
 	super.wdgmsg("forget");
 	super.wdgmsg("login", data());
-    }
-
-    private void save() {
-	if (accounts.sel != null) {
-	    accounts.sel.username = username.text;
-	    accounts.sel.password = password.text;
-	}
-	try {
-	    accdb.save();
-	} catch (Exception e) {
-	    error("Failed to save accounts");
-	    e.printStackTrace();
-	}
-    }
-
-    private void newAccount() {
-	final AccountManagement.Account acc = accdb.addAccount();
-	accounts.sel = acc;
-	username.settext(acc.username);
-	setfocus(username);
-	password.settext(acc.password);
     }
 
     private void error(String error) {
@@ -171,11 +114,21 @@ public class LoginScreen extends Widget {
 	c = parent.sz.div(2).sub(sz.div(2));
     }
 
+    private void normalLogin(final String user, final String pass) {
+        super.wdgmsg("forget");
+        super.wdgmsg("login", new AuthClient.NativeCred(user, pass), false);
+    }
+
+    private void tokenLogin(final String token) {
+	super.wdgmsg("forget");
+    }
+
     protected void added() {
 	presize();
 	parent.setfocus(this);
 	setfocus(username);
-	adda(new Button(UI.scale(100), "Options", () -> adda(new OptionsWnd(ui), sz.div(2), 0.5, 0.5)),
+	ui.root.add(new AccountManager(accdb, this::tokenLogin, this::normalLogin));
+	adda(new Button(UI.scale(100), "Options", () -> ui.root.adda(new OptionsWnd(ui), sz.div(2), 0.5, 0.5)),
 		UI.scale(10), sz.y - UI.scale(10), 0, 1);
 	adda(new Button(UI.scale(100), "Close", () -> ui.root.wdgmsg("close")), sz.x - UI.scale(10), sz.y - UI.scale(10), 1, 1);
     }

@@ -37,7 +37,7 @@ public class Grouping extends Widget {
 
     @Override
     public void resize(Coord sz) {
-        final Coord capsz = cap != null ? cap.sz().add(0, 5) : new Coord(0, 0);
+        final Coord capsz = cap != null ? cap.sz().add(0, UI.scale(5)) : new Coord(0, 0);
         if (showbox) {
             capy = box.ctloff();
         } else {
@@ -46,7 +46,7 @@ public class Grouping extends Widget {
         ctl = capy.add(0, capsz.y);
         sz.x = Math.max(sz.x, capsz.x);
         if (showbox)
-            this.sz = sz.add(box.cisz().add(0, capsz.y));
+            this.sz = sz.add(box.cisz().add(0, capsz.y).add(UI.scale(5, 5)));
         else
             this.sz = sz.add(0, capsz.y);
     }
