@@ -1238,6 +1238,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new Hidden(gob)));
 	    }
 
+	    if(RangeMonitor.hasRange(name)) {
+	        deltas.add((gob) -> gob.setattr(new RangeMonitor(gob)));
+	    }
 
 	    MarkerData.marker(name).ifPresent(mark -> mapfile.markobj(mark, rc));
 

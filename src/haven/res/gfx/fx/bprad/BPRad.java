@@ -10,6 +10,7 @@ import java.awt.Color;
 /* >spr: BPRad */
 @SuppressWarnings("unused") //Dynamically created by resources
 public class BPRad extends Sprite {
+    public static final int CUSTOM_BPRAD_ID = -541924911;
     static final Pipe.Op smat = new BaseColor(new Color(192, 0, 0, 128));
     static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new Color(255, 224, 96)), new States.LineWidth(4));
     final VertexBuf.VertexData posa;
@@ -17,6 +18,7 @@ public class BPRad extends Sprite {
     final Model smod, emod;
     private Coord2d lc;
     float[] barda;
+    private boolean alive = true;
 
     public BPRad(Owner owner, Resource res, float r) {
 	super(owner, res);
@@ -95,5 +97,15 @@ public class BPRad extends Sprite {
 				    Location.goback("gobx")));
 	slot.add(smod, smat);
 	slot.add(emod, emat);
+    }
+
+
+    @Override
+    public boolean tick(double dt) {
+	return !alive;
+    }
+
+    public void rem() {
+        this.alive = false;
     }
 }

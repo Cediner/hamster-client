@@ -8,6 +8,7 @@ import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
+import hamster.gob.attrs.monitors.RangeMonitor;
 import hamster.io.Storage;
 import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
@@ -39,6 +40,8 @@ public class GlobalSettings {
             Hidden.init();
             logger.atInfo().log("Loading Tag Data");
             Tag.init(optint.get());
+            logger.atInfo().log("Loading Range Data");
+            RangeMonitor.init(optint.get());
             logger.atInfo().log("Loading highlighted");
             HighlightData.init();
             logger.atInfo().log("Loading itemdata");
