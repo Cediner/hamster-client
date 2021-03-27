@@ -37,12 +37,15 @@ import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import static haven.Utils.el;
 
+import com.google.common.flogger.FluentLogger;
+import com.google.common.flogger.LazyArgs;
 import hamster.GlobalSettings;
 import hamster.util.MessageBus;
 import haven.render.Environment;
 import haven.render.Render;
 
 public class UI {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static int MOD_SHIFT = 1, MOD_CTRL = 2, MOD_META = 4, MOD_SUPER = 8;
     public RootWidget root;
     public GameUI gui;
@@ -260,6 +263,8 @@ public class UI {
     }
 	
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
+	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
+		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
 	Widget.Factory f = Widget.gettype2(type);
 	if(f == null)
 	    throw(new UIException("Bad widget name", type, cargs));
@@ -277,6 +282,7 @@ public class UI {
     }
 
     public void addwidget(int id, int parent, Object[] pargs) {
+        logger.atFine().log("Add Widget [%d] to [%d] - %s", id, parent, LazyArgs.lazy(() -> Arrays.toString(pargs)));
 	synchronized(this) {
 	    Widget wdg = getwidget(id);
 	    if(wdg == null)
