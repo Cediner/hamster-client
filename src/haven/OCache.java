@@ -372,6 +372,11 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    @SuppressWarnings("unused") // For scripting API
+    public synchronized Gob[] getallgobs() {
+        return objs.values().toArray(new Gob[0]);
+    }
+
     public synchronized Gob getgob(long id) {
 	return(objs.get(id));
     }

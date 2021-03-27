@@ -2493,6 +2493,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	olftimer = Utils.rtime() + tm;
     }
 
+
+    @SuppressWarnings("unused") // For scripting API
+    public Plob placing() {
+	Loader.Future<Plob> placing = this.placing;
+	if(placing != null && placing.done()) {
+	    return placing.get();
+	} else {
+	    return null;
+	}
+    }
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "place") {
 	    Loader.Future<Plob> placing = this.placing;

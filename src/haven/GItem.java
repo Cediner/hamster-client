@@ -28,6 +28,7 @@ package haven;
 
 import hamster.data.ContentData;
 import hamster.data.ItemData;
+import haven.res.ui.tt.q.qbuff.Quality;
 import haven.resutil.Curiosity;
 import haven.resutil.FoodInfo;
 
@@ -292,6 +293,10 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 
     public boolean isCurio() {
 	return getinfo(Curiosity.class).isPresent();
+    }
+
+    public int quality() {
+        return getinfo(Quality.class).map((q) -> (int)q.q).orElse(0);
     }
     /******************************************************************************/
 
