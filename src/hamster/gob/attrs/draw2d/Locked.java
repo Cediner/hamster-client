@@ -16,7 +16,7 @@ public class Locked extends GAttrib implements RenderTree.Node, PView.Render2D {
     }
 
     public void draw(GOut g, Pipe state) {
-	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 5), state).round2();
+	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 5), state, Area.sized(g.sz())).round2();
 	if (sc.isect(Coord.z, g.sz())) {
 	    g.aimage(lockt, sc, 0.5, 0.5);
 	}
