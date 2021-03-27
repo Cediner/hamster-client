@@ -360,7 +360,15 @@ public class UI {
 		destroy(wdg);
 	}
     }
-	
+
+    /**
+     * For scripting only
+     */
+    public void wdgmsg(final int id, final String msg, Object... args) {
+	if(rcvr != null)
+	    rcvr.rcvmsg(id, msg, args);
+    }
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	int id = widgetid(sender);
 	if(id < 0) {
