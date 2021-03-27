@@ -12,7 +12,9 @@
       "nooff": false,
       "id": 0,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\paginae\\default\\management\\image-0.png"
+      "img": "unbuilt\\custom\\paginae\\default\\management\\image-0.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "tooltip",
