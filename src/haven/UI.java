@@ -265,6 +265,8 @@ public class UI {
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
 	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
 		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "new-widget", id, type, parent, cargs);
 	Widget.Factory f = Widget.gettype2(type);
 	if(f == null)
 	    throw(new UIException("Bad widget name", type, cargs));
@@ -283,6 +285,8 @@ public class UI {
 
     public void addwidget(int id, int parent, Object[] pargs) {
         logger.atFine().log("Add Widget [%d] to [%d] - %s", id, parent, LazyArgs.lazy(() -> Arrays.toString(pargs)));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "add-widget", id, parent);
 	synchronized(this) {
 	    Widget wdg = getwidget(id);
 	    if(wdg == null)
@@ -380,6 +384,8 @@ public class UI {
     }
 	
     public void uimsg(int id, String msg, Object... args) {
+        if(this.sess != null)
+            sess.details.context.dispatchmsg(null, "uimsg", id, msg, args);
 	Widget wdg = getwidget(id);
 	if(wdg != null) {
 	    synchronized(this) {
