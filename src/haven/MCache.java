@@ -872,6 +872,25 @@ public class MCache implements MapSource {
 	});
     }
 
+    @SuppressWarnings("unused") // For Scripting API
+    public Coord2d getcoord(final long id, final double offsetx, final double offsety){
+	Optional<Grid> grid = getgrido(id);
+	return grid.map(value -> new Coord2d(value.ul).add(offsetx, offsety).mul(tilesz)).orElse(null);
+    }
+
+    @SuppressWarnings("unused") // For Scripting API
+    public long getgridid(final Coord2d mc) {
+	final Optional<Grid> grid = getgridto(mc.floor(tilesz));
+	return grid.map((g) -> g.id).orElse(-1L);
+    }
+
+    @SuppressWarnings("unused") // For Scripting API
+    public Coord gettileoffset(final Coord2d mc) {
+	final Coord tc = mc.floor(tilesz);
+	final Optional<Grid> grid = getgridto(tc);
+	return grid.map(g -> tc.sub(g.ul)).orElse(new Coord(0,0));
+    }
+
     public int gettile_safe(Coord tc) {
 	final Optional<Grid> grid = getgridto(tc);
 	if (grid.isPresent()) {

@@ -619,7 +619,8 @@ public class ChatUI extends Widget {
 	@Override
 	public void append(Message msg) {
 	    super.append(msg);
-	    ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
+	    if(name.equals("System"))
+	    	ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
 	}
     }
     
@@ -692,7 +693,7 @@ public class ChatUI extends Widget {
 	}
 
 	public void uimsg(String msg, Object... args) {
-	    if((msg == "msg") || (msg == "log")) {
+	    if((msg.equals("msg")) || (msg.equals("log"))) {
 		String line = (String)args[0];
 		Color col = null;
 		if(args.length > 1) col = (Color)args[1];

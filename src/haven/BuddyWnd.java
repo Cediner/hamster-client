@@ -508,6 +508,12 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	    buf.append(charset.charAt((int)(Math.random() * charset.length())));
 	return(buf.toString());
     }
+
+
+    @SuppressWarnings("unused") // For scripting API
+    public Buddy[] buddies() {
+	return buddies.toArray(new Buddy[0]);
+    }
     
     public void setpwd(String pass) {
 	wdgmsg("pwd", pass);

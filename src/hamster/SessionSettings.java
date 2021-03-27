@@ -29,6 +29,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWVMARKERS;
     public final IndirSetting<Boolean> SHOWVMARKERRAD;
     public final IndirSetting<Boolean> SHOWVMARKERTIPS;
+
     public final IndirSetting<Coord> MMMEMSIZEONE;
     public final IndirSetting<Coord> MMMEMPOSONE ;
     public final IndirSetting<Coord> MMMEMSIZETWO;
@@ -86,6 +87,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWBELTONLOGIN;
     public final IndirSetting<Boolean> SHOWSESSIONS;
     public final IndirSetting<Boolean> SHOWCHAT;
+    public final IndirSetting<Boolean> SHOWMINIMAP;
     public final IndirSetting<Boolean> SHOWLRSLOTS;
     //Meter UI
     public final IndirSetting<Boolean> BIGSIMPLEMETERS;
@@ -189,6 +191,7 @@ public class SessionSettings {
         SHOWSESSIONS = new IndirSetting<>(local, "ui.show-session-display", true);
         SHOWCHAT = new IndirSetting<>(local, "ui.show-chat", true);
         SHOWLRSLOTS = new IndirSetting<>(local, "ui.show-lr-hand-slots", true);
+        SHOWMINIMAP = new IndirSetting<>(local, "ui.show-minimap", true);
 
         SHOWINVONLOGIN = new IndirSetting<>(local, "ui.show-inv-on-login", true);
         SHOWBELTONLOGIN = new IndirSetting<>(local, "ui.show-belt-on-login", true);

@@ -62,6 +62,7 @@ public class GlobalSettings {
 
     //Non-saved globals
     public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(tmp, "tmp.pause", false);
+    public static final IndirSetting<Boolean> GENERATINGTOKEN = new IndirSetting<>(tmp, "generate-token", false);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);

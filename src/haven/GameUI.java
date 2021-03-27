@@ -293,6 +293,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	savewndpos();
 	Debug.log = new java.io.PrintWriter(System.err);
 	ui.cons.clearout();
+	ui.gui = null;
 	super.dispose();
     }
 
@@ -523,7 +524,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		if (mapstore != null) {
 		    MapFile file = MapFile.load(mapstore, mapfilename());
 		    mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
-		    mapfile.show(Utils.getprefb("wndvis-map", false));
 		    mapmarkers = new MapMarkerWnd(mapfile);
 		    mapmarkers.hide();
 		    add(mapfile, Utils.getprefc("wndc-map", new Coord(50, 50)));

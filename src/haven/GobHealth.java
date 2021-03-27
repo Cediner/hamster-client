@@ -29,39 +29,43 @@ package haven;
 import haven.render.*;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GobHealth extends GAttrib implements Gob.SetupMod, RenderTree.Node, PView.Render2D {
-    private static final Tex[] gobhp = new Tex[]{
-	    Text.renderstroked("25%", Color.WHITE, Color.BLACK, Text.std16).tex(),
-	    Text.renderstroked("50%", Color.WHITE, Color.BLACK, Text.std16).tex(),
-	    Text.renderstroked("75%", Color.WHITE, Color.BLACK, Text.std16).tex()
-    };
-    public final int hp;
+    private static final Map<Float, Tex> gobhpmap = new HashMap<>();
+    private static Tex gobhp(final float hp) {
+        if(gobhpmap.containsKey(hp))
+            return gobhpmap.get(hp);
+        final var tex = Text.renderstroked(String.format("%d%%", (int)(hp*100f)), Color.WHITE, Color.BLACK, Text.std16).tex();
+        gobhpmap.put(hp, tex);
+        return tex;
+    }
+
+    public final float hp;
     public final MixColor fx;
-    
-    public GobHealth(Gob g, int hp) {
+    private final Tex hptex;
+
+    public GobHealth(Gob g, float hp) {
 	super(g);
 	this.hp = hp;
-	this.fx = new MixColor(255, 0, 0, 128 - ((hp * 128) / 4));
+	this.fx = new MixColor(255, 0, 0, 128 - Math.round(hp * 128));
+    	this.hptex = gobhp(hp);
     }
 
     public void draw(GOut g, Pipe state) {
 	final UI ui = gob.glob.ui.get();
-	if(ui != null && ui.gui != null && ui.gui.settings.SHOWGOBHP.get() && hp < 4) {
+	if(ui != null && ui.gui != null && ui.gui.settings.SHOWGOBHP.get() && hp < 1) {
 	    Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 5), state, Area.sized(g.sz())).round2();
 	    if (sc.isect(Coord.z, g.sz())) {
-		g.aimage(gobhp[hp-1], sc, 0.5, 1.0);
+		g.aimage(hptex, sc, 0.5, 1.0);
 	    }
 	}
     }
     
     public Pipe.Op gobstate() {
-	if(hp >= 4)
+	if(hp >= 1)
 	    return(null);
 	return(fx);
-    }
-
-    public double asfloat() {
-	return(((double)hp) / 4.0);
     }
 }

@@ -84,7 +84,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Ext
     public final MapViewExt ext = new MapViewExt(this);
     private final Outlines outlines;
-    
+
     public interface Delayed {
 	public void run(GOut g);
     }
@@ -100,7 +100,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	protected haven.render.Camera view = new haven.render.Camera(Matrix4f.identity());
 	protected Projection proj = new Projection(Matrix4f.identity());
 	private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
-	
+
 	public Camera() {
 	    resized();
 
@@ -278,7 +278,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public Coord3f getcenter() {
 	    return getcc();
 	}
-	
+
 	public float angle() {
 	    return(angl);
 	}
@@ -286,7 +286,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void setDist(final float d) {
 	    this.dist = d;
 	}
-	
+
 	public boolean click(Coord c) {
 	    elevorig = elev;
 	    anglorig = angl;
@@ -661,7 +661,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     static {
 	camtypes.put("topdown", TopDownCam.class);
     }
-    
+
     public class OrthoCam extends Camera {
 	public boolean exact = true;
 	protected float dist = 500.0f;
@@ -729,6 +729,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	private float tfield = field;
 	private boolean isometric = true;
 	private final float pi2 = (float)(Math.PI * 2);
+	private double tf = 1.0;
 	private boolean lock = true;
 
 	private long lastwh = 0;
@@ -740,7 +741,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public SOrthoCam(String... args) {
-	    PosixArgs opt = PosixArgs.getopt(args, "enif");
+	    PosixArgs opt = PosixArgs.getopt(args, "enift:");
 	    for(char c : opt.parsed()) {
 		switch(c) {
 		case 'e':
@@ -755,11 +756,15 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		case 'f':
 		    isometric = false;
 		    break;
+		case 't':
+		    tf = Double.parseDouble(opt.arg);
+		    break;
 		}
 	    }
 	}
 
 	public void tick2(double dt) {
+	    dt *= tf;
 	    float cf = 1f - (float)Math.pow(500, -dt);
 	    Coord3f mc = getcc();
 	    mc.y = -mc.y;
@@ -2488,6 +2493,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	olftimer = Utils.rtime() + tm;
     }
 
+
+    @SuppressWarnings("unused") // For scripting API
+    public Plob placing() {
+	Loader.Future<Plob> placing = this.placing;
+	if(placing != null && placing.done()) {
+	    return placing.get();
+	} else {
+	    return null;
+	}
+    }
+
     public void uimsg(String msg, Object... args) {
 	if(msg == "place") {
 	    Loader.Future<Plob> placing = this.placing;
@@ -2691,7 +2707,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		return Optional.empty();
 	    }
 	}
-	
+
 	protected void hit(Coord pc, Coord2d mc, ClickData inf) {
 	    final String seq = MouseBind.generateSequence(ui, clickb);
 	    Object[] args = {pc, mc.floor(posres), clickb, ui.modflags()};

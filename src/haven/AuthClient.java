@@ -30,7 +30,7 @@ import java.io.*;
 import java.net.*;
 import java.security.MessageDigest;
 
-public class AuthClient {
+public class AuthClient implements Closeable {
     private static final SslHelper ssl;
     private Socket sk;
     private InputStream skin;
@@ -98,8 +98,48 @@ public class AuthClient {
 	}
     }
 
-    public byte[] gettoken() throws IOException {
-	Message rpl = cmd("mktoken");
+    public static class TokenInfo {
+	public byte[] id = new byte[] {};
+	public String desc = "";
+
+	public TokenInfo() { }
+
+	public TokenInfo(final String desc) {
+	    this.desc = desc;
+	    id = new byte[16];
+	    new java.security.SecureRandom().nextBytes(id);
+	}
+
+	public TokenInfo id(byte[] id) {this.id = id; return(this);}
+	public TokenInfo desc(String desc) {this.desc = desc; return(this);}
+
+	public Object[] encode() {
+	    Object[] ret = {};
+	    if(this.id.length > 0)
+		ret = Utils.extend(ret, new Object[] {new Object[] {"id", this.id}});
+	    if(this.desc.length() > 0)
+		ret = Utils.extend(ret, new Object[] {new Object[] {"desc", this.desc}});
+	    return(ret);
+	}
+
+	public static TokenInfo forhost() {
+	    TokenInfo ret = new TokenInfo();
+	    if((ret.id = Utils.getprefb("token-id", ret.id)).length == 0) {
+		ret.id = new byte[16];
+		new java.security.SecureRandom().nextBytes(ret.id);
+		Utils.setprefb("token-id", ret.id);
+	    }
+	    if((ret.desc = Utils.getpref("token-desc", null)) == null) {
+		try {
+		    ret.desc = InetAddress.getLocalHost().getHostName();
+		} catch(UnknownHostException ignored) { }
+	    }
+	    return(ret);
+	}
+    }
+
+    public byte[] gettoken(TokenInfo info) throws IOException {
+	Message rpl = cmd("mktoken", info.encode());
 	String stat = rpl.string();
 	if(stat.equals("ok")) {
 	    return(rpl.bytes(32));
@@ -107,7 +147,11 @@ public class AuthClient {
 	    throw(new RuntimeException("Unexpected reply `" + stat + "' from auth server"));
 	}
     }
-    
+
+    public byte[] gettoken() throws IOException {
+	return(gettoken(TokenInfo.forhost()));
+    }
+
     public void close() throws IOException {
 	sk.close();
     }
@@ -129,6 +173,8 @@ public class AuthClient {
 		buf.addstring((String)arg);
 	    } else if(arg instanceof byte[]) {
 		buf.addbytes((byte[])arg);
+	    } else if(arg instanceof Object[]) {
+		buf.addlist((Object[])arg);
 	    } else {
 		throw(new RuntimeException("Illegal argument to esendmsg: " + arg.getClass()));
 	    }
@@ -227,28 +273,28 @@ public class AuthClient {
     public static class TokenCred extends Credentials implements Serializable {
 	public final String acctname;
 	public final byte[] token;
-	
+
 	public TokenCred(String acctname, byte[] token) {
 	    this.acctname = acctname;
-	    if((this.token = token).length != 32)
-		throw(new IllegalArgumentException("Token must be 32 bytes"));
+	    if ((this.token = token).length != 32)
+		throw (new IllegalArgumentException("Token must be 32 bytes"));
 	}
-	
+
 	public String name() {
-	    throw(new UnsupportedOperationException());
+	    return acctname;
 	}
-	
+
 	public String tryauth(AuthClient cl) throws IOException {
 	    Message rpl = cl.cmd("token", acctname, token);
 	    String stat = rpl.string();
-	    if(stat.equals("ok")) {
+	    if (stat.equals("ok")) {
 		String acct = rpl.string();
-		return(acct);
-	    } else if(stat.equals("no")) {
+		return (acct);
+	    } else if (stat.equals("no")) {
 		String err = rpl.string();
-		throw(new AuthException(err));
+		throw (new AuthException(err));
 	    } else {
-		throw(new RuntimeException("Unexpected reply `" + stat + "' from auth server"));
+		throw (new RuntimeException("Unexpected reply `" + stat + "' from auth server"));
 	    }
 	}
     }

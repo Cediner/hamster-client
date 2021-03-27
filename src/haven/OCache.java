@@ -372,6 +372,11 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    @SuppressWarnings("unused") // For scripting API
+    public synchronized Gob[] getallgobs() {
+        return objs.values().toArray(new Gob[0]);
+    }
+
     public synchronized Gob getgob(long id) {
 	return(objs.get(id));
     }
@@ -772,7 +777,7 @@ public class OCache implements Iterable<Gob> {
     }
 
     public static void health(Gob g, int hp) {
-	g.setattr(new GobHealth(g, hp));
+	g.setattr(new GobHealth(g, hp / 4.0f));
     }
     public Delta health(Message msg) {
 	int hp = msg.uint8();

@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
+import hamster.GlobalSettings;
 import hamster.data.MarkerData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
@@ -328,6 +329,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    if(rd.attr != null)
 		rd.attr.dispose();
 	}
+    }
+
+    public boolean moving() {
+	return getattr(Moving.class) != null;
     }
 
     public void move(Coord2d c, double a) {
@@ -1056,6 +1061,91 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 	return false;
     }
+
+    @SuppressWarnings("unused") // For scripting api
+    public Overlay[] overlays() {
+	synchronized (ols) {
+	    return ols.toArray(new Overlay[0]);
+	}
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public String kinname() {
+	if(getattr(KinInfo.class) != null) {
+	    return getattr(KinInfo.class).name;
+	} else {
+	    return "???";
+	}
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public String[] equipment() {
+	if(hasTag(Tag.HUMAN)) {
+	    Drawable d = getattr(Drawable.class);
+	    if (d instanceof Composite) {
+		Composite comp = (Composite) d;
+		if(comp.lastnmod != null && comp.lastnequ != null) {
+		    final List<String> equs = new ArrayList<>();
+		    for (Composited.ED eq : comp.lastnequ) {
+			equs.add(rnm(eq.res.res));
+		    }
+		    for (Composited.MD md : comp.lastnmod) {
+			for (ResData rd : md.tex) {
+			    equs.add(rnm(rd.res));
+			}
+		    }
+		    return equs.toArray(new String[0]);
+		} else {
+		    return null;
+		}
+	    } else {
+		return null;
+	    }
+	} else {
+	    return null;
+	}
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public String[] poses(){
+	Drawable d = getattr(Drawable.class);
+	if (d instanceof Composite) {
+	    Composite comp = (Composite) d;
+	    final List<String> poses = new ArrayList<>();
+
+	    if (comp.oldposes != null) {
+		for (ResData res : comp.oldposes) {
+		    poses.add(rnm(res.res));
+		}
+	    }
+	    if (comp.oldtposes != null) {
+		for (ResData res : comp.oldtposes) {
+		    poses.add(rnm(res.res));
+		}
+	    }
+	    return poses.toArray(new String[0]);
+	}
+	return null;
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public boolean isFriendly() {
+	final KinInfo kin = getattr(KinInfo.class);
+	final UI ui = glob.ui.get();
+	final GameUI gui = ui.gui;
+	final int badkin = gui != null ? gui.settings.BADKIN.get() : 2;
+	if (kin != null) {
+	    return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
+	} else {
+	    return false;
+	}
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public boolean isDangerous() {
+        return hasTag(Tag.CAN_FIGHT);
+    }
+
 
     /*
      * Details about our Gob
