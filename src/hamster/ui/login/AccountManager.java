@@ -6,7 +6,6 @@ import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class AccountManager extends Window {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
@@ -19,16 +18,18 @@ public class AccountManager extends Window {
     private final CheckBox useToken;
     private final TextEntry token;
     //Callbacks
-    private final Consumer<String> onTokenLogin;
-    private final BiConsumer<String, String> onUPLogin;
+    private final BiConsumer<String, String> onTokenLogin, onUPLogin, onTokenGen;
 
 
-    public AccountManager(final AccountManagement data, final Consumer<String> onTokenLogin,
-                          final BiConsumer<String, String> onUPLogin) {
+    public AccountManager(final AccountManagement data,
+                          final BiConsumer<String, String> onTokenLogin,
+                          final BiConsumer<String, String> onUPLogin,
+                          final BiConsumer<String, String> onTokenGen) {
         super(Coord.z, "Account Manager", "AccountManager");
         this.data = data;
         this.onUPLogin = onUPLogin;
         this.onTokenLogin = onTokenLogin;
+        this.onTokenGen = onTokenGen;
         final var spacer = UI.scale(5, 5);
         final var container = add(new LinearGrouping(spacer, false, LinearGrouping.Direction.HORIZONTAL));
         final var listing = new LinearGrouping("Accounts", spacer, true);
@@ -88,9 +89,12 @@ public class AccountManager extends Window {
             details.add(new CheckBox("Show Token", (val) -> token.setpw(!val), false));
             details.add(new Button(UI.scale(200), "Save", this::saveAccount));
             details.add(new Button(UI.scale(200), "Login", this::login));
+            details.add(new Button(UI.scale(200), "Generate Token", this::generateToken));
             details.pack();
             container.add(details);
         }
+        if(data.size() > 0)
+            accounts.change(data.get(0));
         container.pack();
         pack();
     }
@@ -151,9 +155,20 @@ public class AccountManager extends Window {
         saveAccount();
         if(acc != null) {
             if(acc.useToken)
-                onTokenLogin.accept(acc.token);
+                onTokenLogin.accept(acc.username, acc.token);
             else
                 onUPLogin.accept(acc.username, acc.password);
         }
     }
+
+    private void generateToken() {
+        final var acc = accounts.sel;
+        saveAccount();
+        if(acc != null) {
+            onTokenGen.accept(acc.username, acc.password);
+        }
+    }
+
+    @Override
+    public void close() { }
 }

@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.ui.login.AccountLoginScreen;
 
 import java.net.*;
@@ -35,7 +36,7 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
     Session sess;
     String hostname;
     int port;
-    Queue<Message> msgs = new LinkedList<Message>();
+    final Queue<Message> msgs = new LinkedList<>();
     String inituser = null;
     byte[] initcookie = null;
 	
@@ -81,56 +82,17 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 	ui.setreceiver(this);
 	ui.bind(ui.root.add(new AccountLoginScreen()), 1);
 	String loginname = getpref("loginname", "");
+	String tokendesc = "";
 	boolean savepw = false;
-	byte[] token = null;
-	if(getpref("savedtoken", "").length() == 64)
-	    token = Utils.hex2byte(getpref("savedtoken", null));
 	String authserver = (Config.authserv == null)?hostname:Config.authserv;
 	int authport = Config.authport;
 	retry: do {
 	    byte[] cookie;
-	    String acctname, tokenname;
+	    String acctname;
 	    if(initcookie != null) {
 		acctname = inituser;
 		cookie = initcookie;
 		initcookie = null;
-	    } else if((token != null) && ((tokenname = getpref("tokenname", null)) != null)) {
-		savepw = true;
-		ui.uimsg(1, "token", loginname);
-		while(true) {
-		    Message msg;
-		    synchronized(msgs) {
-			while((msg = msgs.poll()) == null)
-			    msgs.wait();
-		    }
-		    if(msg.id == 1) {
-			if(msg.name == "login") {
-			    break;
-			} else if(msg.name == "forget") {
-			    token = null;
-			    setpref("savedtoken", "");
-			    continue retry;
-			}
-		    }
-		}
-		ui.uimsg(1, "prg", "Authenticating...");
-		try {
-		    AuthClient auth = new AuthClient(authserver, authport);
-		    try {
-			if((acctname = auth.trytoken(tokenname, token)) == null) {
-			    token = null;
-			    setpref("savedtoken", "");
-			    ui.uimsg(1, "error", "Invalid save");
-			    continue retry;
-			}
-			cookie = auth.getcookie();
-		    } finally {
-			auth.close();
-		    }
-		} catch(java.io.IOException e) {
-		    ui.uimsg(1, "error", e.getMessage());
-		    continue retry;
-		}
 	    } else {
 		AuthClient.Credentials creds;
 		ui.uimsg(1, "passwd", loginname, savepw);
@@ -141,9 +103,11 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 			    msgs.wait();
 		    }
 		    if(msg.id == 1) {
-			if(msg.name == "login") {
-			    creds = (AuthClient.Credentials)msg.args[0];
-			    savepw = (Boolean)msg.args[1];
+			if(msg.name.equals("login")) {
+			    creds = (AuthClient.Credentials) msg.args[0];
+			    savepw = (Boolean) msg.args[1];
+			    if(msg.args.length > 2)
+				tokendesc = (String)msg.args[2];
 			    loginname = creds.name();
 			    break;
 			}
@@ -159,22 +123,24 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 			    acctname = creds.tryauth(auth);
 			} catch(AuthClient.Credentials.AuthException e) {
 			    ui.uimsg(1, "error", e.getMessage());
-			    continue retry;
+			    continue;
 			}
 			cookie = auth.getcookie();
 			if(savepw) {
-			    setpref("savedtoken", Utils.byte2hex(auth.gettoken()));
-			    setpref("tokenname", acctname);
+			    if(GlobalSettings.GENERATINGTOKEN.get()) {
+				ui.uimsg(1, "generated-token", acctname,
+					Utils.byte2hex(auth.gettoken(new AuthClient.TokenInfo(tokendesc))));
+			    }
 			}
 		    } finally {
 			auth.close();
 		    }
 		} catch(UnknownHostException e) {
 		    ui.uimsg(1, "error", "Could not locate server");
-		    continue retry;
+		    continue;
 		} catch(java.io.IOException e) {
 		    ui.uimsg(1, "error", e.getMessage());
-		    continue retry;
+		    continue;
 		}
 	    }
 	    ui.uimsg(1, "prg", "Connecting...");
@@ -182,36 +148,30 @@ public class Bootstrap implements UI.Receiver, UI.Runner {
 		sess = new Session(new InetSocketAddress(InetAddress.getByName(hostname), port), acctname, cookie);
 	    } catch(UnknownHostException e) {
 		ui.uimsg(1, "error", "Could not locate server");
-		continue retry;
+		continue;
 	    }
 	    Thread.sleep(100);
 	    while(true) {
-		if(sess.state == "") {
-		    setpref("loginname", loginname);
-		    ui.destroy(1);
-		    break retry;
-		} else if(sess.connfailed != 0) {
-		    String error;
-		    switch(sess.connfailed) {
-		    case 1:
-			error = "Invalid authentication token";
-			break;
-		    case 2:
-			error = "Already logged in";
-			break;
-		    case 3:
-			error = "Could not connect to server";
-			break;
-		    case 4:
-			error = "This client is too old";
-			break;
-		    case 5:
-			error = "Authentication token expired";
-			break;
-		    default:
-			error = "Connection failed";
-			break;
+		if(sess.state.equals("")) {
+		    if(GlobalSettings.GENERATINGTOKEN.get()) {
+		        sess.close();
+		        sess = null;
+			GlobalSettings.GENERATINGTOKEN.set(false);
+		        continue retry;
+		    } else {
+			setpref("loginname", loginname);
+			ui.destroy(1);
+			break retry;
 		    }
+		} else if(sess.connfailed != 0) {
+		    String error = switch (sess.connfailed) {
+			case 1 -> "Invalid authentication token";
+			case 2 -> "Already logged in";
+			case 3 -> "Could not connect to server";
+			case 4 -> "This client is too old";
+			case 5 -> "Authentication token expired";
+			default -> "Connection failed";
+		    };
 		    ui.uimsg(1, "error", error);
 		    sess = null;
 		    continue retry;

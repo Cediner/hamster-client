@@ -619,7 +619,8 @@ public class ChatUI extends Widget {
 	@Override
 	public void append(Message msg) {
 	    super.append(msg);
-	    ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
+	    if(name.equals("System"))
+	    	ui.sess.details.context.dispatchmsg(this, "sys", msg.text().text);
 	}
     }
     
