@@ -17,6 +17,7 @@ public class ChatWnd extends ResizableWnd {
     @Override
     public void close() {
         hide();
+        ui.gui.settings.SHOWCHAT.set(false);
     }
 
     @Override
