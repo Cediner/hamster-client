@@ -31,15 +31,13 @@ import hamster.ui.core.indir.IndirThemeTex;
 
 import java.util.function.Consumer;
 
-public class CheckBox extends Widget {
+public class CheckBox extends ACheckBox {
     public static final IndirThemeTex lbox = Theme.themetex("chkbox/large", 0),
 	    lmark = Theme.themetex("chkbox/large", 1);
     public static final IndirThemeTex sbox = Theme.themetex("chkbox/small", 0),
 	    smark = Theme.themetex("chkbox/small", 1);
     public final IndirThemeTex box, mark;
     public final Coord loff;
-    public boolean a = false;
-    private final Consumer<Boolean> onChange;
     Text lbl;
 
     @RName("chk")
@@ -63,7 +61,8 @@ public class CheckBox extends Widget {
 	    loff = new Coord(5, 0);
 	}
 	sz = new Coord(box.tex().sz().x + 5 + this.lbl.sz().x, Math.max(box.tex().sz().y, this.lbl.sz().y));
-	this.onChange = onChange;
+	if(onChange != null)
+	    changed(onChange);
     }
 
     public CheckBox(final String lbl, final Consumer<Boolean> onChange) {
@@ -92,39 +91,15 @@ public class CheckBox extends Widget {
         super.draw(g);
     }
 
-    public void changed(boolean val) {
-	if(canactivate)
-	    wdgmsg("ch", a ? 1 : 0);
-	if (onChange != null)
-	    onChange.accept(val);
-    }
-
-    public void set(boolean a) {
-	this.a = a;
-	changed(a);
-    }
-
     public void click() {
 	set(!a);
     }
 
     public boolean mousedown(Coord c, int button) {
-	if(button != 1)
-	    return(false);
-	click();
-	return(true);
-    }
-
-    public boolean gkeytype(java.awt.event.KeyEvent ev) {
-	click();
-	return(true);
-    }
-
-    public void uimsg(String msg, Object... args) {
-	if(msg == "ch") {
-	    this.a = ((Integer)args[0]) != 0;
-	} else {
-	    super.uimsg(msg, args);
+	if(button == 1) {
+	    click();
+	    return(true);
 	}
+	return(super.mousedown(c, button));
     }
 }

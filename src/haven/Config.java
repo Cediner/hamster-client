@@ -53,7 +53,7 @@ public class Config {
     public static int authport = getint("haven.authport", 1871);
     public static boolean softres = getprop("haven.softres", "on").equals("on");
     public static Double uiscale = getfloat("haven.uiscale", null);
-    public static byte[] authck = null;
+    public static byte[] authck = null, inittoken = null;
     public static String prefspec = "hafen";
     public static final String confid = "";
     public static final double SERVER_TIME_RATIO = 3.29d;
@@ -62,6 +62,8 @@ public class Config {
 	String p;
 	if((p = getprop("haven.authck", null)) != null)
 	    authck = Utils.hex2byte(p);
+	if((p = getprop("haven.inittoken", null)) != null)
+	    inittoken = Utils.hex2byte(p);
     }
     
     private static int getint(String name, int def) {
