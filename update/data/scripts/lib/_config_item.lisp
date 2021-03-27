@@ -21,7 +21,7 @@
 (java-func +item+ item-get-contents "hasContents")
 (java-func +item+ item-get-all-contents "getRawContents")
 (java-func +item+ item-witem "witem")
-(java-field item-quality "quality")
+(java-func +item+ item-quality "quality")
 (java-field item-amount "num")
 (java-field item-meter "meter")
 (java-field contents-name "name")

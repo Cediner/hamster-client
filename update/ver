@@ -1,5 +1,5 @@
 {
-  "version": "28657e6570f6d9817f09e668671b9d2edc119dca",
+  "version": "7b7f4acc7dfb5fe6264ed3caf9f13b1f5c5ea68c",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -70,7 +70,7 @@
     "data\\res\\custom\\paginae\\default\\wnd\\foragehelper.res": "2hoJvYrCnCGitXTIaNkcjLCTCCAiL81iMWYuUVr7VYQ=",
     "data\\res\\custom\\hud\\sloth\\buttons\\wnd\\realm.res": "WJ6r10/nl4Vzh0nN2By8Uy9PLun/6gyjW+G5CHkeynI=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
-    "hafen.jar": "wo/4IqGOuN+qXzwST2LRQzDHyTSOhHa1Lk4SsoWr7sw=",
+    "hafen.jar": "C2xw1GIRoOG4kp4O9s819CdDaw5RYbBMyo2LE1Qzl9M=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "Q3FvW8ekO3GSPIdQSk/9SCjXn5NsQKbdfXOpkM26+mE=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "Xcp1HnccKct/PDVNOQuspm1UYPmp78zqKfYMs7X+RQQ=",
@@ -261,7 +261,7 @@
     "data\\res\\custom\\hud\\sloth\\buttons\\square\\view.res": "uL5ngVF1EESTjkVl6qCdduXpA5J13dLDgw/q8mxf78E=",
     "data\\res\\custom\\paginae\\default\\script.res": "b63FzA4O5Fn4GM6/FXsKXJ6CV8sG3mT+mjPrTu8HO94=",
     "data\\scripts\\eat-all-food.lisp": "tnVNBYDMq+MUvZWCDkW1BnoUb5soNwncevCysrUFaaY=",
-    "data\\scripts\\lib\\_config_item.lisp": "cksdW8MdbNfS6ufdbIxE6tnGT40f8UeaC6KttvThFHs=",
+    "data\\scripts\\lib\\_config_item.lisp": "S12iE1hRnitbpmEC0dgCQL4GiPvwRFN2Pu2agL4kYCM=",
     "data\\res\\custom\\hud\\default\\drop.res": "s/JRryk9EW4m+3kIdokOOeZb2K0ovGp+JJHJvGkzU4k=",
     "data\\scripts\\lualib\\api.lua": "NMv9RsnoE7V5BXqlORcPmTRVXoWtK0ALwIvf0ImSsmI=",
     "data\\res\\custom\\hud\\sloth\\buttons\\hide.res": "4/jVkmHdE/HyqLq2rVKtW/Wyv7jNBdc/E7rYuQTZxp8=",
