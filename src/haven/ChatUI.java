@@ -693,7 +693,7 @@ public class ChatUI extends Widget {
 	}
 
 	public void uimsg(String msg, Object... args) {
-	    if((msg == "msg") || (msg == "log")) {
+	    if((msg.equals("msg")) || (msg.equals("log"))) {
 		String line = (String)args[0];
 		Color col = null;
 		if(args.length > 1) col = (Color)args[1];
