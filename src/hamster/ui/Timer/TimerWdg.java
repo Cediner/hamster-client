@@ -149,20 +149,20 @@ public class TimerWdg extends Widget implements ObservableListener<TimerData.Tim
 
     private static class TimerDoneWindow extends Window {
         private TimerDoneWindow(String timername) {
-            super(new Coord(300, 130), "Hooray!", "Hooray!");
+            super(UI.scale(300, 130), "Hooray!", "Hooray!");
 
             Label lbltimer = new Label(timername);
-            add(lbltimer, new Coord(300 / 2 - lbltimer.sz.x / 2, 20));
+            add(lbltimer, new Coord(UI.scale(300) / 2 - lbltimer.sz.x / 2, UI.scale(20)));
 
             Label lblinf = new Label("has finished running");
-            add(lblinf, new Coord(300 / 2 - lblinf.sz.x / 2, 50));
+            add(lblinf, new Coord(UI.scale(300) / 2 - lblinf.sz.x / 2, UI.scale(50)));
 
             add(new Button(60, "Close") {
                 @Override
                 public void click() {
                     parent.reqdestroy();
                 }
-            }, new Coord(300 / 2 - 60 / 2, 90));
+            }, new Coord(UI.scale(300) / 2 - UI.scale(60) / 2, UI.scale(90)));
         }
 
         public void close() {
