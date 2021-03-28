@@ -1,10 +1,7 @@
 package hamster;
 
 import com.google.common.flogger.FluentLogger;
-import hamster.data.FarmingData;
-import hamster.data.ForagableData;
-import hamster.data.HighlightData;
-import hamster.data.ItemData;
+import hamster.data.*;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
@@ -31,7 +28,7 @@ public class GlobalSettings {
     public static void init() {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
-        FarmingData.init();
+        ObjData.init();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
             logger.atInfo().log("Loading alerted");
@@ -40,16 +37,10 @@ public class GlobalSettings {
             Deleted.init();
             logger.atInfo().log("Loading hidden");
             Hidden.init();
-            logger.atInfo().log("Loading Tag Data");
-            Tag.init(optint.get());
-            logger.atInfo().log("Loading Range Data");
-            RangeMonitor.init(optint.get());
             logger.atInfo().log("Loading highlighted");
             HighlightData.init();
             logger.atInfo().log("Loading itemdata");
             ItemData.init(optint.get());
-            logger.atInfo().log("Loading foragables");
-            ForagableData.init(optint.get());
             logger.atInfo().log("Loading Skill Data");
             SkillTree.init(optint.get());
             logger.atInfo().log("Loading Credo Data");

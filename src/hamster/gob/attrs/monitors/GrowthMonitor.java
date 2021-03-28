@@ -1,6 +1,7 @@
 package hamster.gob.attrs.monitors;
 
-import hamster.data.FarmingData;
+import hamster.data.CropData;
+import hamster.data.ObjData;
 import hamster.gob.sprites.GrowthSprite;
 import haven.GAttrib;
 import haven.Gob;
@@ -9,12 +10,12 @@ import haven.UI;
 public class GrowthMonitor extends GAttrib {
     private boolean show;
     private int stage = -1;
-    private final FarmingData.Crop cropdata;
+    private final CropData cropdata;
 
     public GrowthMonitor(final Gob g, final String name) {
         super(g);
         show = false;
-        this.cropdata = FarmingData.getCropData(name);
+        this.cropdata = ObjData.getCropData(name);
     }
 
     private void remol() {

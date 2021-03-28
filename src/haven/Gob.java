@@ -29,9 +29,8 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
-import hamster.GlobalSettings;
-import hamster.data.FarmingData;
 import hamster.data.MarkerData;
+import hamster.data.ObjData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
 import hamster.gob.attrs.info.ScreenLocation;
@@ -1142,18 +1141,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     public boolean isFriendly() {
 	final KinInfo kin = getattr(KinInfo.class);
 	final UI ui = glob.ui.get();
-	final GameUI gui = ui.gui;
-	final int badkin = gui != null ? gui.settings.BADKIN.get() : 2;
-	if (kin != null) {
-	    return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
-	} else {
-	    return false;
+	if(ui != null) {
+	    final GameUI gui = ui.gui;
+	    final int badkin = gui != null ? gui.settings.BADKIN.get() : 2;
+	    if (kin != null) {
+		return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
+	    }
 	}
+	return false;
     }
 
     @SuppressWarnings("unused") // For scripting api
     public boolean isDangerous() {
-        return hasTag(Tag.CAN_FIGHT) || hasTag(Tag.MEAN_ANIMAL);
+        return hasTag(Tag.CAN_AGGRO) || hasTag(Tag.HUMAN);
     }
 
 
@@ -1288,7 +1288,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if (!Deleted.isDeleted(name)) {
 
 	    final List<OCache.Delta> deltas = new ArrayList<>();
-	    tags = Tag.getTags(name);
+	    tags = ObjData.getTags(name);
 	    hitbox = Hitbox.hbfor(this);
 	    glob.gobhitmap.add(this);
 
@@ -1313,7 +1313,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    deltas.add((gob) -> gob.setattr(new MyGobIndicator(gob)));
 		}
 	    }
-	    if (FarmingData.isACrop(name)) {
+	    if (ObjData.isACrop(name)) {
 		deltas.add((gob) -> gob.setattr(new GrowthMonitor(gob, name)));
 	    }
 	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {
@@ -1338,7 +1338,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new Hidden(gob)));
 	    }
 
-	    if(RangeMonitor.hasRange(name)) {
+	    if(ObjData.hasRange(name)) {
 	        deltas.add((gob) -> gob.setattr(new RangeMonitor(gob)));
 	    }
 

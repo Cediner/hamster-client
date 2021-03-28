@@ -60,7 +60,6 @@ public class ItemData {
                 case LIQUID -> cont.liquid_max;
                 case WEIGHT -> cont.weight_max;
                 case SEED -> cont.seed_max;
-                default -> 0;
             };
         } else {
             return 0;

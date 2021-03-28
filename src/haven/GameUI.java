@@ -26,11 +26,10 @@
 
 package haven;
 
-import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
-import hamster.data.ForagableData;
+import hamster.data.ObjData;
 import hamster.gob.Tag;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.sprites.TargetSprite;
@@ -996,7 +995,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		   float dist = Float.MAX_VALUE;
 		   synchronized (ui.sess.glob.oc) {
 		       for (final Gob g : ui.sess.glob.oc) {
-			   if(g.hasTag(Tag.CAN_BOARD) && !g.hasTag(Tag.WATER_VEHICLE) || (g.hasTag(Tag.WATER_VEHICLE) && !g.isHolding(pl.id))) {
+			   if(g.hasTag(Tag.CAN_RIDE) && !g.hasTag(Tag.WATER_VEHICLE) || (g.hasTag(Tag.WATER_VEHICLE) && !g.isHolding(pl.id))) {
 			       final float gdist = plc.dist(g.getc());
 			       if (target != null && gdist < dist) {
 				   target = g;
@@ -1037,7 +1036,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    synchronized (ui.sess.glob.oc) {
 			for (final Gob g : ui.sess.glob.oc) {
 			    final Optional<String> name = g.resname();
-			    if (name.isPresent() && (ForagableData.isForagable(name.get(), g) || isKickSled(name.get(), g, map.plgob))) {
+			    if (name.isPresent() && (ObjData.isForagable(name.get(), g)
+				    || isKickSled(name.get(), g, map.plgob))) {
 				final float gdist = plc.dist(g.getc());
 				if (target != null && gdist < dist) {
 				    target = g;
