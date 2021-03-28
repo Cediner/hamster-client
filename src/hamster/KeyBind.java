@@ -20,7 +20,7 @@ public class KeyBind {
     	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
     public static final KeyBind // Gameplay
 	KB_TOGGLE_GRID, KB_TOGGLE_TIPS, KB_TOGGLE_HITBOXES, KB_TOGGLE_HIDDEN, KB_TOGGLE_PAUSE,
-	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_FORAGE_CLOSEST_ITM, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
+	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
     public static final KeyBind // Movement
     	KB_CYCLE_SPEED, KB_CRAWL, KB_WALK, KB_RUN, KB_SPRINT,
 	KB_MOVE_NORTH, KB_MOVE_SOUTH, KB_MOVE_EAST, KB_MOVE_WEST;
@@ -106,10 +106,10 @@ public class KeyBind {
 	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W"); //Speedget
 	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E"); //Speedget
 	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R"); //Speedget
-	    KB_MOVE_NORTH = addKB("Move North", MV_GRP, "Up"); //TODO
-	    KB_MOVE_SOUTH = addKB("Move South", MV_GRP, "Down"); //TODO
-	    KB_MOVE_EAST = addKB("Move East", MV_GRP, "Left"); //TODO
-	    KB_MOVE_WEST = addKB("Move West", MV_GRP, "Right"); //TODO
+	    KB_MOVE_NORTH = addKB("Move North", MV_GRP, "S-Up");
+	    KB_MOVE_SOUTH = addKB("Move South", MV_GRP, "S-Down");
+	    KB_MOVE_EAST = addKB("Move East", MV_GRP, "S-Left");
+	    KB_MOVE_WEST = addKB("Move West", MV_GRP, "S-Right");
 	}
 	{ // Combat Keybinds
 	    final String CBT_GRP = "Combat";

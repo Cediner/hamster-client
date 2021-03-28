@@ -2957,6 +2957,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    ui.gui.settings.SHOWHITBOX.set(!ui.gui.settings.SHOWHITBOX.get());
 	    return true;
         });
+        binds.put(KB_MOVE_EAST, () -> { relMove(-1000d, 0d); return true; });
+	binds.put(KB_MOVE_WEST, () -> { relMove(1000d, 0d); return true; });
+	binds.put(KB_MOVE_NORTH, () -> { relMove(0d, -1000d); return true; });
+	binds.put(KB_MOVE_SOUTH, () -> { relMove(0d, 1000d); return true; });
     }
 
     public boolean globtype(char c, KeyEvent ev) {
