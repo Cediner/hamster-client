@@ -1,6 +1,5 @@
 package hamster.script.pathfinding;
 
-import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.gob.Tag;
 import haven.*;

@@ -972,6 +972,15 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
         return hitbox;
     }
 
+    public Optional<Hitbox> hitboxo() { return Optional.ofNullable(hitbox); }
+
+    public void updateHitbox(final Coord2d off, final Coord2d sz) {
+        if(hitbox != null)
+	    glob.gobhitmap.add(this);
+        hitbox = new Hitbox.Rectangular(off, sz, true);
+	glob.gobhitmap.add(this);
+    }
+
     /*
      * Crop related helpers
      */

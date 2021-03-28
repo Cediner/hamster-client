@@ -2,6 +2,7 @@ package hamster.script.pathfinding;
 
 import hamster.util.ResHashMap;
 import haven.*;
+import haven.res.gfx.terobjs.consobj.Consobj;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -189,7 +190,7 @@ public class Hitbox {
         final Optional<Resource> res = g.res();
         if (res.isPresent()) {
             if (!force) {
-                if (!res.get().name.endsWith("gate") && !res.get().name.endsWith("/pow")) {
+                if (!res.get().name.endsWith("gate") && !res.get().name.endsWith("/pow") && !res.get().name.endsWith("consobj")) {
                     return hitboxes.get(res.get().name).orElse(loadHitboxFromRes(res.get()));
                 } else if (res.get().name.endsWith("gate") && res.get().name.startsWith("gfx/terobjs/arch")) {
                     ResDrawable rd = g.getattr(ResDrawable.class);
@@ -205,6 +206,16 @@ public class Hitbox {
                     } else {
                         return hitboxes.get(res.get().name).orElse(loadHitboxFromRes(res.get()));
                     }
+                } else if (res.get().name.endsWith("consobj")) {
+                    for(final var ol : g.overlays()) {
+                        if(ol.spr instanceof Consobj) {
+                            final var cons = (Consobj)ol.spr;
+                            final var sz = new Coord2d(cons.br.sub(cons.ul));
+                            return new Rectangular(new Coord2d(cons.ul), sz, true);
+                        }
+                    }
+                    //Couldn't find Consobj sprite
+                    return hitboxes.get(res.get().name).orElse(loadHitboxFromRes(res.get()));
                 } else {
                     return hitboxes.get(res.get().name).orElse(loadHitboxFromRes(res.get()));
                 }
