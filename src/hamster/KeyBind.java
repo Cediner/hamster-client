@@ -72,14 +72,14 @@ public class KeyBind {
 	    KB_TOGGLE_KIN = addKB("Toggle Kin List", UI_GRP, "C-B"); //GameUI
 	    KB_TOGGLE_OPTS = addKB("Toggle Options", UI_GRP, "C-O"); //GameUI
 	    KB_TOGGLE_CHAT = addKB("Toggle Chat", UI_GRP, "C-C"); //GameUI
-	    KB_TOGGLE_FORAGE = addKB("Toggle Forage", UI_GRP, "S-F"); //TODO
-	    KB_TOGGLE_LIVESTOCK = addKB("Toggle Livestock Manager", UI_GRP, "S-L"); //TODO
+	    KB_TOGGLE_FORAGE = addKB("Toggle Forage", UI_GRP, "S-F");
+	    KB_TOGGLE_LIVESTOCK = addKB("Toggle Livestock Manager", UI_GRP, "S-L");
 	    KB_TOGGLE_CMD = addKB("Toggle Console", UI_GRP, "S-Semicolon"); //GameUI / Root
-	    KB_TOGGLE_PROFILER = addKB("Toggle Profiler", UI_GRP, "C-L"); //TODO fix
+	    KB_TOGGLE_PROFILER = addKB("Toggle Profiler", UI_GRP, "C-L");
 	    KB_FOCUS_MAP = addKB("Focus Map", UI_GRP, "Escape"); //GameUI
 	    KB_RECALL_MAP_ONE = addKB("Recall First map pos/size", UI_GRP, "C-Z"); //MapWnd
 	    KB_RECALL_MAP_TWO = addKB("Recall Second map pos/size", UI_GRP, "C-X"); //MapWnd
-	    KB_LOCK_ITEM_ON_MOUSE = addKB("Lock item on mouse", UI_GRP, "Back Quote"); //TODO
+	    KB_LOCK_ITEM_ON_MOUSE = addKB("Lock item on mouse", UI_GRP, "Back Quote");
 	    KB_SCREENSHOT = addKB("Screenshot", UI_GRP, "M-S"); //GameUI
 	    KB_MAKE_ONE = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "Enter");
 	    KB_MAKE_ALL = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "C-Enter");
@@ -91,8 +91,8 @@ public class KeyBind {
 	    final String GP_GRP = "Gameplay";
 	    KB_TOGGLE_GRID = addKB("Toggle Grid Lines", GP_GRP, "C-G");
 	    KB_TOGGLE_TIPS = addKB("Toggle Hovertips", GP_GRP, "C-Q");
-	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H"); //TODO
-	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G"); //TODO
+	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H");
+	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G");
 	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root
 	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q"); //TODO
 	    KB_QUICK_BOARD = addKB("Quick Board", GP_GRP, "S-Q"); //TODO
@@ -130,7 +130,7 @@ public class KeyBind {
 	}
 	{ // Camera Keybinds
 	    final String CAM_GRP = "Camera";
-	    KB_RECENTER_CAMERA = addKB("Recenter Camera on Player", CAM_GRP, "S-C"); //TODO
+	    KB_RECENTER_CAMERA = addKB("Recenter Camera on Player", CAM_GRP, "S-C");
 	    KB_CAM_RESET = addKB("Reset Camera", CAM_GRP, "Home");
 	    KB_CAM_LEFT = addKB("Move Camera Left", CAM_GRP, "Left");
 	    KB_CAM_RIGHT = addKB("Move Camera Right", CAM_GRP, "Right");

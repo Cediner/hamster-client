@@ -55,16 +55,20 @@ public class RootWidget extends ConsoleHost {
         if(!super.globtype(key, ev)) {
 	    final String cmdstr = KeyBind.generateSequence(ev, ui);
 	    if(!KB_TOGGLE_PROFILER.check(cmdstr, () -> {
-		final Widget par = ui.gui != null ? ui.gui : ui.root;
-		final ProfWnd wnd = par.add(new ProfWnd());
-		if (Config.profile) {
-		    wnd.add(ui.root.guprof, "UI profile");
-		    wnd.add(ui.root.grprof, "GL profile");
+	        if(Config.profile || Config.profilegpu) {
+		    final Widget par = ui.gui != null ? ui.gui : ui.root;
+		    final ProfWnd wnd = par.add(new ProfWnd());
+		    if (Config.profile) {
+			wnd.add(ui.root.guprof, "UI profile");
+			wnd.add(ui.root.grprof, "GL profile");
+		    }
+		    if (Config.profilegpu) {
+			wnd.add(ui.root.ggprof, "GPU profile");
+		    }
+		    return true;
+		} else {
+	            return false;
 		}
-		if (Config.profilegpu) {
-		    wnd.add(ui.root.ggprof, "GPU profile");
-		}
-		return true;
 	    }) && !KB_TOGGLE_CMD.check(cmdstr, () -> {
 	        entercmd();
 		return true;

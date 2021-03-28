@@ -969,12 +969,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisibility(); return true; });
         binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisibility(); return true; });
         binds.put(KB_TOGGLE_FORAGE, () -> { foragehelper.toggleVisibility(); return true; });
-        binds.put(KB_TOGGLE_LIVESTOCK, () -> {
-            if(menu != null) {
-                menu.use("paginae/act/croster");
-                return true;
+        binds.put(KB_TOGGLE_LIVESTOCK, () -> { menu.use("paginae/act/croster");return true; });
+        binds.put(KB_LOCK_ITEM_ON_MOUSE, () -> {
+            if(vhand != null) {
+                vhand.setLock(!vhand.locked());
+		return true;
 	    } else {
-                return false;
+		return false;
 	    }
 	});
         binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisibility(); return true; });
