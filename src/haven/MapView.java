@@ -405,8 +405,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
 	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
 		telev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
-		if (telev < 0.0f) elev = 0.0f;
-		if (telev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+		if (telev < 0.0f) telev = 0.0f;
+		if (telev > (Math.PI / 2.0)) telev = (float) Math.PI / 2.0f;
 	    }
 	    tangl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
 	}
@@ -805,7 +805,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	private void chfield(float nf) {
 	    tfield = nf;
-	    tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 8f), 50);
+	    tfield = Math.max(tfield, 50);
 	    if(tfield > 100)
 		release();
 	}
