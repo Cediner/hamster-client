@@ -1007,7 +1007,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    }
 		    if (target != null) {
 			final Coord tc = target.rc.floor(OCache.posres);
-			ui.gui.map.wdgmsg("click", Coord.z, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+			ui.gui.map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
 			return true;
 		    } else {
 			return false;
@@ -1017,6 +1017,22 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}
 	    } else {
 		return false;
+	    }
+	});
+    	binds.put(KB_AGGRO_TARGET, () -> {
+	    if (ui.gui.map != null && ui.gui.curtar != -1) {
+	        final Gob g = ui.sess.glob.oc.getgob(ui.gui.curtar);
+	        if(g != null) {
+		    final Coord tc = g.rc.floor(OCache.posres);
+		    ui.gui.menu.wdgmsg("act", (Object[]) new Object[]{"aggro"});
+		    ui.gui.map.wdgmsg("click", Coord.o, tc, 1, 0, 0, (int) g.id, tc, 0, -1);
+		    ui.gui.map.wdgmsg("click", Coord.o, tc, 3, 0);
+		    return true;
+		} else {
+	            return false;
+		}
+	    } else {
+	        return false;
 	    }
 	});
     }

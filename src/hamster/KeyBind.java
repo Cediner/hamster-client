@@ -117,9 +117,9 @@ public class KeyBind {
 	    KB_AGGRO_NEAREST_PLAYER_TO_MOUSE = addKB("Aggro player nearest to mouse", CBT_GRP, "C-D"); //TODO
 	    KB_TARGET_NEAREST_ANIMAL_TO_MOUSE = addKB("Target nearest animal to mouse", CBT_GRP, "S-A"); //TODO
 	    KB_TARGET_NEAREST_PLAYER_TO_MOUSE = addKB("Target nearest player to mouse", CBT_GRP, "S-D"); //TODO
-	    KB_AGGRO_TARGET = addKB("Aggro targeted gob", CBT_GRP, "S-T"); //TODO
-	    KB_TARGET_CURRENT = addKB("Target current gob", CBT_GRP, "S-C"); //TODO
-	    KB_PEACE_CURRENT = addKB("Peace current target", CBT_GRP, "S-P"); //TODO
+	    KB_AGGRO_TARGET = addKB("Aggro targeted gob", CBT_GRP, "S-T");
+	    KB_TARGET_CURRENT = addKB("Target current gob", CBT_GRP, "S-C");
+	    KB_PEACE_CURRENT = addKB("Peace current target", CBT_GRP, "S-P");
 	    KB_CYCLEUP_OPP = addKB("Cycle Up Current Opponent", CBT_GRP, "");
 	    KB_CYCLEDOWN_OPP = addKB("Cycle Down Current Opponent", CBT_GRP, "");
 	    final int moves = 10;

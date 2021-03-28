@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.KeyBind;
+import hamster.gob.sprites.TargetSprite;
 import hamster.ui.fight.*;
 import haven.render.*;
 import haven.res.ui.tt.q.qbuff.Quality;
@@ -569,6 +570,35 @@ public class Fightsess extends Widget {
 	    }
 	    fv.wdgmsg("bump", (int)fv.lsrel.get(0).gobid);
 	    return(true);
+	});
+        binds.put(KB_PEACE_CURRENT, () -> {
+           if(fv.current != null) {
+               fv.current.peace();
+               return true;
+	   } else {
+               return false;
+	   }
+	});
+        binds.put(KB_TARGET_CURRENT, () -> {
+            if(fv.current != null) {
+                final MapView mv = ui.gui.map;
+		final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+		if (old != null) {
+		    final Gob.Overlay ol = old.findol(TargetSprite.id);
+		    if (ol != null) {
+			((TargetSprite) ol.spr).rem();
+		    }
+		}
+		final Gob g = ui.sess.glob.oc.getgob(fv.current.gobid);
+		mv.ui.gui.curtar = fv.current.gobid;
+		if(g != null)
+		    g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+		if(mv.ui.gui.chat.party != null)
+		    mv.ui.gui.chat.party.send(String.format(TargetSprite.target_pat, fv.current.gobid));
+                return true;
+	    } else {
+                return false;
+	    }
 	});
     }
 
