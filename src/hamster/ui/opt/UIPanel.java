@@ -2,6 +2,8 @@ package hamster.ui.opt;
 
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
+import hamster.ui.core.indir.IndirHSlider;
+import hamster.ui.core.indir.IndirLabel;
 import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
@@ -15,6 +17,7 @@ public class UIPanel extends Scrollport {
 
         final Grouping visibility = new GridGrouping("UI Visibility Settings", spacer, spacer.x, UI.scale(200), false);
         final Grouping minimap = new GridGrouping("Minimap Settings", spacer, spacer.x, UI.scale(200), false);
+        final Grouping menu = new LinearGrouping("MenuGrid Settings", spacer, false);
         final Grouping meter = new LinearGrouping("Meter Settings", spacer, false);
         final Grouping inv = new LinearGrouping("Inventory Settings", spacer, false);
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);
@@ -57,6 +60,21 @@ public class UIPanel extends Scrollport {
             minimap.add(OptionsWnd.ColorPreWithLabel("Queued Path Color", ui.gui.settings.MMPATHCOL));
             minimap.pack();
         }
+        { //menu
+            menu.add(new IndirLabel(() -> String.format("MenuGrid Columns: %d", ui.gui.settings.MENUGRIDSIZEX.get())));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, ui.gui.settings.MENUGRIDSIZEX, (val) -> {
+                if(ui.gui.menu != null) {
+                    ui.gui.menu.updlayoutsize();
+                }
+            }));
+            menu.add(new IndirLabel(() -> String.format("MenuGrid Rows: %d", ui.gui.settings.MENUGRIDSIZEY.get())));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, ui.gui.settings.MENUGRIDSIZEY, (val) -> {
+                if(ui.gui.menu != null) {
+                    ui.gui.menu.updlayoutsize();
+                }
+            }));
+            menu.pack();
+        }
         { //mods
             meter.add(new IndirCheckBox("Alternate Meter Display", ui.gui.settings.BIGSIMPLEMETERS));
             meter.pack();
@@ -79,6 +97,7 @@ public class UIPanel extends Scrollport {
 
         y += add(visibility, new Coord(0, y)).sz.y + spacer.y;
         y += add(minimap, new Coord(0, y)).sz.y + spacer.y;
+        y += add(menu, new Coord(0, y)).sz.y + spacer.y;
         y += add(meter, new Coord(0, y)).sz.y + spacer.y;
         y += add(inv, new Coord(0, y)).sz.y + spacer.y;
         y += add(fmenu, new Coord(0, y)).sz.y + spacer.y;

@@ -89,6 +89,9 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWCHAT;
     public final IndirSetting<Boolean> SHOWMINIMAP;
     public final IndirSetting<Boolean> SHOWLRSLOTS;
+    //Menugrid
+    public final IndirSetting<Integer> MENUGRIDSIZEX;
+    public final IndirSetting<Integer> MENUGRIDSIZEY;
     //Meter UI
     public final IndirSetting<Boolean> BIGSIMPLEMETERS;
     //Inv UI
@@ -192,19 +195,17 @@ public class SessionSettings {
         SHOWCHAT = new IndirSetting<>(local, "ui.show-chat", true);
         SHOWLRSLOTS = new IndirSetting<>(local, "ui.show-lr-hand-slots", true);
         SHOWMINIMAP = new IndirSetting<>(local, "ui.show-minimap", true);
-
         SHOWINVONLOGIN = new IndirSetting<>(local, "ui.show-inv-on-login", true);
         SHOWBELTONLOGIN = new IndirSetting<>(local, "ui.show-belt-on-login", true);
-
+        MENUGRIDSIZEX = new IndirSetting<>(local, "ui.mg.size-x", 4);
+        MENUGRIDSIZEY = new IndirSetting<>(local, "ui.mg.size-y", 4);
         BIGSIMPLEMETERS = new IndirSetting<>(local, "ui.big-simple-imeters", false);
-
         SHOWITEMQ = new IndirSetting<>(local, "ui.inv.show-item-quality", true);
         SHOWITEMWEAR = new IndirSetting<>(local, "ui.inv.show-item-wear", true);
         SHOWITEMCONT = new IndirSetting<>(local, "ui.inv.show-item-cont", true);
         ALWAYSITEMLONGTIPS = new IndirSetting<>(local, "ui.inv.always-show-longtip", true);
         AUTOEQUIP = new IndirSetting<>(local, "ui.inv.auto-equip", true);
         WATERDROPITEMCTRL = new IndirSetting<>(local, "ui.dont-drop-item-over-water", false);
-
         QUICKFLMENU = new IndirSetting<>(local, "ui.flowermenu.quick-menu", false);
         KEEPFLOPEN = new IndirSetting<>(local, "ui.flowermenu.never-close-on-click", false);
 

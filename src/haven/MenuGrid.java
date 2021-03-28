@@ -42,7 +42,7 @@ public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
-    private static Coord gsz = new Coord(4, 4);
+    private static Coord gsz = new Coord(5, 5);
     public final ObservableCollection<Pagina> paginae = new ObservableCollection<>(new HashSet<>());
     public Pagina cur;
     private Pagina dragging;
@@ -300,7 +300,6 @@ public class MenuGrid extends MovableWidget {
 	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)), "Menugrid");
 	//Custom Management Menu
 	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
-	//TODO: All the Custom window toggles
 	addCustom(new CustomPagina(this, "management::landmanager",
 		Resource.local().load("custom/paginae/default/wnd/selector"),
 		(pag) -> ui.gui.add(new MapMod(true))));
@@ -391,6 +390,19 @@ public class MenuGrid extends MovableWidget {
     private void addCustom(final CustomPagina pag) {
 	paginae.add(pag);
 	custompag.put(pag.key, pag);
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	updlayoutsize();
+    }
+
+    public void updlayoutsize() {
+        gsz = new Coord(ui.gui.settings.MENUGRIDSIZEX.get(), ui.gui.settings.MENUGRIDSIZEY.get());
+	layout = new PagButton[gsz.x][gsz.y];
+	updlayout();
+	resize(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
     }
 
     private void updlayout() {
