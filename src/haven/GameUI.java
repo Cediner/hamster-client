@@ -26,10 +26,14 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
 import hamster.data.ForagableData;
+import hamster.gob.Tag;
+import hamster.gob.attrs.info.ScreenLocation;
+import hamster.gob.sprites.TargetSprite;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
@@ -984,8 +988,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
     	binds.put(KB_QUICK_ACTION, () -> {
-    	    if (ui.gui.map != null) {
-		final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+    	    if (map != null) {
+		final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
 		if (pl != null) {
 		    final Coord3f plc = pl.getc();
 		    Gob target = null;
@@ -993,7 +997,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    synchronized (ui.sess.glob.oc) {
 			for (final Gob g : ui.sess.glob.oc) {
 			    final Optional<String> name = g.resname();
-			    if (name.isPresent() && (ForagableData.isForagable(name.get(), g) || isKickSled(name.get(), g, ui.gui.map.plgob))) {
+			    if (name.isPresent() && (ForagableData.isForagable(name.get(), g) || isKickSled(name.get(), g, map.plgob))) {
 				final float gdist = plc.dist(g.getc());
 				if (target != null && gdist < dist) {
 				    target = g;
@@ -1007,7 +1011,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    }
 		    if (target != null) {
 			final Coord tc = target.rc.floor(OCache.posres);
-			ui.gui.map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+			final ScreenLocation sc = target.getattr(ScreenLocation.class);
+			map.wdgmsg("click", sc.sc(), tc, 3, 0, 0, (int) target.id, tc, 0, -1);
 			return true;
 		    } else {
 			return false;
@@ -1020,13 +1025,14 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	});
     	binds.put(KB_AGGRO_TARGET, () -> {
-	    if (ui.gui.map != null && ui.gui.curtar != -1) {
-	        final Gob g = ui.sess.glob.oc.getgob(ui.gui.curtar);
+	    if (map != null && curtar != -1) {
+	        final Gob g = ui.sess.glob.oc.getgob(curtar);
 	        if(g != null) {
 		    final Coord tc = g.rc.floor(OCache.posres);
-		    ui.gui.menu.wdgmsg("act", (Object[]) new Object[]{"aggro"});
-		    ui.gui.map.wdgmsg("click", Coord.o, tc, 1, 0, 0, (int) g.id, tc, 0, -1);
-		    ui.gui.map.wdgmsg("click", Coord.o, tc, 3, 0);
+		    final ScreenLocation sc = g.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) g.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
 		    return true;
 		} else {
 	            return false;
@@ -1035,6 +1041,150 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	        return false;
 	    }
 	});
+    	binds.put(KB_AGGRO_NEAREST_ANIMAL_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+		        final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (sc != null && g.name().startsWith("gfx/kritter/") && sc.sc() != null && !g.isDead()) {
+			    final double gdist = ui.mc.dist(sc.sc());
+			    if (target != null && gdist < dist) {
+				target = g;
+				dist = gdist;
+			    } else if (target == null) {
+				target = g;
+				dist = gdist;
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    final ScreenLocation sc = target.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    	binds.put(KB_AGGRO_NEAREST_PLAYER_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
+			    final KinInfo kin = g.getattr(KinInfo.class);
+			    if (kin == null || kin.group == settings.BADKIN.get()) {
+				final double gdist = ui.mc.dist(sc.sc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    final ScreenLocation sc = target.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+	binds.put(KB_TARGET_NEAREST_ANIMAL_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (sc != null && g.name().startsWith("gfx/kritter/") && sc.sc() != null && !g.isDead()) {
+			    final double gdist = ui.mc.dist(sc.sc());
+			    if (target != null && gdist < dist) {
+				target = g;
+				dist = gdist;
+			    } else if (target == null) {
+				target = g;
+				dist = gdist;
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    target(target);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+	binds.put(KB_TARGET_NEAREST_PLAYER_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
+			    final KinInfo kin = g.getattr(KinInfo.class);
+			    if (kin == null || kin.group == settings.BADKIN.get()) {
+				final double gdist = ui.mc.dist(sc.sc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    target(target);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    }
+
+    private void target(final Gob target) {
+	final Gob old = ui.sess.glob.oc.getgob(curtar);
+	if (old != null) {
+	    final Gob.Overlay ol = old.findol(TargetSprite.id);
+	    if (ol != null) {
+		((TargetSprite) ol.spr).rem();
+	    }
+	}
+	curtar = target.id;
+	target.queueDeltas(Collections.singletonList((gob) -> target.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+	if(chat.party != null)
+	    chat.party.send(String.format(TargetSprite.target_pat, target.id));
     }
 
     private boolean isKickSled(final String name, final Gob g, long plgob){

@@ -23,4 +23,11 @@ public class ScreenLocation extends GAttrib implements PView.Render2D {
     public Coord sc() {
         return sc;
     }
+
+    @Override
+    public String toString() {
+        return "ScreenLocation<" +
+                "sc=" + sc +
+                '>';
+    }
 }

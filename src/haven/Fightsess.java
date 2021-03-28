@@ -581,8 +581,7 @@ public class Fightsess extends Widget {
 	});
         binds.put(KB_TARGET_CURRENT, () -> {
             if(fv.current != null) {
-                final MapView mv = ui.gui.map;
-		final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+		final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
 		if (old != null) {
 		    final Gob.Overlay ol = old.findol(TargetSprite.id);
 		    if (ol != null) {
@@ -590,11 +589,11 @@ public class Fightsess extends Widget {
 		    }
 		}
 		final Gob g = ui.sess.glob.oc.getgob(fv.current.gobid);
-		mv.ui.gui.curtar = fv.current.gobid;
+		ui.gui.curtar = fv.current.gobid;
 		if(g != null)
 		    g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
-		if(mv.ui.gui.chat.party != null)
-		    mv.ui.gui.chat.party.send(String.format(TargetSprite.target_pat, fv.current.gobid));
+		if(ui.gui.chat.party != null)
+		    ui.gui.chat.party.send(String.format(TargetSprite.target_pat, fv.current.gobid));
                 return true;
 	    } else {
                 return false;
