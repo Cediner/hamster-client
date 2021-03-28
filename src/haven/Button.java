@@ -79,7 +79,7 @@ public class Button extends SIWidget {
     }
 
     private static boolean largep(int w) {
-	return (w >= (ul.img().getWidth() + um.img().getWidth() + ur.img().getWidth()));
+	return (w >= (ul.imgs().getWidth() + um.imgs().getWidth() + ur.imgs().getWidth()));
     }
 
     private Button(int w, boolean lg) {
@@ -121,7 +121,7 @@ public class Button extends SIWidget {
     public Button(final String text) {
 	this(0, false);
 	change(text);
-	sz = new Coord(cont.getWidth() + ul.img().getWidth() + um.img().getWidth() + ur.img().getWidth(), ul.img().getHeight());
+	sz = new Coord(cont.getWidth() + ul.imgs().getWidth() + um.imgs().getWidth() + ur.imgs().getWidth(), ul.imgs().getHeight());
 	this.action = () -> wdgmsg("activate");
     }
 	
@@ -135,14 +135,14 @@ public class Button extends SIWidget {
 
 	if (a) {
 	    //down
-	    g.drawImage(dl.imgs(), 0, 0, dl.img().getWidth(), sz.y, null);
-	    g.drawImage(dm.imgs(), dl.img().getWidth(), 0, sz.x - dr.img().getWidth() - dl.img().getWidth(), sz.y, null);
-	    g.drawImage(dr.imgs(), sz.x - dr.img().getWidth(), 0, dr.img().getWidth(), sz.y, null);
+	    g.drawImage(dl.imgs(), 0, 0, dl.imgs().getWidth(), sz.y, null);
+	    g.drawImage(dm.imgs(), dl.imgs().getWidth(), 0, sz.x - dr.imgs().getWidth() - dl.imgs().getWidth(), sz.y, null);
+	    g.drawImage(dr.imgs(), sz.x - dr.imgs().getWidth(), 0, dr.imgs().getWidth(), sz.y, null);
 	} else {
 	    //up
-	    g.drawImage(ul.imgs(), 0, 0, ul.img().getWidth(), sz.y, null);
-	    g.drawImage(um.imgs(), ul.img().getWidth(), 0, sz.x - ur.img().getWidth() - ul.img().getWidth(), sz.y, null);
-	    g.drawImage(ur.imgs(), sz.x - ur.img().getWidth(), 0, ur.img().getWidth(), sz.y, null);
+	    g.drawImage(ul.imgs(), 0, 0, ul.imgs().getWidth(), sz.y, null);
+	    g.drawImage(um.imgs(), ul.imgs().getWidth(), 0, sz.x - ur.imgs().getWidth() - ul.imgs().getWidth(), sz.y, null);
+	    g.drawImage(ur.imgs(), sz.x - ur.imgs().getWidth(), 0, ur.imgs().getWidth(), sz.y, null);
 	}
 
 	Coord tc = sz.sub(Utils.imgsz(cont)).div(2);

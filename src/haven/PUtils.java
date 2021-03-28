@@ -579,7 +579,7 @@ public class PUtils {
         throw(new IllegalArgumentException("Can only scale images up or down in both dimensions"));
     }
 
-    private static final Convolution uifilter = new Lanczos(3);
+    private static final Convolution uifilter = new Hanning(5);
     public static BufferedImage uiscale(BufferedImage img, Coord tsz) {
 	Coord sz = imgsz(img);
 	if(tsz.equals(sz))

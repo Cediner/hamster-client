@@ -8,7 +8,9 @@
       "nooff": false,
       "id": 0,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\inv\\locked\\image-0.png"
+      "img": "unbuilt\\custom\\inv\\locked\\image-0.png",
+      "fl": 4,
+      "scale": 4.0
     }
   ]
 }

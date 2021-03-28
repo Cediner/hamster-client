@@ -61,16 +61,15 @@ public class Frame extends Widget {
     }
 
     public static Frame with(Widget child, boolean resize) {
+	Frame ret;
 	if(resize) {
-	    Frame ret = new Frame(child.sz, false);
+	    ret = new Frame(child.sz, false);
 	    child.resize(child.sz.sub(ret.box.bisz()));
-	    ret.add(child, 0, 0);
-	    return(ret);
 	} else {
-	    Frame ret = new Frame(child.sz, true);
-	    ret.add(child, 0, 0);
-	    return(ret);
+	    ret = new Frame(child.sz, true);
 	}
+	ret.add(child, 0, 0);
+	return(ret);
     }
 
     public Coord inner() {
@@ -85,17 +84,17 @@ public class Frame extends Widget {
     }
 
     public Position getpos(String nm) {
-	switch(nm) {
-	case "iul": return(new Position(this.c.add(box.btloff())));
-	case "iur": return(new Position(this.c.add(this.sz.x - box.bbroff().x, box.btloff().y)));
-	case "ibr": return(new Position(this.c.add(this.sz).sub(box.bbroff())));
-	case "ibl": return(new Position(this.c.add(box.btloff().x, this.sz.y - box.bbroff().y)));
-	case "icul": return(new Position(box.btloff()));
-	case "icur": return(new Position(this.sz.x - box.bbroff().x, box.btloff().y));
-	case "icbr": return(new Position(this.sz.sub(box.bbroff())));
-	case "icbl": return(new Position(box.btloff().x, this.sz.y - box.bbroff().y));
-	default: return(super.getpos(nm));
-	}
+	return switch (nm) {
+	    case "iul" -> (new Position(this.c.add(box.btloff())));
+	    case "iur" -> (new Position(this.c.add(this.sz.x - box.bbroff().x, box.btloff().y)));
+	    case "ibr" -> (new Position(this.c.add(this.sz).sub(box.bbroff())));
+	    case "ibl" -> (new Position(this.c.add(box.btloff().x, this.sz.y - box.bbroff().y)));
+	    case "icul" -> (new Position(box.btloff()));
+	    case "icur" -> (new Position(this.sz.x - box.bbroff().x, box.btloff().y));
+	    case "icbr" -> (new Position(this.sz.sub(box.bbroff())));
+	    case "icbl" -> (new Position(box.btloff().x, this.sz.y - box.bbroff().y));
+	    default -> (super.getpos(nm));
+	};
     }
 
     public void draw(GOut g) {
@@ -108,9 +107,7 @@ public class Frame extends Widget {
 	if((c.x < ul.x) || (c.y < ul.y))
 	    return(true);
 	Coord br = sz.sub(box.bisz()).add(ul);
-	if((c.x >= br.x) || (c.y >= br.y))
-	    return(true);
-	return(false);
+	return (c.x >= br.x) || (c.y >= br.y);
     }
 
     public <T extends Widget> T addin(T child) {

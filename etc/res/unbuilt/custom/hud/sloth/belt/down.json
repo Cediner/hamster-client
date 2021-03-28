@@ -8,7 +8,9 @@
       "nooff": false,
       "id": 0,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-0.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-0.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -17,7 +19,9 @@
       "nooff": false,
       "id": 1,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-1.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-1.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -26,7 +30,9 @@
       "nooff": false,
       "id": 2,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-2.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\belt\\down\\image-2.png",
+      "fl": 4,
+      "scale": 4.0
     }
   ]
 }
