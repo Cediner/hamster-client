@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.function.*;
 
 import hamster.GlobalSettings;
+import hamster.data.FarmingData;
 import hamster.data.MarkerData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
@@ -986,12 +987,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     /*
-     * Crop related helpers
+     * This is more useful for getting Bush/Tree max stages
      */
-    public int getMaxStage() {
-	return Growth.maxstage(name());
-    }
-
     public int getMaxStage(final int guess) {
 	int max = guess;
 	for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
@@ -1316,7 +1313,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    deltas.add((gob) -> gob.setattr(new MyGobIndicator(gob)));
 		}
 	    }
-	    if (Growth.isGrowth(name)) {
+	    if (FarmingData.isACrop(name)) {
 		deltas.add((gob) -> gob.setattr(new GrowthMonitor(gob, name)));
 	    }
 	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {

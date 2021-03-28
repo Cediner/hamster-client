@@ -1,6 +1,7 @@
 package hamster;
 
 import com.google.common.flogger.FluentLogger;
+import hamster.data.FarmingData;
 import hamster.data.ForagableData;
 import hamster.data.HighlightData;
 import hamster.data.ItemData;
@@ -30,6 +31,7 @@ public class GlobalSettings {
     public static void init() {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
+        FarmingData.init();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
             logger.atInfo().log("Loading alerted");

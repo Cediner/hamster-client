@@ -1,6 +1,6 @@
 package hamster.gob.attrs.monitors;
 
-import hamster.gob.Growth;
+import hamster.data.FarmingData;
 import hamster.gob.sprites.GrowthSprite;
 import haven.GAttrib;
 import haven.Gob;
@@ -9,12 +9,12 @@ import haven.UI;
 public class GrowthMonitor extends GAttrib {
     private boolean show;
     private int stage = -1;
-    private final String name;
+    private final FarmingData.Crop cropdata;
 
     public GrowthMonitor(final Gob g, final String name) {
         super(g);
         show = false;
-        this.name = name;
+        this.cropdata = FarmingData.getCropData(name);
     }
 
     private void remol() {
@@ -41,7 +41,7 @@ public class GrowthMonitor extends GAttrib {
                 if(show) {
                     if(gob.findol(GrowthSprite.id) == null) {
                         gob.addol(new Gob.Overlay(gob, GrowthSprite.id, new GrowthSprite(gob, stage,
-                                Growth.minstage(name), Growth.maxstage(name))));
+                                cropdata.min_stage(), cropdata.final_stage())));
                     }
                 } else {
                     remol();
