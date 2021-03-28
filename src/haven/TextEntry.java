@@ -35,7 +35,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 public class TextEntry extends SIWidget {
     public static final Color defcol = new Color(255, 205, 109), dirtycol = new Color(255, 232, 209);
@@ -45,14 +44,13 @@ public class TextEntry extends SIWidget {
     public static final IndirThemeTex rcap = res.img(2);
     public static final IndirThemeTex mext = res.img(1);
     public static final Tex caret = Resource.loadtex("gfx/hud/text/caret");
-    public static final Coord toff = new Coord(lcap.img().getWidth() - 1, 1);
+    public static final Coord toff = new Coord(lcap.imgs().getWidth() - 1, 1);
     public static final Coord coff = UI.scale(new Coord(-3, 0));
-    public static final int wmarg = lcap.img().getWidth() + rcap.img().getWidth() + 1;
+    public static final int wmarg = lcap.imgs().getWidth() + rcap.imgs().getWidth() + 1;
     public boolean dshow = false;
     public LineEdit buf;
     public int sx;
     public boolean pw = false;
-    private final static Pattern numpat = Pattern.compile("(-)|(-?[0-9]+)");
     public boolean numeric = false;
     public String text;
     private boolean dirty = false;
@@ -107,18 +105,13 @@ public class TextEntry extends SIWidget {
     }
 
     public void uimsg(String name, Object... args) {
-	if(name == "settext") {
-	    settext((String)args[0]);
-	} else if(name == "get") {
-	    wdgmsg("text", buf.line);
-	} else if(name == "pw") {
-	    pw = ((Integer)args[0]) != 0;
-	} else if(name == "dshow") {
-	    dshow = ((Integer)args[0]) != 0;
-	} else if(name == "cmt") {
-	    commit();
-	} else {
-	    super.uimsg(name, args);
+	switch (name) {
+	    case "settext" -> settext((String) args[0]);
+	    case "get" -> wdgmsg("text", buf.line);
+	    case "pw" -> pw = ((Integer) args[0]) != 0;
+	    case "dshow" -> dshow = ((Integer) args[0]) != 0;
+	    case "cmt" -> commit();
+	    default -> super.uimsg(name, args);
 	}
     }
 
@@ -142,10 +135,7 @@ public class TextEntry extends SIWidget {
 
     protected String dtext() {
 	if(pw) {
-	    String ret = "";
-	    for(int i = 0; i < buf.line.length(); i++)
-		ret += "\u2022";
-	    return(ret);
+	    return("\u2022".repeat(buf.line.length()));
 	} else {
 	    return(buf.line);
 	}
@@ -156,10 +146,10 @@ public class TextEntry extends SIWidget {
 	String dtext = dtext();
 	tcache = fnd.render(dtext, (dshow && dirty) ? dirtycol : defcol);
 
-	g.drawImage(lcap.img(), 0, 0, lcap.img().getWidth(), sz.y, null);
-	g.drawImage(mext.img(), lcap.img().getWidth(), 0,
-		sz.x - lcap.img().getWidth() - rcap.img().getWidth(), sz.y, null);
-	g.drawImage(rcap.img(), sz.x - rcap.img().getWidth(), 0, rcap.img().getWidth(), sz.y,  null);
+	g.drawImage(lcap.imgs(), 0, 0, null);
+	g.drawImage(mext.imgs(), lcap.imgs().getWidth(), 0,
+		sz.x - lcap.imgs().getWidth() - rcap.imgs().getWidth(), mext.imgs().getHeight(), null);
+	g.drawImage(rcap.imgs(), sz.x - rcap.imgs().getWidth(), 0,  null);
 
 	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
 
@@ -187,7 +177,7 @@ public class TextEntry extends SIWidget {
     }
 
     public TextEntry(final int w, final String deftext, final Consumer<String> onChange, final Consumer<String> onActivate) {
-	super(new Coord(w, UI.scale(mext.img().getHeight())));
+	super(new Coord(w, UI.scale(mext.imgs().getHeight())));
 	this.onChange = onChange;
 	this.onActivate = onActivate;
 	rsettext(deftext);

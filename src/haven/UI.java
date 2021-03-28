@@ -37,12 +37,15 @@ import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import static haven.Utils.el;
 
+import com.google.common.flogger.FluentLogger;
+import com.google.common.flogger.LazyArgs;
 import hamster.GlobalSettings;
 import hamster.util.MessageBus;
 import haven.render.Environment;
 import haven.render.Render;
 
 public class UI {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static int MOD_SHIFT = 1, MOD_CTRL = 2, MOD_META = 4, MOD_SUPER = 8;
     public RootWidget root;
     public GameUI gui;
@@ -260,6 +263,10 @@ public class UI {
     }
 	
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
+	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
+		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "new-widget", id, type, parent, cargs);
 	Widget.Factory f = Widget.gettype2(type);
 	if(f == null)
 	    throw(new UIException("Bad widget name", type, cargs));
@@ -277,6 +284,9 @@ public class UI {
     }
 
     public void addwidget(int id, int parent, Object[] pargs) {
+        logger.atFine().log("Add Widget [%d] to [%d] - %s", id, parent, LazyArgs.lazy(() -> Arrays.toString(pargs)));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "add-widget", id, parent);
 	synchronized(this) {
 	    Widget wdg = getwidget(id);
 	    if(wdg == null)
@@ -354,7 +364,15 @@ public class UI {
 		destroy(wdg);
 	}
     }
-	
+
+    /**
+     * For scripting only
+     */
+    public void wdgmsg(final int id, final String msg, Object... args) {
+	if(rcvr != null)
+	    rcvr.rcvmsg(id, msg, args);
+    }
+
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	int id = widgetid(sender);
 	if(id < 0) {
@@ -366,6 +384,8 @@ public class UI {
     }
 	
     public void uimsg(int id, String msg, Object... args) {
+        if(this.sess != null)
+            sess.details.context.dispatchmsg(null, "uimsg", id, msg, args);
 	Widget wdg = getwidget(id);
 	if(wdg != null) {
 	    synchronized(this) {

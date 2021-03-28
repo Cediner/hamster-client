@@ -8,7 +8,9 @@
       "nooff": false,
       "id": 0,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-0.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-0.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -17,7 +19,9 @@
       "nooff": false,
       "id": 1,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-1.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-1.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -26,7 +30,9 @@
       "nooff": false,
       "id": 2,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-2.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-2.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -35,7 +41,9 @@
       "nooff": false,
       "id": 3,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-3.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-3.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -44,7 +52,9 @@
       "nooff": false,
       "id": 4,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-4.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-4.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -53,7 +63,9 @@
       "nooff": false,
       "id": 5,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-5.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-5.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -62,7 +74,9 @@
       "nooff": false,
       "id": 6,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-6.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-6.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -71,7 +85,9 @@
       "nooff": false,
       "id": 7,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-7.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-7.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -80,7 +96,9 @@
       "nooff": false,
       "id": 8,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-8.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-8.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -89,7 +107,9 @@
       "nooff": false,
       "id": 9,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-9.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-9.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "image",
@@ -98,11 +118,13 @@
       "nooff": false,
       "id": 10,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-10.png"
+      "img": "unbuilt\\custom\\hud\\sloth\\window\\image-10.png",
+      "fl": 4,
+      "scale": 4.0
     },
     {
       "layer-name": "windowconfig",
-      "tlc": "Coord{2, 24}",
+      "tlc": "Coord{2, 23}",
       "brc": "Coord{2, 2}",
       "capc": "Coord{5, 0}",
       "btnc": "Coord{22, 3}"
