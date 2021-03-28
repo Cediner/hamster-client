@@ -1,0 +1,58 @@
+/* This is for custom marker data */
+{
+  // Basic Markers
+  basic: {
+    "gfx/terobjs/coronationstone": {
+      defname: "Coronation Stone",
+      res: "custom/mm/icons/realmcairn",
+      type: "REALM"
+    },
+    "gfx/terobjs/bordercairn": {
+      defname: "Border Cairn",
+      res: "custom/mm/icons/realmcairn",
+      type: "REALM"
+    },
+    "gfx/terobjs/seamark": {
+      defname: "Seamark",
+      res: "custom/mm/icons/realmcairn",
+      type: "REALM"
+    },
+    "gfx/terobjs/villageidol": {
+      defname: "Idol",
+      res: "custom/mm/icons/vidol",
+      type: "VILLAGE"
+    },
+    "gfx/terobjs/vflag": {
+      defname: "Banner",
+      res: "custom/mm/icons/banner",
+      type: "VILLAGE"
+    }
+  },
+  // Linked Markers
+  linked: {
+    "gfx/terobjs/minehole": {
+      defname: "Minehole",
+      res: "custom/mm/icons/minehole",
+      type: "LINKED",
+      ltype: 0
+    },
+    "gfx/terobjs/ladder": {
+      defname: "Ladder",
+      res: "custom/mm/icons/ladder",
+      type: "LINKED",
+      ltype: 1
+    },
+    "gfx/tiles/ridges/cavein": {
+      defname: "Cave (Surface)",
+      res: "custom/mm/icons/cave",
+      type: "LINKED",
+      ltype: 2
+    },
+    "gfx/tiles/ridges/caveout": {
+      defname: "Cave (L1)",
+      res: "custom/mm/icons/cave",
+      type: "LINKED",
+      ltype: 3
+    }
+  }
+}

@@ -1,18 +1,20 @@
 package hamster.data;
 
+import com.google.common.flogger.FluentLogger;
+import com.google.gson.Gson;
 import hamster.io.Storage;
 import haven.MapFile;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-//Too small for me to care to put into static.sqlite
 public class MarkerData {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static class Marker {
         public final String defname;
         public final String res;
@@ -34,24 +36,32 @@ public class MarkerData {
         }
     }
 
+    /* Used only to import config data */
+    private static class MarkerDataImport {
+        public Map<String, Marker> basic;
+        public Map<String, LinkedMarker> linked;
+    }
+
     public enum Type {
         LINKED, SLOTH, REALM, VILLAGE
     }
 
     private static final Map<String, Marker> markable = new HashMap<>();
 
-    static {
-        markable.put("gfx/terobjs/minehole", new LinkedMarker("Minehole", "custom/mm/icons/minehole", Type.LINKED, MapFile.MINEHOLE));
-        markable.put("gfx/terobjs/ladder", new LinkedMarker("Ladder", "custom/mm/icons/ladder", Type.LINKED, MapFile.LADDER));
-        markable.put("gfx/tiles/ridges/cavein", new LinkedMarker("Cave (Surface)", "custom/mm/icons/cave", Type.LINKED, MapFile.CAVE));
-        markable.put("gfx/tiles/ridges/caveout", new LinkedMarker("Cave (L1)", "custom/mm/icons/cave", Type.LINKED, MapFile.CAVEIN));
-
-        markable.put("gfx/terobjs/coronationstone", new Marker("Coronation Stone", "custom/mm/icons/realmcairn", Type.REALM));
-        markable.put("gfx/terobjs/bordercairn", new Marker("Border Cairn", "custom/mm/icons/realmcairn", Type.REALM));
-        markable.put("gfx/terobjs/seamark", new Marker("Seamark", "custom/mm/icons/realmcairn", Type.REALM));
-
-        markable.put("gfx/terobjs/villageidol", new Marker("Idol", "custom/mm/icons/vidol", Type.VILLAGE));
-        markable.put("gfx/terobjs/vflag", new Marker("Banner", "custom/mm/icons/banner", Type.VILLAGE));
+    public static void init() {
+        logger.atInfo().log("Loading Custom Marker Data");
+        final var gson = new Gson();
+        try {
+            final var markers = gson.fromJson(new FileReader("data/MarkerData.json5"), MarkerDataImport.class);
+            for(final var marker : markers.basic.keySet()) {
+                markable.put(marker, markers.basic.get(marker));
+            }
+            for(final var marker : markers.linked.keySet()) {
+                markable.put(marker, markers.linked.get(marker));
+            }
+        } catch (FileNotFoundException e) {
+            logger.atSevere().withCause(e).log("Failed to load custom marker data");
+        }
     }
 
     public static Optional<Marker> marker(final String name) {
@@ -82,7 +92,6 @@ public class MarkerData {
     };
 
 
-    //TODO: realm settings should be apart of the mapdb and refreshed regularly to pull in cross-client data
     static {
         realmcolors.put("???", 2);
         villagecolors.put("???", 2);

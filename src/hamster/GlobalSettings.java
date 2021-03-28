@@ -29,6 +29,7 @@ public class GlobalSettings {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
         ObjData.init();
+        MarkerData.init();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
             logger.atInfo().log("Loading alerted");
