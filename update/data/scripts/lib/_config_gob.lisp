@@ -20,7 +20,7 @@
 (java-func +gob+ gob-poses "poses")
 (java-func +gob+ gob-heldBy "heldBy")
 (java-func +gob+ gob-holding "holding")
-(java-func +gob+ gob-has-tag "hasTag")
+(java-func +gob+ gob-has-tag "hasTag" +tag+)
 ;;friendly
 (java-func +gob+ is-gob-dead "isDead")
 (java-func +gob+ is-gob-friendly "isFriendly")
