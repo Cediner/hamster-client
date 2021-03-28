@@ -2191,11 +2191,20 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public boolean los(final Coord2d c) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
-	return finder.walk(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	pl.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(pl.getc()), c.floor());
+	pl.updatePathfindingBlackout(false);
+	return los;
     }
 
-    public void los(final Gob g) {
-
+    public boolean los(final Gob g) {
+	final NBAPathfinder finder = new NBAPathfinder(ui);
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	pl.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(pl.getc()), g.rc.floor());
+	pl.updatePathfindingBlackout(false);
+	return los;
     }
 
     public Move[] findpath(final Coord2d c) {
