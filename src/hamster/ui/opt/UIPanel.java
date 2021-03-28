@@ -40,6 +40,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox("Show Study Window", ui.gui.settings.SHOWSTUDY, val -> ui.gui.study.setVisible(val)));
             visibility.add(new IndirCheckBox("Show Inventory on Login", ui.gui.settings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox("Show Belt on Login", ui.gui.settings.SHOWBELTONLOGIN));
+            visibility.add(new IndirCheckBox("Show Experience Windows", ui.gui.settings.SHOWEXPWND));
             visibility.pack();
         }
         { //minimap

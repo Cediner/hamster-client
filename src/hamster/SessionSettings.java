@@ -89,6 +89,7 @@ public class SessionSettings {
     public final IndirSetting<Boolean> SHOWCHAT;
     public final IndirSetting<Boolean> SHOWMINIMAP;
     public final IndirSetting<Boolean> SHOWLRSLOTS;
+    public final IndirSetting<Boolean> SHOWEXPWND;
     //Menugrid
     public final IndirSetting<Integer> MENUGRIDSIZEX;
     public final IndirSetting<Integer> MENUGRIDSIZEY;
@@ -208,6 +209,7 @@ public class SessionSettings {
         WATERDROPITEMCTRL = new IndirSetting<>(local, "ui.dont-drop-item-over-water", false);
         QUICKFLMENU = new IndirSetting<>(local, "ui.flowermenu.quick-menu", false);
         KEEPFLOPEN = new IndirSetting<>(local, "ui.flowermenu.never-close-on-click", false);
+        SHOWEXPWND = new IndirSetting<>(local, "ui.show-experience-window", true);
 
         //Temporary, non-saved, settings
         SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
