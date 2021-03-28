@@ -1,5 +1,7 @@
 package hamster.data;
 
+import hamster.GlobalSettings;
+import hamster.gob.Tag;
 import hamster.io.Storage;
 import haven.*;
 
@@ -35,16 +37,15 @@ public class ForagableData {
     }
 
 
-    /* TODO: Add back later when doing quick actions
     public static boolean isForagable(final String name, final Gob g) {
         return name.startsWith("gfx/terobjs/herbs/") ||
-                (DefSettings.FORAGEANIMALS.get() && g.type == Type.SMALLANIMAL) ||
+                (GlobalSettings.FORAGEANIMALS.get() && g.hasTag(Tag.SMALL_ANIMAL)) ||
                 (name.equals("gfx/kritter/bat/bat") && g.isDead()) ||
                 (name.equals("gfx/kritter/swan/swan") && g.isDead()) ||
                 (name.equals("gfx/kritter/adder/adder") && g.isDead()) ||
                 (name.startsWith("gfx/terobjs/items/")) ||
                 forageable_names.contains(name);
-    }*/
+    }
 
     public static Tex getSeasonStatusTex(final int status) {
         return seasonstatus.get(status).tex();

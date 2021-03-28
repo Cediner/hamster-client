@@ -19,6 +19,7 @@ public class GameplayPanel extends Scrollport {
         final Grouping map = new LinearGrouping("Map Settings (Global)", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
         final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
+        final Grouping animal = new LinearGrouping("Animal Settings", spacer, false);
         final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
 
         { //System
@@ -62,7 +63,6 @@ public class GameplayPanel extends Scrollport {
             map.pack();
         }
         { //Camera
-            final Coord c = new Coord(0, 0);
             final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), ui.gui.settings.CAMERA, (camera) -> {
                 if(ui.gui != null) {
                     ui.gui.map.setcam(camera);
@@ -107,16 +107,20 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
             gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
             gob.add(new IndirCheckBox("Show Player Paths", ui.gui.settings.SHOWGOBPATH));
-            gob.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
-            gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
             gob.add(new IndirLabel(() -> String.format("Path Width: %d", ui.gui.settings.PATHWIDTH.get()), Text.std));
             gob.add(new IndirHSlider(200, 1, 8, ui.gui.settings.PATHWIDTH));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", ui.gui.settings.GOBPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
             gob.pack();
+        }
+        { //Animals
+            animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
+            animal.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
+            animal.add(new IndirCheckBox("Show Dangerous Animal Radius", ui.gui.settings.SHOWANIMALRADIUS));
+            animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
+            animal.pack();
         }
         { //Pathfinding
             final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), ui.gui.settings.PATHFINDINGTIER));
@@ -132,12 +136,13 @@ public class GameplayPanel extends Scrollport {
 
         int y = 0;
 
+        y += add(cam, new Coord(0, y)).sz.y + spacer.y;
         y += add(sys, new Coord(0, y)).sz.y + spacer.y;
         y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
         y += add(map, new Coord(0, y)).sz.y + spacer.y;
-        y += add(cam, new Coord(0, y)).sz.y + spacer.y;
         y += add(gob, new Coord(0, y)).sz.y + spacer.y;
-        y += add(pf, new Coord(0, y)).sz.y + spacer.y;
+        y += add(animal, new Coord(0, y)).sz.y + spacer.y;
+        add(pf, new Coord(0, y));
         pack();
     }
 }

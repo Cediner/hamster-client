@@ -1152,7 +1152,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     @SuppressWarnings("unused") // For scripting api
     public boolean isDangerous() {
-        return hasTag(Tag.CAN_FIGHT);
+        return hasTag(Tag.CAN_FIGHT) || hasTag(Tag.MEAN_ANIMAL);
     }
 
 
