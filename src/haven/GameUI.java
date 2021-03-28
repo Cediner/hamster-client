@@ -29,6 +29,7 @@ package haven;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
+import hamster.data.ForagableData;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
@@ -982,6 +983,49 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    	binds.put(KB_QUICK_ACTION, () -> {
+    	    if (ui.gui.map != null) {
+		final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+		if (pl != null) {
+		    final Coord3f plc = pl.getc();
+		    Gob target = null;
+		    float dist = Float.MAX_VALUE;
+		    synchronized (ui.sess.glob.oc) {
+			for (final Gob g : ui.sess.glob.oc) {
+			    final Optional<String> name = g.resname();
+			    if (name.isPresent() && (ForagableData.isForagable(name.get(), g) || isKickSled(name.get(), g, ui.gui.map.plgob))) {
+				final float gdist = plc.dist(g.getc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		    if (target != null) {
+			final Coord tc = target.rc.floor(OCache.posres);
+			ui.gui.map.wdgmsg("click", Coord.z, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+			return true;
+		    } else {
+			return false;
+		    }
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    }
+
+    private boolean isKickSled(final String name, final Gob g, long plgob){
+	if(name.equals("gfx/terobjs/vehicle/spark")){
+	    return !g.isHolding(plgob) &&  g.howManyGobsHeld() < 2;
+	}
+	return false;
     }
 
     public boolean globtype(char key, KeyEvent ev) {

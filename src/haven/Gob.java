@@ -957,6 +957,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	heldby = id;
     }
 
+    public int howManyGobsHeld() {
+        return holding.size();
+    }
+
     /*
      * Pathfinding Related
      */

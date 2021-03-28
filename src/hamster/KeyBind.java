@@ -20,7 +20,7 @@ public class KeyBind {
     	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
     public static final KeyBind // Gameplay
 	KB_TOGGLE_GRID, KB_TOGGLE_TIPS, KB_TOGGLE_HITBOXES, KB_TOGGLE_HIDDEN, KB_TOGGLE_PAUSE,
-	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
+	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_FORAGE_CLOSEST_ITM, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
     public static final KeyBind // Movement
     	KB_CYCLE_SPEED, KB_CRAWL, KB_WALK, KB_RUN, KB_SPRINT,
 	KB_MOVE_NORTH, KB_MOVE_SOUTH, KB_MOVE_EAST, KB_MOVE_WEST;
@@ -94,7 +94,7 @@ public class KeyBind {
 	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H");
 	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G");
 	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root
-	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q"); //TODO
+	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q");
 	    KB_QUICK_BOARD = addKB("Quick Board", GP_GRP, "S-Q"); //TODO
 	    KB_EQ_HELD_INTO_LH = addKB("Equip Held Item Into Left Hand", GP_GRP, "M-Z");
 	    KB_EQ_HELD_INTO_RH = addKB("Equip Held Item Into Right Hand", GP_GRP, "M-X");
