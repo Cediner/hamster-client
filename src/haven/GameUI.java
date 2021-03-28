@@ -987,6 +987,46 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    	binds.put(KB_QUICK_BOARD, () -> {
+    	   if(map != null) {
+	       final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
+	       if (pl != null) {
+		   final Coord3f plc = pl.getc();
+		   Gob target = null;
+		   float dist = Float.MAX_VALUE;
+		   synchronized (ui.sess.glob.oc) {
+		       for (final Gob g : ui.sess.glob.oc) {
+			   if(g.hasTag(Tag.CAN_BOARD) && !g.hasTag(Tag.WATER_VEHICLE) || (g.hasTag(Tag.WATER_VEHICLE) && !g.isHolding(pl.id))) {
+			       final float gdist = plc.dist(g.getc());
+			       if (target != null && gdist < dist) {
+				   target = g;
+				   dist = gdist;
+			       } else if (target == null) {
+				   target = g;
+				   dist = gdist;
+			       }
+			   }
+		       }
+		   }
+		   if (target != null) {
+		       final Coord tc = target.rc.floor(OCache.posres);
+		       final Optional<String> name = target.resname();
+		       map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+		       name.ifPresent((nm) -> {
+		           //Knars, Snekkja have a flowermenu and the second option is to join the crew
+		           if(nm.endsWith("knarr") || nm.endsWith("snekkja")) {
+		               ui.wdgmsg(ui.next_predicted_id, "cl", 1);
+			   } else if(nm.endsWith("wagon")) {
+		               //Wagons havea  flowermenu and the first option is to ride
+			       ui.wdgmsg(ui.next_predicted_id, "cl", 0);
+			   }
+		       });
+		       return true;
+		   }
+	       }
+	   }
+    	   return false;
+	});
     	binds.put(KB_QUICK_ACTION, () -> {
     	    if (map != null) {
 		final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
@@ -1011,8 +1051,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    }
 		    if (target != null) {
 			final Coord tc = target.rc.floor(OCache.posres);
-			final ScreenLocation sc = target.getattr(ScreenLocation.class);
-			map.wdgmsg("click", sc.sc(), tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+			map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
 			return true;
 		    } else {
 			return false;
