@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 import hamster.util.ObservableCollection;
@@ -39,6 +40,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MenuGrid extends MovableWidget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
@@ -557,6 +559,15 @@ public class MenuGrid extends MovableWidget {
 		dragging = pressed.pag;
 	} else {
 	    super.mousemove(c);
+	}
+    }
+
+    public void use(final String resn) {
+        try {
+	    final Resource res = Resource.remote().loadwait(resn);
+	    wdgmsg("act", (Object[]) res.layer(Resource.action).ad);
+	} catch (Exception e) {
+            logger.atSevere().withCause(e).log("Failed to use %s", resn);
 	}
     }
 
