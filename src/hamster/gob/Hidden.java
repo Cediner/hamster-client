@@ -1,5 +1,6 @@
 package hamster.gob;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.io.Storage;
 import hamster.script.pathfinding.Hitbox;
 import hamster.util.ObservableCollection;
@@ -22,9 +23,11 @@ import java.util.HashSet;
  * Otherwise nothing is rendered.
  */
 public class Hidden extends GAttrib implements RenderTree.Node {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final ObservableCollection<String> hidden = new ObservableCollection<>(new HashSet<>());
 
     public static void init() {
+        logger.atInfo().log("Loading hidden");
         Storage.dynamic.ensure(sql -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_hidden ( name TEXT PRIMARY KEY )");

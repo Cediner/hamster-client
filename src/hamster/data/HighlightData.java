@@ -1,5 +1,6 @@
 package hamster.data;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.io.Storage;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
@@ -10,9 +11,11 @@ import java.sql.Statement;
 import java.util.HashSet;
 
 public class HighlightData {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final ObservableCollection<String> highlighted = new ObservableCollection<>(new HashSet<>());
 
     public static void init() {
+        logger.atInfo().log("Loading highlighted");
         Storage.dynamic.ensure(sql -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_highlight ( name TEXT PRIMARY KEY )");

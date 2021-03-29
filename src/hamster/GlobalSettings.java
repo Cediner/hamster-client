@@ -21,7 +21,6 @@ import java.util.Optional;
  * A list of settings that will work across all sessions
  */
 public class GlobalSettings {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Settings global = new Settings("global");
     private static final Settings tmp = new Settings("gtmp", false);
 
@@ -32,24 +31,11 @@ public class GlobalSettings {
         ItemData.init();
         MarkerData.init();
         Alerted.init();
-        final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
-        if (optint.isPresent()) {
-            logger.atInfo().log("Loading deleted");
-            Deleted.init();
-            logger.atInfo().log("Loading hidden");
-            Hidden.init();
-            logger.atInfo().log("Loading highlighted");
-            HighlightData.init();
-            logger.atInfo().log("Loading Skill Data");
-            SkillTree.init(optint.get());
-            logger.atInfo().log("Loading Credo Data");
-            CredoTree.init(optint.get());
-            //Internal lookups are no longer needed
-            optint.get().close();
-        } else {
-            logger.atSevere().log("Failed to open static datastore");
-            System.exit(0);
-        }
+        CredoTree.init();
+        SkillTree.init();
+        Deleted.init();
+        Hidden.init();
+        HighlightData.init();
     }
 
     //Non-saved globals

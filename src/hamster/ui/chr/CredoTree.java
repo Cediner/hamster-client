@@ -1,23 +1,23 @@
 package hamster.ui.chr;
 
 
-import hamster.io.Storage;
+import com.google.common.flogger.FluentLogger;
+import com.google.gson.Gson;
 import haven.Button;
 import haven.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Credo Tree is a
  */
 public class CredoTree extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final RichText.Foundry ifnd = new RichText.Foundry(Resource.remote(),
             java.awt.font.TextAttribute.FAMILY, "SansSerif", java.awt.font.TextAttribute.SIZE, 9).aa(true);
     private static final Tex bought = Resource.loadtex("custom/credos/states", 0);
@@ -25,44 +25,29 @@ public class CredoTree extends Widget {
     private static final Tex locked = Resource.loadtex("custom/credos/states", 2);
     private static final List<CredoData> credoData = new ArrayList<>();
     private static final Coord csz = new Coord(90, 130);
-    public static void init(final Storage internal) {
-        internal.ensure((sql) -> {
-            try (final Statement stmt = sql.createStatement()) {
-                final Map<Integer, CredoData> id2credo = new HashMap<>();
-                try (final ResultSet res = stmt.executeQuery("SELECT id, res, loc_x, loc_y FROM credo_tree")) {
-                    while (res.next()) {
-                        final CredoData sd = new CredoData(res.getInt(1),
-                                res.getString(2),
-                                new Coord2d(res.getDouble(3), res.getDouble(4)));
-                        id2credo.put(sd.id, sd);
-                        credoData.add(sd);
-                    }
-                }
-                try (final ResultSet res = stmt.executeQuery("SELECT credo_id, parent_id FROM credo_tree_rel")) {
-                    while (res.next()) {
-                        id2credo.get(res.getInt(1)).addParent(res.getInt(2));
-                    }
-                }
+    public static void init() {
+        logger.atInfo().log("Loading Credo Data");
+        final var gson = new Gson();
+        try {
+            final var credos = gson.fromJson(new FileReader("data/CredoTree.json5"), CredoData[].class);
+            for(final var credo : credos) {
+                credoData.add(credo);
+                credo.init();
             }
-        });
+        } catch (FileNotFoundException e) {
+            logger.atSevere().withCause(e).log("Failed to load Credo data");
+        }
     }
 
     private static class CredoData {
-        final int id;
-        final String name;
-        final Indir<Resource> res;
-        final Coord2d loc;
-        final List<Integer> parents = new ArrayList<>();
+        int id;
+        String name;
+        Indir<Resource> res;
+        Coord2d loc;
+        List<Integer> parents;
 
-        public CredoData(final int id, final String res, final Coord2d loc) {
-            this.id = id;
-            this.name = res;
-            this.res = Resource.remote().load(res);
-            this.loc = loc;
-        }
-
-        public void addParent(final int par) {
-            parents.add(par);
+        public void init() {
+            this.res = Resource.remote().load(name);
         }
     }
 

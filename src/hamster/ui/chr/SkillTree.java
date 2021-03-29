@@ -1,13 +1,14 @@
 package hamster.ui.chr;
 
-import hamster.io.Storage;
+import com.google.common.flogger.FluentLogger;
+import com.google.gson.Gson;
 import haven.Button;
 import haven.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
  * Each full column is 90px
  */
 public class SkillTree extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final RichText.Foundry ifnd = new RichText.Foundry(Resource.remote(),
             java.awt.font.TextAttribute.FAMILY, "SansSerif", java.awt.font.TextAttribute.SIZE, 9).aa(true);
     private static final Tex bought = Resource.loadtex("custom/skills/states", 0);
@@ -26,54 +28,38 @@ public class SkillTree extends Widget {
     private static final Tex locked = Resource.loadtex("custom/skills/states", 2);
     private static final List<SkillData> skillData = new ArrayList<>();
     private static final Coord csz = new Coord(90, 130);
-    public static void init(final Storage internal) {
-        internal.ensure((sql) -> {
-            try (final Statement stmt = sql.createStatement()) {
-                final Map<Integer, SkillData> id2skill = new HashMap<>();
-                try (final ResultSet res = stmt.executeQuery("SELECT id, res, expected_lp, loc_x, loc_y FROM skill_tree")) {
-                    while (res.next()) {
-                        final SkillData sd = new SkillData(res.getInt(1),
-                                res.getString(2), res.getInt(3),
-                                new Coord2d(res.getDouble(4), res.getDouble(5)));
-                        id2skill.put(sd.id, sd);
-                        skillData.add(sd);
-                    }
-                }
-                try (final ResultSet res = stmt.executeQuery("SELECT skill_id, parent_id FROM skill_tree_rel")) {
-                    while (res.next()) {
-                        id2skill.get(res.getInt(1)).addParent(res.getInt(2));
-                    }
-                }
+    public static void init() {
+        logger.atInfo().log("Loading Skill Data");
+        final var gson = new Gson();
+        try {
+            final var skills = gson.fromJson(new FileReader("data/SkillTreeData.json5"), SkillData[].class);
+            for(final var skill : skills) {
+                skill.init();
+                skillData.add(skill);
             }
-        });
+        } catch (FileNotFoundException e) {
+            logger.atSevere().withCause(e).log("Failed to load skill data");
+        }
     }
 
     private static class SkillData {
-        final int id;
-        final String name;
-        final Indir<Resource> res;
-        final int expected_lp;
-        final Coord2d loc;
-        final List<Integer> parents = new ArrayList<>();
-        final boolean shortcut;
+        int id;
+        String name;
+        Indir<Resource> res;
+        int expected_lp;
+        Coord2d loc;
+        List<Integer> parents;
+        boolean shortcut;
 
-        public SkillData(final int id, final String res, final int expected_lp, final Coord2d loc) {
-            this.id = id;
-            if (!res.startsWith("custom/skills/shortcut:")) {
-                this.name = res;
-                this.res = Resource.remote().load(res);
+        public void init() {
+            if (!name.startsWith("custom/skills/shortcut:")) {
+                this.res = Resource.remote().load(name);
                 shortcut = false;
             } else {
-                this.name = res.substring(res.indexOf(":") + 1);
-                this.res = Resource.remote().load(res.substring(0, res.indexOf(":")));
+                this.res = Resource.remote().load(name.substring(0, name.indexOf(":")));
+                this.name = name.substring(name.indexOf(":") + 1);
                 shortcut = true;
             }
-            this.expected_lp = expected_lp;
-            this.loc = loc;
-        }
-
-        public void addParent(final int par) {
-            parents.add(par);
         }
     }
 
