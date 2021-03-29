@@ -1,7 +1,7 @@
 package hamster.gob.attrs.monitors;
 
-import hamster.data.CropData;
-import hamster.data.ObjData;
+import hamster.data.gob.CropData;
+import hamster.data.gob.ObjData;
 import hamster.gob.sprites.GrowthSprite;
 import haven.GAttrib;
 import haven.Gob;

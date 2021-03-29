@@ -26,8 +26,9 @@
 
 package haven;
 
-import hamster.data.ContentData;
-import hamster.data.ItemData;
+import hamster.data.itm.ContainerData;
+import hamster.data.itm.ContainerType;
+import hamster.data.itm.ItemData;
 import haven.res.ui.tt.q.qbuff.Quality;
 import haven.resutil.Curiosity;
 import haven.resutil.FoodInfo;
@@ -251,10 +252,12 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
     private static final Pattern weight_pat = Pattern.compile("([0-9]+\\.[0-9]+) kg of (.+)");
     private static final Pattern seed_pat = Pattern.compile("([0-9]+) seeds of (.+)");
     private static final Pattern[] contpats = {liquid_pat, weight_pat, seed_pat};
-    private static final ItemData.ContainerType[] conttypes = {ItemData.ContainerType.LIQUID, ItemData.ContainerType.WEIGHT, ItemData.ContainerType.SEED};
+    private static final ContainerType[] conttypes = {
+    	ContainerType.LIQUID, ContainerType.WEIGHT, ContainerType.SEED
+    };
 
 
-    public ContentData hasContents() {
+    public ContainerData hasContents() {
 	final Optional<ItemInfo.Contents> cont = getinfo(ItemInfo.Contents.class);
 	if(cont.isPresent()) {
 	    final Optional<ItemInfo.Name.Name> contname = getinfo(ItemInfo.Name.Name.class, cont.get().sub);
@@ -264,7 +267,7 @@ public class GItem extends AWidget implements ItemInfo.SpriteOwner, GSprite.Owne
 		    for (int i = 0; i < contpats.length; ++i) {
 			final Matcher match = contpats[i].matcher(contname.get().str.text);
 			if (match.find()) {
-			    return new ContentData(conttypes[i], match.group(2),
+			    return new ContainerData(conttypes[i], match.group(2),
 				    Double.parseDouble(match.group(1)),
 				    ItemData.maxContent(name.get(), conttypes[i]));
 			}

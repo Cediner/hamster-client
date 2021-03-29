@@ -1,15 +1,9 @@
 package hamster.gob.attrs.monitors;
 
-import hamster.data.ObjData;
+import hamster.data.gob.ObjData;
 import hamster.gob.Tag;
-import hamster.io.Storage;
 import haven.*;
 import haven.res.gfx.fx.bprad.BPRad;
-
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RangeMonitor extends GAttrib {
     public RangeMonitor(final Gob g) {

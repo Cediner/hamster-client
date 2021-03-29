@@ -1,7 +1,7 @@
 package hamster.ui;
 
-import hamster.data.ForageData;
-import hamster.data.ObjData;
+import hamster.data.gob.ForageData;
+import hamster.data.gob.ObjData;
 import haven.Label;
 import haven.Window;
 import haven.*;

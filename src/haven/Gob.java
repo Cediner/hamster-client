@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.function.*;
 
 import hamster.data.MarkerData;
-import hamster.data.ObjData;
+import hamster.data.gob.ObjData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
 import hamster.gob.attrs.info.ScreenLocation;

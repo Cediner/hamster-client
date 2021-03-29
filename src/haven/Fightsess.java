@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.KeyBind;
+import hamster.data.itm.ItemData;
 import hamster.gob.sprites.TargetSprite;
 import hamster.ui.fight.*;
 import haven.render.*;
@@ -335,7 +336,7 @@ public class Fightsess extends Widget {
 	final double weappen;
 	if (weapon != null) {
 	    weapq = weapon.getinfo(Quality.class).map(quality -> (int) quality.q).orElse(10);
-	    weapdmg = Weapons.lookup.getOrDefault(weapon.name().orElse(""), 0);
+	    weapdmg = ItemData.getWeaponDmg(weapon.name().orElse(""));
 	    weappen = weapon.getinfo(Armpen.class).orElse(Armpen.NOPEN).deg;
 	} else {
 	    weapq = weapdmg = 0;

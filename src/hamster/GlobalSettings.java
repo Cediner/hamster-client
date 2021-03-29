@@ -2,6 +2,7 @@ package hamster;
 
 import com.google.common.flogger.FluentLogger;
 import hamster.data.*;
+import hamster.data.gob.ObjData;
 import hamster.data.itm.ItemData;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;

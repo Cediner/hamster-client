@@ -1,4 +1,4 @@
-package hamster.data;
+package hamster.data.gob;
 
 import haven.*;
 

@@ -1,4 +1,4 @@
-package hamster.data;
+package hamster.data.gob;
 
 public class CropData {
     public enum CropType {

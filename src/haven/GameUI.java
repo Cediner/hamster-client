@@ -29,7 +29,7 @@ package haven;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
-import hamster.data.ObjData;
+import hamster.data.gob.ObjData;
 import hamster.gob.Tag;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.sprites.TargetSprite;
