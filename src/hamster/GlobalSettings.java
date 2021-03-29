@@ -2,11 +2,10 @@ package hamster;
 
 import com.google.common.flogger.FluentLogger;
 import hamster.data.*;
+import hamster.data.itm.ItemData;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
-import hamster.gob.Tag;
-import hamster.gob.attrs.monitors.RangeMonitor;
 import hamster.io.Storage;
 import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
@@ -29,6 +28,7 @@ public class GlobalSettings {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
         ObjData.init();
+        ItemData.init();
         MarkerData.init();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
@@ -40,8 +40,6 @@ public class GlobalSettings {
             Hidden.init();
             logger.atInfo().log("Loading highlighted");
             HighlightData.init();
-            logger.atInfo().log("Loading itemdata");
-            ItemData.init(optint.get());
             logger.atInfo().log("Loading Skill Data");
             SkillTree.init(optint.get());
             logger.atInfo().log("Loading Credo Data");
