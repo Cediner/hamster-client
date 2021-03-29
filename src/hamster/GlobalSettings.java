@@ -31,10 +31,9 @@ public class GlobalSettings {
         ObjData.init();
         ItemData.init();
         MarkerData.init();
+        Alerted.init();
         final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
         if (optint.isPresent()) {
-            logger.atInfo().log("Loading alerted");
-            Alerted.init(optint.get());
             logger.atInfo().log("Loading deleted");
             Deleted.init();
             logger.atInfo().log("Loading hidden");
