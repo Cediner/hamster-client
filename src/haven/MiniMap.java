@@ -919,8 +919,7 @@ public class MiniMap extends Widget {
 
     public boolean mousewheel(Coord c, int amount) {
 	if(amount > 0) {
-	    if(allowzoomout())
-		zoomlevel = Math.min(zoomlevel + 1, dlvl + 1);
+	    zoomlevel = Math.min(Math.min(zoomlevel + 1, dlvl + 1), 6);
 	} else {
 	    zoomlevel = Math.max(zoomlevel - 1, 0);
 	}
