@@ -1,6 +1,6 @@
 package hamster.ui;
 
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
 import haven.Button;
 import haven.Window;
 import haven.*;

@@ -1,13 +1,12 @@
 package hamster;
 
-import com.google.common.flogger.FluentLogger;
 import hamster.data.*;
 import hamster.data.gob.ObjData;
 import hamster.data.itm.ItemData;
+import hamster.data.map.MarkerData;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
-import hamster.io.Storage;
 import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
@@ -15,7 +14,6 @@ import hamster.util.JobSystem;
 import haven.JOGLPanel;
 
 import java.awt.*;
-import java.util.Optional;
 
 /**
  * A list of settings that will work across all sessions

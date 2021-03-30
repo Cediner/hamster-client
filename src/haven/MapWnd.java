@@ -33,7 +33,7 @@ import java.awt.event.KeyEvent;
 
 import hamster.IndirSetting;
 import hamster.KeyBind;
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
 import hamster.ui.DowseWnd;
 import hamster.ui.MapMarkerWnd;

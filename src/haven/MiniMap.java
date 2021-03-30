@@ -30,11 +30,10 @@ import java.util.*;
 import java.awt.Color;
 
 import hamster.MouseBind;
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
-import haven.MapFile.Grid;
 import haven.MapFile.GridInfo;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;

@@ -1,4 +1,4 @@
-package hamster.data;
+package hamster.data.map;
 
 public enum MarkerType {
     PLAYER_MARKER(0),

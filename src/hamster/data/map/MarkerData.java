@@ -1,4 +1,4 @@
-package hamster.data;
+package hamster.data.map;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.gson.Gson;

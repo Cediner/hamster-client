@@ -29,7 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
 import hamster.data.gob.ObjData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
