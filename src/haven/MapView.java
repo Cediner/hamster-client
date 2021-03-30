@@ -140,8 +140,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void resized() {
 	    float field = 0.5f;
 	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    //TODO: Probably should make far into a setting?  Make it scale with draw distance?
-	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 10000));
+	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field,
+		    -aspect * field, aspect * field,
+		    1, ui != null ? ui.gui.settings.CAMERAPROJFAR.get() : 10000));
 	}
 
 	public void apply(Pipe p) {
@@ -884,7 +885,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	setcanfocus(true);
 	setupKeyBinds();
     }
-    
+
     protected void envdispose() {
 	if(smap != null) {
 	    smap.dispose(); smap = null;
@@ -1409,7 +1410,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private ShadowMap smap = null;
     private double lsmch = 0;
     public static final int[] shadowmap = {128, 256, 512, 1024, 2048, 4096, 8192, 16384};
-    public static final int[] shadowsizemap = {100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000};
+    public static final int[] shadowsizemap = {100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000,
+	    3000, 4000, 5000, 6000, 8000, 10000};
     public static final int[] shadowdepthmap = {100, 1000, 3000, 5000, 10000, 25000, 50000};
     public AtomicBoolean resetsmap = new AtomicBoolean(false);
 

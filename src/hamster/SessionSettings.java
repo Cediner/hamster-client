@@ -61,6 +61,7 @@ public class SessionSettings {
 
     ////Camera
     public final IndirSetting<String> CAMERA;
+    public final IndirSetting<Integer> CAMERAPROJFAR;
     public final IndirSetting<Boolean> FREECAMREXAXIS;
     public final IndirSetting<Boolean> FREECAMREYAXIS;
     public final IndirSetting<Boolean> FREECAMLOCKELAV;
@@ -170,6 +171,7 @@ public class SessionSettings {
 
         //Camera
         CAMERA = new IndirSetting<>(local, "camera.camera-type", "sortho");
+        CAMERAPROJFAR = new IndirSetting<>(local, "camera.camera-proj-far", 5000);
         FREECAMREXAXIS = new IndirSetting<>(local, "camera.free.reverse-x-axis", false);
         FREECAMREYAXIS = new IndirSetting<>(local, "camera.free.reverse-y-axis", false);
         FREECAMLOCKELAV = new IndirSetting<>(local, "camera.free.lock-elevation", false);
