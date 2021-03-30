@@ -346,6 +346,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
     }
 
+    // For scripting api
+    public Coord2d getDest() {
+	Moving m = getattr(Moving.class);
+	if(m != null) {
+	    return m.getDest().orElse(rc);
+	} else {
+	    return rc;
+	}
+    }
+
     public Coord3f getc() {
 	Moving m = getattr(Moving.class);
 	Coord3f ret = (m != null)?m.getc():getrc();

@@ -23,6 +23,7 @@ public class CustomPointer extends Widget {
     private Coord lc;
     private final Tex licon;
     private final PointerData data;
+    private boolean canRemove = false;
 
     //Tooltip
     private Text.Line tt = null;
@@ -68,6 +69,8 @@ public class CustomPointer extends Widget {
     public void presize() {
 	resize(parent.sz);
     }
+
+    public void canRemove() { canRemove = true; }
 
     protected void added() {
 	presize();
@@ -173,13 +176,22 @@ public class CustomPointer extends Widget {
     @Override
     public boolean mousedown(Coord c, int button) {
 	if (this.lc != null && this.lc.dist(c) < 20.0) {
-	    if (gobid > 0) {
-		ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button,
-			ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
+	    if(canRemove && ui.modctrl && button == 3) {
+		ui.gui.add(new FlowerMenu((selection) -> {
+			if ("Remove".equals(selection)) {
+			    ui.destroy(this);
+			}
+		    }, "Remove"), ui.mc);
+		return true;
 	    } else {
-		ui.gui.map.queuemove(new Move(this.tc));
+		if (gobid > 0) {
+		    ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button,
+			    ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
+		} else {
+		    ui.gui.map.queuemove(new Move(this.tc));
+		}
+		return true;
 	    }
-	    return true;
 	} else {
 	    return super.mousedown(c, button);
 	}
@@ -205,15 +217,9 @@ public class CustomPointer extends Widget {
 		    final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
 		    if (cdist != dist) {
 			dist = cdist;
-			final String extra;
-			if (dist >= 1000) {
-			    extra = " - May be further than the client can see";
-			} else {
-			    extra = "";
-			}
 			if (tt != null && tt.tex() != null)
 			    tt.tex().dispose();
-			tt = Text.render(data.name() + " - Distance: " + dist + extra);
+			tt = Text.render(data.name() + " - Distance: " + dist);
 		    }
 		}
 	    }

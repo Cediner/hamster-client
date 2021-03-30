@@ -5,7 +5,8 @@ public enum MarkerType {
     SERVER_MARKER(1),
     CUSTOM_MARKER(2),
     REALM_MARKER(3),
-    LINKED_MARKER(4);
+    LINKED_MARKER(4),
+    SCRIPT_MARKER(5);
 
     public final byte id;
 

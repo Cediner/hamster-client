@@ -1,5 +1,11 @@
 /* This is for custom marker data */
 {
+  // Markers from scripts
+  script: {
+    defname: "Script Marker",
+    res: "custom/mm/pl/friend",
+    type: "SCRIPT"
+  },
   // Basic Markers
   basic: {
     "gfx/terobjs/coronationstone": {

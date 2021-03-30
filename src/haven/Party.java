@@ -26,16 +26,18 @@
 
 package haven;
 
+import com.google.common.flogger.FluentLogger;
+
 import java.util.*;
 import java.awt.Color;
 
 public class Party {
-    Map<Long, Member> memb = new TreeMap<Long, Member>();
+    Map<Long, Member> memb = new TreeMap<>();
     Member leader = null;
     public static final int PD_LIST = 0;
     public static final int PD_LEADER = 1;
     public static final int PD_MEMBER = 2;
-    private Glob glob;
+    private final Glob glob;
 	
     public Party(Glob glob) {
 	this.glob = glob;
@@ -43,6 +45,7 @@ public class Party {
 	
     public class Member {
 	public final long gobid;
+	public Avaview view;
 	private Coord2d c = null;
 	private double ma = Math.random() * Math.PI * 2;
 	private double oa = Double.NaN;
@@ -63,7 +66,7 @@ public class Party {
 		    this.oa = gob.a;
 		    return(new Coord2d(gob.getc()));
 		}
-	    } catch(Loading e) {}
+	    } catch(Loading ignored) {}
 	    this.oa = Double.NaN;
 	    return(c);
 	}
@@ -77,14 +80,14 @@ public class Party {
 	while(!msg.eom()) {
 	    int type = msg.uint8();
 	    if(type == PD_LIST) {
-		ArrayList<Long> ids = new ArrayList<Long>();
+		ArrayList<Long> ids = new ArrayList<>();
 		while(true) {
 		    long id = msg.uint32();
-		    if(id == 0xffffffffl)
+		    if(id == 0xffffffffL)
 			break;
 		    ids.add(id);
 		}
-		Map<Long, Member> nmemb = new TreeMap<Long, Member>();
+		Map<Long, Member> nmemb = new TreeMap<>();
 		for(long id : ids) {
 		    Member m = memb.get(id);
 		    if(m == null)
@@ -113,5 +116,16 @@ public class Party {
 		}
 	    }
 	}
+    }
+
+    /* Scripting API Below */
+    @SuppressWarnings("unused")
+    public synchronized Member leader() {
+	return leader;
+    }
+
+    @SuppressWarnings("unused")
+    public synchronized Member[] members() {
+        return memb.values().toArray(new Member[0]);
     }
 }

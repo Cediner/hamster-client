@@ -85,6 +85,10 @@ api.core = {
   mc = function()
     return session:getUI().sess.glob.mc
   end,
+
+  glob = function()
+    return session:getUI().sess.glob
+  end
 }
 
 
@@ -469,7 +473,7 @@ api.chat = {
   chat_send_message = function(chat, msg)
     if chat == api.chat.bot_chat() then
       local color = luajava.bindClass("java.awt.Color")
-      chat:uimsg("msg", msg.format("[Bot] %s", msg), color.RED, 1)
+      chat:uimsg("msg", {msg.format("[Bot] %s", msg), color.RED, 1})
     else
       chat:send(msg)
     end
@@ -481,11 +485,11 @@ api.chat = {
 --------------------------------------------------
 api.widget = {
   wdgmsg = function(wdg, msg, ...)
-    wdg:wdgmsg(msg, ...)
+    wdg:wdgmsg(msg, {...})
   end,
 
   uimsg = function(wdg, msg, ...)
-    wdg:uimsg(msg, ...)
+    wdg:uimsg(msg, {...})
   end,
 
   id = function(wdg)
@@ -503,7 +507,7 @@ api.widget = {
 
   ui_force_wdgmsg = function(id, msg, args)
     args = args or {}
-    session:getUI():wdgmsg(id, msg, args)
+    session:getUI():wdgmsg(id, msg, {args})
   end
 }
 
@@ -543,6 +547,49 @@ api.hotkey = {
 }
 
 --------------------------------------------------
+--- Party
+--- Party Members have a few funcs/fields you can directly
+--- Access:
+---  * getgob() [Gob] (Member's Gob obj if within draw range)
+---  * getc()  [Coord2d] (Member  position, no z)
+---  * geta()  [double]  (Members rotation about itself)
+---  * col     [Color] (Color in party)
+--- Ex: member:getgob() to get its Gob
+--------------------------------------------------
+api.party = {
+  leader = function()
+    return api.core.glob().party:leader()
+  end,
+
+  members = function()
+    return api.core.glob().party:members()
+  end
+}
+
+--------------------------------------------------
+--- Pointer
+--- This is mainly for creating map pointers
+--- to aid in showing where something in
+--------------------------------------------------
+api.pointer = {
+  make = function(name, c)
+    local ptr = luajava.newInstance("hamster.ui.CustomPointer", name, c)
+    ptr:canRemove()
+    api.core.gui():add(ptr)
+  end
+}
+
+--------------------------------------------------
+--- Minimap
+--- This is to allow marking of the minimap
+--------------------------------------------------
+api.minimap = {
+  mark = function(name, color, mc)
+    api.core.gui().mapfile:mark(name, color, mc)
+  end
+}
+
+--------------------------------------------------
 -- Gob
 -- Gob objects have a few fields you can directly
 -- access:
@@ -569,7 +616,7 @@ api.gob = {
   -- There's a few gob functions you can call directly
   -- Given Gob `g` these are:
   --
-  -- g:getc()  returns Coord2d
+  -- g:getc()  returns Coord3f
   --   - Gets position as seen on the client
   -- g:name()  returns String
   --   - Returns the resource name of this gob
@@ -711,6 +758,11 @@ api.gob = {
 -- MapView (movement, pathfinding)
 --------------------------------------------------
 api.mv = {
+  wait_for_movement_start = function(gob)
+    gob = gob or api.gob.mygob()
+    api.core.waituntil((function() return api.gob.is_moving(gob) end), 2000)
+  end,
+
   wait_for_movement = function(gob)
     gob = gob or api.gob.mygob()
     api.core.waituntil((function() return api.gob.is_moving(gob) end), 2000)

@@ -38,21 +38,24 @@ public class MarkerData {
 
     /* Used only to import config data */
     private static class MarkerDataImport {
+        public Marker script;
         public Map<String, Marker> basic;
         public Map<String, LinkedMarker> linked;
     }
 
     public enum Type {
-        LINKED, SLOTH, REALM, VILLAGE
+        LINKED, SLOTH, REALM, VILLAGE, SCRIPT
     }
 
     private static final Map<String, Marker> markable = new HashMap<>();
+    public static Marker scriptmarker;
 
     public static void init() {
         logger.atInfo().log("Loading Custom Marker Data");
         final var gson = new Gson();
         try {
             final var markers = gson.fromJson(new FileReader("data/MarkerData.json5"), MarkerDataImport.class);
+            scriptmarker = markers.script;
             for(final var marker : markers.basic.keySet()) {
                 markable.put(marker, markers.basic.get(marker));
             }
@@ -61,6 +64,7 @@ public class MarkerData {
             }
         } catch (FileNotFoundException e) {
             logger.atSevere().withCause(e).log("Failed to load custom marker data");
+            System.exit(1);
         }
     }
 

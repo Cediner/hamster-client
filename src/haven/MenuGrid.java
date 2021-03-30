@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import com.google.common.flogger.FluentLogger;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
+import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
 import haven.Resource.AButton;
 import java.util.*;
@@ -44,7 +45,7 @@ public class MenuGrid extends MovableWidget {
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
-    private static Coord gsz = new Coord(5, 5);
+    private Coord gsz = new Coord(5, 5);
     public final ObservableCollection<Pagina> paginae = new ObservableCollection<>(new HashSet<>());
     public Pagina cur;
     private Pagina dragging;
@@ -55,7 +56,7 @@ public class MenuGrid extends MovableWidget {
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
-	
+
     @RName("scm")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -299,7 +300,7 @@ public class MenuGrid extends MovableWidget {
     }
 
     public MenuGrid() {
-	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)), "Menugrid");
+	super(bgsz.mul(new Coord(5,5)).add(UI.scale(1), UI.scale(1)), "Menugrid");
 	//Custom Management Menu
 	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
 	addCustom(new CustomPagina(this, "management::landmanager",
