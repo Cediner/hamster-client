@@ -1,0 +1,5630 @@
+[
+  {
+    name: "Waterskin",
+    res: "",
+    tags: [
+      "CAN_DRINK",
+      "CAN_FILL_WITH_WATER"
+    ],
+    contentdata: {
+      liquid_max: 3.0,
+      weight_max: 0.0,
+      seed_max: 0
+    }
+  },
+  {
+    name: "Waterflask",
+    res: "",
+    tags: [
+      "CAN_DRINK",
+      "CAN_FILL_WITH_WATER"
+    ],
+    contentdata: {
+      liquid_max: 2.0,
+      weight_max: 0.0,
+      seed_max: 0
+    }
+  },
+  {
+    name: "Birchbark Kuksa",
+    res: "",
+    tags: [
+      "CAN_DRINK",
+      "CAN_FILL_WITH_WATER"
+    ],
+    contentdata: {
+      liquid_max: 0.4,
+      weight_max: 0.0,
+      seed_max: 0
+    }
+  },
+  /*** Ammo for weapons ***/
+  {
+    name: "Bone Arrow",
+    res: "",
+    tags: [
+      "AMMO"
+    ],
+    weapondata: {
+      damage: 15,
+      armorpen: 10
+    }
+  },
+  {
+    name: "Stone Arrow",
+    res: "",
+    tags: [
+      "AMMO"
+    ],
+    weapondata: {
+      damage: 10,
+      armorpen: 5
+    }
+  },
+  {
+    name: "Metal Arrow",
+    res: "",
+    tags: [
+      "AMMO"
+    ],
+    weapondata: {
+      damage: 20,
+      armorpen: 20
+    }
+  },
+  {
+    name: "Stone",
+    res: "",
+    tags: [
+      "AMMO"
+    ],
+    weapondata: {
+      damage: 0,
+      armorpen: 0
+    }
+  },
+  /*** Equipable items ***/
+  {
+    name: "Bucket",
+    res: "",
+    tags: [
+      "CAN_FILL_WITH_WATER",
+      "CAN_FILL_WITH_SEED",
+      "CAN_FILL_WITH_MATERIAL"
+    ],
+    contentdata: {
+      liquid_max: 10.0,
+      weight_max: 10.0,
+      seed_max: 1000
+    },
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Adder Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 40,
+      attributes: [
+        "Charisma",
+        "Dexterity",
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Air Marshal's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Ant Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 50,
+      max_chance: 75,
+      attributes: [
+        "Carpentry",
+        "Strength",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Ant Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Antenna Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Armored Striders",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    armordata: {
+      hp: -1,
+      deflection: 5,
+      absorption: 3
+    }
+  },
+  {
+    name: "Ant Queen's Wings",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Back"
+      ]
+    },
+    gilddata: {
+      min_chance: 35,
+      max_chance: 80,
+      attributes: [
+        "Agility",
+        "Lore",
+        "Unarmed Combat"
+      ]
+    }
+  },
+  {
+    name: "Ashen Robes",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 40,
+      attributes: [
+        "Psyche",
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Ashtray Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Astrologer's Cone",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Autumn Bounty",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Badger Hide Vest",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 0,
+      max_chance: 35,
+      attributes: [
+        "Survival"
+      ]
+    },
+    armordata: {
+      hp: 75,
+      deflection: 2,
+      absorption: 1
+    }
+  },
+  {
+    name: "Bagpipe",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Banana Panama",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bandit's Mask",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Barbershop Boater",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bat Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bat Wing",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 30,
+      attributes: [
+        "Stealth"
+      ]
+    },
+    armordata: {
+      hp: 138,
+      deflection: 3,
+      absorption: 3
+    }
+  },
+  {
+    name: "Battle Standard",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Battleaxe of the Twelfth Bay",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 150,
+      armorpen: 10
+    }
+  },
+  {
+    name: "Bear Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 32,
+      attributes: [
+        "Strength",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Bear Coat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 30,
+      max_chance: 50,
+      attributes: [
+        "Melee",
+        "Strength",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Bear Tooth Talisman",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Accessory"
+      ]
+    }
+  },
+  {
+    name: "Bearskin Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Beast Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 20,
+      attributes: [
+        "Agility",
+        "Strength"
+      ]
+    }
+  },
+  {
+    name: "Beaver Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Carpentry",
+        "Exploration"
+      ]
+    }
+  },
+  {
+    name: "Beaver Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 50,
+      max_chance: 75,
+      attributes: [
+        "Carpentry",
+        "Strength",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Beaver Wrist Guards",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    },
+    armordata: {
+      hp: 15,
+      deflection: 1,
+      absorption: 2
+    }
+  },
+  {
+    name: "Bee Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Beerhat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bicycle Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Birchbark Backpack",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Back"
+      ]
+    }
+  },
+  {
+    name: "Bishop's Mitre",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bluebell Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Black Guardsman's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Blueberry Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bluebucket Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bluejay's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Boar Spear",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 80,
+      armorpen: 15
+    }
+  },
+  {
+    name: "Boar Tusk Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 50,
+      deflection: 1,
+      absorption: 7
+    }
+  },
+  {
+    name: "Bobby Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bone Greaves",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "LegArmor"
+      ]
+    },
+    armordata: {
+      hp: 75,
+      deflection: 4,
+      absorption: 5
+    }
+  },
+  {
+    name: "Bone Saw",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Boreworm Mask",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Mouth"
+      ]
+    },
+    armordata: {
+      hp: 60,
+      deflection: 2,
+      absorption: 1
+    }
+  },
+  {
+    name: "Bossa Nova Red",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bouquet of Flowers",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Brain in a Jar",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bronze Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 40,
+      deflection: 8,
+      absorption: 5
+    }
+  },
+  {
+    name: "Bronze Plate",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 90,
+      deflection: 20,
+      absorption: 15
+    }
+  },
+  {
+    name: "Bronze Sword",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 90,
+      armorpen: 7.5
+    }
+  },
+  {
+    name: "Brown paper bag",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bull Pipe",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Bunny Slippers",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 5,
+      max_chance: 20,
+      attributes: [
+        "Agility"
+      ]
+    }
+  },
+  {
+    name: "Burning Man Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Bushcraft Fishingpole",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Butcher's Cleaver",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 45,
+      armorpen: 20
+    }
+  },
+  {
+    name: "Cachalot Charm",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Accessory"
+      ]
+    }
+  },
+  {
+    name: "Campaign Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Candle Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    }
+  },
+  {
+    name: "Candy Cane Bowler",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cap of the International Brigades",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cat Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cavalier's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cavalry Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cave Angler Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 40,
+      attributes: [
+        "Lore",
+        "Perception"
+      ]
+    }
+  },
+  {
+    name: "Cave Coral Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 25,
+      attributes: [
+        "Dexterity",
+        "Lore",
+        "Masonry"
+      ]
+    }
+  },
+  {
+    name: "Ceiling Fan",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Centurion's Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Chainmail Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 500,
+      deflection: 15,
+      absorption: 15
+    }
+  },
+  {
+    name: "Che's Beret",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Chef's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 1,
+      max_chance: 35,
+      attributes: [
+        "Cooking"
+      ]
+    }
+  },
+  {
+    name: "Chicken Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Chieftain's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 35,
+      attributes: [
+        "Charisma"
+      ]
+    }
+  },
+  {
+    name: "Chitin Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 25,
+      deflection: 0,
+      absorption: 2
+    }
+  },
+  {
+    name: "Christmas Cowboy",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Christmas Gnome's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cigar",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Circus Director's Tophat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Clap Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Clay Pipe",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Clockwork Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Clogs",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    }
+  },
+  {
+    name: "Clothier's Thimble",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 30,
+      attributes: [
+        "Dexterity",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Clownfish Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Conquistador's Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cool Summer Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Coracle",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Back"
+      ]
+    }
+  },
+  {
+    name: "Creel",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    }
+  },
+  {
+    name: "Crown of Lower Egypt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Crown of Upper Egypt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cupcake Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cutblade",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 125,
+      armorpen: 5
+    }
+  },
+  {
+    name: "Cutthroat Cuirass",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 80,
+      deflection: 15,
+      absorption: 15
+    }
+  },
+  {
+    name: "Cutthroat Knuckles",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    }
+  },
+  {
+    name: "Cylinder Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 45,
+      attributes: [
+        "Charisma"
+      ]
+    }
+  },
+  {
+    name: "Deputy's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Dev Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    }
+  },
+  {
+    name: "Devil's Diadem",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Dowsing Rod",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Dragon Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 200,
+      deflection: 9,
+      absorption: 9
+    }
+  },
+  {
+    name: "Druid's Cloak",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Robe"
+      ]
+    }
+  },
+  {
+    name: "Druid's Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 45,
+      deflection: 8,
+      absorption: 4
+    }
+  },
+  {
+    name: "Druid's Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 30,
+      max_chance: 40,
+      attributes: [
+        "Farming",
+        "Lore",
+        "Psyche",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Drum & Sticks",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Drum Major's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Duck Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Dustman's Stovepipe",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Elephat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Elf's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Exquisite Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Family Heirloom",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Accessory"
+      ]
+    }
+  },
+  {
+    name: "Feather Band",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 30,
+      attributes: [
+        "Agility",
+        "Perception"
+      ]
+    }
+  },
+  {
+    name: "Feather Sunfeather",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    }
+  },
+  {
+    name: "Feathered Tricorne",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    }
+  },
+  {
+    name: "Felt Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 30,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Charisma",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Fez",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Fiddle & Bow",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Firefighter's Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Fisherman's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 25,
+      attributes: [
+        "Lore",
+        "Survival",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Flamenco Bobble Trim",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Flower Bowler",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Flower Plush",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Flute",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Forge Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 30,
+      attributes: [
+        "Smithing"
+      ]
+    }
+  },
+  {
+    name: "Four Winds Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Fox Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 25,
+      attributes: [
+        "Agility",
+        "Exploration"
+      ]
+    }
+  },
+  {
+    name: "Freebooter's Slouch",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "French Fried Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Frog Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Frog Prince",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Frying Pan",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Full Metal Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Fur Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Agility"
+      ]
+    }
+  },
+  {
+    name: "Fur Cloak",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 35,
+      attributes: [
+        "Exploration",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Fyrdsman's Sword",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "SHARP",
+      "TOOL",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 70,
+      armorpen: 10
+    }
+  },
+  {
+    name: "Galleon Captain's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Gauze",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Ghost Dancer's Bowler",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Goat Mask",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Goggled Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Governor's Tricorne",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Grand Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Grand Troll Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 250,
+      deflection: 6,
+      absorption: 10
+    }
+  },
+  {
+    name: "Grandee's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Half-Moon Cowboy",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Halloween Derby",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Hardhat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Harmonica",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Headset",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Helsing Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Hemp Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Hemp Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Heraldic Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Hermine Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 35,
+      max_chance: 50,
+      attributes: [
+        "Charisma",
+        "Melee"
+      ]
+    }
+  },
+  {
+    name: "Hermine Cloak",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 45,
+      max_chance: 65,
+      attributes: [
+        "Charisma",
+        "Psyche",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Hide Cloak",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 30,
+      attributes: [
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Highland Bonnet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Hipster's Skullcap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Hirdsman's Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Melee"
+      ]
+    }
+  },
+  {
+    name: "Hirdsman's Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 45,
+      deflection: 6,
+      absorption: 4
+    }
+  },
+  {
+    name: "Hirdsman's Sword",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 125,
+      armorpen: 5
+    }
+  },
+  {
+    name: "Holy Halo",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Horse Nomad's Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    },
+    armordata: {
+      hp: 150,
+      deflection: 4,
+      absorption: 5
+    }
+  },
+  {
+    name: "Hunter's Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Hunter's Bow",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "RANGED"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 30,
+      armorpen: 0
+    }
+  },
+  {
+    name: "Hunter's Quiver",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Back"
+      ]
+    }
+  },
+  {
+    name: "Hunter's Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 45,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Hunting Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Hussar's Wings",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Cape",
+        "Back"
+      ]
+    },
+    armordata: {
+      hp: 30,
+      deflection: 2,
+      absorption: 3
+    }
+  },
+  {
+    name: "Imperial Navy Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Inquisitor's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Irrlantern",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Jack-o'-Mask",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Jaws!",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Jester's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Kitsune Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Kozhukh",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 30,
+      max_chance: 50,
+      attributes: [
+        "Agility",
+        "Farming",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Laced Top Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Laddie's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 30,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Lantern",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Launch Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Lawspeaker's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 30,
+      attributes: [
+        "Charisma"
+      ]
+    }
+  },
+  {
+    name: "Lawspeaker's Robes",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 45,
+      attributes: [
+        "Charisma",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Leather Armor",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 100,
+      deflection: 4,
+      absorption: 5
+    }
+  },
+  {
+    name: "Leather Backpack",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Back"
+      ]
+    }
+  },
+  {
+    name: "Leather Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 35,
+      attributes: [
+        "Agility"
+      ]
+    },
+    armordata: {
+      hp: 15,
+      deflection: 1,
+      absorption: 3
+    }
+  },
+  {
+    name: "Leather Coat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Leather Merchant's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 30,
+      attributes: [
+        "Charisma"
+      ]
+    }
+  },
+  {
+    name: "Leather Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "LegArmor"
+      ]
+    },
+    armordata: {
+      hp: 75,
+      deflection: 3,
+      absorption: 4
+    }
+  },
+  {
+    name: "Leech",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Accessory",
+        "Shirt",
+        "TorsoArmor",
+        "Gloves",
+        "Belt",
+        "LeftHand",
+        "RightHand",
+        "LeftRing",
+        "RightRing",
+        "Robe",
+        "Back",
+        "Pants",
+        "LegsArmor",
+        "Cape",
+        "Shoes",
+        "Eyes",
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Leek",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Leonardo's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Leprechaun's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Linen Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Linen Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Little Green Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Lute",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "INSTRUMENT"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Lynx Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 32,
+      attributes: [
+        "Agility",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Lynx Claw Gloves",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    },
+    weapondata: {
+      damage: 4,
+      armorpen: 0
+    }
+  },
+  {
+    name: "Magician's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Mammoth Guard",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 120,
+      deflection: 15,
+      absorption: 20
+    }
+  },
+  {
+    name: "Martian's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Mask of the Green Man",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "Melon Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Merchant's Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 35,
+      max_chance: 65,
+      attributes: [
+        "Charisma",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Merchant's Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 25,
+      attributes: [
+        "Charisma",
+        "Intelligence"
+      ]
+    }
+  },
+  {
+    name: "Merchant's Robe",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 35,
+      attributes: [
+        "Charisma",
+      ]
+    }
+  },
+  {
+    name: "Metal Axe",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 45,
+      armorpen: 0
+    }
+  },
+  {
+    name: "Metal Saw",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Metal Shovel",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Meteoring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 35,
+      max_chance: 45,
+      attributes: [
+        "Psyche",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Miner's Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 85,
+      deflection: 2,
+      absorption: 4
+    }
+  },
+  {
+    name: "Minstrel's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Mohair Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 30,
+      max_chance: 45,
+      attributes: [
+        "Farming",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Molehide Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 45,
+      attributes: [
+        "Masonry",
+        "Strength"
+      ]
+    }
+  },
+  {
+    name: "Monocle",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Eyes"
+      ]
+    }
+  },
+  {
+    name: "Monster Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Moose Hide Jacket",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 40,
+      attributes: [
+        "Exploration",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Mortar & Pestle",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Mortar & Pestle Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Muckraker's Fedora",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Mushroom Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Navy Bicorne",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Nettle Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 5,
+      max_chance: 25,
+      attributes: [
+        "Survival",
+      ]
+    }
+  },
+  {
+    name: "Nettle Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 5,
+      max_chance: 25,
+      attributes: [
+        "Survival",
+      ]
+    }
+  },
+  {
+    name: "Nurse Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Nut Beret",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Occult Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 35,
+      attributes: [
+        "Dexterity",
+        "Lore",
+        "Psyche"
+      ]
+    }
+  },
+  {
+    name: "Oogie-Boogie Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Overgrown Tophat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Package Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Parasol Mushroom Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Patriotic Pilotka",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pearl Necklace",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Accessory"
+      ]
+    }
+  },
+  {
+    name: "Pharaoh's Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Phrygian Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pickaxe",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Pickelhaube",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pilgrim's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pimp Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pineapple Panama",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pink Bow",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pirate Captain's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pirate's Bandana",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Plain Tabard",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 30,
+      attributes: [
+        "Sewing",
+      ]
+    }
+  },
+  {
+    name: "Plate Armor",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "TorsoArmor"
+      ]
+    },
+    armordata: {
+      hp: 100,
+      deflection: 25,
+      absorption: 15
+    }
+  },
+  {
+    name: "Plate Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    armordata: {
+      hp: -1,
+      deflection: 7,
+      absorption: 5
+    }
+  },
+  {
+    name: "Plate Gauntlets",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    },
+    armordata: {
+      hp: 30,
+      deflection: 2,
+      absorption: 4
+    }
+  },
+  {
+    name: "Plate Greaves",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "LegArmor"
+      ]
+    },
+    armordata: {
+      hp: 100,
+      deflection: 18,
+      absorption: 8
+    }
+  },
+  {
+    name: "Plate Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 60,
+      deflection: 9,
+      absorption: 6
+    }
+  },
+  {
+    name: "Plumber's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Plumber's Plunger",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Pointed Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 50,
+      attributes: [
+        "Charisma",
+        "Farming",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Poor Man's Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Poor Man's Gloves",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    }
+  },
+  {
+    name: "Primitive Casting-Rod",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Princess' Cone",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Propeller Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Protest Sign",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Quest Giver's Stump",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rabbit Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rabbit Wizard's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Raider's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 70,
+      deflection: 6,
+      absorption: 4
+    }
+  },
+  {
+    name: "Rainbow Shell Amulet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Accessory"
+      ]
+    }
+  },
+  {
+    name: "Ranger's Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 45,
+      attributes: [
+        "Agility",
+        "Stealth"
+      ]
+    },
+    armordata: {
+      hp: 58,
+      deflection: 3,
+      absorption: 3
+    }
+  },
+  {
+    name: "Ranger's Bow",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "RANGED"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 60,
+      armorpen: 5
+    }
+  },
+  {
+    name: "Ranger's Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 50,
+      attributes: [
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Ranger's Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 55,
+      attributes: [
+        "Exploration",
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Ranger's Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 0,
+      max_chance: 55,
+      attributes: [
+        "Exploration",
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Rasta Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rat Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rattlesnake Stetson",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Raven",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Red Corsair's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Reindeer Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Farming",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Reindeer Parka",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 45,
+      attributes: [
+        "Agility",
+        "Farming",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Rhubarb-Plumed Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Ring of Brodgar (Jewelry)",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 25,
+      attributes: [
+        "Agility",
+        "Psyche",
+      ]
+    }
+  },
+  {
+    name: "Robin Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rope",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Royal Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 45,
+      max_chance: 60,
+      attributes: [
+        "Charisma",
+        "Psyche",
+        "Smithing"
+      ]
+    }
+  },
+  {
+    name: "Rudolf Kit",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rusalka's Water Moccasins",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 50,
+      max_chance: 85,
+      attributes: [
+        "Exploration",
+        "Psyche",
+      ]
+    }
+  },
+  {
+    name: "Safari Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sailor's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Santa's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Saucepan Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Scarecrow's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Scarlet Gown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Charisma",
+        "Melee",
+      ]
+    }
+  },
+  {
+    name: "Scythe",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Seal Hide Hoses",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Perception",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Seer's Hood",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    }
+  },
+  {
+    name: "Seer's Shoes",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    }
+  },
+  {
+    name: "Seer's Tunic",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    }
+  },
+  {
+    name: "Shears",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Sherlock Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sherrif's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Silk Gloves",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Gloves"
+      ]
+    }
+  },
+  {
+    name: "Silver for the Ferryman",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 25,
+      max_chance: 40,
+      attributes: [
+        "Intelligence",
+        "Lore",
+      ]
+    }
+  },
+  {
+    name: "Sledgehammer",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Sleuth's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sling",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "WEAPON",
+      "RANGED"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 15,
+      armorpen: 20
+    }
+  },
+  {
+    name: "Smithy's Hammer",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Snakeskin Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Snakeskin Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 50,
+      attributes: [
+        "Agility",
+        "Melee",
+        "Stealth"
+      ]
+    }
+  },
+  {
+    name: "Sombrero",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Spectacles",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Eyes"
+      ]
+    }
+  },
+  {
+    name: "Splint",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Spring Wizard's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sprucecap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 5,
+      max_chance: 20,
+      attributes: [
+        "Survival",
+      ]
+    }
+  },
+  {
+    name: "Squid Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Stahlhelm",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Starfox Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Starry Wizard's Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Stone Axe",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 30,
+      armorpen: 0
+    }
+  },
+  {
+    name: "Straw Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 20,
+      attributes: [
+        "Farming",
+      ]
+    }
+  },
+  {
+    name: "Straw Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 25,
+      attributes: [
+        "Farming",
+      ]
+    }
+  },
+  {
+    name: "Strawberry Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Strawberry Santa",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sultan's Turban",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Sun Visor",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Swan Feather Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Agility",
+        "Exploration"
+      ]
+    }
+  },
+  {
+    name: "Taxidermist's Top",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Thane's Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 90,
+      deflection: 8,
+      absorption: 8
+    }
+  },
+  {
+    name: "Thane's Ring",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 35,
+      attributes: [
+        "Charisma",
+        "Strength"
+      ]
+    }
+  },
+  {
+    name: "The Abominable Snowman",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Mouth"
+      ]
+    }
+  },
+  {
+    name: "The Green Hero's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "The Perfect Hole",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftRing",
+        "RightRing"
+      ]
+    }
+  },
+  {
+    name: "Thinking Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Tiger Bowler",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Tinfoil Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Toga",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Robe"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Charisma",
+        "Sewing"
+      ]
+    }
+  },
+  {
+    name: "Torch",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Totem Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Traffic Cone",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Traveller's Sack",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Troll Belt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Belt"
+      ]
+    }
+  },
+  {
+    name: "Tsoksha",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Turkey Topper",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "University Mortarboard",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Valentine's Cylinder",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Valentine's Top",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Vapntreyiu",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "Robe"
+      ]
+    },
+    armordata: {
+      hp: 100,
+      deflection: 3,
+      absorption: 4
+    }
+  },
+  {
+    name: "Victorian Bowler",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Viking Helm",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Völva's Wand",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Walrus Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 20,
+      max_chance: 45,
+      attributes: [
+        "Charisma",
+        "Strength",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Walrus Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 30,
+      attributes: [
+        "Survival",
+        "Will",
+      ]
+    }
+  },
+  {
+    name: "Wanderer's Bindle",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Welding Mask",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Whaler's Jacket",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 0,
+      max_chance: 50,
+      attributes: [
+        "Charisma",
+        "Sewing",
+        "Survival"
+      ]
+    },
+    armordata: {
+      hp: -1,
+      deflection: 7,
+      absorption: 5
+    }
+  },
+  {
+    name: "Wicker Picker",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Wind Top Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Winged Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Winged Helmet",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    armordata: {
+      hp: 250,
+      deflection: 10,
+      absorption: 6
+    }
+  },
+  {
+    name: "Witch Hat",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Wolf Cape",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear",
+        "Cape"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Agility",
+        "Strength",
+        "Survival"
+      ]
+    }
+  },
+  {
+    name: "Wolverine Boots",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shoes"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 40,
+      attributes: [
+        "Agility",
+        "Exploration",
+        "Lore",
+        "Will"
+      ]
+    }
+  },
+  {
+    name: "Wood Gnome's Cap",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Wooden Roundshield",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "ARMOR"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    armordata: {
+      hp: 75,
+      deflection: 3,
+      absorption: 1
+    }
+  },
+  {
+    name: "Wooden Shovel",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    }
+  },
+  {
+    name: "Woodland Crown",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 35,
+      max_chance: 50,
+      attributes: [
+        "Charisma",
+        "Exploration",
+        "Psyche",
+      ]
+    }
+  },
+  {
+    name: "Woodsman's Axe",
+    res: "",
+    tags: [
+      "CAN_EQUIP",
+      "TOOL",
+      "SHARP",
+      "WEAPON",
+      "MELEE"
+    ],
+    geardata: {
+      slots: [
+        "LeftHand",
+        "RightHand"
+      ]
+    },
+    weapondata: {
+      damage: 55,
+      armorpen: 20
+    }
+  },
+  {
+    name: "Woodsman's Tunic",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 18,
+      max_chance: 36,
+      attributes: [
+        "Carpentry",
+        "Strength",
+      ]
+    }
+  },
+  {
+    name: "Woodsman's Ushanka",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "HeadGear"
+      ]
+    },
+    gilddata: {
+      min_chance: 10,
+      max_chance: 25,
+      attributes: [
+        "Agility",
+      ]
+    }
+  },
+  {
+    name: "Wool Pants",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Pants",
+        "LegArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Farming",
+      ]
+    }
+  },
+  {
+    name: "Wool Shirt",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "Shirt",
+        "TorsoArmor"
+      ]
+    },
+    gilddata: {
+      min_chance: 15,
+      max_chance: 35,
+      attributes: [
+        "Farming",
+      ]
+    }
+  },
+  {
+    name: "Yule Top",
+    res: "",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  }
+]
