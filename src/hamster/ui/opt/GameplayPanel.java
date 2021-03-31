@@ -1,6 +1,7 @@
 package hamster.ui.opt;
 
 import hamster.GlobalSettings;
+import hamster.gob.Tag;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
@@ -14,9 +15,10 @@ public class GameplayPanel extends Scrollport {
         super(new Coord(UI.scale(500), UI.scale(395)));
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
+        final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);
-        final Grouping lighting = new LinearGrouping("Light Settings (Global)", spacer, false);
-        final Grouping map = new LinearGrouping("Map Settings (Global)", spacer, false);
+        final Grouping lighting = new LinearGrouping("Light Settings", spacer, false);
+        final Grouping map = new LinearGrouping("Map Settings", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
         final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
         final Grouping animal = new LinearGrouping("Animal Settings", spacer, false);
@@ -26,41 +28,7 @@ public class GameplayPanel extends Scrollport {
             sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
             sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
             sys.pack();
-        }
-        { // Lights
-            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient: ", NVAMBIENTCOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse: ", NVDIFFUSECOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
-            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
-            lighting.pack();
-        }
-        { // Map related
-            //Display related
-            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
-            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
-            map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
-            map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
-            map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
-            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
-            map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
-            map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
-            //Grid related
-            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
-            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
-            //Ocean related
-            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
-            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
-            //Cave related
-            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
-            map.pack();
+            overall.add(sys);
         }
         { //Camera
             final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA, (camera) -> {
@@ -91,6 +59,44 @@ public class GameplayPanel extends Scrollport {
             cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
             cam.add(freeg);
             cam.pack();
+            overall.add(cam);
+        }
+        { // Lights
+            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient: ", NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse: ", NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
+            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
+            lighting.pack();
+            overall.add(lighting);
+        }
+        { // Map related
+            //Display related
+            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
+            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
+            map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
+            map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
+            map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
+            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
+            map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
+            map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
+            //Grid related
+            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
+            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
+            //Ocean related
+            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
+                ui.sess.glob.map.updateWaterTiles();
+                ui.sess.glob.map.invalidateAll();
+            }));
+            //Cave related
+            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.pack();
+            overall.add(map);
         }
         { //Gob
             gob.add(new Label("Bad Kin Group:"));
@@ -102,11 +108,11 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Colorize Tanning Tubs", GlobalSettings.COLORFULTUBS));
             gob.add(new IndirCheckBox("Colorize Cupboards", GlobalSettings.COLORFULCUPBOARDS));
             gob.add(new IndirCheckBox("Colorize Cheese Racks", GlobalSettings.COLORFULCHEESERACKS));
-            gob.add(new IndirCheckBox("Colorize Cave dust (Global)", COLORFULDUST));
-            gob.add(new IndirCheckBox("Cave dust last longer (Global)", LONGLIVINGDUST));
-            gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
+            gob.add(new IndirCheckBox("Colorize Cave dust", COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer", LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Make Cave dust larger", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
-            gob.add(new IndirCheckBox("Show Simple Crops", GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Simple Crops (Requires reload of gobs in view)", GlobalSettings.SIMPLECROPS));
             gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
             gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
             gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
@@ -116,6 +122,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", GlobalSettings.GOBHIDDENCOL));
             gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", GlobalSettings.GOBHITBOXCOL));
             gob.pack();
+            overall.add(gob);
         }
         { //Animals
             animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
@@ -123,6 +130,7 @@ public class GameplayPanel extends Scrollport {
             animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
             animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));
             animal.pack();
+            overall.add(animal);
         }
         { //Pathfinding
             final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), GlobalSettings.PATHFINDINGTIER));
@@ -134,17 +142,11 @@ public class GameplayPanel extends Scrollport {
             pf.add(new IndirCheckBox("Limit pathfinding to view distance", GlobalSettings.LIMITPATHFINDING));
             pf.add(new IndirCheckBox("Re-search goal until reached", GlobalSettings.RESEARCHUNTILGOAL));
             pf.pack();
+            overall.add(pf);
         }
 
-        int y = 0;
-
-        y += add(cam, new Coord(0, y)).sz.y + spacer.y;
-        y += add(sys, new Coord(0, y)).sz.y + spacer.y;
-        y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
-        y += add(map, new Coord(0, y)).sz.y + spacer.y;
-        y += add(gob, new Coord(0, y)).sz.y + spacer.y;
-        y += add(animal, new Coord(0, y)).sz.y + spacer.y;
-        add(pf, new Coord(0, y));
+        overall.pack();
+        add(overall);
         pack();
     }
 }

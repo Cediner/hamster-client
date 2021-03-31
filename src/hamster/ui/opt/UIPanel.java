@@ -16,6 +16,7 @@ public class UIPanel extends Scrollport {
         super(new Coord(UI.scale(500), UI.scale(395)));
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
+        final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
         final Grouping visibility = new GridGrouping("UI Visibility Settings", spacer, spacer.x, UI.scale(200), false);
         final Grouping minimap = new GridGrouping("Minimap Settings", spacer, spacer.x, UI.scale(200), false);
         final Grouping menu = new LinearGrouping("MenuGrid Settings", spacer, false);
@@ -43,6 +44,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox("Show Belt on Login", GlobalSettings.SHOWBELTONLOGIN));
             visibility.add(new IndirCheckBox("Show Experience Windows", GlobalSettings.SHOWEXPWND));
             visibility.pack();
+            overall.add(visibility);
         }
         { //minimap
             minimap.add(new IndirCheckBox("Show Gobs", GlobalSettings.SHOWMMGOBS));
@@ -61,8 +63,18 @@ public class UIPanel extends Scrollport {
             minimap.add(new IndirCheckBox("Show Village Names", GlobalSettings.SHOWVMARKERTIPS));
             minimap.add(OptionsWnd.ColorPreWithLabel("Queued Path Color: ", GlobalSettings.MMPATHCOL));
             minimap.pack();
+            overall.add(minimap);
         }
-        { //menu
+        { //Inventory
+            inv.add(new IndirCheckBox("Show Item Quality", GlobalSettings.SHOWITEMQ));
+            inv.add(new IndirCheckBox("Show Item Wear Bar", GlobalSettings.SHOWITEMWEAR));
+            inv.add(new IndirCheckBox("Show Item Contents Bar", GlobalSettings.SHOWITEMCONT));
+            inv.add(new IndirCheckBox("Always show longtip on items", GlobalSettings.ALWAYSITEMLONGTIPS));
+            inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", GlobalSettings.WATERDROPITEMCTRL));
+            inv.pack();
+            overall.add(inv);
+        }
+        { // Menu Grid
             menu.add(new IndirLabel(() -> String.format("MenuGrid Columns: %d", GlobalSettings.MENUGRIDSIZEX.get())));
             menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEX, (val) -> {
                 if(ui.gui.menu != null) {
@@ -76,33 +88,22 @@ public class UIPanel extends Scrollport {
                 }
             }));
             menu.pack();
-        }
-        { //mods
-            meter.add(new IndirCheckBox("Alternate Meter Display", GlobalSettings.BIGSIMPLEMETERS));
-            meter.pack();
-        }
-        { //Inventory
-            inv.add(new IndirCheckBox("Show Item Quality", GlobalSettings.SHOWITEMQ));
-            inv.add(new IndirCheckBox("Show Item Wear Bar", GlobalSettings.SHOWITEMWEAR));
-            inv.add(new IndirCheckBox("Show Item Contents Bar", GlobalSettings.SHOWITEMCONT));
-            inv.add(new IndirCheckBox("Always show longtip on items", GlobalSettings.ALWAYSITEMLONGTIPS));
-            inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", GlobalSettings.WATERDROPITEMCTRL));
-            inv.pack();
+            overall.add(menu);
         }
         { //Flowermenu
             fmenu.add(new IndirCheckBox("Quick Flowermenu", GlobalSettings.QUICKFLMENU));
             fmenu.add(new IndirCheckBox("Don't close Flowermenu on clicks", GlobalSettings.KEEPFLOPEN));
             fmenu.pack();
+            overall.add(fmenu);
+        }
+        { // Meter
+            meter.add(new IndirCheckBox("Alternate Meter Display", GlobalSettings.BIGSIMPLEMETERS));
+            meter.pack();
+            overall.add(meter);
         }
 
-        int y = 0;
-
-        y += add(visibility, new Coord(0, y)).sz.y + spacer.y;
-        y += add(minimap, new Coord(0, y)).sz.y + spacer.y;
-        y += add(menu, new Coord(0, y)).sz.y + spacer.y;
-        y += add(meter, new Coord(0, y)).sz.y + spacer.y;
-        y += add(inv, new Coord(0, y)).sz.y + spacer.y;
-        y += add(fmenu, new Coord(0, y)).sz.y + spacer.y;
+        overall.pack();
+        add(overall);
         pack();
     }
 }
