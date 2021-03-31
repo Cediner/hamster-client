@@ -71,7 +71,7 @@ public class MCache implements MapSource {
     /*
      * MessageBus / MailBox System Message
      */
-    public static MessageBus<MCMail> MessageBus = new MessageBus<>();
+    public static final MessageBus<MCMail> MessageBus = new MessageBus<>();
     private MailBox<MCMail> mailbox;
     public static abstract class MCMail extends hamster.util.msg.Message {
 	public abstract void apply(final MCache mc);

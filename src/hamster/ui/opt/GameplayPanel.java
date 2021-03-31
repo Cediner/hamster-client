@@ -72,8 +72,8 @@ public class GameplayPanel extends Scrollport {
         }
         { // Map related
             //Display related
-            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
-            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
+            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> MapView.MessageBus.send(new MapView.ToggleMap(val))));
+            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> MapView.MessageBus.send(new MapView.ToggleGobs(val))));
             map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
             map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
             map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
@@ -81,7 +81,7 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
             //Grid related
-            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
+            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> MapView.MessageBus.send(new MapView.ToggleFlavObjs(val))));
             map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Ocean related
             map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));

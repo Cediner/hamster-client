@@ -88,11 +88,7 @@ public class VideoPanel extends Scrollport {
             disp.pack();
         }
         { //Shadow
-            final Consumer<Integer> resetshadows = val -> {
-                if (ui.gui != null && ui.gui.map != null) {
-                    ui.gui.map.resetshadows();
-                }
-            };
+            final Consumer<Integer> resetshadows = val -> MapView.MessageBus.send(new MapView.ResetShadows());
 
             shadow.add(new IndirCheckBox("Render shadows", SHADOWS));
             //shadow quality
@@ -117,11 +113,7 @@ public class VideoPanel extends Scrollport {
             shadow.pack();
         }
         { //Outlines
-            ol.add(new IndirCheckBox("Symmetric Outlines", SYMMETRICOUTLINES, (val) -> {
-                if(ui.gui != null && ui.gui.map != null) {
-                    ui.gui.map.toggleOutlines(val);
-                }
-            }));
+            ol.add(new IndirCheckBox("Symmetric Outlines", SYMMETRICOUTLINES, (val) -> MapView.MessageBus.send(new MapView.ToggleOutlines(val))));
             ol.pack();
         }
 

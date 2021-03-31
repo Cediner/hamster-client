@@ -44,6 +44,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
     public static final IndirSetting<Boolean> SHOWHITBOX = new IndirSetting<>(tmp, "session.show-hitbox", false);
     public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(tmp, "session.show-hover-tooltips", false);
+    public static final IndirSetting<Boolean> SHOWPCLAIM = new IndirSetting<>(tmp, "session.show-pclaim", false);
+    public static final IndirSetting<Boolean> SHOWVCLAIM = new IndirSetting<>(tmp, "session.show-vclaim", false);
+    public static final IndirSetting<Boolean> SHOWKCLAIM = new IndirSetting<>(tmp, "session.show-kclaim", false);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
