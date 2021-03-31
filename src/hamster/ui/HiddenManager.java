@@ -38,13 +38,13 @@ public class HiddenManager extends Window implements ObservableListener<String> 
         c.y += add(new Button(200, "Add Hidden", () -> {
             if (!manualin.text.equals("")) {
                 Hidden.add(manualin.text);
-                OCache.OCMessageBus.send(new OCache.HideGobsByName(manualin.text));
+                OCache.MessageBus.send(new OCache.HideGobsByName(manualin.text));
             }
         }), c.copy()).sz.y;
         add(new Button(200, "Stop Hiding", () -> {
             if (lst.sel != null) {
                 Hidden.remove(lst.sel);
-                OCache.OCMessageBus.send(new OCache.UnhideGobsByName(lst.sel));
+                OCache.MessageBus.send(new OCache.UnhideGobsByName(lst.sel));
             }
         }), c.copy());
         pack();

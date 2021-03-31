@@ -82,19 +82,13 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
             //Grid related
             map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
-            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Ocean related
-            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
-            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
+            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
             //Cave related
-            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             map.pack();
             overall.add(map);
         }

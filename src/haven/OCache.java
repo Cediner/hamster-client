@@ -71,7 +71,7 @@ public class OCache implements Iterable<Gob> {
      * MessageBus / MailBox System Message
      */
     //MessageBus is there for cross-session related mail (ie: changing setting that requires all gob refresh)
-    public static MessageBus<OCMail> OCMessageBus = new MessageBus<>();
+    public static MessageBus<OCMail> MessageBus = new MessageBus<>();
     //The mailbox itself should only be used for session-specific mail
     public MailBox<OCMail> mailbox;
 
@@ -242,11 +242,11 @@ public class OCache implements Iterable<Gob> {
 
     public void attached(final UI ui) {
 	mailbox = new MailBox<>(ui.office);
-	OCMessageBus.subscribe(mailbox);
+	MessageBus.subscribe(mailbox);
     }
 
     public void dispose() {
-        OCMessageBus.unsubscribe(mailbox);
+        MessageBus.unsubscribe(mailbox);
     }
 
     public synchronized void callback(ChangeCallback cb) {

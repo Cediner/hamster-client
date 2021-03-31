@@ -28,7 +28,6 @@ package haven;
 
 import static hamster.KeyBind.*;
 import static hamster.MouseBind.*;
-import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import java.awt.Color;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
-import java.lang.ref.*;
 import java.lang.reflect.*;
 
 import com.google.common.flogger.FluentLogger;
@@ -2947,7 +2945,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	});
         binds.put(KB_TOGGLE_HIDDEN, () -> {
 	    GlobalSettings.SHOWHIDDEN.set(!GlobalSettings.SHOWHIDDEN.get());
-	    OCache.OCMessageBus.send(new OCache.RefreshGobByAttr(Hidden.class));
+	    OCache.MessageBus.send(new OCache.RefreshGobByAttr(Hidden.class));
 	    if(this.placing != null && this.placing.done()) {
 	        final var plob = this.placing.get();
 	        plob.refresh();

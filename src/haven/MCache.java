@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 
 import hamster.GlobalSettings;
 import hamster.script.pathfinding.Tile;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 import haven.render.*;
 import haven.resutil.WaterTile;
 
@@ -65,6 +67,30 @@ public class MCache implements MapSource {
     Set<Overlay> ols = new HashSet<Overlay>();
     public int olseq = 0;
     Map<Integer, Defrag> fragbufs = new TreeMap<Integer, Defrag>();
+
+    /*
+     * MessageBus / MailBox System Message
+     */
+    public static MessageBus<MCMail> MessageBus = new MessageBus<>();
+    private MailBox<MCMail> mailbox;
+    public static abstract class MCMail extends hamster.util.msg.Message {
+	public abstract void apply(final MCache mc);
+    }
+
+    public static class InvalidateAllGrids extends MCMail {
+	@Override
+	public void apply(MCache mc) {
+	    mc.invalidateAll();
+	}
+    }
+
+    public static class UpdateWaterTile extends MCMail {
+	@Override
+	public void apply(MCache mc) {
+	    mc.updateWaterTiles();
+	    mc.invalidateAll();
+	}
+    }
 
     public static class LoadingMap extends Loading {
 	public final Coord gc;
@@ -749,6 +775,15 @@ public class MCache implements MapSource {
 	this.sess = sess;
     }
 
+    public void attached(final UI ui) {
+	mailbox = new MailBox<>(ui.office);
+	MessageBus.subscribe(mailbox);
+    }
+
+    public void dispose() {
+	MessageBus.unsubscribe(mailbox);
+    }
+
     public void ctick(double dt) {
 	Collection<Grid> copy;
 	synchronized(grids) {
@@ -756,6 +791,9 @@ public class MCache implements MapSource {
 	}
 	for(Grid g : copy)
 	    g.tick(dt);
+	if(mailbox != null) {
+	    mailbox.processMail(mail -> mail.apply(this));
+	}
     }
 
     public void gtick(Render g) {

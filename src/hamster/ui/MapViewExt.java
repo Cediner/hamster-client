@@ -267,11 +267,11 @@ public class MapViewExt {
                         break;
                     case "Unhide":
                         Hidden.remove(name);
-                        OCache.OCMessageBus.send(new OCache.UnhideGobsByName(name));
+                        OCache.MessageBus.send(new OCache.UnhideGobsByName(name));
                         break;
                     case "Hide":
                         Hidden.add(name);
-                        OCache.OCMessageBus.send(new OCache.HideGobsByName(name));
+                        OCache.MessageBus.send(new OCache.HideGobsByName(name));
                         break;
                     case "Remove Sound":
                         Alerted.remove(name);
@@ -281,7 +281,7 @@ public class MapViewExt {
                         break;
                     case "Delete":
                         Deleted.add(name);
-                       OCache.OCMessageBus.send(new OCache.RemoveGobByRes(name));
+                       OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
                         break;
                     case "Delete this":
                         g.dispose();
