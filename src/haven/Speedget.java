@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 
@@ -94,13 +95,13 @@ public class Speedget extends MovableWidget {
     @Override
     public void toggleVisibility() {
 	super.toggleVisibility();
-	ui.gui.settings.SHOWSPEED.set(visible);
+	GlobalSettings.SHOWSPEED.set(visible);
     }
 
     @Override
     protected void added() {
 	super.added();
-	setVisible(ui.gui.settings.SHOWSPEED.get());
+	setVisible(GlobalSettings.SHOWSPEED.get());
 	ui.gui.speed = this;
     }
 

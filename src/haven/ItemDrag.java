@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.MouseBind;
 import haven.resutil.WaterTile;
 
@@ -89,7 +90,7 @@ public class ItemDrag extends WItem {
 	    setLock(!locked());
 	    return true;
 	})) || (MouseBind.HITM_DROP.check(bind, () -> {
-	    if(!locked() && !ui.gui.settings.WATERDROPITEMCTRL.get()) {
+	    if(!locked() && !GlobalSettings.WATERDROPITEMCTRL.get()) {
 		dropon(parent, c.add(this.c));
 		return true;
 	    } else {

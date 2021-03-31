@@ -223,7 +223,7 @@ public class Equipory extends Widget implements DTarget {
 		}
 		switch (ep) {
 		    case 5 -> {
-			if (ui.gui.settings.SHOWBELTONLOGIN.get()) {
+			if (GlobalSettings.SHOWBELTONLOGIN.get()) {
 			    g.delayediact = true;
 			}
 		    }

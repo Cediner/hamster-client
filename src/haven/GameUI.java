@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
@@ -229,7 +230,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
 	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
-	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
+	lrhandview.setVisible(GlobalSettings.SHOWLRSLOTS.get());
 	timers = new TimersWnd();
 	timers.hide();
 	foragehelper = new ForageHelperWnd();
@@ -537,9 +538,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	    case "menu" -> {
 		menu = (MenuGrid) add(child, new Coord(sz.x - child.sz.x, sz.y - child.sz.y));
-		add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
-		add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
-		add(hotbar3, new Coord(20, 500)).setVisible(ui.gui.settings.SHOWHOTBAR3.get());
+		add(hotbar1, new Coord(20, 300)).setVisible(GlobalSettings.SHOWHOTBAR1.get());
+		add(hotbar2, new Coord(20, 400)).setVisible(GlobalSettings.SHOWHOTBAR2.get());
+		add(hotbar3, new Coord(20, 500)).setVisible(GlobalSettings.SHOWHOTBAR3.get());
 
 		paginasearch = add(new ActWnd("Menu Search"));
 		paginasearch.hide();
@@ -555,7 +556,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		};
 		invwnd.add(maininv = (Inventory) child, Coord.z);
 		invwnd.pack();
-		if(!settings.SHOWINVONLOGIN.get())
+		if(!GlobalSettings.SHOWINVONLOGIN.get())
 		    invwnd.hide();
 		mminv = new MiniInvView(maininv);
 		add(mminv, new Coord(100, 100));

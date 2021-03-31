@@ -120,7 +120,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     @Override
     protected void added() {
 	super.added();
-	setVisible(ui.gui.settings.SHOWMINIMAP.get());
+	setVisible(GlobalSettings.SHOWMINIMAP.get());
 	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
 		.state(GlobalSettings.MMSHOWVIEW::get)
 		.changed(GlobalSettings.MMSHOWVIEW::set)
@@ -146,13 +146,13 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     @Override
     public void toggleVisibility() {
 	super.toggleVisibility();
-	ui.gui.settings.SHOWMINIMAP.set(visible);
+	GlobalSettings.SHOWMINIMAP.set(visible);
     }
 
     @Override
     public void close() {
 	hide();
-	ui.gui.settings.SHOWMINIMAP.set(false);
+	GlobalSettings.SHOWMINIMAP.set(false);
     }
 
     private void toggleol(String tag, boolean a) {

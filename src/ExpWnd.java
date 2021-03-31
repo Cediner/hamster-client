@@ -1,4 +1,5 @@
 /* Preprocessed source code */
+import hamster.GlobalSettings;
 import haven.*;
 
 /* >wdg: ExpWnd */
@@ -26,7 +27,7 @@ public class ExpWnd extends Window {
     protected void added() {
         if(ep > 0)
             ui.gui.msg(String.format("Experience points gained: %d", ep));
-        if(ui.gui.settings.SHOWEXPWND.get()) {
+        if(GlobalSettings.SHOWEXPWND.get()) {
 	    if (c.equals(0, 0))
 		c = new Coord((parent.sz.x - sz.x) / 2, ((parent.sz.y / 2) - sz.y) / 2);
 	    Audio.play(sfx);
@@ -40,7 +41,7 @@ public class ExpWnd extends Window {
     @Override
     protected void binded() {
 	super.binded();
-	if(!ui.gui.settings.SHOWEXPWND.get()) {
+	if(!GlobalSettings.SHOWEXPWND.get()) {
 	    wdgmsg("close");
 	}
     }

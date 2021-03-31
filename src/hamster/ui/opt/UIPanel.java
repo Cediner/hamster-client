@@ -24,24 +24,24 @@ public class UIPanel extends Scrollport {
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);
 
         { //visibility
-            visibility.add(new IndirCheckBox("Show Player Avatar", ui.gui.settings.SHOWPLAVA, (val) -> ui.gui.portrait.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Speed", ui.gui.settings.SHOWSPEED, (val) -> ui.gui.speed.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Health", ui.gui.settings.SHOWHEALTH, (val) -> ui.gui.hp.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Energy", ui.gui.settings.SHOWENERGY, (val) -> ui.gui.energy.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Stamina", ui.gui.settings.SHOWSTAM, (val) -> ui.gui.stam.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Chat Window", ui.gui.settings.SHOWCHAT, (val) -> ui.gui.chatwnd.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Calendar", ui.gui.settings.SHOWCAL, val -> ui.gui.cal.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Sessions Display", ui.gui.settings.SHOWSESSIONS, val -> ui.root.sessionDisplay.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 1", ui.gui.settings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 2", ui.gui.settings.SHOWHOTBAR2, (val) -> ui.gui.hotbar2.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 3", ui.gui.settings.SHOWHOTBAR3, (val) -> ui.gui.hotbar3.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Mini Inventory", ui.gui.settings.SHOWMINIINV, val -> ui.gui.mminv.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Mini Equipment", ui.gui.settings.SHOWMINIEQU, val -> ui.gui.mmequ.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", ui.gui.settings.SHOWLRSLOTS, val -> ui.gui.lrhandview.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Study Window", ui.gui.settings.SHOWSTUDY, val -> ui.gui.study.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Inventory on Login", ui.gui.settings.SHOWINVONLOGIN));
-            visibility.add(new IndirCheckBox("Show Belt on Login", ui.gui.settings.SHOWBELTONLOGIN));
-            visibility.add(new IndirCheckBox("Show Experience Windows", ui.gui.settings.SHOWEXPWND));
+            visibility.add(new IndirCheckBox("Show Player Avatar", GlobalSettings.SHOWPLAVA, (val) -> ui.gui.portrait.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Speed", GlobalSettings.SHOWSPEED, (val) -> ui.gui.speed.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Health", GlobalSettings.SHOWHEALTH, (val) -> ui.gui.hp.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Energy", GlobalSettings.SHOWENERGY, (val) -> ui.gui.energy.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Stamina", GlobalSettings.SHOWSTAM, (val) -> ui.gui.stam.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Chat Window", GlobalSettings.SHOWCHAT, (val) -> ui.gui.chatwnd.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Calendar", GlobalSettings.SHOWCAL, val -> ui.gui.cal.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Sessions Display", GlobalSettings.SHOWSESSIONS, val -> ui.root.sessionDisplay.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Hotbar 1", GlobalSettings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Hotbar 2", GlobalSettings.SHOWHOTBAR2, (val) -> ui.gui.hotbar2.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Hotbar 3", GlobalSettings.SHOWHOTBAR3, (val) -> ui.gui.hotbar3.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Mini Inventory", GlobalSettings.SHOWMINIINV, val -> ui.gui.mminv.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Mini Equipment", GlobalSettings.SHOWMINIEQU, val -> ui.gui.mmequ.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", GlobalSettings.SHOWLRSLOTS, val -> ui.gui.lrhandview.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Study Window", GlobalSettings.SHOWSTUDY, val -> ui.gui.study.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Inventory on Login", GlobalSettings.SHOWINVONLOGIN));
+            visibility.add(new IndirCheckBox("Show Belt on Login", GlobalSettings.SHOWBELTONLOGIN));
+            visibility.add(new IndirCheckBox("Show Experience Windows", GlobalSettings.SHOWEXPWND));
             visibility.pack();
         }
         { //minimap
@@ -63,14 +63,14 @@ public class UIPanel extends Scrollport {
             minimap.pack();
         }
         { //menu
-            menu.add(new IndirLabel(() -> String.format("MenuGrid Columns: %d", ui.gui.settings.MENUGRIDSIZEX.get())));
-            menu.add(new IndirHSlider(UI.scale(200), 4, 16, ui.gui.settings.MENUGRIDSIZEX, (val) -> {
+            menu.add(new IndirLabel(() -> String.format("MenuGrid Columns: %d", GlobalSettings.MENUGRIDSIZEX.get())));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEX, (val) -> {
                 if(ui.gui.menu != null) {
                     ui.gui.menu.updlayoutsize();
                 }
             }));
-            menu.add(new IndirLabel(() -> String.format("MenuGrid Rows: %d", ui.gui.settings.MENUGRIDSIZEY.get())));
-            menu.add(new IndirHSlider(UI.scale(200), 4, 16, ui.gui.settings.MENUGRIDSIZEY, (val) -> {
+            menu.add(new IndirLabel(() -> String.format("MenuGrid Rows: %d", GlobalSettings.MENUGRIDSIZEY.get())));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEY, (val) -> {
                 if(ui.gui.menu != null) {
                     ui.gui.menu.updlayoutsize();
                 }
@@ -78,20 +78,20 @@ public class UIPanel extends Scrollport {
             menu.pack();
         }
         { //mods
-            meter.add(new IndirCheckBox("Alternate Meter Display", ui.gui.settings.BIGSIMPLEMETERS));
+            meter.add(new IndirCheckBox("Alternate Meter Display", GlobalSettings.BIGSIMPLEMETERS));
             meter.pack();
         }
         { //Inventory
-            inv.add(new IndirCheckBox("Show Item Quality", ui.gui.settings.SHOWITEMQ));
-            inv.add(new IndirCheckBox("Show Item Wear Bar", ui.gui.settings.SHOWITEMWEAR));
-            inv.add(new IndirCheckBox("Show Item Contents Bar", ui.gui.settings.SHOWITEMCONT));
-            inv.add(new IndirCheckBox("Always show longtip on items", ui.gui.settings.ALWAYSITEMLONGTIPS));
-            inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", ui.gui.settings.WATERDROPITEMCTRL));
+            inv.add(new IndirCheckBox("Show Item Quality", GlobalSettings.SHOWITEMQ));
+            inv.add(new IndirCheckBox("Show Item Wear Bar", GlobalSettings.SHOWITEMWEAR));
+            inv.add(new IndirCheckBox("Show Item Contents Bar", GlobalSettings.SHOWITEMCONT));
+            inv.add(new IndirCheckBox("Always show longtip on items", GlobalSettings.ALWAYSITEMLONGTIPS));
+            inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", GlobalSettings.WATERDROPITEMCTRL));
             inv.pack();
         }
         { //Flowermenu
-            fmenu.add(new IndirCheckBox("Quick Flowermenu", ui.gui.settings.QUICKFLMENU));
-            fmenu.add(new IndirCheckBox("Don't close Flowermenu on clicks", ui.gui.settings.KEEPFLOPEN));
+            fmenu.add(new IndirCheckBox("Quick Flowermenu", GlobalSettings.QUICKFLMENU));
+            fmenu.add(new IndirCheckBox("Don't close Flowermenu on clicks", GlobalSettings.KEEPFLOPEN));
             fmenu.pack();
         }
 

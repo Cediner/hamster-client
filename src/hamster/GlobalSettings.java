@@ -151,6 +151,38 @@ public class GlobalSettings {
             = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.slider.color", HUDTHEME),
             Color.WHITE);
 
+    //UI
+    public static final IndirSetting<Boolean> SHOWPLAVA = new IndirSetting<>(global, "ui.show-player-avatar", true);
+    public static final IndirSetting<Boolean> SHOWSPEED = new IndirSetting<>(global, "ui.show-player-speed", true);
+    public static final IndirSetting<Boolean> SHOWHEALTH = new IndirSetting<>(global, "ui.show-player-health", true);
+    public static final IndirSetting<Boolean> SHOWENERGY = new IndirSetting<>(global, "ui.show-player-energy", true);
+    public static final IndirSetting<Boolean> SHOWSTAM = new IndirSetting<>(global, "ui.show-player-stam", true);
+    public static final IndirSetting<Boolean> SHOWCAL = new IndirSetting<>(global, "ui.show-calendar", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR1 = new IndirSetting<>(global, "ui.show-hotbar1", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR2 = new IndirSetting<>(global, "ui.show-hotbar2", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR3 = new IndirSetting<>(global, "ui.show-hotbar3", true);
+    public static final IndirSetting<Boolean> SHOWMINIINV = new IndirSetting<>(global, "ui.show-mini-inv", true);
+    public static final IndirSetting<Boolean> SHOWMINIEQU = new IndirSetting<>(global, "ui.show-mini-equ", true);
+    public static final IndirSetting<Boolean> SHOWSTUDY = new IndirSetting<>(global, "ui.show-study", true);
+    public static final IndirSetting<Boolean> SHOWSESSIONS = new IndirSetting<>(global, "ui.show-session-display", true);
+    public static final IndirSetting<Boolean> SHOWCHAT = new IndirSetting<>(global, "ui.show-chat", true);
+    public static final IndirSetting<Boolean> SHOWLRSLOTS = new IndirSetting<>(global, "ui.show-lr-hand-slots", true);
+    public static final IndirSetting<Boolean> SHOWMINIMAP = new IndirSetting<>(global, "ui.show-minimap", true);
+    public static final IndirSetting<Boolean> SHOWINVONLOGIN = new IndirSetting<>(global, "ui.show-inv-on-login", true);
+    public static final IndirSetting<Boolean> SHOWBELTONLOGIN = new IndirSetting<>(global, "ui.show-belt-on-login", true);
+    public static final IndirSetting<Integer> MENUGRIDSIZEX = new IndirSetting<>(global, "ui.mg.size-x", 4);
+    public static final IndirSetting<Integer> MENUGRIDSIZEY = new IndirSetting<>(global, "ui.mg.size-y", 4);
+    public static final IndirSetting<Boolean> BIGSIMPLEMETERS = new IndirSetting<>(global, "ui.big-simple-imeters", false);
+    public static final IndirSetting<Boolean> SHOWITEMQ = new IndirSetting<>(global, "ui.inv.show-item-quality", true);
+    public static final IndirSetting<Boolean> SHOWITEMWEAR = new IndirSetting<>(global, "ui.inv.show-item-wear", true);
+    public static final IndirSetting<Boolean> SHOWITEMCONT = new IndirSetting<>(global, "ui.inv.show-item-cont", true);
+    public static final IndirSetting<Boolean> ALWAYSITEMLONGTIPS = new IndirSetting<>(global, "ui.inv.always-show-longtip", true);
+    public static final IndirSetting<Boolean> AUTOEQUIP = new IndirSetting<>(global, "ui.inv.auto-equip", true);
+    public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "ui.dont-drop-item-over-water", false);
+    public static final IndirSetting<Boolean> QUICKFLMENU = new IndirSetting<>(global, "ui.flowermenu.quick-menu", false);
+    public static final IndirSetting<Boolean> KEEPFLOPEN = new IndirSetting<>(global, "ui.flowermenu.never-close-on-click", false);
+    public static final IndirSetting<Boolean> SHOWEXPWND = new IndirSetting<>(global, "ui.show-experience-window", true);
+
     //Hotkey related
     public static final IndirSetting<String> KB_F_STYLE = new IndirSetting<>(global, "keybind.hotkey-f-style", "GRID");
     public static final IndirSetting<Boolean> KB_F_VIS   = new IndirSetting<>(global, "keybind.hotkey-f-visible", true);

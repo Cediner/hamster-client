@@ -1,5 +1,6 @@
 package hamster.ui.chr;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.resutil.Curiosity;
 
@@ -80,12 +81,12 @@ public class StudyWnd extends Window {
     @Override
     protected void added() {
         super.added();
-        visible = ui.gui.settings.SHOWSTUDY.get();
+        visible = GlobalSettings.SHOWSTUDY.get();
     }
 
     @Override
     public void close() {
-        ui.gui.settings.SHOWSTUDY.set(false);
+        GlobalSettings.SHOWSTUDY.set(false);
         hide();
     }
 }

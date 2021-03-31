@@ -1,5 +1,6 @@
 package haven.res.ui.tt;
 /* Preprocessed source code */
+import hamster.GlobalSettings;
 import haven.*;
 import haven.res.ui.tt.wpn.Armpen;
 
@@ -39,7 +40,7 @@ public class Level extends ItemInfo implements GItem.OverlayInfo<Double> {
 
     public void drawoverlay(GOut g, Double l) {
 	final UI ui = ((GItem) owner).ui;
-	if(ui.gui != null && ui.gui.settings.SHOWITEMCONT.get()) {
+	if(ui.gui != null && GlobalSettings.SHOWITEMCONT.get()) {
 	    Coord sz = g.sz();
 	    g.chcolor(ocolor);
 	    g.frect2(new Coord(1 + m, sz.y - 3 - m - h), new Coord(sz.x - 2 - m, sz.y - 1 - m));

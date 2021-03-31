@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import hamster.GlobalSettings;
 import hamster.MouseBind;
 import hamster.data.itm.ItemData;
 import hamster.ui.equip.EquipmentType;
@@ -154,7 +155,7 @@ public class WItem extends Widget implements DTarget {
 		shorttip = longtip = null;
 		ttinfo = info;
 	    }
-	    if(now - hoverstart < 1.0 && !ui.gui.settings.ALWAYSITEMLONGTIPS.get()) {
+	    if(now - hoverstart < 1.0 && !GlobalSettings.ALWAYSITEMLONGTIPS.get()) {
 		if(shorttip == null)
 		    shorttip = new ShortTip(info);
 		return(shorttip);
@@ -245,7 +246,7 @@ public class WItem extends Widget implements DTarget {
 		g.chcolor();
 	    }
 
-	    if (ui.gui.settings.SHOWITEMWEAR.get()) {
+	    if (GlobalSettings.SHOWITEMWEAR.get()) {
 		item.getinfo(Wear.class).ifPresent(wear -> {
 		    double p = 1 - wear.percent();
 		    int h = (int) (p * (double) sz.y);
@@ -307,7 +308,7 @@ public class WItem extends Widget implements DTarget {
 	    return true;
 	}) || MouseBind.ITM_AUTO_EQUIP.check(seq, () -> {
 	    final Optional<String> name = item.name();
-	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+	    if (!locked && name.isPresent() && GlobalSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
 		if (!(parent instanceof Equipory)) {
 		    item.wdgmsg("take", c);
 		    ui.gui.equ.wdgmsg("drop", -1);
@@ -320,7 +321,7 @@ public class WItem extends Widget implements DTarget {
 	    }
 	}) || MouseBind.ITM_AUTO_EQUIP_LH.check(seq, () -> {
 	    final Optional<String> name = item.name();
-	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+	    if (!locked && name.isPresent() && GlobalSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
 		item.wdgmsg("take", c);
 		ui.gui.equ.wdgmsg("drop", EquipmentType.LeftHand.slot);
 		return true;
@@ -329,7 +330,7 @@ public class WItem extends Widget implements DTarget {
 	    }
 	}) || MouseBind.ITM_AUTO_EQUIP_RH.check(seq, () -> {
 	    final Optional<String> name = item.name();
-	    if (!locked && name.isPresent() && ui.gui.settings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
+	    if (!locked && name.isPresent() && GlobalSettings.AUTOEQUIP.get() && ItemData.isEquipable(name.get())) {
 		item.wdgmsg("take", c);
 		ui.gui.equ.wdgmsg("drop", EquipmentType.RightHand.slot);
 		return true;

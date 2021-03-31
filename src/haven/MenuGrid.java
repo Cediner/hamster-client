@@ -32,6 +32,7 @@ import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 
 import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 import hamster.util.MessageBus;
@@ -402,7 +403,7 @@ public class MenuGrid extends MovableWidget {
     }
 
     public void updlayoutsize() {
-        gsz = new Coord(ui.gui.settings.MENUGRIDSIZEX.get(), ui.gui.settings.MENUGRIDSIZEY.get());
+        gsz = new Coord(GlobalSettings.MENUGRIDSIZEX.get(), GlobalSettings.MENUGRIDSIZEY.get());
 	layout = new PagButton[gsz.x][gsz.y];
 	updlayout();
 	resize(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));

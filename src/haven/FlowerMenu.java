@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 
 import java.awt.Color;
@@ -235,7 +236,7 @@ public class FlowerMenu extends Widget {
     public boolean mousedown(Coord c, int button) {
 	if(!anims.isEmpty())
 	    return(true);
-	if(ui.gui.settings.KEEPFLOPEN.get())
+	if(GlobalSettings.KEEPFLOPEN.get())
 	    return super.mousedown(c, button);
 	if(!super.mousedown(c, button))
 	    choose(null);
@@ -298,7 +299,7 @@ public class FlowerMenu extends Widget {
 	ui.sess.details.attachFlowermenu(this);
 	int jack = ui.modflags();
 
-	if (ui.gui.settings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 2) {
+	if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 2) {
 	    if (opts[0].name.equals("Empty")) {
 		if (opts.length == 1) return; //don't jackui a single empty
 		//switch options for containers
@@ -306,7 +307,7 @@ public class FlowerMenu extends Widget {
 	    }
 	    wdgmsg("cl", jack, 0);
 	    hide();
-	} else if (ui.gui.settings.QUICKFLMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
+	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
 	    wdgmsg("cl", jack, 0);
 	    hide();
 	}

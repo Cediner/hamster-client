@@ -1,5 +1,6 @@
 package hamster.ui;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.MovableWidget;
 import hamster.ui.core.Theme;
 import haven.*;
@@ -36,7 +37,7 @@ public class MiniInvView extends MovableWidget {
     @Override
     protected void added() {
         super.added();
-        visible = ui.gui.settings.SHOWMINIINV.get();
+        visible = GlobalSettings.SHOWMINIINV.get();
     }
 
     @Override

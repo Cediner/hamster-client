@@ -1,5 +1,6 @@
 package hamster.ui;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.MovableWidget;
 import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
@@ -79,9 +80,9 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
     public void tick(double dt) {
         super.tick(dt);
         if(ui != null && ui.gui != null) {
-            if (visible && !ui.gui.settings.SHOWSESSIONS.get()) {
+            if (visible && !GlobalSettings.SHOWSESSIONS.get()) {
                 hide();
-            } else if (!visible && ui.gui.settings.SHOWSESSIONS.get()) {
+            } else if (!visible && GlobalSettings.SHOWSESSIONS.get()) {
                 show();
             }
         }
