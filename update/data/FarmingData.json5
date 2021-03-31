@@ -1,0 +1,122 @@
+[
+  {
+    name: "gfx/terobjs/plants/flax",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/barley",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/carrot",
+    type: "GROUND",
+    min_stage: 2,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/poppy",
+    type: "GROUND",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/hemp",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/pipeweed",
+    type: "GROUND",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/beet",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/hops",
+    type: "TRELLIS",
+    min_stage: 6,
+    final_stage: 6
+  },
+  {
+    name: "gfx/terobjs/plants/peas",
+    type: "TRELLIS",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/yellowonion",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/pumpkin",
+    type: "GROUND",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/pepper",
+    type: "TRELLIS",
+    min_stage: 6,
+    final_stage: 6
+  },
+  {
+    name: "gfx/terobjs/plants/wine",
+    type: "TRELLIS",
+    min_stage: 6,
+    final_stage: 6
+  },
+  {
+    name: "gfx/terobjs/plants/redonion",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/turnip",
+    type: "GROUND",
+    min_stage: 1,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/cucumber",
+    type: "TRELLIS",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/millet",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  },
+  {
+    name: "gfx/terobjs/plants/leek",
+    type: "GROUND",
+    min_stage: 2,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/lettuce",
+    type: "GROUND",
+    min_stage: 4,
+    final_stage: 4
+  },
+  {
+    name: "gfx/terobjs/plants/wheat",
+    type: "GROUND",
+    min_stage: 3,
+    final_stage: 3
+  }
+]

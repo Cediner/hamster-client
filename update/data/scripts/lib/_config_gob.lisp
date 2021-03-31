@@ -8,7 +8,6 @@
 (defconstant +human+ (svar +tag+ "HUMAN"))
 (defconstant +animal+ (svar +tag+ "ANIMAL"))
 (defconstant +tamed-animal+ (svar +tag+ "TAMED_ANIMAL"))
-(defconstant +small-animal+ (svar +tag+ "SMALL_ANIMAL"))
 (defconstant +water-vehicle+ (svar +tag+ "WATER_VEHICLE"))
 (defconstant +vehicle+ (svar +tag+ "VEHICLE"))
 
@@ -119,7 +118,7 @@
 (defmacro gob-get-closest-by-name (name)
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
-(export '(+plant+ +human+ +animal+ +tamed-animal+ +small-animal+ +water-vehicle+ +vehicle+
+(export '(+plant+ +human+ +animal+ +tamed-animal+ +water-vehicle+ +vehicle+
           gob-c gob-name gob-type gob-overlays gob-poses gob-heldBy gob-holding gob-sdt is-gob-dead
           gob-kinname gob-equipment
           gob-id gob-rc gob-v
