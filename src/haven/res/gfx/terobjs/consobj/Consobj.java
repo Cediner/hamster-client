@@ -6,13 +6,12 @@ import haven.render.*;
 import static haven.MCache.tilesz;
 
 /* >spr: Consobj */
-@SuppressWarnings("unused") // Dynamically created via server
 public class Consobj extends Sprite implements Sprite.CUpd {
     public final static Indir<Resource> signres = Resource.remote().load("gfx/terobjs/sign", 6);
     public final static Indir<Resource> poleres = Resource.remote().load("gfx/terobjs/arch/conspole", 2);
     private static Material bmat = null;
     public final static float bscale = 1f / 11;
-    public final Coord ul, br; // bounding box ul -> br
+    public final Coord ul, br;
     public final ResData built;
     public float done;
     final Coord3f cc;
@@ -35,6 +34,15 @@ public class Consobj extends Sprite implements Sprite.CUpd {
 	    bmat = res.layer(Material.Res.class).get();
 	ul = new Coord(sdt.int8(), sdt.int8());
 	br = new Coord(sdt.int8(), sdt.int8());
+	done = sdt.uint8() / 255.0f;
+	if(!sdt.eom()) {
+	    int resid = sdt.uint16();
+	    built = new ResData(owner.context(Resource.Resolver.class).getres(resid), new MessageBuf(sdt.bytes()));
+	} else {
+	    built = null;
+	}
+	sign = Sprite.create(owner, signres.get(), Message.nil);
+	pole = Sprite.create(owner, poleres.get(), Message.nil);
 	if(owner instanceof Gob) {
 	    final var gob = (Gob)owner;
 	    this.cc = gob.getrc();
@@ -42,15 +50,6 @@ public class Consobj extends Sprite implements Sprite.CUpd {
 	} else {
 	    this.cc = Coord3f.o;
 	}
-	done = sdt.uint8() / 255.0f;
-	if(!sdt.eom()) {
-	    int resid = sdt.uint16();
-	    built = new ResData(() -> res, new MessageBuf(sdt.bytes()));
-	} else {
-	    built = null;
-	}
-	sign = Sprite.create(owner, signres.get(), Message.nil);
-	pole = Sprite.create(owner, poleres.get(), Message.nil);
 	poles = new Location[] {
 		Location.xlate(gnd(ul.x, ul.y)),
 		Location.xlate(gnd(br.x, ul.y)),

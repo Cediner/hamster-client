@@ -357,7 +357,7 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.paginasearch.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::studyreport",
 		Resource.local().load("custom/paginae/default/wnd/study"),
-		(pag) -> ui.gui.study.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.StudyWindow))));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),
@@ -373,13 +373,13 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.zerg.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::lmap",
 		Resource.local().load("custom/paginae/default/wnd/lmap"),
-		(pag) -> ui.gui.mapfile.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.MiniMap))));
 	addCustom(new CustomPagina(this, "management::opts",
 		Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.opts.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
-		(pag) -> ui.gui.chatwnd.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.ChatWindow))));
 	//Keybinds
 	binds.put(KeyBind.KB_SCM_ROOT, () -> {
 	    if(this.cur != null) {

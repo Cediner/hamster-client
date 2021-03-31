@@ -9,6 +9,7 @@ import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.Coord;
+import haven.GameUI;
 import haven.MenuGrid;
 import haven.UI;
 
@@ -26,21 +27,36 @@ public class UIPanel extends Scrollport {
         final Grouping fmenu = new LinearGrouping("Flowermenu Settings", spacer, false);
 
         { //visibility
-            visibility.add(new IndirCheckBox("Show Player Avatar", GlobalSettings.SHOWPLAVA, (val) -> ui.gui.portrait.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Speed", GlobalSettings.SHOWSPEED, (val) -> ui.gui.speed.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Health", GlobalSettings.SHOWHEALTH, (val) -> ui.gui.hp.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Energy", GlobalSettings.SHOWENERGY, (val) -> ui.gui.energy.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Player Stamina", GlobalSettings.SHOWSTAM, (val) -> ui.gui.stam.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Chat Window", GlobalSettings.SHOWCHAT, (val) -> ui.gui.chatwnd.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Calendar", GlobalSettings.SHOWCAL, val -> ui.gui.cal.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Sessions Display", GlobalSettings.SHOWSESSIONS, val -> ui.root.sessionDisplay.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 1", GlobalSettings.SHOWHOTBAR1, (val) -> ui.gui.hotbar1.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 2", GlobalSettings.SHOWHOTBAR2, (val) -> ui.gui.hotbar2.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Hotbar 3", GlobalSettings.SHOWHOTBAR3, (val) -> ui.gui.hotbar3.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Mini Inventory", GlobalSettings.SHOWMINIINV, val -> ui.gui.mminv.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Mini Equipment", GlobalSettings.SHOWMINIEQU, val -> ui.gui.mmequ.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", GlobalSettings.SHOWLRSLOTS, val -> ui.gui.lrhandview.setVisible(val)));
-            visibility.add(new IndirCheckBox("Show Study Window", GlobalSettings.SHOWSTUDY, val -> ui.gui.study.setVisible(val)));
+            visibility.add(new IndirCheckBox("Show Player Avatar", GlobalSettings.SHOWPLAVA,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.PlayerAvatar, val))));
+            visibility.add(new IndirCheckBox("Show Player Speed", GlobalSettings.SHOWSPEED,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.PlayerSpeed, val))));
+            visibility.add(new IndirCheckBox("Show Player Health", GlobalSettings.SHOWHEALTH,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.PlayerHealth, val))));
+            visibility.add(new IndirCheckBox("Show Player Energy", GlobalSettings.SHOWENERGY,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.PlayerEnergy, val))));
+            visibility.add(new IndirCheckBox("Show Player Stamina", GlobalSettings.SHOWSTAM,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.PlayerStamina, val))));
+            visibility.add(new IndirCheckBox("Show Chat Window", GlobalSettings.SHOWCHAT,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.ChatWindow, val))));
+            visibility.add(new IndirCheckBox("Show Calendar", GlobalSettings.SHOWCAL,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.Calendar, val))));
+            visibility.add(new IndirCheckBox("Show Sessions Display", GlobalSettings.SHOWSESSIONS,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.SessionDisplay, val))));
+            visibility.add(new IndirCheckBox("Show Hotbar 1", GlobalSettings.SHOWHOTBAR1,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.Hotbar1, val))));
+            visibility.add(new IndirCheckBox("Show Hotbar 2", GlobalSettings.SHOWHOTBAR2,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.Hotbar2, val))));
+            visibility.add(new IndirCheckBox("Show Hotbar 3", GlobalSettings.SHOWHOTBAR3,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.Hotbar3, val))));
+            visibility.add(new IndirCheckBox("Show Mini Inventory", GlobalSettings.SHOWMINIINV,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.MiniInv, val))));
+            visibility.add(new IndirCheckBox("Show Mini Equipment", GlobalSettings.SHOWMINIEQU,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.MiniEqu, val))));
+            visibility.add(new IndirCheckBox("Show Left/Right Hand Slots", GlobalSettings.SHOWLRSLOTS,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.LRHandSlots, val))));
+            visibility.add(new IndirCheckBox("Show Study Window", GlobalSettings.SHOWSTUDY,
+                    (val) -> GameUI.MessageBus.send(new GameUI.SetVisiblity(GameUI.Wdg.StudyWindow, val))));
             visibility.add(new IndirCheckBox("Show Inventory on Login", GlobalSettings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox("Show Belt on Login", GlobalSettings.SHOWBELTONLOGIN));
             visibility.add(new IndirCheckBox("Show Experience Windows", GlobalSettings.SHOWEXPWND));
