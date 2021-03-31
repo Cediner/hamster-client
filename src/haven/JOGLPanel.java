@@ -37,9 +37,10 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
 import hamster.GlobalSettings;
 import hamster.util.JobSystem;
-import hamster.util.MessageBus;
+import hamster.util.msg.MailBox;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
+import hamster.util.msg.Office;
 import haven.render.*;
 import haven.render.States;
 import haven.render.gl.*;
@@ -56,7 +57,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     /*  */
 
     /* MultiSession Mailsystem */
-    public static class RemoveUIMessage extends MessageBus.Message {
+    public static class RemoveUIMessage extends hamster.util.msg.Message {
 	final UI lui;
 
 	public RemoveUIMessage(final UI lui) {
@@ -64,7 +65,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
-    public static class AddUIMessage extends MessageBus.Message {
+    public static class AddUIMessage extends hamster.util.msg.Message {
 	final UI lui;
 
 	public AddUIMessage(final UI lui) {
@@ -72,7 +73,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
-    public static class CloseUIMessage extends MessageBus.Message {
+    public static class CloseUIMessage extends hamster.util.msg.Message {
 	final UI lui;
 
 	public CloseUIMessage(final UI lui) {
@@ -80,10 +81,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
-    private MessageBus.Office UIThreadOffice;
-    private MessageBus.MailBox<AddUIMessage> adduibox;
-    private MessageBus.MailBox<RemoveUIMessage> remuibox;
-    private MessageBus.MailBox<CloseUIMessage> closeuibox;
+    private Office UIThreadOffice;
+    private MailBox<AddUIMessage> adduibox;
+    private MailBox<RemoveUIMessage> remuibox;
+    private MailBox<CloseUIMessage> closeuibox;
     /*  */
 
     private static final boolean dumpbgl = true;
@@ -182,10 +183,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     }
 
     public void setupMail(final Thread owner) {
-	UIThreadOffice = new MessageBus.Office(owner);
-	adduibox = new MessageBus.MailBox<>(UIThreadOffice, "add");
-	remuibox = new MessageBus.MailBox<>(UIThreadOffice, "rem");
-	closeuibox = new MessageBus.MailBox<>(UIThreadOffice, "close");
+	UIThreadOffice = new Office(owner);
+	adduibox = new MailBox<>(UIThreadOffice);
+	remuibox = new MailBox<>(UIThreadOffice);
+	closeuibox = new MailBox<>(UIThreadOffice);
     }
 
     private void initgl(GL gl) {
@@ -547,9 +548,8 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	    UIThreadOffice.processTransfers();
 	}
 	{ //Handle new UIs
-	    final Iterator<AddUIMessage> add = adduibox.mailqueue.iterator();
-	    while (add.hasNext()) {
-		final UI lui = add.next().lui;
+	    adduibox.processMail(mail -> {
+		final UI lui = mail.lui;
 		lui.setupMail(Thread.currentThread());
 
 		synchronized (sessions) {
@@ -557,13 +557,11 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		}
 
 		this.ui.getAndUpdate(cui -> cui != null ? cui : lui);
-		add.remove();
-	    }
+	    });
 	}
 	{ //Handle any UI's that need to be destroyed.
-	    final Iterator<RemoveUIMessage> rem = remuibox.mailqueue.iterator();
-	    while (rem.hasNext()) {
-		final UI lui = rem.next().lui;
+	    remuibox.processMail(mail -> {
+		final UI lui = mail.lui;
 		logger.atFine().log("Destroying UI [ui %s]", lui);
 		lui.destroy();
 		synchronized (sessions) {
@@ -583,25 +581,22 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		    }
 		    return ui;
 		});
-		rem.remove();
-	    }
+	    });
 	}
 	{ //Handle any UI's that need to start the closure process
-	    final Iterator<CloseUIMessage> close = closeuibox.mailqueue.iterator();
-	    while (close.hasNext()) {
-		final UI lui = close.next().lui;
+	    closeuibox.processMail(mail -> {
+		final UI lui = mail.lui;
 		if (lui.gui != null) {
 		    lui.gui.act("lo");
 		} else {
 		    if (lui.sess != null) {
 			lui.sess.close();
 		    } else {
-		        //Login screen
+			//Login screen
 			lui.root.wdgmsg("close");
 		    }
 		}
-		close.remove();
-	    }
+	    });
 	}
     }
 

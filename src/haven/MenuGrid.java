@@ -35,7 +35,6 @@ import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
-import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
 import haven.Resource.AButton;
 import java.util.*;

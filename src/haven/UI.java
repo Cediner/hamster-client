@@ -34,13 +34,11 @@ import java.awt.DisplayMode;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.InputEvent;
-import java.awt.image.BufferedImage;
-import static haven.Utils.el;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.common.flogger.LazyArgs;
 import hamster.GlobalSettings;
-import hamster.util.MessageBus;
+import hamster.util.msg.Office;
 import haven.render.Environment;
 import haven.render.Render;
 
@@ -69,7 +67,7 @@ public class UI {
     private static final double scalef;
 
     // UI MessageBus
-    public MessageBus.Office office;
+    public Office office;
     
     {
 	lastevent = lasttick = Utils.rtime();
@@ -82,6 +80,7 @@ public class UI {
     public interface Runner {
 	public Runner run(UI ui) throws InterruptedException;
 	public default void init(UI ui) {}
+	public default void dispose() {}
 	public default String title() {return(null);}
 
 	public static class Proxy implements Runner {
@@ -186,7 +185,7 @@ public class UI {
 
 
     public void setupMail(final Thread thr) {
-	office = new MessageBus.Office(thr);
+	office = new Office(thr);
     }
 
     public void reset(final Coord sz, final Runner fun) {

@@ -33,7 +33,8 @@ import hamster.GlobalSettings;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
 import hamster.util.JobSystem;
-import hamster.util.MessageBus;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 import haven.render.Render;
 
 public class OCache implements Iterable<Gob> {
@@ -67,14 +68,19 @@ public class OCache implements Iterable<Gob> {
     private final Collection<ChangeCallback> cbs = new WeakList<ChangeCallback>();
 
     /*
-     * MailBox System Message
+     * MessageBus / MailBox System Message
      */
-    public MessageBus.MailBox<OCMail> mailbox;
+    //MessageBus is there for cross-session related mail (ie: changing setting that requires all gob refresh)
+    public static MessageBus<OCMail> OCMessageBus = new MessageBus<>();
+    //The mailbox itself should only be used for session-specific mail
+    public MailBox<OCMail> mailbox;
 
-    public static abstract class OCMail extends MessageBus.Message {
+    public static abstract class OCMail extends hamster.util.msg.Message {
 	public abstract void apply(final OCache oc, final List<Gob> gobs);
     }
+
     public static class RemoveGobById extends OCMail {
+        //Session Specific
 	private final long id;
 
 	public RemoveGobById(final long id) {
@@ -127,6 +133,7 @@ public class OCache implements Iterable<Gob> {
     }
 
     public static class RefreshGobByObject extends OCMail {
+	//Session Specific
 	public final Gob self;
 
 	public RefreshGobByObject(final Gob g) {
@@ -234,7 +241,12 @@ public class OCache implements Iterable<Gob> {
     }
 
     public void attached(final UI ui) {
-	mailbox = new MessageBus.MailBox<>(ui.office, this);
+	mailbox = new MailBox<>(ui.office);
+	OCMessageBus.subscribe(mailbox);
+    }
+
+    public void dispose() {
+        OCMessageBus.unsubscribe(mailbox);
     }
 
     public synchronized void callback(ChangeCallback cb) {
@@ -297,9 +309,7 @@ public class OCache implements Iterable<Gob> {
 
 	// Then apply ourselves and our gobs for this tick to any mail
 	if(mailbox != null) {
-	    while(!mailbox.mailqueue.isEmpty()) {
-	        mailbox.mailqueue.poll().apply(this, copy);
-	    }
+	    mailbox.processMail(mail -> mail.apply(this, copy));
 	}
     }
 

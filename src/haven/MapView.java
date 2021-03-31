@@ -2947,8 +2947,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	});
         binds.put(KB_TOGGLE_HIDDEN, () -> {
 	    GlobalSettings.SHOWHIDDEN.set(!GlobalSettings.SHOWHIDDEN.get());
-	    //TODO: I really should apply this to all sessions somehow...
-	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
+	    OCache.OCMessageBus.send(new OCache.RefreshGobByAttr(Hidden.class));
 	    if(this.placing != null && this.placing.done()) {
 	        final var plob = this.placing.get();
 	        plob.refresh();

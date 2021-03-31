@@ -72,6 +72,10 @@ public class Glob {
 	oc.attached(ui);
     }
 
+    public void dispose() {
+        oc.dispose();
+    }
+
     @Resource.PublishedCode(name = "wtr")
     public static interface Weather {
 	public Pipe.Op state();

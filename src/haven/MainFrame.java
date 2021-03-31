@@ -310,6 +310,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
                 if(fun != null) {
                     lui.reset(new Coord(p.getSize()), fun);
                     fun.run(lui);
+                    fun.dispose();
 		}
 	    } catch (InterruptedException ignored) {
 	    } finally {
@@ -332,14 +333,13 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    while (true) {
 		// Login first
 		UI.Runner fun = new Bootstrap();
-		//TODO: May need to reexamine this as the looping and UI resetting out of sync with the frame tick
-		//      can cause issues. May be resolved for now but should be relooked at.
 		lui.reset(new Coord(p.getSize()), fun);
 		fun = fun.run(lui);
 		//Run remote
 		if (fun != null) {
 		    lui.reset(new Coord(p.getSize()), fun);
 		    fun.run(lui);
+		    fun.dispose();
 		}
 	    }
 	} catch (InterruptedException e) {
