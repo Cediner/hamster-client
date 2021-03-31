@@ -31,11 +31,8 @@ public class GameplayPanel extends Scrollport {
             overall.add(sys);
         }
         { //Camera
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA, (camera) -> {
-                if(ui.gui != null) {
-                    ui.gui.map.setcam(camera);
-                }
-            });
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA,
+                    (camera) -> MapView.MessageBus.send(new MapView.SetCamera(camera)));
             {
                 rgrp.add("Ortho Cam", "sortho");
                 rgrp.add("Angle Locked Ortho Cam", "ortho");

@@ -94,6 +94,18 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public abstract void apply(final MapView mv);
     }
 
+    public static class SetCamera extends MapViewMail {
+        private final String name;
+        public SetCamera(final String name) {
+            this.name = name;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.setcam(name);
+	}
+    }
+
     public static class ToggleFlavObjs extends MapViewMail {
         private final boolean visible;
         public ToggleFlavObjs(final boolean visible) {
