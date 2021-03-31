@@ -283,4 +283,15 @@ public class Charlist extends Widget {
 	ui.sess.details.removeCharlist();
     }
 
+    @SuppressWarnings("unused")
+    public Char[] characters() {
+        synchronized (chars) {
+	    return chars.toArray(new Char[0]);
+	}
+    }
+
+    @SuppressWarnings("unused")
+    public void login(final Char character) {
+        wdgmsg("play", character.name);
+    }
 }
