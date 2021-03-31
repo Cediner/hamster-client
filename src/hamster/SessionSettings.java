@@ -30,13 +30,6 @@ public class SessionSettings {
     public final IndirSetting<BaseColor> ANIMALPATHCOL;
     public final IndirSetting<BaseColor> VEHPATHCOL;
 
-    ////Camera
-    public final IndirSetting<String> CAMERA;
-    public final IndirSetting<Integer> CAMERAPROJFAR;
-    public final IndirSetting<Boolean> FREECAMREXAXIS;
-    public final IndirSetting<Boolean> FREECAMREYAXIS;
-    public final IndirSetting<Boolean> FREECAMLOCKELAV;
-
     ////UI
     public final IndirSetting<Boolean> SHOWPLAVA;
     public final IndirSetting<Boolean> SHOWSPEED;
@@ -99,13 +92,6 @@ public class SessionSettings {
         GOBPATHCOL = new IndirSetting<>(local, "gob.gob-path-color", new BaseColor(Color.GREEN));
         ANIMALPATHCOL = new IndirSetting<>(local, "gob.animal-path-color", new BaseColor(Color.RED));
         VEHPATHCOL = new IndirSetting<>(local, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
-
-        //Camera
-        CAMERA = new IndirSetting<>(local, "camera.camera-type", "sortho");
-        CAMERAPROJFAR = new IndirSetting<>(local, "camera.camera-proj-far", 5000);
-        FREECAMREXAXIS = new IndirSetting<>(local, "camera.free.reverse-x-axis", false);
-        FREECAMREYAXIS = new IndirSetting<>(local, "camera.free.reverse-y-axis", false);
-        FREECAMLOCKELAV = new IndirSetting<>(local, "camera.free.lock-elevation", false);
 
         //UI
         SHOWPLAVA = new IndirSetting<>(local, "ui.show-player-avatar", true);

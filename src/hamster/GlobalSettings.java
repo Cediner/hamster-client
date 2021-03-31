@@ -124,6 +124,13 @@ public class GlobalSettings {
     public static final IndirSetting<Color> NVSPECCOL = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE);
     public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false);
 
+    //Camera
+    public static final IndirSetting<String> CAMERA = new IndirSetting<>(global, "camera.camera-type", "sortho");
+    public static final IndirSetting<Integer> CAMERAPROJFAR = new IndirSetting<>(global, "camera.camera-proj-far", 5000);
+    public static final IndirSetting<Boolean> FREECAMREXAXIS = new IndirSetting<>(global, "camera.free.reverse-x-axis", false);
+    public static final IndirSetting<Boolean> FREECAMREYAXIS = new IndirSetting<>(global, "camera.free.reverse-y-axis", false);
+    public static final IndirSetting<Boolean> FREECAMLOCKELAV = new IndirSetting<>(global, "camera.free.lock-elevation", false);
+
     //Pathfinding
     public static final IndirSetting<Integer> PATHFINDINGTIER = new IndirSetting<>(global, "pathfinding.tier", 3);
     public static final IndirSetting<Boolean> LIMITPATHFINDING = new IndirSetting<>(global, "pathfinding.limit-distance-to-view", false);

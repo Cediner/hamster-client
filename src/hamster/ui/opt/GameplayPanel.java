@@ -63,7 +63,7 @@ public class GameplayPanel extends Scrollport {
             map.pack();
         }
         { //Camera
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), ui.gui.settings.CAMERA, (camera) -> {
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA, (camera) -> {
                 if(ui.gui != null) {
                     ui.gui.map.setcam(camera);
                 }
@@ -80,15 +80,15 @@ public class GameplayPanel extends Scrollport {
             }
             final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
             { //Free Cam Settings
-                freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", ui.gui.settings.FREECAMREXAXIS));
-                freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", ui.gui.settings.FREECAMREYAXIS));
-                freeg.add(new IndirCheckBox("Free Cam lock elevation", ui.gui.settings.FREECAMLOCKELAV));
+                freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", GlobalSettings.FREECAMREXAXIS));
+                freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", GlobalSettings.FREECAMREYAXIS));
+                freeg.add(new IndirCheckBox("Free Cam lock elevation", GlobalSettings.FREECAMLOCKELAV));
                 freeg.pack();
             }
 
             cam.add(rgrp);
-            cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", ui.gui.settings.CAMERAPROJFAR.get())));
-            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, ui.gui.settings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
+            cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", GlobalSettings.CAMERAPROJFAR.get())));
+            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
             cam.add(freeg);
             cam.pack();
         }

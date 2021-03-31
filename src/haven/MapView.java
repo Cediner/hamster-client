@@ -142,7 +142,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    float aspect = ((float)sz.y) / ((float)sz.x);
 	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field,
 		    -aspect * field, aspect * field,
-		    1, ui != null ? ui.gui.settings.CAMERAPROJFAR.get() : 10000));
+		    1, ui != null ? GlobalSettings.CAMERAPROJFAR.get() : 10000));
 	}
 
 	public void apply(Pipe p) {
@@ -296,11 +296,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	public void drag(Coord c) {
-	    if (ui.gui.settings.FREECAMREXAXIS.get())
+	    if (GlobalSettings.FREECAMREXAXIS.get())
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
-	    if (ui.gui.settings.FREECAMREYAXIS.get())
+	    if (GlobalSettings.FREECAMREYAXIS.get())
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+	    if (ui.modshift || !GlobalSettings.FREECAMLOCKELAV.get()) {
 		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
 		if (elev < 0.0f) elev = 0.0f;
 		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
@@ -400,11 +400,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public void drag(Coord c) {
-	    if (ui.gui.settings.FREECAMREXAXIS.get())
+	    if (GlobalSettings.FREECAMREXAXIS.get())
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
-	    if (ui.gui.settings.FREECAMREYAXIS.get())
+	    if (GlobalSettings.FREECAMREYAXIS.get())
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+	    if (ui.modshift || !GlobalSettings.FREECAMLOCKELAV.get()) {
 		telev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
 		if (telev < 0.0f) telev = 0.0f;
 		if (telev > (Math.PI / 2.0)) telev = (float) Math.PI / 2.0f;
@@ -3155,7 +3155,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Camera restorecam() {
 	final UI ui = glob.ui.get();
 	if(ui != null) {
-	    Class<? extends Camera> ct = camtypes.get(ui.gui.settings.CAMERA.get());
+	    Class<? extends Camera> ct = camtypes.get(GlobalSettings.CAMERA.get());
 	    if (ct != null) {
 		return makecam(ct);
 	    } else {
