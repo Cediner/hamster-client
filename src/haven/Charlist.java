@@ -86,6 +86,9 @@ public class Charlist extends Widget {
 	    }, bg.sz().x / 2, sau.c.y + sau.sz.y + (bg.sz().y * height) + (margin * (height - 1)), 0.5, 0);
 	sau.hide(); sad.hide();
 	resize(new Coord(bg.sz().x, sad.c.y + sad.sz.y));
+	final var logout = add(new Button(UI.scale(100), "Logout", () -> ui.sess.close()),
+		new Coord(0, sz.y));
+	resize(sz.x, sz.y + logout.sz.y);
     }
 
     protected void added() {
