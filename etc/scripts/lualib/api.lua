@@ -212,7 +212,7 @@ api.mc = {
 
   tilify = function(c)
     local mc = api.core.mc()
-    return c.div(mc.tilesz).mul(mc.tilesz).add(tilesz.div(2.0))
+    return c.div(mc.tilesz).mul(mc.tilesz).add(mc.tilesz.div(2.0))
   end
 }
 
@@ -284,11 +284,11 @@ api.bbox = {
       dir = api.coord.coord2i(1, 1)
     }
 
-    if sz.x < 0 then
-      dir.x = -1
+    if bb.sz.x < 0 then
+      bb.dir.x = -1
     end
-    if sz.y < 0 then
-      dir.y = -1
+    if bb.sz.y < 0 then
+      bb.dir.y = -1
     end
 
     return bb
@@ -456,7 +456,7 @@ api.chat = {
     local chats = api.chat.privchats()
     for i = 1, #chats do
       if name == chats[i]:name() then
-        return chat[i]
+        return chats[i]
       end
     end
     return nil
@@ -467,7 +467,7 @@ api.chat = {
   end,
 
   log = function(msg)
-    script:log(msG)
+    script:log(msg)
   end,
 
   chat_send_message = function(chat, msg)
@@ -538,11 +538,11 @@ api.hotkey = {
   end,
 
   wait_until_hotkey_is_set = function(slot)
-    api.core.waituntil((function() return is_hotkey_set(slot) end))
+    api.core.waituntil((function() return api.hotkey.is_hotkey_set(slot) end))
   end,
 
   wait_until_hotkey_is_unset = function(slot)
-    api.core.waituntil((function() return not is_hotkey_set(slot) end))
+    api.core.waituntil((function() return not api.hotkey.is_hotkey_set(slot) end))
   end
 }
 
@@ -697,7 +697,7 @@ api.gob = {
   end,
 
   get_all_by_name = function(name)
-    return get_all_by_filter((function(g) string.find(g:name(), name) end))
+    return api.core.gob.get_all_by_filter((function(g) string.find(g:name(), name) end))
   end,
 
   get_closest_by_filter_and_path = function(filter)
@@ -840,7 +840,7 @@ api.mv = {
     local nmoves = {}
 
     while i > 0 do
-      nmoves.insert(moves[i])
+      nmoves.insert(move[i])
       i = i - 1
     end
 
@@ -907,11 +907,11 @@ api.mv = {
   end,
 
   wait_for_placing_gob = function()
-    waituntil((function() return api.mv.placing_gob() end))
+    api.core.waituntil((function() return api.mv.placing_gob() end))
   end,
 
   wait_for_placing_gob_to_be_gone = function()
-    waituntil((function() return api.mv.placing_gob() == nil end))
+    api.core.waituntil((function() return api.mv.placing_gob() == nil end))
   end
 }
 
