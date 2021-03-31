@@ -124,6 +124,11 @@ public class GlobalSettings {
     public static final IndirSetting<Color> NVSPECCOL = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE);
     public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false);
 
+    //Pathfinding
+    public static final IndirSetting<Integer> PATHFINDINGTIER = new IndirSetting<>(global, "pathfinding.tier", 3);
+    public static final IndirSetting<Boolean> LIMITPATHFINDING = new IndirSetting<>(global, "pathfinding.limit-distance-to-view", false);
+    public static final IndirSetting<Boolean> RESEARCHUNTILGOAL = new IndirSetting<>(global, "pathfinding.research-until-at-goal", false);
+
     //Theme options
     public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");
     public static final IndirSetting<Color> WNDCOL =

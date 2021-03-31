@@ -125,14 +125,14 @@ public class GameplayPanel extends Scrollport {
             animal.pack();
         }
         { //Pathfinding
-            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), ui.gui.settings.PATHFINDINGTIER));
+            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), GlobalSettings.PATHFINDINGTIER));
             {
                 rg.add("Perfect", 1);
                 rg.add("Decent", 2);
                 rg.add("Fastest", 3);
             }
-            pf.add(new IndirCheckBox("Limit pathfinding to view distance", ui.gui.settings.LIMITPATHFINDING));
-            pf.add(new IndirCheckBox("Re-search goal until reached", ui.gui.settings.RESEARCHUNTILGOAL));
+            pf.add(new IndirCheckBox("Limit pathfinding to view distance", GlobalSettings.LIMITPATHFINDING));
+            pf.add(new IndirCheckBox("Re-search goal until reached", GlobalSettings.RESEARCHUNTILGOAL));
             pf.pack();
         }
 

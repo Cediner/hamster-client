@@ -2213,7 +2213,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
 
-	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
 	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
 	}
 
@@ -2226,7 +2226,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
 
-	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
 	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
 	}
 	g.updatePathfindingBlackout(false);

@@ -37,11 +37,6 @@ public class SessionSettings {
     public final IndirSetting<Boolean> FREECAMREYAXIS;
     public final IndirSetting<Boolean> FREECAMLOCKELAV;
 
-    ////Pathfinding
-    public final IndirSetting<Integer> PATHFINDINGTIER;
-    public final IndirSetting<Boolean> LIMITPATHFINDING;
-    public final IndirSetting<Boolean> RESEARCHUNTILGOAL;
-
     ////UI
     public final IndirSetting<Boolean> SHOWPLAVA;
     public final IndirSetting<Boolean> SHOWSPEED;
@@ -111,11 +106,6 @@ public class SessionSettings {
         FREECAMREXAXIS = new IndirSetting<>(local, "camera.free.reverse-x-axis", false);
         FREECAMREYAXIS = new IndirSetting<>(local, "camera.free.reverse-y-axis", false);
         FREECAMLOCKELAV = new IndirSetting<>(local, "camera.free.lock-elevation", false);
-
-        //Pathfinding
-        PATHFINDINGTIER = new IndirSetting<>(local, "pathfinding.tier", 3);
-        LIMITPATHFINDING = new IndirSetting<>(local, "pathfinding.limit-distance-to-view", false);
-        RESEARCHUNTILGOAL = new IndirSetting<>(local, "pathfinding.research-until-at-goal", false);
 
         //UI
         SHOWPLAVA = new IndirSetting<>(local, "ui.show-player-avatar", true);
