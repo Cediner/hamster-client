@@ -1,5 +1,6 @@
 package hamster.gob.attrs.monitors;
 
+import hamster.GlobalSettings;
 import hamster.gob.sprites.HitboxSprite;
 import haven.GAttrib;
 import haven.Gob;
@@ -19,8 +20,8 @@ public class HitboxMonitor extends GAttrib {
         super.ctick(dt);
         final UI ui = gob.glob.ui.get();
         if(ui != null && ui.gui != null) {
-            if(show != ui.gui.settings.SHOWHITBOX.get()) {
-                show = ui.gui.settings.SHOWHITBOX.get();
+            if(show != GlobalSettings.SHOWHITBOX.get()) {
+                show = GlobalSettings.SHOWHITBOX.get();
                 if(show) {
                     if(gob.findol(HitboxSprite.id) == null) {
                         gob.addol(new Gob.Overlay(gob, HitboxSprite.id, new HitboxSprite(gob)));

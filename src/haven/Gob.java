@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
+import hamster.GlobalSettings;
 import hamster.data.map.MarkerData;
 import hamster.data.gob.ObjData;
 import hamster.gob.*;
@@ -262,7 +263,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.slots == null) {
-		if(hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get()) {
+		if(hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get()) {
 		    try {
 			ol.init();
 		    } catch (Loading ignored) {
@@ -402,7 +403,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		setupmods.remove(prev);
 	}
 	if(a != null) {
-	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get())) {
+	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get())) {
 		try {
 		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
 		} catch(Loading l) {
@@ -626,7 +627,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if (ui != null && ui.gui != null) {
 	    slot.ostate(curstate());
 	    final Hidden hidden = getattr(Hidden.class);
-	    if (ui.gui.settings.SHOWHIDDEN.get() || hidden == null) {
+	    if (GlobalSettings.SHOWHIDDEN.get() || hidden == null) {
 		_added(slot);
 	    } else {
 		slot.add(hidden);

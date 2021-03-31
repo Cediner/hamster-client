@@ -9,35 +9,6 @@ import java.awt.*;
  * Session based settings based off account:character name
  */
 public class SessionSettings {
-    ////Display / Graphical
-    public final IndirSetting<Boolean> SHOWPCLAIM;
-    public final IndirSetting<Boolean> SHOWVCLAIM;
-    public final IndirSetting<Boolean> SHOWKCLAIM;
-
-    ////Minimap
-    public final IndirSetting<Boolean> SHOWMMGOBS;
-    public final IndirSetting<Boolean> SHOWMMMARKERNAMES;
-    public final IndirSetting<Boolean> SHOWMMGOBNAMES;
-    public final IndirSetting<Boolean> SHOWMMMARKERS;
-    public final IndirSetting<Boolean> SMALLMMMARKERS;
-    public final IndirSetting<Boolean> SHOWPMARKERS;
-    public final IndirSetting<Boolean> SHOWNMARKERS;
-    public final IndirSetting<Boolean> SHOWCMARKERS;
-    public final IndirSetting<Boolean> SHOWLMARKERS;
-    public final IndirSetting<Boolean> SHOWKMARKERS;
-    public final IndirSetting<Boolean> SHOWKMARKERRAD;
-    public final IndirSetting<Boolean> SHOWVMARKERS;
-    public final IndirSetting<Boolean> SHOWVMARKERRAD;
-    public final IndirSetting<Boolean> SHOWVMARKERTIPS;
-
-    public final IndirSetting<Coord> MMMEMSIZEONE;
-    public final IndirSetting<Coord> MMMEMPOSONE ;
-    public final IndirSetting<Coord> MMMEMSIZETWO;
-    public final IndirSetting<Coord> MMMEMPOSTWO;
-    public final IndirSetting<Boolean> MMSHOWGRID;
-    public final IndirSetting<Boolean> MMSHOWVIEW;
-    public final IndirSetting<Color> MMPATHCOL;
-
     ////Gob
     public final IndirSetting<Integer> BADKIN;
     public final IndirSetting<Boolean> COLORFULFARMES;
@@ -109,46 +80,11 @@ public class SessionSettings {
     //Combat UI
     public final IndirSetting<Boolean> COLORIZEAGGRO;
 
-
-    ////Temporary, non-saved, settings
-    public final IndirSetting<Boolean> SHOWGRID;
-    public final IndirSetting<Boolean> SHOWHIDDEN;
-    public final IndirSetting<Boolean> SHOWHITBOX;
-    public final IndirSetting<Boolean> SHOWHOVERTOOLTIPS;
-
     public SessionSettings(final String account, final String character) {
         final Settings local = new Settings(String.format("%s:%s", account, character));
-        final Settings tmp = new Settings("Temp", false);
-        //Display / Graphical
-        COLORIZEAGGRO = new IndirSetting<>(local, "display.colorize-aggro", true);
-        SHOWPCLAIM = new IndirSetting<>(local, "display.show-pclaim", false);
-        SHOWVCLAIM = new IndirSetting<>(local, "display.show-vclaim", false);
-        SHOWKCLAIM = new IndirSetting<>(local, "display.show-kclaim", false);
-
-        //Minimap
-        SHOWMMGOBS = new IndirSetting<>(local, "minimap.show-gobs", true);
-        SHOWMMMARKERNAMES = new IndirSetting<>(local, "minimap.show-marker-names", true);
-        SHOWMMGOBNAMES = new IndirSetting<>(local, "minimap.show-gob-names", true);
-        SHOWMMMARKERS = new IndirSetting<>(local, "minimap.show-markers", true);
-        SMALLMMMARKERS = new IndirSetting<>(local, "minimap.show-small-markers", true);
-        SHOWPMARKERS = new IndirSetting<>(local, "minimap.show-placed-markers", true);
-        SHOWNMARKERS = new IndirSetting<>(local, "minimap.show-natural-markers", true);
-        SHOWCMARKERS = new IndirSetting<>(local, "minimap.show-custom-markers", true);
-        SHOWLMARKERS = new IndirSetting<>(local, "minimap.show-linked-markers", true);
-        SHOWKMARKERS = new IndirSetting<>(local, "minimap.show-kingdom-markers", true);
-        SHOWKMARKERRAD = new IndirSetting<>(local, "minimap.show-kingdom-radius", true);
-        SHOWVMARKERS = new IndirSetting<>(local, "minimap.show-village-markers", true);
-        SHOWVMARKERRAD = new IndirSetting<>(local, "minimap.show-village-radius", true);
-        SHOWVMARKERTIPS = new IndirSetting<>(local, "minimap.show-village-names", true);
-        MMMEMSIZEONE = new IndirSetting<>(local, "minimap.mem-size-one", new Coord(100, 100));
-        MMMEMPOSONE = new IndirSetting<>(local, "minimap.mem-pos-one", new Coord(500, 100));
-        MMMEMSIZETWO = new IndirSetting<>(local, "minimap.mem-size-two", new Coord(300, 300));
-        MMMEMPOSTWO = new IndirSetting<>(local, "minimap.mem-pos-two", new Coord(500, 100));
-        MMSHOWGRID = new IndirSetting<>(local, "minimap.show-grid", false);
-        MMSHOWVIEW = new IndirSetting<>(local, "minimap.show-view", true);
-        MMPATHCOL = new IndirSetting<>(local, "minimap.path-color", Color.magenta);
 
         //Gob
+        COLORIZEAGGRO = new IndirSetting<>(local, "gob.colorize-aggro", true);
         BADKIN = new IndirSetting<>(local, "gob.bad-kin-color", 2);
         COLORFULFARMES = new IndirSetting<>(local, "gob.colorful-frames", true);
         COLORFULTUBS = new IndirSetting<>(local, "gob.colorful-tubs", true);
@@ -212,11 +148,5 @@ public class SessionSettings {
         QUICKFLMENU = new IndirSetting<>(local, "ui.flowermenu.quick-menu", false);
         KEEPFLOPEN = new IndirSetting<>(local, "ui.flowermenu.never-close-on-click", false);
         SHOWEXPWND = new IndirSetting<>(local, "ui.show-experience-window", true);
-
-        //Temporary, non-saved, settings
-        SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
-        SHOWGRID = new IndirSetting<>(tmp, "session.show-grid", false);
-        SHOWHITBOX = new IndirSetting<>(tmp, "session.show-hitbox", false);
-        SHOWHOVERTOOLTIPS = new IndirSetting<>(tmp, "session.show-hover-tooltips", false);
     }
 }

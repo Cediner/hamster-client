@@ -2868,7 +2868,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		placing.new Adjust(c, ui.modflags()).run();
 	    }
-	} else if (ui.gui.settings.SHOWHOVERTOOLTIPS.get()) {
+	} else if (GlobalSettings.SHOWHOVERTOOLTIPS.get()) {
 	    new Hover(c).run();
 	} else {
 	    lasttt = "";
@@ -2942,12 +2942,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void setupKeyBinds() {
         binds.put(KB_TOGGLE_GRID, () -> { showgrid(gridlines == null); return true; });
         binds.put(KB_TOGGLE_TIPS, () -> {
-	    ui.gui.settings.SHOWHOVERTOOLTIPS.set(!ui.gui.settings.SHOWHOVERTOOLTIPS.get());
+	    GlobalSettings.SHOWHOVERTOOLTIPS.set(!GlobalSettings.SHOWHOVERTOOLTIPS.get());
             return true;
 	});
         binds.put(KB_TOGGLE_HIDDEN, () -> {
-	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
-	    //TODO: This can result in very buggy behavior and needs reexamined at some point
+	    GlobalSettings.SHOWHIDDEN.set(!GlobalSettings.SHOWHIDDEN.get());
+	    //TODO: I really should apply this to all sessions somehow...
 	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
 	    if(this.placing != null && this.placing.done()) {
 	        final var plob = this.placing.get();
@@ -2956,7 +2956,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
             return true;
 	});
         binds.put(KB_TOGGLE_HITBOXES, () -> {
-	    ui.gui.settings.SHOWHITBOX.set(!ui.gui.settings.SHOWHITBOX.get());
+	    GlobalSettings.SHOWHITBOX.set(!GlobalSettings.SHOWHITBOX.get());
 	    return true;
         });
         binds.put(KB_MOVE_EAST, () -> { relMove(-1000d, 0d); return true; });

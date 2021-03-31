@@ -11,6 +11,7 @@ import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
 import hamster.util.JobSystem;
+import haven.Coord;
 import haven.JOGLPanel;
 
 import java.awt.*;
@@ -39,6 +40,9 @@ public class GlobalSettings {
     //Non-saved globals
     public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(tmp, "tmp.pause", false);
     public static final IndirSetting<Boolean> GENERATINGTOKEN = new IndirSetting<>(tmp, "generate-token", false);
+    public static final IndirSetting<Boolean> SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
+    public static final IndirSetting<Boolean> SHOWHITBOX = new IndirSetting<>(tmp, "session.show-hitbox", false);
+    public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(tmp, "session.show-hover-tooltips", false);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
@@ -86,6 +90,29 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> LONGLIVINGDUST = new IndirSetting<>(global, "map.long-living-cave-dust", false);
     public static final IndirSetting<Boolean> COLORFULDUST = new IndirSetting<>(global, "map.colorful-cave-dust", false);
     public static final IndirSetting<Boolean> LARGEDUSTSIZE = new IndirSetting<>(global, "map.large-cave-dust", false);
+
+    //Minimap
+    public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "minimap.show-gobs", true);
+    public static final IndirSetting<Boolean> SHOWMMMARKERNAMES = new IndirSetting<>(global, "minimap.show-marker-names", true);
+    public static final IndirSetting<Boolean> SHOWMMGOBNAMES = new IndirSetting<>(global, "minimap.show-gob-names", true);
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "minimap.show-markers", true);
+    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "minimap.show-small-markers", true);
+    public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "minimap.show-placed-markers", true);
+    public static final IndirSetting<Boolean> SHOWNMARKERS = new IndirSetting<>(global, "minimap.show-natural-markers", true);
+    public static final IndirSetting<Boolean> SHOWCMARKERS = new IndirSetting<>(global, "minimap.show-custom-markers", true);
+    public static final IndirSetting<Boolean> SHOWLMARKERS = new IndirSetting<>(global, "minimap.show-linked-markers", true);
+    public static final IndirSetting<Boolean> SHOWKMARKERS = new IndirSetting<>(global, "minimap.show-kingdom-markers", true);
+    public static final IndirSetting<Boolean> SHOWKMARKERRAD = new IndirSetting<>(global, "minimap.show-kingdom-radius", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERS = new IndirSetting<>(global, "minimap.show-village-markers", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERRAD = new IndirSetting<>(global, "minimap.show-village-radius", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERTIPS = new IndirSetting<>(global, "minimap.show-village-names", true);
+    public static final IndirSetting<Coord> MMMEMSIZEONE = new IndirSetting<>(global, "minimap.mem-size-one", new Coord(100, 100));
+    public static final IndirSetting<Coord> MMMEMPOSONE = new IndirSetting<>(global, "minimap.mem-pos-one", new Coord(500, 100));
+    public static final IndirSetting<Coord> MMMEMSIZETWO = new IndirSetting<>(global, "minimap.mem-size-two", new Coord(300, 300));
+    public static final IndirSetting<Coord> MMMEMPOSTWO = new IndirSetting<>(global, "minimap.mem-pos-two", new Coord(500, 100));
+    public static final IndirSetting<Boolean> MMSHOWGRID = new IndirSetting<>(global, "minimap.show-grid", false);
+    public static final IndirSetting<Boolean> MMSHOWVIEW = new IndirSetting<>(global, "minimap.show-view", true);
+    public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);

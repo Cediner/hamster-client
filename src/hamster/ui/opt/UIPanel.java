@@ -1,5 +1,6 @@
 package hamster.ui.opt;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
 import hamster.ui.core.indir.IndirHSlider;
@@ -44,21 +45,21 @@ public class UIPanel extends Scrollport {
             visibility.pack();
         }
         { //minimap
-            minimap.add(new IndirCheckBox("Show Gobs", ui.gui.settings.SHOWMMGOBS));
-            minimap.add(new IndirCheckBox("Show Marker Names", ui.gui.settings.SHOWMMMARKERNAMES));
-            minimap.add(new IndirCheckBox("Show Gob Names", ui.gui.settings.SHOWMMGOBNAMES));
-            minimap.add(new IndirCheckBox("Show Markers", ui.gui.settings.SHOWMMMARKERS));
-            minimap.add(new IndirCheckBox("Show Small Markers", ui.gui.settings.SMALLMMMARKERS));
-            minimap.add(new IndirCheckBox("Show Placed Markers", ui.gui.settings.SHOWPMARKERS));
-            minimap.add(new IndirCheckBox("Show Natural Markers", ui.gui.settings.SHOWNMARKERS));
-            minimap.add(new IndirCheckBox("Show Custom Markers", ui.gui.settings.SHOWCMARKERS));
-            minimap.add(new IndirCheckBox("Show Linked Markers", ui.gui.settings.SHOWLMARKERS));
-            minimap.add(new IndirCheckBox("Show Kingdom Markers", ui.gui.settings.SHOWKMARKERS));
-            minimap.add(new IndirCheckBox("Show Kingdom Radius", ui.gui.settings.SHOWKMARKERRAD));
-            minimap.add(new IndirCheckBox("Show Village Markers", ui.gui.settings.SHOWVMARKERS));
-            minimap.add(new IndirCheckBox("Show Village Radius", ui.gui.settings.SHOWVMARKERRAD));
-            minimap.add(new IndirCheckBox("Show Village Names", ui.gui.settings.SHOWVMARKERTIPS));
-            minimap.add(OptionsWnd.ColorPreWithLabel("Queued Path Color", ui.gui.settings.MMPATHCOL));
+            minimap.add(new IndirCheckBox("Show Gobs", GlobalSettings.SHOWMMGOBS));
+            minimap.add(new IndirCheckBox("Show Marker Names", GlobalSettings.SHOWMMMARKERNAMES));
+            minimap.add(new IndirCheckBox("Show Gob Names", GlobalSettings.SHOWMMGOBNAMES));
+            minimap.add(new IndirCheckBox("Show Markers", GlobalSettings.SHOWMMMARKERS));
+            minimap.add(new IndirCheckBox("Show Small Markers", GlobalSettings.SMALLMMMARKERS));
+            minimap.add(new IndirCheckBox("Show Placed Markers", GlobalSettings.SHOWPMARKERS));
+            minimap.add(new IndirCheckBox("Show Natural Markers", GlobalSettings.SHOWNMARKERS));
+            minimap.add(new IndirCheckBox("Show Custom Markers", GlobalSettings.SHOWCMARKERS));
+            minimap.add(new IndirCheckBox("Show Linked Markers", GlobalSettings.SHOWLMARKERS));
+            minimap.add(new IndirCheckBox("Show Kingdom Markers", GlobalSettings.SHOWKMARKERS));
+            minimap.add(new IndirCheckBox("Show Kingdom Radius", GlobalSettings.SHOWKMARKERRAD));
+            minimap.add(new IndirCheckBox("Show Village Markers", GlobalSettings.SHOWVMARKERS));
+            minimap.add(new IndirCheckBox("Show Village Radius", GlobalSettings.SHOWVMARKERRAD));
+            minimap.add(new IndirCheckBox("Show Village Names", GlobalSettings.SHOWVMARKERTIPS));
+            minimap.add(OptionsWnd.ColorPreWithLabel("Queued Path Color: ", GlobalSettings.MMPATHCOL));
             minimap.pack();
         }
         { //menu

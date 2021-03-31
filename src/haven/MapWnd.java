@@ -31,6 +31,7 @@ import java.io.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
 import hamster.data.map.MarkerData;
@@ -106,8 +107,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 
 	makeHidable();
 
-	binds.put(KB_RECALL_MAP_ONE, () -> { recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE); return true; });
-	binds.put(KB_RECALL_MAP_TWO, () -> { recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO); return true; });
+	binds.put(KB_RECALL_MAP_ONE, () -> { recall(GlobalSettings.MMMEMSIZEONE, GlobalSettings.MMMEMPOSONE); return true; });
+	binds.put(KB_RECALL_MAP_TWO, () -> { recall(GlobalSettings.MMMEMSIZETWO, GlobalSettings.MMMEMPOSTWO); return true; });
 	binds.put(KB_MAP_HOME, () -> {recenter(); return true;});
 	binds.put(KB_MAP_MARK, () -> {domark = !domark; return true; });
 	binds.put(KB_MAP_HIDE_MARKERS, () -> {hmarkers = !hmarkers; return true;});
@@ -121,25 +122,24 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	super.added();
 	setVisible(ui.gui.settings.SHOWMINIMAP.get());
 	addBtn(new ICheckBox("buttons/wnd/view", "Toggle view range"))
-		.state(() -> ui.gui.settings.MMSHOWVIEW.get())
-		.changed(a -> ui.gui.settings.MMSHOWVIEW.set(a))
-		.set(ui.gui.settings.MMSHOWVIEW.get());
+		.state(GlobalSettings.MMSHOWVIEW::get)
+		.changed(GlobalSettings.MMSHOWVIEW::set)
+		.set(GlobalSettings.MMSHOWVIEW.get());
 	addBtn(new ICheckBox("buttons/wnd/grid", "Toggle grid on minimap"))
-		.state(() -> ui.gui.settings.MMSHOWGRID.get())
-		.changed(a -> ui.gui.settings.MMSHOWGRID.set(a))
-		.set(ui.gui.settings.MMSHOWGRID.get());
+		.state(GlobalSettings.MMSHOWGRID::get)
+		.changed(GlobalSettings.MMSHOWGRID::set)
+		.set(GlobalSettings.MMSHOWGRID.get());
 	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisibility());
-	//TODO: Update the realm, vclaim, claim icons with jorb's newer hi-res ones
 	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("realm", a));
 	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
 	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("cplot", a));
 
 	addBtn("buttons/wnd/two", "2nd remembered window size",
-		() -> recall(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO),
-		() -> remember(ui.gui.settings.MMMEMSIZETWO, ui.gui.settings.MMMEMPOSTWO));
+		() -> recall(GlobalSettings.MMMEMSIZETWO, GlobalSettings.MMMEMPOSTWO),
+		() -> remember(GlobalSettings.MMMEMSIZETWO, GlobalSettings.MMMEMPOSTWO));
 	addBtn("buttons/wnd/one", "1st remembered window size",
-		() -> recall(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE),
-		() -> remember(ui.gui.settings.MMMEMSIZEONE, ui.gui.settings.MMMEMPOSONE));
+		() -> recall(GlobalSettings.MMMEMSIZEONE, GlobalSettings.MMMEMPOSONE),
+		() -> remember(GlobalSettings.MMMEMSIZEONE, GlobalSettings.MMMEMPOSONE));
 	pack();
     }
 
@@ -292,7 +292,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	}
 
 	private void drawview(final GOut g, final Coord ploc) {
-	    if (ui.gui.settings.MMSHOWVIEW.get()) {
+	    if (GlobalSettings.MMSHOWVIEW.get()) {
 		final Coord vsz = viewbox.sz().div(UI.scale(scalef()));
 		g.image(viewbox, ploc.sub(vsz.div(2)), vsz);
 	    }
@@ -335,7 +335,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		Coord last;
 		if (movingto != null) {
 		    //Make the line first
-		    g.chcolor(ui.gui.settings.MMPATHCOL.get());
+		    g.chcolor(GlobalSettings.MMPATHCOL.get());
 		    final Coord cloc = xlate(ploc);
 		    last = xlate(new Location(ploc.seg, ploc.tc.add(movingto.dest().floor(tilesz).sub(pc))));
 		    if (last != null && cloc != null) {
