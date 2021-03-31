@@ -1,5 +1,6 @@
 package hamster.gob.attrs.mods;
 
+import hamster.GlobalSettings;
 import haven.GAttrib;
 import haven.Gob;
 import haven.UI;
@@ -31,7 +32,7 @@ public class CupboardStatus extends GAttrib implements Gob.SetupMod {
     @Override
     public Pipe.Op gobstate() {
         final UI ui = gob.glob.ui.get();
-        if (ui != null && ui.gui != null &&  ui.gui.settings.COLORFULCUPBOARDS.get()) {
+        if (ui != null && ui.gui != null &&  GlobalSettings.COLORFULCUPBOARDS.get()) {
             return switch (state) {
                 case EMPTY -> cupboardempty;
                 case FULL -> cupboardfull;

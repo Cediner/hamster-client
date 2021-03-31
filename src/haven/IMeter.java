@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.ui.core.MovableWidget;
 
@@ -83,15 +84,15 @@ public class IMeter extends MovableWidget {
 	switch (t) {
 	    case HP -> {
 		ui.gui.hp = this;
-	        checkVisiblity(ui.gui.settings.SHOWHEALTH);
+	        checkVisiblity(GlobalSettings.SHOWHEALTH);
 	    }
 	    case STAM -> {
 		ui.gui.stam = this;
-	        checkVisiblity(ui.gui.settings.SHOWSTAM);
+	        checkVisiblity(GlobalSettings.SHOWSTAM);
 	    }
 	    case ENERGY -> {
 		ui.gui.energy = this;
-	        checkVisiblity(ui.gui.settings.SHOWENERGY);
+	        checkVisiblity(GlobalSettings.SHOWENERGY);
 	    }
 	}
     }
@@ -122,7 +123,7 @@ public class IMeter extends MovableWidget {
     @Override
     public void tick(double dt) {
 	super.tick(dt);
-	if (ui.gui.settings.BIGSIMPLEMETERS.get()) {
+	if (GlobalSettings.BIGSIMPLEMETERS.get()) {
 	    if (!sz.equals(bsz))
 		resize(bsz);
 	} else if (!sz.equals(fsz)) {
@@ -151,7 +152,7 @@ public class IMeter extends MovableWidget {
     }
 
     public void draw(GOut g) {
-	if (!ui.gui.settings.BIGSIMPLEMETERS.get()) {
+	if (!GlobalSettings.BIGSIMPLEMETERS.get()) {
 	    try {
 		Tex bg = this.bg.get().layer(Resource.imgc).tex();
 		g.chcolor(0, 0, 0, 255);
@@ -196,21 +197,21 @@ public class IMeter extends MovableWidget {
 			    ui.sess.details.shp = Integer.parseInt(matcher.group(1));
 			    ui.sess.details.hhp = Integer.parseInt(matcher.group(2));
 			    ui.sess.details.mhp = Integer.parseInt(matcher.group(3));
-			    setVisible(ui.gui.settings.SHOWHEALTH.get());
+			    setVisible(GlobalSettings.SHOWHEALTH.get());
 			}
 		    }
 		    case STAM -> {
 			final Matcher matcher = stampat.matcher(tt);
 			if (matcher.find()) {
 			    ui.sess.details.stam = Integer.parseInt(matcher.group(1));
-			    setVisible(ui.gui.settings.SHOWSTAM.get());
+			    setVisible(GlobalSettings.SHOWSTAM.get());
 			}
 		    }
 		    case ENERGY -> {
 			final Matcher matcher = energypat.matcher(tt);
 			if (matcher.find()) {
 			    ui.sess.details.energy = Integer.parseInt(matcher.group(1));
-			    setVisible(ui.gui.settings.SHOWENERGY.get());
+			    setVisible(GlobalSettings.SHOWENERGY.get());
 			}
 		    }
 		}

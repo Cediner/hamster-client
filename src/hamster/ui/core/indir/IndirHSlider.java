@@ -51,7 +51,7 @@ public class IndirHSlider extends Widget {
     }
 
     public boolean mousedown(Coord c, int button) {
-        if (button != 1)
+        if (button != 1 || !c.isect(Coord.z, sz))
             return (false);
         drag = ui.grabmouse(this);
         mousemove(c);

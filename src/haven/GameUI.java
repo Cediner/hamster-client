@@ -26,9 +26,14 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.SessionSettings;
 import hamster.data.BeltData;
+import hamster.data.gob.ObjData;
+import hamster.gob.Tag;
+import hamster.gob.attrs.info.ScreenLocation;
+import hamster.gob.sprites.TargetSprite;
 import hamster.io.SQLResCache;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
@@ -225,7 +230,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
 	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
-	lrhandview.setVisible(settings.SHOWLRSLOTS.get());
+	lrhandview.setVisible(GlobalSettings.SHOWLRSLOTS.get());
 	timers = new TimersWnd();
 	timers.hide();
 	foragehelper = new ForageHelperWnd();
@@ -290,6 +295,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void dispose() {
+	ui.root.add(ui.root.sessionDisplay = new SessionDisplay());
 	savewndpos();
 	Debug.log = new java.io.PrintWriter(System.err);
 	ui.cons.clearout();
@@ -532,9 +538,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	    case "menu" -> {
 		menu = (MenuGrid) add(child, new Coord(sz.x - child.sz.x, sz.y - child.sz.y));
-		add(hotbar1, new Coord(20, 300)).setVisible(ui.gui.settings.SHOWHOTBAR1.get());
-		add(hotbar2, new Coord(20, 400)).setVisible(ui.gui.settings.SHOWHOTBAR2.get());
-		add(hotbar3, new Coord(20, 500)).setVisible(ui.gui.settings.SHOWHOTBAR3.get());
+		add(hotbar1, new Coord(20, 300)).setVisible(GlobalSettings.SHOWHOTBAR1.get());
+		add(hotbar2, new Coord(20, 400)).setVisible(GlobalSettings.SHOWHOTBAR2.get());
+		add(hotbar3, new Coord(20, 500)).setVisible(GlobalSettings.SHOWHOTBAR3.get());
 
 		paginasearch = add(new ActWnd("Menu Search"));
 		paginasearch.hide();
@@ -550,7 +556,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		};
 		invwnd.add(maininv = (Inventory) child, Coord.z);
 		invwnd.pack();
-		if(!settings.SHOWINVONLOGIN.get())
+		if(!GlobalSettings.SHOWINVONLOGIN.get())
 		    invwnd.hide();
 		mminv = new MiniInvView(maininv);
 		add(mminv, new Coord(100, 100));
@@ -968,10 +974,265 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_EQU, () -> { equwnd.toggleVisibility(); return true; });
         binds.put(KB_TOGGLE_INV, () -> { invwnd.toggleVisibility(); return true; });
         binds.put(KB_TOGGLE_KIN, () -> { zerg.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_FORAGE, () -> { foragehelper.toggleVisibility(); return true; });
+        binds.put(KB_TOGGLE_LIVESTOCK, () -> { menu.use("paginae/act/croster");return true; });
+        binds.put(KB_LOCK_ITEM_ON_MOUSE, () -> {
+            if(vhand != null) {
+                vhand.setLock(!vhand.locked());
+		return true;
+	    } else {
+		return false;
+	    }
+	});
         binds.put(KB_TOGGLE_MINIMAP, () -> { mapfile.toggleVisibility(); return true; });
         binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    	binds.put(KB_QUICK_BOARD, () -> {
+    	   if(map != null) {
+	       final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
+	       if (pl != null) {
+		   final Coord3f plc = pl.getc();
+		   Gob target = null;
+		   float dist = Float.MAX_VALUE;
+		   synchronized (ui.sess.glob.oc) {
+		       for (final Gob g : ui.sess.glob.oc) {
+			   if(g.hasTag(Tag.CAN_RIDE) && !g.hasTag(Tag.WATER_VEHICLE) || (g.hasTag(Tag.WATER_VEHICLE) && !g.isHolding(pl.id))) {
+			       final float gdist = plc.dist(g.getc());
+			       if (target != null && gdist < dist) {
+				   target = g;
+				   dist = gdist;
+			       } else if (target == null) {
+				   target = g;
+				   dist = gdist;
+			       }
+			   }
+		       }
+		   }
+		   if (target != null) {
+		       final Coord tc = target.rc.floor(OCache.posres);
+		       final Optional<String> name = target.resname();
+		       map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+		       name.ifPresent((nm) -> {
+		           //Knars, Snekkja have a flowermenu and the second option is to join the crew
+		           if(nm.endsWith("knarr") || nm.endsWith("snekkja")) {
+		               ui.wdgmsg(ui.next_predicted_id, "cl", 1);
+			   } else if(nm.endsWith("wagon")) {
+		               //Wagons havea  flowermenu and the first option is to ride
+			       ui.wdgmsg(ui.next_predicted_id, "cl", 0);
+			   }
+		       });
+		       return true;
+		   }
+	       }
+	   }
+    	   return false;
+	});
+    	binds.put(KB_QUICK_ACTION, () -> {
+    	    if (map != null) {
+		final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
+		if (pl != null) {
+		    final Coord3f plc = pl.getc();
+		    Gob target = null;
+		    float dist = Float.MAX_VALUE;
+		    synchronized (ui.sess.glob.oc) {
+			for (final Gob g : ui.sess.glob.oc) {
+			    final Optional<String> name = g.resname();
+			    if (name.isPresent() && (ObjData.isForagable(name.get(), g)
+				    || isKickSled(name.get(), g, map.plgob))) {
+				final float gdist = plc.dist(g.getc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		    if (target != null) {
+			final Coord tc = target.rc.floor(OCache.posres);
+			map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
+			return true;
+		    } else {
+			return false;
+		    }
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    	binds.put(KB_AGGRO_TARGET, () -> {
+	    if (map != null && curtar != -1) {
+	        final Gob g = ui.sess.glob.oc.getgob(curtar);
+	        if(g != null) {
+		    final Coord tc = g.rc.floor(OCache.posres);
+		    final ScreenLocation sc = g.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) g.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
+		    return true;
+		} else {
+	            return false;
+		}
+	    } else {
+	        return false;
+	    }
+	});
+    	binds.put(KB_AGGRO_NEAREST_ANIMAL_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+		        final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (sc != null && g.name().startsWith("gfx/kritter/") && sc.sc() != null && !g.isDead()) {
+			    final double gdist = ui.mc.dist(sc.sc());
+			    if (target != null && gdist < dist) {
+				target = g;
+				dist = gdist;
+			    } else if (target == null) {
+				target = g;
+				dist = gdist;
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    final ScreenLocation sc = target.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    	binds.put(KB_AGGRO_NEAREST_PLAYER_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
+			    final KinInfo kin = g.getattr(KinInfo.class);
+			    if (kin == null || kin.group == GlobalSettings.BADKIN.get()) {
+				final double gdist = ui.mc.dist(sc.sc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    final Coord tc = target.rc.floor(OCache.posres);
+		    final ScreenLocation sc = target.getattr(ScreenLocation.class);
+		    menu.wdgmsg("act", new Object[]{"aggro"});
+		    map.wdgmsg("click", sc.sc(), tc, 1, 0, 0, (int) target.id, tc, 0, -1);
+		    map.wdgmsg("click", sc.sc(), tc, 3, 0);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+	binds.put(KB_TARGET_NEAREST_ANIMAL_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (sc != null && g.name().startsWith("gfx/kritter/") && sc.sc() != null && !g.isDead()) {
+			    final double gdist = ui.mc.dist(sc.sc());
+			    if (target != null && gdist < dist) {
+				target = g;
+				dist = gdist;
+			    } else if (target == null) {
+				target = g;
+				dist = gdist;
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    target(target);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+	binds.put(KB_TARGET_NEAREST_PLAYER_TO_MOUSE, () -> {
+	    if (map != null && menu != null) {
+		Gob target = null;
+		double dist = Float.MAX_VALUE;
+		synchronized (ui.sess.glob.oc) {
+		    for (final Gob g : ui.sess.glob.oc) {
+			final ScreenLocation sc = g.getattr(ScreenLocation.class);
+			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
+			    final KinInfo kin = g.getattr(KinInfo.class);
+			    if (kin == null || kin.group == GlobalSettings.BADKIN.get()) {
+				final double gdist = ui.mc.dist(sc.sc());
+				if (target != null && gdist < dist) {
+				    target = g;
+				    dist = gdist;
+				} else if (target == null) {
+				    target = g;
+				    dist = gdist;
+				}
+			    }
+			}
+		    }
+		}
+		if (target != null) {
+		    target(target);
+		    return true;
+		} else {
+		    return false;
+		}
+	    } else {
+		return false;
+	    }
+	});
+    }
+
+    private void target(final Gob target) {
+	final Gob old = ui.sess.glob.oc.getgob(curtar);
+	if (old != null) {
+	    final Gob.Overlay ol = old.findol(TargetSprite.id);
+	    if (ol != null) {
+		((TargetSprite) ol.spr).rem();
+	    }
+	}
+	curtar = target.id;
+	target.queueDeltas(Collections.singletonList((gob) -> target.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+	if(chat.party != null)
+	    chat.party.send(String.format(TargetSprite.target_pat, target.id));
+    }
+
+    private boolean isKickSled(final String name, final Gob g, long plgob){
+	if(name.equals("gfx/terobjs/vehicle/spark")){
+	    return !g.isHolding(plgob) &&  g.howManyGobsHeld() < 2;
+	}
+	return false;
     }
 
     public boolean globtype(char key, KeyEvent ev) {

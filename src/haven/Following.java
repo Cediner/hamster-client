@@ -75,6 +75,36 @@ public class Following extends Moving {
 	return(gob.glob.oc.getgob(this.tgt));
     }
 
+    @Override
+    public void ctick(double dt) {
+	super.ctick(dt);
+	final Gob tgt = tgt();
+	if (tgt != null) {
+	    //tgt is holding `gob`
+	    if (!gob.isHeldBy(this.tgt)) {
+		gob.heldby(this.tgt);
+	    }
+	    if (!tgt.isHolding(gob.id)) {
+		tgt.hold(gob.id);
+	    }
+	}
+    }
+
+    @Override
+    public void dispose() {
+	final Gob tgt = tgt();
+	if (tgt != null) {
+	    //tgt is holding `gob`
+	    if (gob.isHeldBy(this.tgt)) {
+	        gob.isNoLongerHeld();
+	    }
+	    if (tgt.isHolding(gob.id)) {
+		tgt.isNoLongerHolding(gob.id);
+	    }
+	}
+	super.dispose();
+    }
+
     private Skeleton.Pose getpose(Gob tgt) {
 	if(tgt == null)
 	    return(null);

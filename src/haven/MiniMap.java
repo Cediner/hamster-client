@@ -29,12 +29,13 @@ package haven;
 import java.util.*;
 import java.awt.Color;
 
+import hamster.GlobalSettings;
 import hamster.MouseBind;
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
+import hamster.gob.Tag;
 import hamster.script.pathfinding.Move;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
-import haven.MapFile.Grid;
 import haven.MapFile.GridInfo;
 import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
@@ -335,16 +336,17 @@ public class MiniMap extends Widget {
 	}
 
 	private Area hit(final UI ui) {
-	    if ((type == Type.PLACED && ui.gui.settings.SHOWPMARKERS.get()) ||
-		    (type == Type.KINGDOM && ui.gui.settings.SHOWKMARKERS.get()) ||
-		    (type == Type.LINKED && ui.gui.settings.SHOWLMARKERS.get()) ||
-		    (type == Type.CUSTOM && ui.gui.settings.SHOWCMARKERS.get()) ||
-		    (type == Type.NATURAL && ui.gui.settings.SHOWNMARKERS.get()) ||
-		    (type == Type.VILLAGE && ui.gui.settings.SHOWVMARKERS.get())) {
+	    if (GlobalSettings.SHOWMMMARKERS.get() &&
+		    ((type == Type.PLACED && GlobalSettings.SHOWPMARKERS.get()) ||
+		    (type == Type.KINGDOM && GlobalSettings.SHOWKMARKERS.get()) ||
+		    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
+		    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
+		    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
+		    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()))) {
 		if (!(m instanceof MapFile.CustomMarker || m instanceof MapFile.RealmMarker)) {
 		    return hit;
 		} else if (img != null) {
-		    final Coord sz = ui.gui.settings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
+		    final Coord sz = GlobalSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
 		    return Area.sized(sz.div(2).inv(), sz);
 		} else {
 		    return null;
@@ -355,12 +357,13 @@ public class MiniMap extends Widget {
 	}
 
 	public void draw(GOut g, Coord c, final float scale, final UI ui) {
-	    if ((type == Type.PLACED && ui.gui.settings.SHOWPMARKERS.get()) ||
-		    (type == Type.KINGDOM && ui.gui.settings.SHOWKMARKERS.get()) ||
-		    (type == Type.LINKED && ui.gui.settings.SHOWLMARKERS.get()) ||
-		    (type == Type.CUSTOM && ui.gui.settings.SHOWCMARKERS.get()) ||
-		    (type == Type.NATURAL && ui.gui.settings.SHOWNMARKERS.get()) ||
-		    (type == Type.VILLAGE && ui.gui.settings.SHOWVMARKERS.get())) {
+	    if (GlobalSettings.SHOWMMMARKERS.get() &&
+		    ((type == Type.PLACED && GlobalSettings.SHOWPMARKERS.get()) ||
+		    (type == Type.KINGDOM && GlobalSettings.SHOWKMARKERS.get()) ||
+		    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
+		    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
+		    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
+		    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()))) {
 		checkTip(m.tip(ui));
 
 		if (m instanceof PMarker) {
@@ -369,7 +372,7 @@ public class MiniMap extends Widget {
 		    g.image(flagfg, ul);
 		    g.chcolor();
 		    g.image(flagbg, ul);
-		    if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+		    if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
 			final Coord tipc = new Coord(ul.x + flagbg.img.getWidth() / 2 - tip.sz().x / 2,
 				ul.y - tip.sz().y);
 			g.image(tip.tex(), tipc);
@@ -392,7 +395,7 @@ public class MiniMap extends Widget {
 		    if (img != null) {
 			final Coord ul = c.sub(cc);
 			g.image(img, ul);
-			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
 			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
@@ -401,11 +404,11 @@ public class MiniMap extends Widget {
 		    final MapFile.CustomMarker mark = (MapFile.CustomMarker) m;
 		    g.chcolor(mark.color);
 		    if (img != null) {
-			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
 			g.image(img.tex(), ul, sz);
-			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
 			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
@@ -421,16 +424,16 @@ public class MiniMap extends Widget {
 		} else if (m instanceof MapFile.RealmMarker) {
 		    final MapFile.RealmMarker mark = (MapFile.RealmMarker) m;
 		    if (img != null) {
-			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
 			g.image(img.tex(), ul, sz);
-			if (ui.gui.settings.SHOWKMARKERRAD.get()) {
+			if (GlobalSettings.SHOWKMARKERRAD.get()) {
 			    g.chcolor(MarkerData.getRealmColor(mark.realm));
 			    g.frect(c.sub(new Coord(250, 250).div(scale)), new Coord(500, 500).div(scale));
 			    g.chcolor();
 			}
-			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
 			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
@@ -445,11 +448,11 @@ public class MiniMap extends Widget {
 		} else if (m instanceof MapFile.VillageMarker) {
 		    final MapFile.VillageMarker mark = (MapFile.VillageMarker) m;
 		    if (img != null) {
-			final Coord sz = !ui.gui.settings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
 			g.image(img.tex(), ul, sz);
-			if (ui.gui.settings.SHOWVMARKERRAD.get()) {
+			if (GlobalSettings.SHOWVMARKERRAD.get()) {
 			    final int offset, isz;
 			    if (mark.nm.equals("Idol")) {
 				offset = 50;
@@ -464,7 +467,7 @@ public class MiniMap extends Widget {
 			    g.frect(c.sub(new Coord(offset, offset).div(scale)), new Coord(isz, isz).div(scale));
 			    g.chcolor();
 			}
-			if (ui.gui.settings.SHOWMMMARKERNAMES.get()) {
+			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
 			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.chcolor(MarkerData.getVillageBoldColor(mark.village));
 			    g.image(tip.tex(), tipc);
@@ -619,7 +622,7 @@ public class MiniMap extends Widget {
     }
 
     public void drawgrid(final GOut g, final Location loc) {
-	if (ui.gui.settings.MMSHOWGRID.get()) {
+	if (GlobalSettings.MMSHOWGRID.get()) {
 	    final Coord hsz = sz.div(2);
 	    //Grid view is weird due to how zoommaps work, the only guarantee is that if we have one zoommap done
 	    //we know it's ul is on a grid edge. gc is the ul of SOME grid
@@ -697,20 +700,30 @@ public class MiniMap extends Widget {
     public void drawicons(GOut g) {
 	if((sessloc == null) || (dloc.seg != sessloc.seg))
 	    return;
-	for(DisplayIcon disp : icons) {
-	    if((disp.sc == null) || filter(disp))
-		continue;
-	    GobIcon.Image img = disp.img;
-	    if(disp.col != null)
-		g.chcolor(disp.col);
-	    else
-		g.chcolor();
-	    if(!img.rot)
-		g.image(img.tex, disp.sc.sub(img.cc));
-	    else
-		g.rotimage(img.tex, disp.sc, img.cc, -disp.ang + img.ao);
+	if(GlobalSettings.SHOWMMGOBS.get()) {
+	    for (DisplayIcon disp : icons) {
+		if ((disp.sc == null) || filter(disp))
+		    continue;
+		GobIcon.Image img = disp.img;
+		if (disp.col != null)
+		    g.chcolor(disp.col);
+		else
+		    g.chcolor();
+		if (!img.rot)
+		    g.image(img.tex, disp.sc.sub(img.cc));
+		else
+		    g.rotimage(img.tex, disp.sc, img.cc, -disp.ang + img.ao);
+		if(GlobalSettings.SHOWMMGOBNAMES.get() && disp.gob.hasTag(Tag.HUMAN)) {
+		    final KinInfo kin = disp.gob.getattr(KinInfo.class);
+		    if (kin != null) {
+			g.chcolor(BuddyWnd.gc[kin.group]);
+			g.image(kin.rendered(), disp.sc.sub(img.cc).sub(kin.rendered().sz().div(2, 1)));
+			g.chcolor();
+		    }
+		}
+	    }
+	    g.chcolor();
 	}
-	g.chcolor();
     }
 
     public void remparty() {
@@ -738,8 +751,15 @@ public class MiniMap extends Widget {
 			continue;
 		    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 255);
 		    g.rotimage(plp, p2c(ppc), plp.sz().div(2), -m.geta() - (Math.PI / 2));
+		    if(GlobalSettings.SHOWMMGOBNAMES.get()) {
+			final Gob gob = m.getgob();
+			final KinInfo kin = gob != null ? gob.getattr(KinInfo.class) : null;
+			if (kin != null) {
+			    g.image(kin.rendered(), p2c(ppc).sub(plp.sz().div(2)).sub(kin.rendered().sz().div(2, 1)));
+			}
+		    }
 		    g.chcolor();
-		} catch(Loading l) {}
+		} catch(Loading ignored) {}
 	    }
 	}
     }
@@ -919,8 +939,7 @@ public class MiniMap extends Widget {
 
     public boolean mousewheel(Coord c, int amount) {
 	if(amount > 0) {
-	    if(allowzoomout())
-		zoomlevel = Math.min(zoomlevel + 1, dlvl + 1);
+	    zoomlevel = Math.min(Math.min(zoomlevel + 1, dlvl + 1), 6);
 	} else {
 	    zoomlevel = Math.max(zoomlevel - 1, 0);
 	}

@@ -1,6 +1,7 @@
 /* Preprocessed source code */
 /* $use: ui/tt/q/qbuff */
 package haven.res.ui.tt.q.qbuff;
+import hamster.GlobalSettings;
 import haven.*;
 
 import java.awt.Color;
@@ -36,7 +37,7 @@ public class Quality extends QBuff implements GItem.OverlayInfo<Tex> {
     @Override
     public void drawoverlay(GOut g, Tex ol) {
 	final UI ui = ((GItem) owner).ui;
-	if(ui.gui != null && ui.gui.settings.SHOWITEMQ.get()) {
+	if(ui.gui != null && GlobalSettings.SHOWITEMQ.get()) {
 	    final Coord tsz = ol.sz();
 	    final Coord c = new Coord(g.sz().x - tsz.x, 0);
 	    g.chcolor(bgcol);

@@ -1,6 +1,7 @@
 package hamster.ui.opt;
 
 import hamster.GlobalSettings;
+import hamster.gob.Tag;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
@@ -14,17 +15,51 @@ public class GameplayPanel extends Scrollport {
         super(new Coord(UI.scale(500), UI.scale(395)));
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
+        final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
         final Grouping sys = new LinearGrouping("System Settings", spacer, false);
-        final Grouping lighting = new LinearGrouping("Light Settings (Global)", spacer, false);
-        final Grouping map = new LinearGrouping("Map Settings (Global)", spacer, false);
+        final Grouping lighting = new LinearGrouping("Light Settings", spacer, false);
+        final Grouping map = new LinearGrouping("Map Settings", spacer, false);
         final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
         final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
+        final Grouping animal = new LinearGrouping("Animal Settings", spacer, false);
         final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
 
         { //System
             sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
             sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
             sys.pack();
+            overall.add(sys);
+        }
+        { //Camera
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA, (camera) -> {
+                if(ui.gui != null) {
+                    ui.gui.map.setcam(camera);
+                }
+            });
+            {
+                rgrp.add("Ortho Cam", "sortho");
+                rgrp.add("Angle Locked Ortho Cam", "ortho");
+                rgrp.add("Non-smoothed Free Cam", "worse");
+                rgrp.add("Smoothed Free Cam", "bad");
+                rgrp.add("Follow Cam", "follow");
+                rgrp.add("Top Down Cam", "topdown");
+                rgrp.add("Fixator", "fixator");
+                rgrp.add("Freestyle", "freestyle");
+            }
+            final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
+            { //Free Cam Settings
+                freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", GlobalSettings.FREECAMREXAXIS));
+                freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", GlobalSettings.FREECAMREYAXIS));
+                freeg.add(new IndirCheckBox("Free Cam lock elevation", GlobalSettings.FREECAMLOCKELAV));
+                freeg.pack();
+            }
+
+            cam.add(rgrp);
+            cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", GlobalSettings.CAMERAPROJFAR.get())));
+            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
+            cam.add(freeg);
+            cam.pack();
+            overall.add(cam);
         }
         { // Lights
             lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
@@ -33,6 +68,7 @@ public class GameplayPanel extends Scrollport {
             lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
             lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
             lighting.pack();
+            overall.add(lighting);
         }
         { // Map related
             //Display related
@@ -60,84 +96,57 @@ public class GameplayPanel extends Scrollport {
             //Cave related
             map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
             map.pack();
-        }
-        { //Camera
-            final Coord c = new Coord(0, 0);
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), ui.gui.settings.CAMERA, (camera) -> {
-                if(ui.gui != null) {
-                    ui.gui.map.setcam(camera);
-                }
-            });
-            {
-                rgrp.add("Ortho Cam", "sortho");
-                rgrp.add("Angle Locked Ortho Cam", "ortho");
-                rgrp.add("Non-smoothed Free Cam", "worse");
-                rgrp.add("Smoothed Free Cam", "bad");
-                rgrp.add("Follow Cam", "follow");
-                rgrp.add("Top Down Cam", "topdown");
-                rgrp.add("Fixator", "fixator");
-                rgrp.add("Freestyle", "freestyle");
-            }
-            final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
-            { //Free Cam Settings
-                freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", ui.gui.settings.FREECAMREXAXIS));
-                freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", ui.gui.settings.FREECAMREYAXIS));
-                freeg.add(new IndirCheckBox("Free Cam lock elevation", ui.gui.settings.FREECAMLOCKELAV));
-                freeg.pack();
-            }
-
-            cam.add(rgrp);
-            cam.add(freeg);
-            cam.pack();
+            overall.add(map);
         }
         { //Gob
             gob.add(new Label("Bad Kin Group:"));
-            gob.add(new IndirGroupSelector(ui.gui.settings.BADKIN, BuddyWnd.gc));
-            gob.add(new IndirCheckBox("Show halo on players", ui.gui.settings.SHOWGOBHALO));
-            gob.add(new IndirCheckBox("Show halo on players on hearth", ui.gui.settings.SHOWGOBHALOONHEARTH));
-            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", ui.gui.settings.COLORIZEAGGRO));
-            gob.add(new IndirCheckBox("Colorize Drying Frames", ui.gui.settings.COLORFULFARMES));
-            gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
-            gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
-            gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
-            gob.add(new IndirCheckBox("Colorize Cave dust (Global)", COLORFULDUST));
-            gob.add(new IndirCheckBox("Cave dust last longer (Global)", LONGLIVINGDUST));
-            gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
-            gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
-            gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
-            gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
-            gob.add(new IndirCheckBox("Show Player Paths", ui.gui.settings.SHOWGOBPATH));
-            gob.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
-            gob.add(new IndirCheckBox("Show Animal Radius (Not implemented)", ui.gui.settings.SHOWANIMALRADIUS));
-            gob.add(new IndirLabel(() -> String.format("Path Width: %d", ui.gui.settings.PATHWIDTH.get()), Text.std));
-            gob.add(new IndirHSlider(200, 1, 8, ui.gui.settings.PATHWIDTH));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", ui.gui.settings.GOBPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
+            gob.add(new IndirGroupSelector(GlobalSettings.BADKIN, BuddyWnd.gc));
+            gob.add(new IndirCheckBox("Show halo on players", GlobalSettings.SHOWGOBHALO));
+            gob.add(new IndirCheckBox("Show halo on players on hearth", GlobalSettings.SHOWGOBHALOONHEARTH));
+            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", GlobalSettings.COLORIZEAGGRO));
+            gob.add(new IndirCheckBox("Colorize Drying Frames", GlobalSettings.COLORFULFARMES));
+            gob.add(new IndirCheckBox("Colorize Tanning Tubs", GlobalSettings.COLORFULTUBS));
+            gob.add(new IndirCheckBox("Colorize Cupboards", GlobalSettings.COLORFULCUPBOARDS));
+            gob.add(new IndirCheckBox("Colorize Cheese Racks", GlobalSettings.COLORFULCHEESERACKS));
+            gob.add(new IndirCheckBox("Colorize Cave dust", COLORFULDUST));
+            gob.add(new IndirCheckBox("Cave dust last longer", LONGLIVINGDUST));
+            gob.add(new IndirCheckBox("Make Cave dust larger", LARGEDUSTSIZE));
+            gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
+            gob.add(new IndirCheckBox("Show Simple Crops (Requires reload of gobs in view)", GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
+            gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
+            gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
+            gob.add(new IndirHSlider(200, 1, 8, GlobalSettings.PATHWIDTH));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", GlobalSettings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", GlobalSettings.VEHPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", GlobalSettings.GOBHIDDENCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", GlobalSettings.GOBHITBOXCOL));
             gob.pack();
+            overall.add(gob);
+        }
+        { //Animals
+            animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
+            animal.add(new IndirCheckBox("Show Animal Paths", GlobalSettings.SHOWANIMALPATH));
+            animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
+            animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));
+            animal.pack();
+            overall.add(animal);
         }
         { //Pathfinding
-            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), ui.gui.settings.PATHFINDINGTIER));
+            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), GlobalSettings.PATHFINDINGTIER));
             {
                 rg.add("Perfect", 1);
                 rg.add("Decent", 2);
                 rg.add("Fastest", 3);
             }
-            pf.add(new IndirCheckBox("Limit pathfinding to view distance", ui.gui.settings.LIMITPATHFINDING));
-            pf.add(new IndirCheckBox("Re-search goal until reached", ui.gui.settings.RESEARCHUNTILGOAL));
+            pf.add(new IndirCheckBox("Limit pathfinding to view distance", GlobalSettings.LIMITPATHFINDING));
+            pf.add(new IndirCheckBox("Re-search goal until reached", GlobalSettings.RESEARCHUNTILGOAL));
             pf.pack();
+            overall.add(pf);
         }
 
-        int y = 0;
-
-        y += add(sys, new Coord(0, y)).sz.y + spacer.y;
-        y += add(lighting, new Coord(0, y)).sz.y + spacer.y;
-        y += add(map, new Coord(0, y)).sz.y + spacer.y;
-        y += add(cam, new Coord(0, y)).sz.y + spacer.y;
-        y += add(gob, new Coord(0, y)).sz.y + spacer.y;
-        y += add(pf, new Coord(0, y)).sz.y + spacer.y;
+        overall.pack();
+        add(overall);
         pack();
     }
 }

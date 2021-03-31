@@ -1,6 +1,7 @@
 package hamster.gob;
 
 
+import com.google.common.flogger.FluentLogger;
 import hamster.io.Storage;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
@@ -11,9 +12,11 @@ import java.sql.Statement;
 import java.util.HashSet;
 
 public class Deleted {
-    private static ObservableCollection<String> deleted = new ObservableCollection<>(new HashSet<>());
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static final ObservableCollection<String> deleted = new ObservableCollection<>(new HashSet<>());
 
     public static void init() {
+        logger.atInfo().log("Loading deleted");
         Storage.dynamic.ensure(sql -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_deleted ( name TEXT PRIMARY KEY )");

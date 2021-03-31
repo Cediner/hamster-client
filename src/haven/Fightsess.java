@@ -27,6 +27,8 @@
 package haven;
 
 import hamster.KeyBind;
+import hamster.data.itm.ItemData;
+import hamster.gob.sprites.TargetSprite;
 import hamster.ui.fight.*;
 import haven.render.*;
 import haven.res.ui.tt.q.qbuff.Quality;
@@ -334,7 +336,7 @@ public class Fightsess extends Widget {
 	final double weappen;
 	if (weapon != null) {
 	    weapq = weapon.getinfo(Quality.class).map(quality -> (int) quality.q).orElse(10);
-	    weapdmg = Weapons.lookup.getOrDefault(weapon.name().orElse(""), 0);
+	    weapdmg = ItemData.getWeaponDmg(weapon.name().orElse(""));
 	    weappen = weapon.getinfo(Armpen.class).orElse(Armpen.NOPEN).deg;
 	} else {
 	    weapq = weapdmg = 0;
@@ -569,6 +571,34 @@ public class Fightsess extends Widget {
 	    }
 	    fv.wdgmsg("bump", (int)fv.lsrel.get(0).gobid);
 	    return(true);
+	});
+        binds.put(KB_PEACE_CURRENT, () -> {
+           if(fv.current != null) {
+               fv.current.peace();
+               return true;
+	   } else {
+               return false;
+	   }
+	});
+        binds.put(KB_TARGET_CURRENT, () -> {
+            if(fv.current != null) {
+		final Gob old = ui.sess.glob.oc.getgob(ui.gui.curtar);
+		if (old != null) {
+		    final Gob.Overlay ol = old.findol(TargetSprite.id);
+		    if (ol != null) {
+			((TargetSprite) ol.spr).rem();
+		    }
+		}
+		final Gob g = ui.sess.glob.oc.getgob(fv.current.gobid);
+		ui.gui.curtar = fv.current.gobid;
+		if(g != null)
+		    g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+		if(ui.gui.chat.party != null)
+		    ui.gui.chat.party.send(String.format(TargetSprite.target_pat, fv.current.gobid));
+                return true;
+	    } else {
+                return false;
+	    }
 	});
     }
 

@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.MovableWidget;
 
 import static java.lang.Math.PI;
@@ -56,7 +57,7 @@ public class Cal extends MovableWidget {
     @Override
     protected void added() {
 	super.added();
-	setVisible(ui.gui.settings.SHOWCAL.get());
+	setVisible(GlobalSettings.SHOWCAL.get());
     }
 
     public void draw(GOut g) {

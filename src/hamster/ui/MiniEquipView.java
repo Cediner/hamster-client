@@ -1,5 +1,6 @@
 package hamster.ui;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.MovableWidget;
 import hamster.ui.core.Theme;
 import haven.*;
@@ -59,7 +60,7 @@ public class MiniEquipView extends MovableWidget {
     @Override
     protected void added() {
         super.added();
-        visible = ui.gui.settings.SHOWMINIEQU.get();
+        visible = GlobalSettings.SHOWMINIEQU.get();
     }
 
     @Override

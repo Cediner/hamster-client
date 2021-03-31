@@ -140,8 +140,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	public void resized() {
 	    float field = 0.5f;
 	    float aspect = ((float)sz.y) / ((float)sz.x);
-	    //TODO: Probably should make far into a setting?  Make it scale with draw distance?
-	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field, -aspect * field, aspect * field, 1, 10000));
+	    proj = new Projection(Projection.makefrustum(new Matrix4f(), -field, field,
+		    -aspect * field, aspect * field,
+		    1, ui != null ? GlobalSettings.CAMERAPROJFAR.get() : 10000));
 	}
 
 	public void apply(Pipe p) {
@@ -295,11 +296,11 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 	
 	public void drag(Coord c) {
-	    if (ui.gui.settings.FREECAMREXAXIS.get())
+	    if (GlobalSettings.FREECAMREXAXIS.get())
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
-	    if (ui.gui.settings.FREECAMREYAXIS.get())
+	    if (GlobalSettings.FREECAMREYAXIS.get())
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+	    if (ui.modshift || !GlobalSettings.FREECAMLOCKELAV.get()) {
 		elev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
 		if (elev < 0.0f) elev = 0.0f;
 		if (elev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
@@ -399,14 +400,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
 
 	public void drag(Coord c) {
-	    if (ui.gui.settings.FREECAMREXAXIS.get())
+	    if (GlobalSettings.FREECAMREXAXIS.get())
 		c = new Coord(c.x + (dragorig.x - c.x) * 2, c.y);
-	    if (ui.gui.settings.FREECAMREYAXIS.get())
+	    if (GlobalSettings.FREECAMREYAXIS.get())
 		c = new Coord(c.x, c.y + (dragorig.y - c.y) * 2);
-	    if (ui.modshift || !ui.gui.settings.FREECAMLOCKELAV.get()) {
+	    if (ui.modshift || !GlobalSettings.FREECAMLOCKELAV.get()) {
 		telev = elevorig - ((float) (c.y - dragorig.y) / 100.0f);
-		if (telev < 0.0f) elev = 0.0f;
-		if (telev > (Math.PI / 2.0)) elev = (float) Math.PI / 2.0f;
+		if (telev < 0.0f) telev = 0.0f;
+		if (telev > (Math.PI / 2.0)) telev = (float) Math.PI / 2.0f;
 	    }
 	    tangl = anglorig + ((float) (c.x - dragorig.x) / 100.0f);
 	}
@@ -805,7 +806,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	private void chfield(float nf) {
 	    tfield = nf;
-	    tfield = Math.max(Math.min(tfield, sz.x * (float)Math.sqrt(2) / 8f), 50);
+	    tfield = Math.max(tfield, 50);
 	    if(tfield > 100)
 		release();
 	}
@@ -884,7 +885,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	setcanfocus(true);
 	setupKeyBinds();
     }
-    
+
     protected void envdispose() {
 	if(smap != null) {
 	    smap.dispose(); smap = null;
@@ -1409,7 +1410,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private ShadowMap smap = null;
     private double lsmch = 0;
     public static final int[] shadowmap = {128, 256, 512, 1024, 2048, 4096, 8192, 16384};
-    public static final int[] shadowsizemap = {100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000};
+    public static final int[] shadowsizemap = {100, 250, 500, 750, 1000, 1250, 1500, 1750, 2000,
+	    3000, 4000, 5000, 6000, 8000, 10000};
     public static final int[] shadowdepthmap = {100, 1000, 3000, 5000, 10000, 25000, 50000};
     public AtomicBoolean resetsmap = new AtomicBoolean(false);
 
@@ -2191,18 +2193,27 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
     public boolean los(final Coord2d c) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
-	return finder.walk(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	pl.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(pl.getc()), c.floor());
+	pl.updatePathfindingBlackout(false);
+	return los;
     }
 
-    public void los(final Gob g) {
-
+    public boolean los(final Gob g) {
+	final NBAPathfinder finder = new NBAPathfinder(ui);
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	pl.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(pl.getc()), g.rc.floor());
+	pl.updatePathfindingBlackout(false);
+	return los;
     }
 
     public Move[] findpath(final Coord2d c) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
 
-	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
 	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
 	}
 
@@ -2215,7 +2226,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
 
-	if (moves != null && ui.gui.settings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
+	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
 	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
 	}
 	g.updatePathfindingBlackout(false);
@@ -2857,7 +2868,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    if((placing.lastmc == null) || !placing.lastmc.equals(c)) {
 		placing.new Adjust(c, ui.modflags()).run();
 	    }
-	} else if (ui.gui.settings.SHOWHOVERTOOLTIPS.get()) {
+	} else if (GlobalSettings.SHOWHOVERTOOLTIPS.get()) {
 	    new Hover(c).run();
 	} else {
 	    lasttt = "";
@@ -2931,12 +2942,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void setupKeyBinds() {
         binds.put(KB_TOGGLE_GRID, () -> { showgrid(gridlines == null); return true; });
         binds.put(KB_TOGGLE_TIPS, () -> {
-	    ui.gui.settings.SHOWHOVERTOOLTIPS.set(!ui.gui.settings.SHOWHOVERTOOLTIPS.get());
+	    GlobalSettings.SHOWHOVERTOOLTIPS.set(!GlobalSettings.SHOWHOVERTOOLTIPS.get());
             return true;
 	});
         binds.put(KB_TOGGLE_HIDDEN, () -> {
-	    ui.gui.settings.SHOWHIDDEN.set(!ui.gui.settings.SHOWHIDDEN.get());
-	    //TODO: This can result in very buggy behavior and needs reexamined at some point
+	    GlobalSettings.SHOWHIDDEN.set(!GlobalSettings.SHOWHIDDEN.get());
+	    //TODO: I really should apply this to all sessions somehow...
 	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
 	    if(this.placing != null && this.placing.done()) {
 	        final var plob = this.placing.get();
@@ -2945,9 +2956,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
             return true;
 	});
         binds.put(KB_TOGGLE_HITBOXES, () -> {
-	    ui.gui.settings.SHOWHITBOX.set(!ui.gui.settings.SHOWHITBOX.get());
+	    GlobalSettings.SHOWHITBOX.set(!GlobalSettings.SHOWHITBOX.get());
 	    return true;
         });
+        binds.put(KB_MOVE_EAST, () -> { relMove(-1000d, 0d); return true; });
+	binds.put(KB_MOVE_WEST, () -> { relMove(1000d, 0d); return true; });
+	binds.put(KB_MOVE_NORTH, () -> { relMove(0d, -1000d); return true; });
+	binds.put(KB_MOVE_SOUTH, () -> { relMove(0d, 1000d); return true; });
     }
 
     public boolean globtype(char c, KeyEvent ev) {
@@ -3140,7 +3155,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private Camera restorecam() {
 	final UI ui = glob.ui.get();
 	if(ui != null) {
-	    Class<? extends Camera> ct = camtypes.get(ui.gui.settings.CAMERA.get());
+	    Class<? extends Camera> ct = camtypes.get(GlobalSettings.CAMERA.get());
 	    if (ct != null) {
 		return makecam(ct);
 	    } else {

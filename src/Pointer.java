@@ -73,8 +73,8 @@ public class Pointer extends Widget {
 	g.usestate(col);
 	g.drawp(Model.Mode.TRIANGLES, new float[] {
 		sc.x, sc.y,
-		sc.x + ad.x - (ad.y / 3), sc.y + ad.y + (ad.x / 3),
-		sc.x + ad.x + (ad.y / 3), sc.y + ad.y - (ad.x / 3),
+		sc.x + ad.x - (ad.y / 3f), sc.y + ad.y + (ad.x / 3f),
+		sc.x + ad.x + (ad.y / 3f), sc.y + ad.y - (ad.x / 3f),
 	});
 
 	if(icon != null) {
@@ -88,23 +88,67 @@ public class Pointer extends Widget {
 	this.lc = sc.add(ad);
     }
 
+    private void drawarrow(GOut g, double a) {
+	Coord hsz = sz.div(2);
+	double ca = -Coord.z.angle(hsz);
+	Coord ac;
+	if ((a > ca) && (a < -ca)) {
+	    ac = new Coord(sz.x, hsz.y - (int) (Math.tan(a) * hsz.x));
+	} else if ((a > -ca) && (a < Math.PI + ca)) {
+	    ac = new Coord(hsz.x - (int) (Math.tan(a - Math.PI / 2) * hsz.y), 0);
+	} else if ((a > -Math.PI - ca) && (a < ca)) {
+	    ac = new Coord(hsz.x + (int) (Math.tan(a + Math.PI / 2) * hsz.y), sz.y);
+	} else {
+	    ac = new Coord(0, hsz.y + (int) (Math.tan(a) * hsz.x));
+	}
+	Coord sc = ac.add(Coord.sc(a, 0));
+	Coord sc2 = sc.add(Coord.sc(a + Math.PI / 12, -35));
+	Coord sc3 = sc.add(Coord.sc(a - Math.PI / 12, -35));
+
+	g.usestate(col);
+	g.drawp(Model.Mode.TRIANGLES, new float[] {
+		sc.x, sc.y, sc2.x, sc2.y, sc3.x, sc3.y
+	});
+
+	if(icon != null) {
+	    try {
+		if(licon == null)
+		    licon = icon.get().layer(Resource.imgc).tex();
+		g.aimage(licon, sc.add(Coord.sc(a, -30)), 0.5, 0.5);
+	    } catch(Loading ignored) {
+	    }
+	}
+	this.lc = sc.add(Coord.sc(a, -30));
+    }
+
     public void draw(GOut g) {
 	this.lc = null;
 	if(tc == null)
 	    return;
 	Gob gob = (gobid < 0) ? null : ui.sess.glob.oc.getgob(gobid);
+	Coord2d gobrc;
 	Coord3f sl;
 	if(gob != null) {
 	    try {
+	        gobrc = gob.rc;
 		sl = getparent(GameUI.class).map.screenxf(gob.getc());
 	    } catch(Loading l) {
 		return;
 	    }
 	} else {
+	    gobrc = tc;
 	    sl = getparent(GameUI.class).map.screenxf(tc);
 	}
-	if(sl != null)
-	    drawarrow(g, new Coord(sl));
+
+
+	if(gobrc != null) {
+	    final Double angle = ui.gui.map.screenangle(gobrc, true);
+	    if (!angle.equals(Double.NaN)) {
+		drawarrow(g, ui.gui.map.screenangle(gobrc, true));
+	    } else if(sl != null) {
+		drawarrow(g, new Coord(sl));
+	    }
+	}
     }
 
     public void update(Coord2d tc, long gobid) {

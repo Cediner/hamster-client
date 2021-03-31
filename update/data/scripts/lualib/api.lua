@@ -85,6 +85,10 @@ api.core = {
   mc = function()
     return session:getUI().sess.glob.mc
   end,
+
+  glob = function()
+    return session:getUI().sess.glob
+  end
 }
 
 
@@ -208,7 +212,7 @@ api.mc = {
 
   tilify = function(c)
     local mc = api.core.mc()
-    return c.div(mc.tilesz).mul(mc.tilesz).add(tilesz.div(2.0))
+    return c.div(mc.tilesz).mul(mc.tilesz).add(mc.tilesz.div(2.0))
   end
 }
 
@@ -280,11 +284,11 @@ api.bbox = {
       dir = api.coord.coord2i(1, 1)
     }
 
-    if sz.x < 0 then
-      dir.x = -1
+    if bb.sz.x < 0 then
+      bb.dir.x = -1
     end
-    if sz.y < 0 then
-      dir.y = -1
+    if bb.sz.y < 0 then
+      bb.dir.y = -1
     end
 
     return bb
@@ -452,7 +456,7 @@ api.chat = {
     local chats = api.chat.privchats()
     for i = 1, #chats do
       if name == chats[i]:name() then
-        return chat[i]
+        return chats[i]
       end
     end
     return nil
@@ -463,13 +467,13 @@ api.chat = {
   end,
 
   log = function(msg)
-    script:log(msG)
+    script:log(msg)
   end,
 
   chat_send_message = function(chat, msg)
     if chat == api.chat.bot_chat() then
       local color = luajava.bindClass("java.awt.Color")
-      chat:uimsg("msg", msg.format("[Bot] %s", msg), color.RED, 1)
+      chat:uimsg("msg", {msg.format("[Bot] %s", msg), color.RED, 1})
     else
       chat:send(msg)
     end
@@ -481,11 +485,11 @@ api.chat = {
 --------------------------------------------------
 api.widget = {
   wdgmsg = function(wdg, msg, ...)
-    wdg:wdgmsg(msg, ...)
+    wdg:wdgmsg(msg, {...})
   end,
 
   uimsg = function(wdg, msg, ...)
-    wdg:uimsg(msg, ...)
+    wdg:uimsg(msg, {...})
   end,
 
   id = function(wdg)
@@ -503,7 +507,7 @@ api.widget = {
 
   ui_force_wdgmsg = function(id, msg, args)
     args = args or {}
-    session:getUI():wdgmsg(id, msg, args)
+    session:getUI():wdgmsg(id, msg, {args})
   end
 }
 
@@ -534,11 +538,54 @@ api.hotkey = {
   end,
 
   wait_until_hotkey_is_set = function(slot)
-    api.core.waituntil((function() return is_hotkey_set(slot) end))
+    api.core.waituntil((function() return api.hotkey.is_hotkey_set(slot) end))
   end,
 
   wait_until_hotkey_is_unset = function(slot)
-    api.core.waituntil((function() return not is_hotkey_set(slot) end))
+    api.core.waituntil((function() return not api.hotkey.is_hotkey_set(slot) end))
+  end
+}
+
+--------------------------------------------------
+--- Party
+--- Party Members have a few funcs/fields you can directly
+--- Access:
+---  * getgob() [Gob] (Member's Gob obj if within draw range)
+---  * getc()  [Coord2d] (Member  position, no z)
+---  * geta()  [double]  (Members rotation about itself)
+---  * col     [Color] (Color in party)
+--- Ex: member:getgob() to get its Gob
+--------------------------------------------------
+api.party = {
+  leader = function()
+    return api.core.glob().party:leader()
+  end,
+
+  members = function()
+    return api.core.glob().party:members()
+  end
+}
+
+--------------------------------------------------
+--- Pointer
+--- This is mainly for creating map pointers
+--- to aid in showing where something in
+--------------------------------------------------
+api.pointer = {
+  make = function(name, c)
+    local ptr = luajava.newInstance("hamster.ui.CustomPointer", name, c)
+    ptr:canRemove()
+    api.core.gui():add(ptr)
+  end
+}
+
+--------------------------------------------------
+--- Minimap
+--- This is to allow marking of the minimap
+--------------------------------------------------
+api.minimap = {
+  mark = function(name, color, mc)
+    api.core.gui().mapfile:mark(name, color, mc)
   end
 }
 
@@ -569,7 +616,7 @@ api.gob = {
   -- There's a few gob functions you can call directly
   -- Given Gob `g` these are:
   --
-  -- g:getc()  returns Coord2d
+  -- g:getc()  returns Coord3f
   --   - Gets position as seen on the client
   -- g:name()  returns String
   --   - Returns the resource name of this gob
@@ -650,7 +697,7 @@ api.gob = {
   end,
 
   get_all_by_name = function(name)
-    return get_all_by_filter((function(g) string.find(g:name(), name) end))
+    return api.core.gob.get_all_by_filter((function(g) string.find(g:name(), name) end))
   end,
 
   get_closest_by_filter_and_path = function(filter)
@@ -711,6 +758,11 @@ api.gob = {
 -- MapView (movement, pathfinding)
 --------------------------------------------------
 api.mv = {
+  wait_for_movement_start = function(gob)
+    gob = gob or api.gob.mygob()
+    api.core.waituntil((function() return api.gob.is_moving(gob) end), 2000)
+  end,
+
   wait_for_movement = function(gob)
     gob = gob or api.gob.mygob()
     api.core.waituntil((function() return api.gob.is_moving(gob) end), 2000)
@@ -788,7 +840,7 @@ api.mv = {
     local nmoves = {}
 
     while i > 0 do
-      nmoves.insert(moves[i])
+      nmoves.insert(move[i])
       i = i - 1
     end
 
@@ -855,11 +907,11 @@ api.mv = {
   end,
 
   wait_for_placing_gob = function()
-    waituntil((function() return api.mv.placing_gob() end))
+    api.core.waituntil((function() return api.mv.placing_gob() end))
   end,
 
   wait_for_placing_gob_to_be_gone = function()
-    waituntil((function() return api.mv.placing_gob() == nil end))
+    api.core.waituntil((function() return api.mv.placing_gob() == nil end))
   end
 }
 

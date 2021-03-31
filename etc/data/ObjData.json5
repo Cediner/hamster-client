@@ -1,0 +1,2174 @@
+[
+  /*** Crops ***/
+  /* Ground based Crops */
+  {
+    res: "gfx/terobjs/plants/flax",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/barley",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/carrot",
+    tags: [
+      "PLANT",
+      "MULTISTAGE_PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 2,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/poppy",
+    tags: [
+      "PLANT",
+      "MULTISTAGE_PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 4,
+      final_stage: 5
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/hemp",
+    tags: [
+      "PLANT",
+      "MULTISTAGE_PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/pipeweed",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 4,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/beet",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/yellowonion",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/pumpkin",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 4,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/redonion",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/turnip",
+    tags: [
+      "PLANT",
+      "MULTISTAGE_PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 1,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/millet",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/leek",
+    tags: [
+      "PLANT",
+      "MULTISTAGE_PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 2,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/lettuce",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 4,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/wheat",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "GROUND",
+      min_stage: 3,
+      final_stage: 3
+    }
+  },
+  /* Trellis Based Crops */
+  {
+    res: "gfx/terobjs/plants/hops",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "TRELLIS",
+      min_stage: 6,
+      final_stage: 6
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/peas",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "TRELLIS",
+      min_stage: 4,
+      final_stage: 4
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/pepper",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "TRELLIS",
+      min_stage: 5,
+      final_stage: 5
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/wine",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "TRELLIS",
+      min_stage: 5,
+      final_stage: 5
+    }
+  },
+  {
+    res: "gfx/terobjs/plants/cucumber",
+    tags: [
+      "PLANT"
+    ],
+    cropdata: {
+      type: "TRELLIS",
+      min_stage: 4,
+      final_stage: 4
+    }
+  },
+  /*** Farming related (non-crops) Objs ***/
+  {
+    res: "gfx/terobjs/trough",
+    tags: [
+      "CAN_LIFT"
+    ],
+    range: 200
+  },
+  {
+    res: "gfx/terobjs/beehive",
+    tags: [
+      "CAN_LIFT"
+    ],
+    range: 151
+  },
+  /*** Player Objs ***/
+  {
+    res: "gfx/borka/body",
+    tags: [
+      "HUMAN",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/borka/wisp",
+    tags: [
+      "HUMAN"
+    ]
+  },
+  /*** Vehicles ***/
+  /* Land based */
+  {
+    res: "gfx/terobjs/vehicle/cart",
+    tags: [
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "UTILITY_VEHICLE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 4,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/plow",
+    tags: [
+      "CAN_LIFT",
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "UTILITY_VEHICLE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/wheelbarrow",
+    tags: [
+      "CAN_LIFT",
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "UTILITY_VEHICLE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/raft",
+    tags: [
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "CAN_RIDE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 1,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/wagon",
+    tags: [
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "CAN_RIDE",
+      "CAN_OPEN"
+    ],
+    vehicledata: {
+      player_slots: 6,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/spark",
+    tags: [
+      "CAN_LIFT",
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "CAN_RIDE"
+    ],
+    vehicledata: {
+      player_slots: 2,
+      other_slots: 1,
+      shared_slots: 1
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/catapult",
+    tags: [
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "SIEGE_VEHICLE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/wreckingball",
+    tags: [
+      "CAN_LIFT",
+      "VEHICLE",
+      "LAND_VEHICLE",
+      "SIEGE_VEHICLE"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  /* Sea based */
+  {
+    res: "gfx/terobjs/vehicle/knarr",
+    tags: [
+      "VEHICLE",
+      "WATER_VEHICLE",
+      "CAN_RIDE",
+      "CAN_OPEN"
+    ],
+    vehicledata: {
+      player_slots: 10,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/snekkja",
+    tags: [
+      "VEHICLE",
+      "WATER_VEHICLE",
+      "CAN_RIDE",
+      "CAN_OPEN"
+    ],
+    vehicledata: {
+      player_slots: 4,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/rowboat",
+    tags: [
+      "VEHICLE",
+      "WATER_VEHICLE",
+      "CAN_RIDE",
+      "CAN_LIFT"
+    ],
+    vehicledata: {
+      player_slots: 3,
+      other_slots: 2,
+      shared_slots: 2
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/coracle",
+    tags: [
+      "VEHICLE",
+      "WATER_VEHICLE",
+      "CAN_RIDE",
+      "CAN_LIFT",
+      "CAN_PICK_UP"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  {
+    res: "gfx/terobjs/vehicle/dugout",
+    tags: [
+      "VEHICLE",
+      "WATER_VEHICLE",
+      "CAN_RIDE",
+      "CAN_LIFT"
+    ],
+    vehicledata: {
+      player_slots: 1,
+      other_slots: 0,
+      shared_slots: 0
+    }
+  },
+  /*** Animals / Birds / Small Critters ***/
+  {
+    res: "gfx/kritter/badger/badger",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/walrus/walrus",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/bear/bear",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/bat/bat",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/boar/boar",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/mammoth/mammoth",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/troll/troll",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/lynx/lynx",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/wolf/wolf",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/wolverine/wolverine",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/adder/adder",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/caveangler/caveangler",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/ooze/greenooze",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/goldeneagle/goldeneagle",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/boreworm/boreworm",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/spermwhale/spermwhale",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/cavelouse/cavelouse",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/goat/wildgoat",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/rat/caverat",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/orca/orca",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/dryad/dryad",
+    tags: [
+      "ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/stoat/stoat",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/stoat/stoat-winter",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/fox/fox",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/beaver/beaver",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/reddeer/reddeer",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/ants/ants",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/moose/moose",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/swan/swan",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/otter/otter",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/reindeer/reindeer",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/greyseal/greyseal",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/wildbees/beeswarm",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/sheep/sheep",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT",
+      "CAN_TAME"
+    ]
+  },
+  {
+    res: "gfx/kritter/sheep/mouflon",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT",
+      "CAN_TAME"
+    ]
+  },
+  {
+    res: "gfx/kritter/cattle/aurochs",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT",
+      "CAN_TAME"
+    ]
+  },
+  {
+    res: "gfx/kritter/cattle/bull",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/cattle/cattle",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/cattle/cow",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/cattle/calf",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/sheep/ram",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/sheep/lamb",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/goat/billy",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/goat/kid",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/goat/nanny",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/horse/horse",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/horse/foal",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/horse/mare",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/horse/stallion",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/pig/piglet",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/pig/sow",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/pig/hog",
+    tags: [
+      "ANIMAL",
+      "TAMED_ANIMAL"
+    ]
+  },
+  {
+    res: "gfx/kritter/rabbit/rabbit",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/chicken/chick",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/chicken/chicken",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/chicken/hen",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/chicken/rooster",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/hedgehog/hedgehog",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/ladybug/ladybug",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/rat/rat",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/squirrel/squirrel",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP",
+      "CAN_FIGHT"
+    ]
+  },
+  {
+    res: "gfx/kritter/toad/toad",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/frog/frog",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/silkmoth/silkmoth",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/dragonfly/dragonfly",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/grasshopper/grasshopper",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/forestlizard/forestlizard",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/waterstrider/waterstrider",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/irrbloss/irrbloss",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/forestsnail/forestsnail",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/stagbeetle/stagbeetle",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/firefly/firefly",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/jellyfish/jellyfish",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/cavecentipede/cavecentipede",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/cavemoth/cavemoth",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/crab/crab",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/mallard/mallard",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/moonmoth/moonmoth",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/magpie/magpie",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  {
+    res: "gfx/kritter/bogturtle/bogturtle",
+    tags: [
+      "ANIMAL",
+      "CAN_PICK_UP"
+    ]
+  },
+  /*** Herbs / Forage-able Items ***/
+  {
+    res: "gfx/invobjs/herbs/blueberry",
+    name: "Blueberries",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests, Grasslands",
+      min_val: 5,
+      max_val: 20,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/perfectautumnleaf",
+    name: "Perfect Autumn Leaf",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 10,
+      max_val: 40,
+      spring: "NO",
+      summer: "NO",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/spindlytaproot",
+    name: "Spindly Taproot",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 10,
+      max_val: 40,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/yulelights",
+    name: "Elven Lights",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests (Winter)",
+      min_val: 10,
+      max_val: 40,
+      spring: "NO",
+      summer: "NO",
+      autumn: "NO",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/dandelion",
+    name: "Dandelion",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Grassland, Forests",
+      min_val: 10,
+      max_val: 40,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/mistletoe",
+    name: "Mistletoe",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 10,
+      max_val: 40,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/coltsfoot",
+    name: "Coltsfoot",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Leaf Patch, Ox Pasture, Green Brake",
+      min_val: 10,
+      max_val: 40,
+      spring: "YES",
+      summer: "MAYBE",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/stingingnettle",
+    name: "Stinging Nettle",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 25,
+      max_val: 100,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/chives",
+    name: "Chives",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Smobre Bramble",
+      min_val: 50,
+      max_val: 200,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/chantrelle",
+    name: "Chantrelles",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 52,
+      max_val: 208,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/windweed",
+    name: "Wild Windsown Weed",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests, Grassland, Swamp",
+      min_val: 80,
+      max_val: 320,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/ladysmantledew",
+    name: "Dewy Lady's Mantle",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Swamp, Bog, Grassland",
+      min_val: 80,
+      max_val: 320,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/ladysmantle",
+    name: "Lady's Mantle",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Bog, Swamp, Grassland, Fen",
+      min_val: 80,
+      max_val: 320,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/thornythistle",
+    name: "Thorny Thistle",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Dirt",
+      min_val: 90,
+      max_val: 360,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/goosebarnacle",
+    name: "Gooseneck Barnacle",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Skargard",
+      min_val: 100,
+      max_val: 400,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/heartsease",
+    name: "Heartsease",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Grass",
+      min_val: 100,
+      max_val: 400,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/stalagoom",
+    name: "Stalagoom",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 100,
+      max_val: 400,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/lingon",
+    name: "Lingonberries",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forest",
+      min_val: 108,
+      max_val: 432,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/flotsam",
+    name: "Peculiar Flotsam",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Water",
+      min_val: 110,
+      max_val: 440,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/bloatedbolete",
+    name: "Bloated Bolete",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forest, Grassland",
+      min_val: 110,
+      max_val: 440,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/fourleafclover",
+    name: "Four-Leaf Clover",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Moor, Highground, Leaf Patch, Flower Meadow",
+      min_val: 130,
+      max_val: 520,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/fourleafclover",
+    name: "Clover",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Moor, Highground, Leaf Patch, Flower Meadow",
+      min_val: 130,
+      max_val: 520,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/snapdragon",
+    name: "Uncommon Snapdragon",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Moor, Lush Field, Red Plain, Greens Wald, Highground",
+      min_val: 144,
+      max_val: 576,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/parasolshroom",
+    name: "Parasol Mushroom",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Lichen Wold, Cloud Range, Shady Corpse",
+      min_val: 150,
+      max_val: 600,
+      spring: "MAYBE",
+      summer: "MAYBE",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/duskfern",
+    name: "Dusk Fern",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 150,
+      max_val: 600,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/lorcheldried",
+    name: "Morels",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 150,
+      max_val: 600,
+      spring: "NO",
+      summer: "NO",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/waybroad",
+    name: "Waybroad",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Bog, Fen, Swamp, Grassland, Highground, Timber Land, Red Plain",
+      min_val: 150,
+      max_val: 600,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/candleberry",
+    name: "Candleberry",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Swamp, Bog, Fen",
+      min_val: 160,
+      max_val: 640,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/yellowfoot",
+    name: "Yellowfeet",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 200,
+      max_val: 800,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/yarrow",
+    name: "Yarrow",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Grassland",
+      min_val: 200,
+      max_val: 800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/lampstalk",
+    name: "Lamp Stalk",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Water",
+      min_val: 200,
+      max_val: 800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/mandrakespirited",
+    name: "Spirited Mandrake Root",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Moor",
+      min_val: 200,
+      max_val: 800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/mandrake",
+    name: "Mandrake Root",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Moor, Pine Barren",
+      min_val: 200,
+      max_val: 800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/cattailfibre",
+    name: "Cattail",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water, Bog, Swamp, Fen",
+      min_val: 210,
+      max_val: 840,
+      spring: "NO",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/leaf-swamplily",
+    name: "Swamplily",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water, Bog, Fen, Swamp",
+      min_val: 250,
+      max_val: 1000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/bladderwrack",
+    name: "Washed-up Bladderwrack",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beach, Skargard",
+      min_val: 250,
+      max_val: 1000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/clay-gray",
+    name: "Grey Clay",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water",
+      min_val: 270,
+      max_val: 1080,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/tangledbramble",
+    name: "Tangled Bramble",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Dirt",
+      min_val: 280,
+      max_val: 1120,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/royaltoadstool",
+    name: "Royal Toadstool",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Swamp",
+      min_val: 324,
+      max_val: 1296,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/frogscrown",
+    name: "Frog's Crown",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Mountain, Swamp",
+      min_val: 450,
+      max_val: 1800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/giantpuffball",
+    name: "Giant Puffball",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Root Bosk, Greens Ward, Leaf Patch, Blue Sod",
+      min_val: 500,
+      max_val: 2000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/rustroot",
+    name: "Rustroot",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forests",
+      min_val: 500,
+      max_val: 2000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/chimingbluebell",
+    name: "Chiming Bluebell",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Swamp, Grassland, Cloud Range",
+      min_val: 520,
+      max_val: 2080,
+      spring: "YES",
+      summer: "MAYBE",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/cavebulb",
+    name: "Cavebulb",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 525,
+      max_val: 2100,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/razorclams-b",
+    name: "Razor Clam",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beach",
+      min_val: 640,
+      max_val: 2400,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/commonstarfish",
+    name: "Common Starfish",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beach, Skarguard",
+      min_val: 700,
+      max_val: 2800,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/mussels",
+    name: "River Pearl Mussel",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water",
+      min_val: 760,
+      max_val: 3040,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/baybolete",
+    name: "Bay Bolete",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Sombre Bramble, Greens Ward, Oak Wilds, Dry Flat",
+      min_val: 960,
+      max_val: 3840,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/rainbowpad",
+    name: "Rainbowpad",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Swamp",
+      min_val: 1000,
+      max_val: 4000,
+      spring: "MAYBE",
+      summer: "MAYBE",
+      autumn: "MAYBE",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/frogspawn",
+    name: "Frogspawn",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water",
+      min_val: 1000,
+      max_val: 4000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/bloodstern",
+    name: "Blood Stern",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Forest",
+      min_val: 1250,
+      max_val: 5000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/glimmermoss",
+    name: "Glimmermoss",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 1275,
+      max_val: 5100,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/edelweiss",
+    name: "Edelweiss",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Mountain",
+      min_val: 1600,
+      max_val: 6400,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/strawberry",
+    name: "Strawberry",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Flower Meadow, Sombre Bramble, Greens Ward, Deep Tangle, Cloud Range",
+      min_val: 1850,
+      max_val: 7400,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/seashell",
+    name: "Rainbow Shell",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beach, Shallow Water",
+      min_val: 2500,
+      max_val: 10000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/kvann",
+    name: "Kvann",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Root Bosk, Leaf Patch,  Oak Wilds",
+      min_val: 2500,
+      max_val: 10000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/camomile",
+    name: "Camomile",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Bog, Swamp, Fen, Flower Meadow",
+      min_val: 3300,
+      max_val: 13200,
+      spring: "YES",
+      summer: "MAYBE",
+      autumn: "NO",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/dill",
+    name: "Dill",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Blue Sod, Lush Field",
+      min_val: 3500,
+      max_val: 14000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/salvia",
+    name: "Sage",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Greens Ward, Beach Grove",
+      min_val: 3500,
+      max_val: 14000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/thyme",
+    name: "Thyme",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Red Plain, Leaf Patch",
+      min_val: 3500,
+      max_val: 14000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/blacktrumpet",
+    name: "Black Trumpets",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beech Grove, Pine Barren, Lichen  Wold",
+      min_val: 3500,
+      max_val: 14000,
+      spring: "NO",
+      summer: "NO",
+      autumn: "YES",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/greenkelp",
+    name: "Green Kelp",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Water, Beach",
+      min_val: 3500,
+      max_val: 14000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/cavecoral",
+    name: "Cave Coral",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 3692,
+      max_val: 14768,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/oyster",
+    name: "Oyster",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Shallow Water",
+      min_val: 4000,
+      max_val: 16000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "YES",
+      winter: "MAYBE"
+    }
+  },
+  {
+    res: "gfx/invobjs/clay-cave",
+    name: "Cave Clay",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 4600,
+      max_val: 18400,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/fieldblewit",
+    name: "Field Blewits",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beech Grove, Cloud Range, Root Bosk, Dry Flat",
+      min_val: 5000,
+      max_val: 20000,
+      spring: "MAYBE",
+      summer: "YES",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/cavelantern",
+    name: "Cave Lantern",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 8000,
+      max_val: 32000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/wintergreen",
+    name: "Wintergreen",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Greens Ward, Moss Brush",
+      min_val: 12000,
+      max_val: 48000,
+      spring: "MAYBE",
+      summer: "MAYBE",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/marshmallow",
+    name: "Marsh-Mallow",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Beech Grove, Fen, Lichen Wold, Sombre Bramble, Bog, Swamp, Shady Corpse",
+      min_val: 12500,
+      max_val: 50000,
+      spring: "YES",
+      summer: "MAYBE",
+      autumn: "MAYBE",
+      winter: "NO"
+    }
+  },
+  {
+    res: "gfx/invobjs/herbs/indigocap",
+    name: "Indigo Cap",
+    tags: [
+      "CAN_PICK_UP"
+    ],
+    foragedata: {
+      location: "Cave",
+      min_val: 39000,
+      max_val: 156000,
+      spring: "YES",
+      summer: "YES",
+      autumn: "YES",
+      winter: "YES"
+    }
+  }
+]

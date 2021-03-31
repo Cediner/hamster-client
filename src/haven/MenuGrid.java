@@ -31,18 +31,22 @@ import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
+import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
 import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
 
 public class MenuGrid extends MovableWidget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public final static Tex bg = Resource.loadtex("gfx/hud/invsq");
     public final static Coord bgsz = bg.sz().add(-UI.scale(1), -UI.scale(1));
     public final static RichText.Foundry ttfnd = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, UI.scale(10f));
-    private static Coord gsz = new Coord(4, 4);
+    private Coord gsz = new Coord(5, 5);
     public final ObservableCollection<Pagina> paginae = new ObservableCollection<>(new HashSet<>());
     public Pagina cur;
     private Pagina dragging;
@@ -53,7 +57,7 @@ public class MenuGrid extends MovableWidget {
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
-	
+
     @RName("scm")
     public static class $_ implements Factory {
 	public Widget create(UI ui, Object[] args) {
@@ -297,10 +301,9 @@ public class MenuGrid extends MovableWidget {
     }
 
     public MenuGrid() {
-	super(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)), "Menugrid");
+	super(bgsz.mul(new Coord(5,5)).add(UI.scale(1), UI.scale(1)), "Menugrid");
 	//Custom Management Menu
 	paginae.add(paginafor(Resource.local().load("custom/paginae/default/management")));
-	//TODO: All the Custom window toggles
 	addCustom(new CustomPagina(this, "management::landmanager",
 		Resource.local().load("custom/paginae/default/wnd/selector"),
 		(pag) -> ui.gui.add(new MapMod(true))));
@@ -391,6 +394,19 @@ public class MenuGrid extends MovableWidget {
     private void addCustom(final CustomPagina pag) {
 	paginae.add(pag);
 	custompag.put(pag.key, pag);
+    }
+
+    @Override
+    protected void added() {
+	super.added();
+	updlayoutsize();
+    }
+
+    public void updlayoutsize() {
+        gsz = new Coord(GlobalSettings.MENUGRIDSIZEX.get(), GlobalSettings.MENUGRIDSIZEY.get());
+	layout = new PagButton[gsz.x][gsz.y];
+	updlayout();
+	resize(bgsz.mul(gsz).add(UI.scale(1), UI.scale(1)));
     }
 
     private void updlayout() {
@@ -545,6 +561,15 @@ public class MenuGrid extends MovableWidget {
 		dragging = pressed.pag;
 	} else {
 	    super.mousemove(c);
+	}
+    }
+
+    public void use(final String resn) {
+        try {
+	    final Resource res = Resource.remote().loadwait(resn);
+	    wdgmsg("act", (Object[]) res.layer(Resource.action).ad);
+	} catch (Exception e) {
+            logger.atSevere().withCause(e).log("Failed to use %s", resn);
 	}
     }
 

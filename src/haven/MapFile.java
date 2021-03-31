@@ -35,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.util.IDPool;
 import haven.Defer.Future;
 import static haven.MCache.cmaps;
@@ -362,7 +363,7 @@ public class MapFile {
 
 	@Override
 	public String tip(final UI ui) {
-	    if (nm.equals("Banner") && !ui.gui.settings.SHOWVMARKERTIPS.get()) {
+	    if (nm.equals("Banner") && !GlobalSettings.SHOWVMARKERTIPS.get()) {
 		return "";
 	    } else {
 		return String.format("[%s] %s", village, nm);

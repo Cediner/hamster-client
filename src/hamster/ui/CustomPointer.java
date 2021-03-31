@@ -23,6 +23,7 @@ public class CustomPointer extends Widget {
     private Coord lc;
     private final Tex licon;
     private final PointerData data;
+    private boolean canRemove = false;
 
     //Tooltip
     private Text.Line tt = null;
@@ -69,6 +70,8 @@ public class CustomPointer extends Widget {
 	resize(parent.sz);
     }
 
+    public void canRemove() { canRemove = true; }
+
     protected void added() {
 	presize();
 	super.added();
@@ -106,12 +109,40 @@ public class CustomPointer extends Widget {
 	g.usestate(col);
 	g.drawp(Model.Mode.TRIANGLES, new float[] {
 		sc.x, sc.y,
-		sc.x + ad.x - (ad.y / 3), sc.y + ad.y + (ad.x / 3),
-		sc.x + ad.x + (ad.y / 3), sc.y + ad.y - (ad.x / 3),
+		sc.x + ad.x - (ad.y / 3f), sc.y + ad.y + (ad.x / 3f),
+		sc.x + ad.x + (ad.y / 3f), sc.y + ad.y - (ad.x / 3f),
 	});
 
 	g.aimage(licon, sc.add(ad), 0.5, 0.5);
 	this.lc = sc.add(ad);
+    }
+
+
+
+    private void drawarrow(GOut g, double a) {
+	Coord hsz = sz.div(2);
+	double ca = -Coord.z.angle(hsz);
+	Coord ac;
+	if ((a > ca) && (a < -ca)) {
+	    ac = new Coord(sz.x, hsz.y - (int) (Math.tan(a) * hsz.x));
+	} else if ((a > -ca) && (a < Math.PI + ca)) {
+	    ac = new Coord(hsz.x - (int) (Math.tan(a - Math.PI / 2) * hsz.y), 0);
+	} else if ((a > -Math.PI - ca) && (a < ca)) {
+	    ac = new Coord(hsz.x + (int) (Math.tan(a + Math.PI / 2) * hsz.y), sz.y);
+	} else {
+	    ac = new Coord(0, hsz.y + (int) (Math.tan(a) * hsz.x));
+	}
+	Coord sc = ac.add(Coord.sc(a, 0));
+	Coord sc2 = sc.add(Coord.sc(a + Math.PI / 12, -35));
+	Coord sc3 = sc.add(Coord.sc(a - Math.PI / 12, -35));
+
+	g.usestate(col);
+	g.drawp(Model.Mode.TRIANGLES, new float[] {
+		sc.x, sc.y, sc2.x, sc2.y, sc3.x, sc3.y
+	});
+
+	g.aimage(licon, sc.add(Coord.sc(a, -30)), 0.5, 0.5);
+	this.lc = sc.add(Coord.sc(a, -30));
     }
 
     public void draw(GOut g) {
@@ -119,30 +150,48 @@ public class CustomPointer extends Widget {
 	if(tc == null)
 	    return;
 	Gob gob = (gobid < 0) ? null : ui.sess.glob.oc.getgob(gobid);
+	Coord2d gobrc;
 	Coord3f sl;
 	if(gob != null) {
 	    try {
+		gobrc = gob.rc;
 		sl = getparent(GameUI.class).map.screenxf(gob.getc());
 	    } catch(Loading l) {
 		return;
 	    }
 	} else {
+	    gobrc = tc;
 	    sl = getparent(GameUI.class).map.screenxf(tc);
 	}
-	if(sl != null)
-	    drawarrow(g, new Coord(sl));
+	if(gobrc != null) {
+	    final Double angle = ui.gui.map.screenangle(gobrc, true);
+	    if (!angle.equals(Double.NaN)) {
+		drawarrow(g, ui.gui.map.screenangle(gobrc, true));
+	    } else if(sl != null) {
+		drawarrow(g, new Coord(sl));
+	    }
+	}
     }
 
     @Override
     public boolean mousedown(Coord c, int button) {
 	if (this.lc != null && this.lc.dist(c) < 20.0) {
-	    if (gobid > 0) {
-		ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button,
-			ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
+	    if(canRemove && ui.modctrl && button == 3) {
+		ui.gui.add(new FlowerMenu((selection) -> {
+			if ("Remove".equals(selection)) {
+			    ui.destroy(this);
+			}
+		    }, "Remove"), ui.mc);
+		return true;
 	    } else {
-		ui.gui.map.queuemove(new Move(this.tc));
+		if (gobid > 0) {
+		    ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button,
+			    ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
+		} else {
+		    ui.gui.map.queuemove(new Move(this.tc));
+		}
+		return true;
 	    }
-	    return true;
 	} else {
 	    return super.mousedown(c, button);
 	}
@@ -168,15 +217,9 @@ public class CustomPointer extends Widget {
 		    final int cdist = (int) (Math.ceil(me.rc.dist(ltc) / 11.0));
 		    if (cdist != dist) {
 			dist = cdist;
-			final String extra;
-			if (dist >= 1000) {
-			    extra = " - May be further than the client can see";
-			} else {
-			    extra = "";
-			}
 			if (tt != null && tt.tex() != null)
 			    tt.tex().dispose();
-			tt = Text.render(data.name() + " - Distance: " + dist + extra);
+			tt = Text.render(data.name() + " - Distance: " + dist);
 		    }
 		}
 	    }

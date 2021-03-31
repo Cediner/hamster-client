@@ -94,7 +94,7 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         private ScriptsList() {
             refresh();
             final Button refresh = new Button(300, "Refresh List", this::refresh);
-            final Listbox<ScriptItm> list = new Listbox<>(300, 20, 20) {
+            final Listbox<ScriptItm> list = new Searchbox<>(300, 20, 20) {
                 @Override
                 protected ScriptItm listitem(int i) {
                     return scripts.get(i);
@@ -108,6 +108,11 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
                 @Override
                 protected void drawitem(GOut g, ScriptItm item, int i) {
                     FastText.print(g, Coord.z, item.name());
+                }
+
+                @Override
+                protected boolean searchmatch(int idx, String text) {
+                    return scripts.get(idx).name().toLowerCase().contains(text.toLowerCase());
                 }
             };
             final Button run = new Button(300, "Run Script", () ->

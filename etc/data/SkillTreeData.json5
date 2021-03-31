@@ -1,0 +1,628 @@
+[
+  {
+    id: 0,
+    name: "paginae/skills/forage",
+    expected_lp: 25,
+    loc: {
+      x: 3.5,
+      y: 0
+    },
+    parents: []
+  },
+  {
+    id: 1,
+    name: "paginae/skills/wzm",
+    expected_lp: 200,
+    loc: {
+      x: 11,
+      y: 0
+    },
+    parents: []
+  },
+  {
+    id: 2,
+    name: "paginae/skills/fishing",
+    expected_lp: 200,
+    loc: {
+      x: 0.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 3,
+    name: "paginae/skills/lumber",
+    expected_lp: 150,
+    loc: {
+      x: 1.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 4,
+    name: "paginae/skills/hunting",
+    expected_lp: 60,
+    loc: {
+      x: 2.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 5,
+    name: "paginae/skills/stonework",
+    expected_lp: 200,
+    loc: {
+      x: 4.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 6,
+    name: "paginae/skills/pottery",
+    expected_lp: 125,
+    loc: {
+      x: 5.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 7,
+    name: "paginae/skills/farming",
+    expected_lp: 400,
+    loc: {
+      x: 6.5,
+      y: 1
+    },
+    parents: [
+      0
+    ]
+  },
+  {
+    id: 8,
+    name: "paginae/skills/hearthmagic",
+    expected_lp: 250,
+    loc: {
+      x: 10.5,
+      y: 1
+    },
+    parents: [
+      1
+    ]
+  },
+  {
+    id: 9,
+    name: "paginae/skills/rage",
+    expected_lp: 30000,
+    loc: {
+      x: 11.5,
+      y: 1
+    },
+    parents: [
+      1
+    ]
+  },
+  {
+    id: 10,
+    name: "paginae/skills/swim",
+    expected_lp: 500,
+    loc: {
+      x: 0,
+      y: 2
+    },
+    parents: [
+      2
+    ]
+  },
+  {
+    id: 11,
+    name: "paginae/skills/crp",
+    expected_lp: 200,
+    loc: {
+      x: 1,
+      y: 2
+    },
+    parents: [
+      3
+    ]
+  },
+  {
+    id: 12,
+    name: "paginae/skills/tanning",
+    expected_lp: 600,
+    loc: {
+      x: 2,
+      y: 2
+    },
+    parents: [
+      4
+    ]
+  },
+  {
+    id: 13,
+    name: "paginae/skills/ahusb",
+    expected_lp: 750,
+    loc: {
+      x: 3,
+      y: 2
+    },
+    parents: [
+      4
+    ]
+  },
+  {
+    id: 14,
+    name: "paginae/skills/metalworking",
+    expected_lp: 1000,
+    loc: {
+      x: 4,
+      y: 2
+    },
+    parents: [
+      5
+    ]
+  },
+  {
+    id: 15,
+    name: "paginae/skills/mining",
+    expected_lp: 1000,
+    loc: {
+      x: 5,
+      y: 2
+    },
+    parents: [
+      5
+    ]
+  },
+  {
+    id: 16,
+    name: "paginae/skills/beekeeping",
+    expected_lp: 500,
+    loc: {
+      x: 6,
+      y: 2
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 17,
+    name: "paginae/skills/sewing",
+    expected_lp: 200,
+    loc: {
+      x: 7,
+      y: 2
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 18,
+    name: "paginae/skills/winemaking",
+    expected_lp: 1000,
+    loc: {
+      x: 8,
+      y: 2
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 19,
+    name: "paginae/skills/yeomanry",
+    expected_lp: 4000,
+    loc: {
+      x: 9,
+      y: 2
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 20,
+    name: "paginae/skills/tres",
+    expected_lp: 20000,
+    loc: {
+      x: 11,
+      y: 2
+    },
+    parents: [
+      1
+    ]
+  },
+  {
+    id: 21,
+    name: "paginae/skills/boating",
+    expected_lp: 1500,
+    loc: {
+      x: 0.5,
+      y: 3
+    },
+    parents: [
+      10,
+      11
+    ]
+  },
+  {
+    id: 22,
+    name: "paginae/skills/ropetwin",
+    expected_lp: 1000,
+    loc: {
+      x: 1.5,
+      y: 3
+    },
+    parents: [
+      12
+    ]
+  },
+  {
+    id: 23,
+    name: "paginae/skills/archery",
+    expected_lp: 1000,
+    loc: {
+      x: 2.5,
+      y: 3
+    },
+    parents: [
+      4
+    ]
+  },
+  {
+    id: 24,
+    name: "paginae/skills/jewelry",
+    expected_lp: 7500,
+    loc: {
+      x: 3.5,
+      y: 3
+    },
+    parents: [
+      14
+    ]
+  },
+  {
+    id: 25,
+    name: "paginae/skills/steelmaking",
+    expected_lp: 5000,
+    loc: {
+      x: 4.5,
+      y: 3
+    },
+    parents: [
+      14
+    ]
+  },
+  {
+    id: 26,
+    name: "paginae/skills/baking",
+    expected_lp: 350,
+    loc: {
+      x: 5.5,
+      y: 3
+    },
+    parents: [
+      6
+    ]
+  },
+  {
+    id: 27,
+    name: "paginae/skills/gardening",
+    expected_lp: 4000,
+    loc: {
+      x: 6.5,
+      y: 3
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 28,
+    name: "paginae/skills/plantlore",
+    expected_lp: 4000,
+    loc: {
+      x: 7.5,
+      y: 3
+    },
+    parents: [
+      7
+    ]
+  },
+  {
+    id: 29,
+    name: "paginae/skills/trade",
+    expected_lp: 15000,
+    loc: {
+      x: 8.5,
+      y: 3
+    },
+    parents: [
+      19
+    ]
+  },
+  {
+    id: 30,
+    name: "paginae/skills/theft",
+    expected_lp: 30000,
+    loc: {
+      x: 11,
+      y: 3
+    },
+    parents: [
+      20
+    ]
+  },
+  {
+    id: 31,
+    name: "paginae/skills/wheelwrighting",
+    expected_lp: 1500,
+    loc: {
+      x: 1,
+      y: 4
+    },
+    parents: [
+      11
+    ]
+  },
+  {
+    id: 32,
+    name: "paginae/skills/tunneling",
+    expected_lp: 6000,
+    loc: {
+      x: 5,
+      y: 4
+    },
+    parents: [
+      15
+    ]
+  },
+  {
+    id: 33,
+    name: "paginae/skills/silk",
+    expected_lp: 1500,
+    loc: {
+      x: 6,
+      y: 4
+    },
+    parents: [
+      16
+    ]
+  },
+  {
+    id: 34,
+    name: "paginae/skills/woodsmanship",
+    expected_lp: 12500,
+    loc: {
+      x: 7,
+      y: 4
+    },
+    parents: [
+      28
+    ]
+  },
+  {
+    id: 35,
+    name: "paginae/skills/locks",
+    expected_lp: 1500,
+    loc: {
+      x: 9.5,
+      y: 3
+    },
+    parents: [
+      51
+    ]
+  },
+  {
+    id: 36,
+    name: "paginae/skills/lawspeaking",
+    expected_lp: 20000,
+    loc: {
+      x: 9,
+      y: 4
+    },
+    parents: [
+      8,
+      19
+    ]
+  },
+  {
+    id: 37,
+    name: "paginae/skills/vandal",
+    expected_lp: 50000,
+    loc: {
+      x: 11,
+      y: 4
+    },
+    parents: [
+      9,
+      30
+    ]
+  },
+  {
+    id: 38,
+    name: "paginae/skills/mechanics",
+    expected_lp: 2500,
+    loc: {
+      x: 1.5,
+      y: 5
+    },
+    parents: [
+      22,
+      31,
+      49
+    ]
+  },
+  {
+    id: 39,
+    name: "paginae/skills/sausagemaking",
+    expected_lp: 1200,
+    loc: {
+      x: 3,
+      y: 5
+    },
+    parents: [
+      13
+    ]
+  },
+  {
+    id: 40,
+    name: "paginae/skills/metallurgy",
+    expected_lp: 15000,
+    loc: {
+      x: 4.5,
+      y: 5
+    },
+    parents: [
+      25
+    ]
+  },
+  {
+    id: 41,
+    name: "paginae/skills/forestry",
+    expected_lp: 25000,
+    loc: {
+      x: 6.5,
+      y: 5
+    },
+    parents: [
+      27,
+      34
+    ]
+  },
+  {
+    id: 42,
+    name: "paginae/skills/firstaid",
+    expected_lp: 4000,
+    loc: {
+      x: 8.5,
+      y: 5
+    },
+    parents: [
+      8,
+      28
+    ]
+  },
+  {
+    id: 43,
+    name: "paginae/skills/siege",
+    expected_lp: 125000,
+    loc: {
+      x: 11,
+      y: 5
+    },
+    parents: [
+      9,
+      37
+    ]
+  },
+  {
+    id: 44,
+    name: "paginae/skills/artifice",
+    expected_lp: 150000,
+    loc: {
+      x: 3,
+      y: 6
+    },
+    parents: [
+      32,
+      38,
+      40,
+      50
+    ]
+  },
+  {
+    id: 45,
+    name: "paginae/skills/druidicrite",
+    expected_lp: 150000,
+    loc: {
+      x: 6.5,
+      y: 6
+    },
+    parents: [
+      8,
+      41
+    ]
+  },
+  {
+    id: 46,
+    name: "paginae/skills/painting",
+    expected_lp: 2000,
+    loc: {
+      x: 8.5,
+      y: 6
+    },
+    parents: [
+      8
+    ]
+  },
+  {
+    id: 47,
+    name: "paginae/skills/ancw",
+    expected_lp: 5000,
+    loc: {
+      x: 10.5,
+      y: 6
+    },
+    parents: [
+      8
+    ]
+  },
+  {
+    id: 48,
+    name: "paginae/skills/murder",
+    expected_lp: 100000,
+    loc: {
+      x: 11.5,
+      y: 6
+    },
+    parents: [
+      9
+    ]
+  },
+  {
+    id: 49,
+    name: "custom/skills/shortcut:metalworking",
+    expected_lp: -1,
+    loc: {
+      x: 2,
+      y: 4
+    },
+    parents: []
+  },
+  {
+    id: 50,
+    name: "custom/skills/shortcut:farming",
+    expected_lp: -1,
+    loc: {
+      x: 3.5,
+      y: 4
+    },
+    parents: []
+  },
+  {
+    id: 51,
+    name: "custom/skills/shortcut:crp",
+    expected_lp: -1,
+    loc: {
+      x: 10,
+      y: 2
+    },
+    parents: []
+  }
+]

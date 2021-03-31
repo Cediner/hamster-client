@@ -29,6 +29,7 @@ package haven;
 import java.awt.Color;
 import java.util.*;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.WdgLocationHelper;
 import haven.render.*;
 import haven.Composited.Desc;
@@ -107,14 +108,14 @@ public class Avaview extends PView {
 	if(loc != null)
 	    loc.added();
 	if(type == Type.PLAYER)
-	    setVisible(ui.gui.settings.SHOWPLAVA.get());
+	    setVisible(GlobalSettings.SHOWPLAVA.get());
     }
 
     @Override
     public void toggleVisibility() {
 	super.toggleVisibility();
 	if(type == Type.PLAYER)
-	    ui.gui.settings.SHOWPLAVA.set(visible);
+	    GlobalSettings.SHOWPLAVA.set(visible);
     }
 
     protected void makeproj() {

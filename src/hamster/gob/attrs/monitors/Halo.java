@@ -1,5 +1,6 @@
 package hamster.gob.attrs.monitors;
 
+import hamster.GlobalSettings;
 import hamster.gob.sprites.HaloSprite;
 import haven.*;
 
@@ -40,9 +41,9 @@ public class Halo extends GAttrib {
         final UI ui = gob.glob.ui.get();
         final boolean nshow;
         if (ui != null && ui.gui != null) {
-            if (ui.gui.settings.SHOWGOBHALO.get()){
+            if (GlobalSettings.SHOWGOBHALO.get()){
                 nshow = true;
-            } else if (ui.gui.settings.SHOWGOBHALOONHEARTH.get()) {
+            } else if (GlobalSettings.SHOWGOBHALOONHEARTH.get()) {
                 nshow = isHearthingOrKnocked();
             } else {
                 nshow = false;

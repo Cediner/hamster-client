@@ -79,18 +79,39 @@ public class Partyview extends MovableWidget {
 		if(w == null) {
 		    w = add(new Avaview(UI.scale(new Coord(27, 27)), m.gobid, "ptavacam") {
 			    private Tex tooltip = null;
-			    
+			    private RichText tt = null;
+			    private int dist;
+
 			    public Object tooltip(Coord c, Widget prev) {
-				Gob gob = m.getgob();
-				if(gob == null)
-				    return(tooltip);
-				KinInfo ki = gob.getattr(KinInfo.class);
-				if(ki == null)
-				    return(null);
-				return(tooltip = ki.rendered());
+			        if(!ui.modctrl) {
+				    Gob gob = m.getgob();
+				    if (gob == null)
+					return (tooltip);
+				    KinInfo ki = gob.getattr(KinInfo.class);
+				    if (ki == null)
+					return (null);
+				    return(tooltip = ki.rendered());
+				} else {
+				    final Coord2d plc = ui.sess.glob.party.memb.get(ui.gui.map.plgob).getc();
+				    final Coord2d ppc = ui.sess.glob.party.memb.get(avagob).getc();
+				    if (ppc != null) {
+					final int cdist = (int) (Math.ceil(ppc.dist(plc) / 11.0));
+					if (tt != null && tt.tex() != null)
+					    tt.tex().dispose();
+					if (cdist != dist) {
+					    dist = cdist;
+					    return tt = RichText.render("Id: " + m.gobid + "\nDistance: " + dist + "\nPosition: " + ppc,
+						    150);
+					} else {
+					    return tt;
+					}
+				    }
+				}
+				return null;
 			    }
 			});
 		    w.canactivate = true;
+		    m.view = w;
 		    avs.put(m, w);
 		} else {
 		    old.remove(m);

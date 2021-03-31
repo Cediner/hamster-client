@@ -28,6 +28,8 @@
   `(mv-move-to-1 (mv) ,mc))
 (defmacro mv-move-to-rel (offset)
   `(mv-move-to-rel-1 (mv) ,offset))
+(defmacro mv-move-to-gob (gob)
+  `(mv-move-to-1 (mv) (gob-rc ,gob)))
 
 (defmacro mv-los (mc)
   `(mv-los-1 (mv) ,mc))
@@ -84,7 +86,7 @@
 (defmacro wait-for-placing-gob-to-be-gone (&key (refresh 100) timeout)
   `(wait-until (lambda () (null (mv-placing-gob))) :refresh ,refresh :timeout ,timeout))
   
-(export '(mv-move-to mv-move-to-rel mv-los mv-los-gob mv-plgob
+(export '(mv-move-to mv-move-to-rel mv-move-to-gob mv-los mv-los-gob mv-plgob
           mv-find-path mv-find-path-to-gob
           mv-clear-moves mv-queue-move
           mv-click-gob mv-interact-held-item-with-gob mv-interact-held-item-with-tile

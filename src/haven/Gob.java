@@ -30,7 +30,8 @@ import java.util.*;
 import java.util.function.*;
 
 import hamster.GlobalSettings;
-import hamster.data.MarkerData;
+import hamster.data.map.MarkerData;
+import hamster.data.gob.ObjData;
 import hamster.gob.*;
 import hamster.gob.attrs.draw2d.Speed;
 import hamster.gob.attrs.info.ScreenLocation;
@@ -262,7 +263,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.slots == null) {
-		if(hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get()) {
+		if(hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get()) {
 		    try {
 			ol.init();
 		    } catch (Loading ignored) {
@@ -346,6 +347,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
     }
 
+    // For scripting api
+    public Coord2d getDest() {
+	Moving m = getattr(Moving.class);
+	if(m != null) {
+	    return m.getDest().orElse(rc);
+	} else {
+	    return rc;
+	}
+    }
+
     public Coord3f getc() {
 	Moving m = getattr(Moving.class);
 	Coord3f ret = (m != null)?m.getc():getrc();
@@ -392,7 +403,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		setupmods.remove(prev);
 	}
 	if(a != null) {
-	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  gui.settings.SHOWHIDDEN.get())) {
+	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get())) {
 		try {
 		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
 		} catch(Loading l) {
@@ -616,7 +627,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if (ui != null && ui.gui != null) {
 	    slot.ostate(curstate());
 	    final Hidden hidden = getattr(Hidden.class);
-	    if (ui.gui.settings.SHOWHIDDEN.get() || hidden == null) {
+	    if (GlobalSettings.SHOWHIDDEN.get() || hidden == null) {
 		_added(slot);
 	    } else {
 		slot.add(hidden);
@@ -957,6 +968,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	heldby = id;
     }
 
+    public int howManyGobsHeld() {
+        return holding.size();
+    }
+
     /*
      * Pathfinding Related
      */
@@ -972,13 +987,18 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
         return hitbox;
     }
 
-    /*
-     * Crop related helpers
-     */
-    public int getMaxStage() {
-	return Growth.maxstage(name());
+    public Optional<Hitbox> hitboxo() { return Optional.ofNullable(hitbox); }
+
+    public void updateHitbox(final Coord2d off, final Coord2d sz) {
+        if(hitbox != null)
+	    glob.gobhitmap.add(this);
+        hitbox = new Hitbox.Rectangular(off, sz, true);
+	glob.gobhitmap.add(this);
     }
 
+    /*
+     * This is more useful for getting Bush/Tree max stages
+     */
     public int getMaxStage(final int guess) {
 	int max = guess;
 	for (FastMesh.MeshRes layer : getres().layers(FastMesh.MeshRes.class)) {
@@ -1132,18 +1152,19 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     public boolean isFriendly() {
 	final KinInfo kin = getattr(KinInfo.class);
 	final UI ui = glob.ui.get();
-	final GameUI gui = ui.gui;
-	final int badkin = gui != null ? gui.settings.BADKIN.get() : 2;
-	if (kin != null) {
-	    return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
-	} else {
-	    return false;
+	if(ui != null) {
+	    final GameUI gui = ui.gui;
+	    final int badkin = gui != null ? GlobalSettings.BADKIN.get() : 2;
+	    if (kin != null) {
+		return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
+	    }
 	}
+	return false;
     }
 
     @SuppressWarnings("unused") // For scripting api
     public boolean isDangerous() {
-        return hasTag(Tag.CAN_FIGHT);
+        return hasTag(Tag.CAN_AGGRO) || hasTag(Tag.HUMAN);
     }
 
 
@@ -1278,7 +1299,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if (!Deleted.isDeleted(name)) {
 
 	    final List<OCache.Delta> deltas = new ArrayList<>();
-	    tags = Tag.getTags(name);
+	    tags = ObjData.getTags(name);
 	    hitbox = Hitbox.hbfor(this);
 	    glob.gobhitmap.add(this);
 
@@ -1303,7 +1324,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    deltas.add((gob) -> gob.setattr(new MyGobIndicator(gob)));
 		}
 	    }
-	    if (Growth.isGrowth(name)) {
+	    if (ObjData.isACrop(name)) {
 		deltas.add((gob) -> gob.setattr(new GrowthMonitor(gob, name)));
 	    }
 	    if (hasTag(Tag.HUMAN) || hasTag(Tag.ANIMAL)) {
@@ -1328,7 +1349,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new Hidden(gob)));
 	    }
 
-	    if(RangeMonitor.hasRange(name)) {
+	    if(ObjData.hasRange(name)) {
 	        deltas.add((gob) -> gob.setattr(new RangeMonitor(gob)));
 	    }
 

@@ -7,6 +7,12 @@ import hamster.util.ObservableMap;
 import hamster.util.ObservableMapListener;
 import haven.*;
 
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -15,13 +21,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeMap;
 
-//TODO: Idealy all the sounds we allow should be stored locally and separate from jorb's names to avoid issues in the future
 public class Alerted {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final List<Resource.Named> sounds = new ArrayList<>();
     private static final ObservableMap<String, Resource.Named> sfxmap = new ObservableMap<>(new TreeMap<>());
 
-    public static void init(final Storage internal) {
+    public static void init() {
+        logger.atInfo().log("Loading sound data");
         Storage.dynamic.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_sound ( name TEXT PRIMARY KEY, sfx TEXT )");
@@ -37,6 +43,27 @@ public class Alerted {
                 }
             }
         });
+        final Path  dir = Path.of("data/res/custom/sfx/");
+        if(Files.exists(dir)) {
+            try {
+                Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if(file.toString().endsWith(".res")) {
+                            sounds.add(Resource.remote().load(file.toString().substring("data/res/".length(), file.toString().length()-4)));
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                logger.atSevere().withCause(e).log("Failed to load sound data");
+                System.exit(1);
+            }
+            sounds.sort(Comparator.comparing(Resource.Named::name));
+        }
+    }
+
+    public static void init(final Storage internal) {
         internal.ensure((sql) -> {
             try (final Statement stmt = sql.createStatement()) {
                 try (final ResultSet res = stmt.executeQuery("SELECT res FROM alert_files")) {
@@ -97,7 +124,7 @@ public class Alerted {
                 //For bodies only play on unknown or RED or village/realm member that you don't have kinned
                 final KinInfo kin = g.getattr(KinInfo.class);
                 final GobHealth hp = g.getattr(GobHealth.class);
-                if ( hp == null && (kin == null || kin.group == ui.gui.settings.BADKIN.get() ||
+                if ( hp == null && (kin == null || kin.group == GlobalSettings.BADKIN.get() ||
                         (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" "))))) {
                     Audio.play(sfxmap.get(name), (GlobalSettings.ALERTVOL.get() / 1000f));
                     g.glob.lastAlert = System.currentTimeMillis();

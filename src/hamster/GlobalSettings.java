@@ -1,68 +1,49 @@
 package hamster;
 
-import com.google.common.flogger.FluentLogger;
-import hamster.data.ForagableData;
-import hamster.data.HighlightData;
-import hamster.data.ItemData;
+import hamster.data.*;
+import hamster.data.gob.ObjData;
+import hamster.data.itm.ItemData;
+import hamster.data.map.MarkerData;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
-import hamster.gob.Tag;
-import hamster.gob.attrs.monitors.RangeMonitor;
-import hamster.io.Storage;
 import hamster.script.LispScript;
 import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
 import hamster.util.JobSystem;
+import haven.Coord;
 import haven.JOGLPanel;
+import haven.render.BaseColor;
 
 import java.awt.*;
-import java.util.Optional;
 
 /**
  * A list of settings that will work across all sessions
  */
 public class GlobalSettings {
-    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Settings global = new Settings("global");
     private static final Settings tmp = new Settings("gtmp", false);
 
     public static void init() {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
-        final Optional<Storage> optint = Storage.create("jdbc:sqlite:data/static.sqlite");
-        if (optint.isPresent()) {
-            logger.atInfo().log("Loading alerted");
-            Alerted.init(optint.get());
-            logger.atInfo().log("Loading deleted");
-            Deleted.init();
-            logger.atInfo().log("Loading hidden");
-            Hidden.init();
-            logger.atInfo().log("Loading Tag Data");
-            Tag.init(optint.get());
-            logger.atInfo().log("Loading Range Data");
-            RangeMonitor.init(optint.get());
-            logger.atInfo().log("Loading highlighted");
-            HighlightData.init();
-            logger.atInfo().log("Loading itemdata");
-            ItemData.init(optint.get());
-            logger.atInfo().log("Loading foragables");
-            ForagableData.init(optint.get());
-            logger.atInfo().log("Loading Skill Data");
-            SkillTree.init(optint.get());
-            logger.atInfo().log("Loading Credo Data");
-            CredoTree.init(optint.get());
-            //Internal lookups are no longer needed
-            optint.get().close();
-        } else {
-            logger.atSevere().log("Failed to open static datastore");
-            System.exit(0);
-        }
+        ObjData.init();
+        ItemData.init();
+        MarkerData.init();
+        Alerted.init();
+        CredoTree.init();
+        SkillTree.init();
+        Deleted.init();
+        Hidden.init();
+        HighlightData.init();
     }
 
     //Non-saved globals
     public static final IndirSetting<Boolean> PAUSED = new IndirSetting<>(tmp, "tmp.pause", false);
     public static final IndirSetting<Boolean> GENERATINGTOKEN = new IndirSetting<>(tmp, "generate-token", false);
+    public static final IndirSetting<Boolean> SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
+    public static final IndirSetting<Boolean> SHOWHITBOX = new IndirSetting<>(tmp, "session.show-hitbox", false);
+    public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(tmp, "session.show-hover-tooltips", false);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
@@ -111,12 +92,72 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> COLORFULDUST = new IndirSetting<>(global, "map.colorful-cave-dust", false);
     public static final IndirSetting<Boolean> LARGEDUSTSIZE = new IndirSetting<>(global, "map.large-cave-dust", false);
 
+    //Minimap
+    public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "minimap.show-gobs", true);
+    public static final IndirSetting<Boolean> SHOWMMMARKERNAMES = new IndirSetting<>(global, "minimap.show-marker-names", true);
+    public static final IndirSetting<Boolean> SHOWMMGOBNAMES = new IndirSetting<>(global, "minimap.show-gob-names", true);
+    public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "minimap.show-markers", true);
+    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "minimap.show-small-markers", true);
+    public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "minimap.show-placed-markers", true);
+    public static final IndirSetting<Boolean> SHOWNMARKERS = new IndirSetting<>(global, "minimap.show-natural-markers", true);
+    public static final IndirSetting<Boolean> SHOWCMARKERS = new IndirSetting<>(global, "minimap.show-custom-markers", true);
+    public static final IndirSetting<Boolean> SHOWLMARKERS = new IndirSetting<>(global, "minimap.show-linked-markers", true);
+    public static final IndirSetting<Boolean> SHOWKMARKERS = new IndirSetting<>(global, "minimap.show-kingdom-markers", true);
+    public static final IndirSetting<Boolean> SHOWKMARKERRAD = new IndirSetting<>(global, "minimap.show-kingdom-radius", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERS = new IndirSetting<>(global, "minimap.show-village-markers", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERRAD = new IndirSetting<>(global, "minimap.show-village-radius", true);
+    public static final IndirSetting<Boolean> SHOWVMARKERTIPS = new IndirSetting<>(global, "minimap.show-village-names", true);
+    public static final IndirSetting<Coord> MMMEMSIZEONE = new IndirSetting<>(global, "minimap.mem-size-one", new Coord(100, 100));
+    public static final IndirSetting<Coord> MMMEMPOSONE = new IndirSetting<>(global, "minimap.mem-pos-one", new Coord(500, 100));
+    public static final IndirSetting<Coord> MMMEMSIZETWO = new IndirSetting<>(global, "minimap.mem-size-two", new Coord(300, 300));
+    public static final IndirSetting<Coord> MMMEMPOSTWO = new IndirSetting<>(global, "minimap.mem-pos-two", new Coord(500, 100));
+    public static final IndirSetting<Boolean> MMSHOWGRID = new IndirSetting<>(global, "minimap.show-grid", false);
+    public static final IndirSetting<Boolean> MMSHOWVIEW = new IndirSetting<>(global, "minimap.show-view", true);
+    public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
+
+    //Gob
+    public static final IndirSetting<Boolean> COLORIZEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
+    public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
+    public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
+    public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);
+    public static final IndirSetting<Boolean> COLORFULCUPBOARDS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
+    public static final IndirSetting<Boolean> COLORFULCHEESERACKS = new IndirSetting<>(global, "gob.colorful-cheese-racks", true);
+    public static final IndirSetting<Boolean> SHOWCROPSTAGE = new IndirSetting<>(global, "gob.show-crop-stage", false);
+    public static final IndirSetting<Boolean> SIMPLECROPS = new IndirSetting<>(global, "gob.simple-crops", false);
+    public static final IndirSetting<BaseColor> GOBHIDDENCOL = new IndirSetting<>(global, "gob.hidden-col", new BaseColor(Color.WHITE));
+    public static final IndirSetting<BaseColor> GOBHITBOXCOL = new IndirSetting<>(global, "gob.hitbox-col", new BaseColor(Color.WHITE));
+    public static final IndirSetting<Boolean> SHOWGOBHALO = new IndirSetting<>(global, "gob.show-gob-halo", false);
+    public static final IndirSetting<Boolean> SHOWGOBHALOONHEARTH = new IndirSetting<>(global, "gob.show-gob-halo-on-hearth", true);
+    public static final IndirSetting<Boolean> SHOWGOBHP = new IndirSetting<>(global, "gob.show-gob-hp", true);
+    public static final IndirSetting<Integer> PATHWIDTH = new IndirSetting<>(global, "gob.path-width", 4);
+    public static final IndirSetting<Boolean> SHOWGOBPATH = new IndirSetting<>(global, "gob.show-gob-path", false);
+    public static final IndirSetting<Boolean> SHOWANIMALPATH = new IndirSetting<>(global, "gob.show-animal-path", false);
+    public static final IndirSetting<Boolean> SHOWANIMALRADIUS = new IndirSetting<>(global, "gob.show-animal-radius", false);
+    public static final IndirSetting<BaseColor> GOBPATHCOL = new IndirSetting<>(global, "gob.gob-path-color", new BaseColor(Color.GREEN));
+    public static final IndirSetting<BaseColor> ANIMALPATHCOL = new IndirSetting<>(global, "gob.animal-path-color", new BaseColor(Color.RED));
+    public static final IndirSetting<BaseColor> VEHPATHCOL = new IndirSetting<>(global, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
+
+    // Animal
+    public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);
+
     // Lighting
     public static final IndirSetting<Boolean> NIGHTVISION = new IndirSetting<>(global, "lighting.nightvision", false);
     public static final IndirSetting<Color> NVAMBIENTCOL = new IndirSetting<>(global, "lighting.nv-ambient-col", Color.WHITE);
     public static final IndirSetting<Color> NVDIFFUSECOL = new IndirSetting<>(global, "lighting.nv-diffuse-col", Color.WHITE);
     public static final IndirSetting<Color> NVSPECCOL = new IndirSetting<>(global, "lighting.nv-spec-col", Color.WHITE);
     public static final IndirSetting<Boolean> DARKMODE = new IndirSetting<>(global, "lighting.darkmode", false);
+
+    //Camera
+    public static final IndirSetting<String> CAMERA = new IndirSetting<>(global, "camera.camera-type", "sortho");
+    public static final IndirSetting<Integer> CAMERAPROJFAR = new IndirSetting<>(global, "camera.camera-proj-far", 5000);
+    public static final IndirSetting<Boolean> FREECAMREXAXIS = new IndirSetting<>(global, "camera.free.reverse-x-axis", false);
+    public static final IndirSetting<Boolean> FREECAMREYAXIS = new IndirSetting<>(global, "camera.free.reverse-y-axis", false);
+    public static final IndirSetting<Boolean> FREECAMLOCKELAV = new IndirSetting<>(global, "camera.free.lock-elevation", false);
+
+    //Pathfinding
+    public static final IndirSetting<Integer> PATHFINDINGTIER = new IndirSetting<>(global, "pathfinding.tier", 3);
+    public static final IndirSetting<Boolean> LIMITPATHFINDING = new IndirSetting<>(global, "pathfinding.limit-distance-to-view", false);
+    public static final IndirSetting<Boolean> RESEARCHUNTILGOAL = new IndirSetting<>(global, "pathfinding.research-until-at-goal", false);
 
     //Theme options
     public static final IndirSetting<String> HUDTHEME = new IndirSetting<>(global, "theme.hud", "default");
@@ -132,6 +173,38 @@ public class GlobalSettings {
     public static final IndirSetting<Color> SLIDERCOL
             = new IndirSetting<>(global, new IndirSetting.IndirFormatKey("theme.%s.slider.color", HUDTHEME),
             Color.WHITE);
+
+    //UI
+    public static final IndirSetting<Boolean> SHOWPLAVA = new IndirSetting<>(global, "ui.show-player-avatar", true);
+    public static final IndirSetting<Boolean> SHOWSPEED = new IndirSetting<>(global, "ui.show-player-speed", true);
+    public static final IndirSetting<Boolean> SHOWHEALTH = new IndirSetting<>(global, "ui.show-player-health", true);
+    public static final IndirSetting<Boolean> SHOWENERGY = new IndirSetting<>(global, "ui.show-player-energy", true);
+    public static final IndirSetting<Boolean> SHOWSTAM = new IndirSetting<>(global, "ui.show-player-stam", true);
+    public static final IndirSetting<Boolean> SHOWCAL = new IndirSetting<>(global, "ui.show-calendar", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR1 = new IndirSetting<>(global, "ui.show-hotbar1", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR2 = new IndirSetting<>(global, "ui.show-hotbar2", true);
+    public static final IndirSetting<Boolean> SHOWHOTBAR3 = new IndirSetting<>(global, "ui.show-hotbar3", true);
+    public static final IndirSetting<Boolean> SHOWMINIINV = new IndirSetting<>(global, "ui.show-mini-inv", true);
+    public static final IndirSetting<Boolean> SHOWMINIEQU = new IndirSetting<>(global, "ui.show-mini-equ", true);
+    public static final IndirSetting<Boolean> SHOWSTUDY = new IndirSetting<>(global, "ui.show-study", true);
+    public static final IndirSetting<Boolean> SHOWSESSIONS = new IndirSetting<>(global, "ui.show-session-display", true);
+    public static final IndirSetting<Boolean> SHOWCHAT = new IndirSetting<>(global, "ui.show-chat", true);
+    public static final IndirSetting<Boolean> SHOWLRSLOTS = new IndirSetting<>(global, "ui.show-lr-hand-slots", true);
+    public static final IndirSetting<Boolean> SHOWMINIMAP = new IndirSetting<>(global, "ui.show-minimap", true);
+    public static final IndirSetting<Boolean> SHOWINVONLOGIN = new IndirSetting<>(global, "ui.show-inv-on-login", true);
+    public static final IndirSetting<Boolean> SHOWBELTONLOGIN = new IndirSetting<>(global, "ui.show-belt-on-login", true);
+    public static final IndirSetting<Integer> MENUGRIDSIZEX = new IndirSetting<>(global, "ui.mg.size-x", 4);
+    public static final IndirSetting<Integer> MENUGRIDSIZEY = new IndirSetting<>(global, "ui.mg.size-y", 4);
+    public static final IndirSetting<Boolean> BIGSIMPLEMETERS = new IndirSetting<>(global, "ui.big-simple-imeters", false);
+    public static final IndirSetting<Boolean> SHOWITEMQ = new IndirSetting<>(global, "ui.inv.show-item-quality", true);
+    public static final IndirSetting<Boolean> SHOWITEMWEAR = new IndirSetting<>(global, "ui.inv.show-item-wear", true);
+    public static final IndirSetting<Boolean> SHOWITEMCONT = new IndirSetting<>(global, "ui.inv.show-item-cont", true);
+    public static final IndirSetting<Boolean> ALWAYSITEMLONGTIPS = new IndirSetting<>(global, "ui.inv.always-show-longtip", true);
+    public static final IndirSetting<Boolean> AUTOEQUIP = new IndirSetting<>(global, "ui.inv.auto-equip", true);
+    public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "ui.dont-drop-item-over-water", false);
+    public static final IndirSetting<Boolean> QUICKFLMENU = new IndirSetting<>(global, "ui.flowermenu.quick-menu", false);
+    public static final IndirSetting<Boolean> KEEPFLOPEN = new IndirSetting<>(global, "ui.flowermenu.never-close-on-click", false);
+    public static final IndirSetting<Boolean> SHOWEXPWND = new IndirSetting<>(global, "ui.show-experience-window", true);
 
     //Hotkey related
     public static final IndirSetting<String> KB_F_STYLE = new IndirSetting<>(global, "keybind.hotkey-f-style", "GRID");

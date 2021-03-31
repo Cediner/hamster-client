@@ -261,12 +261,16 @@ public class UI {
 	    afterdraws.clear();
 	}
     }
-	
+
+    //ids go sequential, 2^16 limit judging by parent != 65535...
+    //At 65535 it wraps back to 1 and breaks your client :)
+    public int next_predicted_id = 2;
     public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
 	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
 		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
 	if(this.sess != null)
 	    sess.details.context.dispatchmsg(null, "new-widget", id, type, parent, cargs);
+	next_predicted_id = id + 1;
 	Widget.Factory f = Widget.gettype2(type);
 	if(f == null)
 	    throw(new UIException("Bad widget name", type, cargs));

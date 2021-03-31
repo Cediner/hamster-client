@@ -1,5 +1,6 @@
 package hamster.ui;
 
+import hamster.GlobalSettings;
 import hamster.ui.core.ResizableWnd;
 import haven.ChatUI;
 import haven.Coord;
@@ -17,20 +18,20 @@ public class ChatWnd extends ResizableWnd {
     @Override
     public void close() {
         hide();
-        ui.gui.settings.SHOWCHAT.set(false);
+        GlobalSettings.SHOWCHAT.set(false);
     }
 
     @Override
     public void toggleVisibility() {
         super.toggleVisibility();
-        ui.gui.settings.SHOWCHAT.set(visible);
+        GlobalSettings.SHOWCHAT.set(visible);
     }
 
     @Override
     protected void added() {
         super.added();
         chat.resize(asz);
-        setVisible(ui.gui.settings.SHOWCHAT.get());
+        setVisible(GlobalSettings.SHOWCHAT.get());
     }
 
     @Override

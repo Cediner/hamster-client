@@ -1,5 +1,7 @@
 package hamster.gob;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.io.Storage;
 import hamster.script.pathfinding.Hitbox;
 import hamster.util.ObservableCollection;
@@ -22,9 +24,11 @@ import java.util.HashSet;
  * Otherwise nothing is rendered.
  */
 public class Hidden extends GAttrib implements RenderTree.Node {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final ObservableCollection<String> hidden = new ObservableCollection<>(new HashSet<>());
 
     public static void init() {
+        logger.atInfo().log("Loading hidden");
         Storage.dynamic.ensure(sql -> {
             try (final Statement stmt = sql.createStatement()) {
                 stmt.executeUpdate("CREATE TABLE IF NOT EXISTS gob_hidden ( name TEXT PRIMARY KEY )");
@@ -106,7 +110,7 @@ public class Hidden extends GAttrib implements RenderTree.Node {
         super.added(slot);
         final UI ui = gob.glob.ui.get();
         if(ui != null && ui.gui != null) {
-            state = new HiddenState(ui.gui.settings.GOBHIDDENCOL.get());
+            state = new HiddenState(GlobalSettings.GOBHIDDENCOL.get());
             slot.add(mesh);
             slot.ostate(state);
         }
@@ -118,9 +122,9 @@ public class Hidden extends GAttrib implements RenderTree.Node {
         final UI ui = gob.glob.ui.get();
         if(ui != null && ui.gui != null && slots != null) {
             final boolean upd;
-            upd = !state.col.equals(ui.gui.settings.GOBHIDDENCOL.get());
+            upd = !state.col.equals(GlobalSettings.GOBHIDDENCOL.get());
             if(upd)
-                state = new HiddenState(ui.gui.settings.GOBHIDDENCOL.get());
+                state = new HiddenState(GlobalSettings.GOBHIDDENCOL.get());
 
             if(upd) {
                 for (final RenderTree.Slot s : slots) {

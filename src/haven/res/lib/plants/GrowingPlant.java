@@ -1,5 +1,6 @@
 package haven.res.lib.plants;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.FastMesh.MeshRes;
 import haven.Sprite.Factory;
@@ -32,7 +33,7 @@ public class GrowingPlant implements Factory {
         } else {
             CSprite cs = new CSprite(owner, res);
             final UI ui = owner instanceof Gob ? ((Gob) owner).glob.ui.get() : null;
-            if (ui != null && ui.gui != null && ui.gui.settings.SIMPLECROPS.get()) {
+            if (ui != null && ui.gui != null && GlobalSettings.SIMPLECROPS.get()) {
                 MeshRes mesh = meshes.get(0);
                 cs.addpart(0, 0, mesh.mat.get(), mesh.m);
             } else {

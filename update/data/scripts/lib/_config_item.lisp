@@ -4,8 +4,8 @@
 ;;;; Item
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +item+ "haven.GItem")
-(defconstant +contents+ "hamster.ui.item.ContentData")
-(defconstant +content-type+ "hamster.io.ItemData$ContainerType")
+(defconstant +contents+ "hamster.data.itm.ContainerData")
+(defconstant +content-type+ "hamster.data.itm.ContainerType")
 (defconstant +item-sz+ (coord 33 33))
 (defmacro liquid-type ()
   `(svar +content-type+ "LIQUID"))
