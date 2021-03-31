@@ -13,6 +13,7 @@ import hamster.ui.chr.SkillTree;
 import hamster.util.JobSystem;
 import haven.Coord;
 import haven.JOGLPanel;
+import haven.render.BaseColor;
 
 import java.awt.*;
 
@@ -113,6 +114,28 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> MMSHOWGRID = new IndirSetting<>(global, "minimap.show-grid", false);
     public static final IndirSetting<Boolean> MMSHOWVIEW = new IndirSetting<>(global, "minimap.show-view", true);
     public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
+
+    //Gob
+    public static final IndirSetting<Boolean> COLORIZEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
+    public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
+    public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
+    public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);
+    public static final IndirSetting<Boolean> COLORFULCUPBOARDS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
+    public static final IndirSetting<Boolean> COLORFULCHEESERACKS = new IndirSetting<>(global, "gob.colorful-cheese-racks", true);
+    public static final IndirSetting<Boolean> SHOWCROPSTAGE = new IndirSetting<>(global, "gob.show-crop-stage", false);
+    public static final IndirSetting<Boolean> SIMPLECROPS = new IndirSetting<>(global, "gob.simple-crops", false);
+    public static final IndirSetting<BaseColor> GOBHIDDENCOL = new IndirSetting<>(global, "gob.hidden-col", new BaseColor(Color.WHITE));
+    public static final IndirSetting<BaseColor> GOBHITBOXCOL = new IndirSetting<>(global, "gob.hitbox-col", new BaseColor(Color.WHITE));
+    public static final IndirSetting<Boolean> SHOWGOBHALO = new IndirSetting<>(global, "gob.show-gob-halo", false);
+    public static final IndirSetting<Boolean> SHOWGOBHALOONHEARTH = new IndirSetting<>(global, "gob.show-gob-halo-on-hearth", true);
+    public static final IndirSetting<Boolean> SHOWGOBHP = new IndirSetting<>(global, "gob.show-gob-hp", true);
+    public static final IndirSetting<Integer> PATHWIDTH = new IndirSetting<>(global, "gob.path-width", 4);
+    public static final IndirSetting<Boolean> SHOWGOBPATH = new IndirSetting<>(global, "gob.show-gob-path", false);
+    public static final IndirSetting<Boolean> SHOWANIMALPATH = new IndirSetting<>(global, "gob.show-animal-path", false);
+    public static final IndirSetting<Boolean> SHOWANIMALRADIUS = new IndirSetting<>(global, "gob.show-animal-radius", false);
+    public static final IndirSetting<BaseColor> GOBPATHCOL = new IndirSetting<>(global, "gob.gob-path-color", new BaseColor(Color.GREEN));
+    public static final IndirSetting<BaseColor> ANIMALPATHCOL = new IndirSetting<>(global, "gob.animal-path-color", new BaseColor(Color.RED));
+    public static final IndirSetting<BaseColor> VEHPATHCOL = new IndirSetting<>(global, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);

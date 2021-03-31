@@ -1,5 +1,6 @@
 package hamster.gob.attrs.monitors;
 
+import hamster.GlobalSettings;
 import hamster.data.gob.ObjData;
 import hamster.gob.Tag;
 import haven.*;
@@ -19,11 +20,11 @@ public class RangeMonitor extends GAttrib {
 	    if(gui != null) {
 	        final var bpol = gob.findol(BPRad.CUSTOM_BPRAD_ID);
 	        if(bpol == null) {
-		    if (gui.settings.SHOWANIMALRADIUS.get() && gob.hasTag(Tag.ANIMAL) && !gob.isDead()) {
+		    if (GlobalSettings.SHOWANIMALRADIUS.get() && gob.hasTag(Tag.ANIMAL) && !gob.isDead()) {
 		        gob.addol(new Gob.Overlay(gob, BPRad.CUSTOM_BPRAD_ID,
 				new BPRad(gob, null, ObjData.getRange(gob.name()))));
 		    }
-		} else if(gob.isDead() || (!gui.settings.SHOWANIMALRADIUS.get() && gob.hasTag(Tag.ANIMAL))) {
+		} else if(gob.isDead() || (!GlobalSettings.SHOWANIMALRADIUS.get() && gob.hasTag(Tag.ANIMAL))) {
 		    ((BPRad) bpol.spr).rem();
 		}
 	    }

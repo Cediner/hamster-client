@@ -1124,7 +1124,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 			final ScreenLocation sc = g.getattr(ScreenLocation.class);
 			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
 			    final KinInfo kin = g.getattr(KinInfo.class);
-			    if (kin == null || kin.group == settings.BADKIN.get()) {
+			    if (kin == null || kin.group == GlobalSettings.BADKIN.get()) {
 				final double gdist = ui.mc.dist(sc.sc());
 				if (target != null && gdist < dist) {
 				    target = g;
@@ -1189,7 +1189,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 			final ScreenLocation sc = g.getattr(ScreenLocation.class);
 			if (g.id != map.plgob && g.hasTag(Tag.HUMAN) && sc != null && !g.isDead()) {
 			    final KinInfo kin = g.getattr(KinInfo.class);
-			    if (kin == null || kin.group == settings.BADKIN.get()) {
+			    if (kin == null || kin.group == GlobalSettings.BADKIN.get()) {
 				final double gdist = ui.mc.dist(sc.sc());
 				if (target != null && gdist < dist) {
 				    target = g;

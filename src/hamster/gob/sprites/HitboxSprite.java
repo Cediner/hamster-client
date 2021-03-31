@@ -1,5 +1,6 @@
 package hamster.gob.sprites;
 
+import hamster.GlobalSettings;
 import hamster.script.pathfinding.Hitbox;
 import haven.FastMesh;
 import haven.Gob;
@@ -31,7 +32,7 @@ public class HitboxSprite extends Sprite {
     public void added(RenderTree.Slot slot) {
         final UI ui = ((Gob)owner).glob.ui.get();
         if(mesh != null && ui != null && ui.gui != null) {
-            slot.add(mesh, ui.gui.settings.GOBHITBOXCOL.get());
+            slot.add(mesh, GlobalSettings.GOBHITBOXCOL.get());
         }
     }
 

@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import haven.render.*;
 
 import java.awt.*;
@@ -55,7 +56,7 @@ public class GobHealth extends GAttrib implements Gob.SetupMod, RenderTree.Node,
 
     public void draw(GOut g, Pipe state) {
 	final UI ui = gob.glob.ui.get();
-	if(ui != null && ui.gui != null && ui.gui.settings.SHOWGOBHP.get() && hp < 1) {
+	if(ui != null && ui.gui != null && GlobalSettings.SHOWGOBHP.get() && hp < 1) {
 	    Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 5), state, Area.sized(g.sz())).round2();
 	    if (sc.isect(Coord.z, g.sz())) {
 		g.aimage(hptex, sc, 0.5, 1.0);

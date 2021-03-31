@@ -1,5 +1,6 @@
 package hamster.gfx;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.Homo3D;
 import haven.render.Pipe;
@@ -42,7 +43,7 @@ public class PlantStageSprite extends Sprite {
     public void draw(GOut g, Pipe state) {
         final Gob gob = (Gob) owner;
         final UI ui = gob.glob.ui.get();
-        if (ui != null && ui.gui != null && ui.gui.settings.SHOWCROPSTAGE.get()) {
+        if (ui != null && ui.gui != null && GlobalSettings.SHOWCROPSTAGE.get()) {
             Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 16), state).round2();
             g.aimage(tex, sc, 0.5, 2.0);
         }

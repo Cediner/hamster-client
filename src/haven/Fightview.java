@@ -26,6 +26,7 @@
 
 package haven;
 
+import hamster.GlobalSettings;
 import hamster.gob.sprites.AggroMark;
 import hamster.gob.sprites.GobCombatSprite;
 import hamster.ui.core.Theme;
@@ -146,7 +147,7 @@ public class Fightview extends Widget {
 
 	public void tick() {
 	    updateDefWeights();
-	    if (ui.gui.settings.COLORIZEAGGRO.get()) {
+	    if (GlobalSettings.COLORIZEAGGRO.get()) {
 		final Gob g = ui.sess.glob.oc.getgob(gobid);
 		if (g != null && g.findol(AggroMark.id) == null) {
 		    g.daddol(AggroMark.id, new AggroMark());

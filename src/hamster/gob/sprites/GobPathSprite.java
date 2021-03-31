@@ -1,5 +1,6 @@
 package hamster.gob.sprites;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.*;
 
@@ -91,13 +92,13 @@ public class GobPathSprite extends Sprite {
                 new States.Facecull(States.Facecull.Mode.NONE),
                 Location.goback("gobx")));
         final UI ui = ((Gob)owner).glob.ui.get();
-        slot.add(model, Pipe.Op.compose(col, new States.LineWidth(ui != null ? ui.gui.settings.PATHWIDTH.get() : 4)));
+        slot.add(model, Pipe.Op.compose(col, new States.LineWidth(ui != null ? GlobalSettings.PATHWIDTH.get() : 4)));
     }
 
     @Override
     public boolean tick(double dt) {
         final Gob g = (Gob)owner;
         final UI ui = g.glob.ui.get();
-        return !alive || (ui != null && ui.gui != null && !ui.gui.settings.SHOWGOBPATH.get());
+        return !alive || (ui != null && ui.gui != null && !GlobalSettings.SHOWGOBPATH.get());
     }
 }

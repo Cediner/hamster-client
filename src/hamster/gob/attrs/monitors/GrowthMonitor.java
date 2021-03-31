@@ -1,5 +1,6 @@
 package hamster.gob.attrs.monitors;
 
+import hamster.GlobalSettings;
 import hamster.data.gob.CropData;
 import hamster.data.gob.ObjData;
 import hamster.gob.sprites.GrowthSprite;
@@ -32,11 +33,11 @@ public class GrowthMonitor extends GAttrib {
         final UI ui = gob.glob.ui.get();
         if(ui != null && ui.gui != null) {
             final int nstg = !gob.fallowplant() ? gob.sdt() : -1;
-            if(show != ui.gui.settings.SHOWCROPSTAGE.get() || stage != nstg) {
+            if(show != GlobalSettings.SHOWCROPSTAGE.get() || stage != nstg) {
                 if(stage != nstg) {
                     remol();
                 }
-                show = ui.gui.settings.SHOWCROPSTAGE.get();
+                show = GlobalSettings.SHOWCROPSTAGE.get();
                 stage = nstg;
 
                 if(show) {

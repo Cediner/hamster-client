@@ -1,5 +1,6 @@
 package hamster.gob.attrs.mods;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.BaseColor;
 import haven.render.Pipe;
@@ -39,7 +40,7 @@ public class DryingFrameStatus extends GAttrib implements Gob.SetupMod {
     public void ctick(double dt) {
         super.ctick(dt);
         final UI ui = gob.glob.ui.get();
-        if(ui != null && ui.gui != null && ui.gui.settings.COLORFULFARMES.get()) {
+        if(ui != null && ui.gui != null && GlobalSettings.COLORFULFARMES.get()) {
             boolean done = true;
             boolean empty = true;
             for (final Gob.Overlay ol : gob.ols) {

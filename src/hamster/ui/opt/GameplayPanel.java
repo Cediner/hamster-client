@@ -94,34 +94,34 @@ public class GameplayPanel extends Scrollport {
         }
         { //Gob
             gob.add(new Label("Bad Kin Group:"));
-            gob.add(new IndirGroupSelector(ui.gui.settings.BADKIN, BuddyWnd.gc));
-            gob.add(new IndirCheckBox("Show halo on players", ui.gui.settings.SHOWGOBHALO));
-            gob.add(new IndirCheckBox("Show halo on players on hearth", ui.gui.settings.SHOWGOBHALOONHEARTH));
-            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", ui.gui.settings.COLORIZEAGGRO));
-            gob.add(new IndirCheckBox("Colorize Drying Frames", ui.gui.settings.COLORFULFARMES));
-            gob.add(new IndirCheckBox("Colorize Tanning Tubs", ui.gui.settings.COLORFULTUBS));
-            gob.add(new IndirCheckBox("Colorize Cupboards", ui.gui.settings.COLORFULCUPBOARDS));
-            gob.add(new IndirCheckBox("Colorize Cheese Racks", ui.gui.settings.COLORFULCHEESERACKS));
+            gob.add(new IndirGroupSelector(GlobalSettings.BADKIN, BuddyWnd.gc));
+            gob.add(new IndirCheckBox("Show halo on players", GlobalSettings.SHOWGOBHALO));
+            gob.add(new IndirCheckBox("Show halo on players on hearth", GlobalSettings.SHOWGOBHALOONHEARTH));
+            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", GlobalSettings.COLORIZEAGGRO));
+            gob.add(new IndirCheckBox("Colorize Drying Frames", GlobalSettings.COLORFULFARMES));
+            gob.add(new IndirCheckBox("Colorize Tanning Tubs", GlobalSettings.COLORFULTUBS));
+            gob.add(new IndirCheckBox("Colorize Cupboards", GlobalSettings.COLORFULCUPBOARDS));
+            gob.add(new IndirCheckBox("Colorize Cheese Racks", GlobalSettings.COLORFULCHEESERACKS));
             gob.add(new IndirCheckBox("Colorize Cave dust (Global)", COLORFULDUST));
             gob.add(new IndirCheckBox("Cave dust last longer (Global)", LONGLIVINGDUST));
             gob.add(new IndirCheckBox("Make Cave dust larger (Global)", LARGEDUSTSIZE));
-            gob.add(new IndirCheckBox("Show Crop Stage", ui.gui.settings.SHOWCROPSTAGE));
-            gob.add(new IndirCheckBox("Show Simple Crops", ui.gui.settings.SIMPLECROPS));
-            gob.add(new IndirCheckBox("Show Gob damage", ui.gui.settings.SHOWGOBHP));
-            gob.add(new IndirCheckBox("Show Player Paths", ui.gui.settings.SHOWGOBPATH));
-            gob.add(new IndirLabel(() -> String.format("Path Width: %d", ui.gui.settings.PATHWIDTH.get()), Text.std));
-            gob.add(new IndirHSlider(200, 1, 8, ui.gui.settings.PATHWIDTH));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", ui.gui.settings.GOBPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", ui.gui.settings.VEHPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", ui.gui.settings.GOBHIDDENCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", ui.gui.settings.GOBHITBOXCOL));
+            gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
+            gob.add(new IndirCheckBox("Show Simple Crops", GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
+            gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
+            gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
+            gob.add(new IndirHSlider(200, 1, 8, GlobalSettings.PATHWIDTH));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", GlobalSettings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", GlobalSettings.VEHPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", GlobalSettings.GOBHIDDENCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", GlobalSettings.GOBHITBOXCOL));
             gob.pack();
         }
         { //Animals
             animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
-            animal.add(new IndirCheckBox("Show Animal Paths", ui.gui.settings.SHOWANIMALPATH));
-            animal.add(new IndirCheckBox("Show Dangerous Animal Radius", ui.gui.settings.SHOWANIMALRADIUS));
-            animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", ui.gui.settings.ANIMALPATHCOL));
+            animal.add(new IndirCheckBox("Show Animal Paths", GlobalSettings.SHOWANIMALPATH));
+            animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
+            animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));
             animal.pack();
         }
         { //Pathfinding

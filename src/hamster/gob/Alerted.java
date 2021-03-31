@@ -124,7 +124,7 @@ public class Alerted {
                 //For bodies only play on unknown or RED or village/realm member that you don't have kinned
                 final KinInfo kin = g.getattr(KinInfo.class);
                 final GobHealth hp = g.getattr(GobHealth.class);
-                if ( hp == null && (kin == null || kin.group == ui.gui.settings.BADKIN.get() ||
+                if ( hp == null && (kin == null || kin.group == GlobalSettings.BADKIN.get() ||
                         (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" "))))) {
                     Audio.play(sfxmap.get(name), (GlobalSettings.ALERTVOL.get() / 1000f));
                     g.glob.lastAlert = System.currentTimeMillis();

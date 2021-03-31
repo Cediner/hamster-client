@@ -1,5 +1,6 @@
 package hamster.gob.attrs.mods;
 
+import hamster.GlobalSettings;
 import haven.GAttrib;
 import haven.Gob;
 import haven.UI;
@@ -35,7 +36,7 @@ public class TanTubStatus extends GAttrib implements Gob.SetupMod {
     @Override
     public Pipe.Op gobstate() {
         final UI ui = gob.glob.ui.get();
-        if (ui != null && ui.gui != null && ui.gui.settings.COLORFULTUBS.get()) {
+        if (ui != null && ui.gui != null && GlobalSettings.COLORFULTUBS.get()) {
             return switch (state) {
                 case EMPTY -> tubEmpty;
                 case DONE -> tubDone;

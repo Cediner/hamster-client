@@ -1154,7 +1154,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	final UI ui = glob.ui.get();
 	if(ui != null) {
 	    final GameUI gui = ui.gui;
-	    final int badkin = gui != null ? gui.settings.BADKIN.get() : 2;
+	    final int badkin = gui != null ? GlobalSettings.BADKIN.get() : 2;
 	    if (kin != null) {
 		return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
 	    }
