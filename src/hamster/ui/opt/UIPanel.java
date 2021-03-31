@@ -9,6 +9,7 @@ import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.Coord;
+import haven.MenuGrid;
 import haven.UI;
 
 public class UIPanel extends Scrollport {
@@ -76,17 +77,9 @@ public class UIPanel extends Scrollport {
         }
         { // Menu Grid
             menu.add(new IndirLabel(() -> String.format("MenuGrid Columns: %d", GlobalSettings.MENUGRIDSIZEX.get())));
-            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEX, (val) -> {
-                if(ui.gui.menu != null) {
-                    ui.gui.menu.updlayoutsize();
-                }
-            }));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEX, (val) -> MenuGrid.MessageBus.send(new MenuGrid.UpdateLayout())));
             menu.add(new IndirLabel(() -> String.format("MenuGrid Rows: %d", GlobalSettings.MENUGRIDSIZEY.get())));
-            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEY, (val) -> {
-                if(ui.gui.menu != null) {
-                    ui.gui.menu.updlayoutsize();
-                }
-            }));
+            menu.add(new IndirHSlider(UI.scale(200), 4, 16, GlobalSettings.MENUGRIDSIZEY, (val) -> MenuGrid.MessageBus.send(new MenuGrid.UpdateLayout())));
             menu.pack();
             overall.add(menu);
         }

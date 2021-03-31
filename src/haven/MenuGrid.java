@@ -36,6 +36,8 @@ import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
 import hamster.util.ObservableCollection;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
@@ -56,6 +58,23 @@ public class MenuGrid extends MovableWidget {
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+
+    /*
+     * MessageBus / MailBox System Message
+     */
+    public static final MessageBus<MenuGridMail> MessageBus = new MessageBus<>();
+    private MailBox<MenuGridMail> mailbox;
+    public static abstract class MenuGridMail extends hamster.util.msg.Message {
+	public abstract void apply(final MenuGrid menu);
+    }
+
+    public static class UpdateLayout extends MenuGridMail {
+	@Override
+	public void apply(MenuGrid menu) {
+	    menu.updlayoutsize();
+	}
+    }
+
 
     @RName("scm")
     public static class $_ implements Factory {
@@ -398,7 +417,15 @@ public class MenuGrid extends MovableWidget {
     @Override
     protected void added() {
 	super.added();
+	mailbox = new MailBox<>(ui.office);
+	MessageBus.subscribe(mailbox);
 	updlayoutsize();
+    }
+
+    @Override
+    public void dispose() {
+	MessageBus.unsubscribe(mailbox);
+	super.dispose();
     }
 
     public void updlayoutsize() {
@@ -592,6 +619,8 @@ public class MenuGrid extends MovableWidget {
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
+	if(mailbox != null)
+	    mailbox.processMail(mail -> mail.apply(this));
     }
 
     public boolean mouseup(Coord c, int button) {

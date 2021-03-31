@@ -106,6 +106,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+    public static class CameraResized extends MapViewMail {
+	@Override
+	public void apply(MapView mv) {
+	    mv.camera.resized();
+	}
+    }
+
     public static class ToggleFlavObjs extends MapViewMail {
         private final boolean visible;
         public ToggleFlavObjs(final boolean visible) {

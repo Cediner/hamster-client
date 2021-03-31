@@ -53,7 +53,8 @@ public class GameplayPanel extends Scrollport {
 
             cam.add(rgrp);
             cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", GlobalSettings.CAMERAPROJFAR.get())));
-            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
+            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR,
+                    (val) -> MapView.MessageBus.send(new MapView.CameraResized())));
             cam.add(freeg);
             cam.pack();
             overall.add(cam);
