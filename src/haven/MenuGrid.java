@@ -35,8 +35,9 @@ import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
-import hamster.util.MessageBus;
 import hamster.util.ObservableCollection;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 import haven.Resource.AButton;
 import java.util.*;
 import java.util.function.Consumer;
@@ -57,6 +58,23 @@ public class MenuGrid extends MovableWidget {
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+
+    /*
+     * MessageBus / MailBox System Message
+     */
+    public static final MessageBus<MenuGridMail> MessageBus = new MessageBus<>();
+    private MailBox<MenuGridMail> mailbox;
+    public static abstract class MenuGridMail extends hamster.util.msg.Message {
+	public abstract void apply(final MenuGrid menu);
+    }
+
+    public static class UpdateLayout extends MenuGridMail {
+	@Override
+	public void apply(MenuGrid menu) {
+	    menu.updlayoutsize();
+	}
+    }
+
 
     @RName("scm")
     public static class $_ implements Factory {
@@ -339,7 +357,7 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.paginasearch.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::studyreport",
 		Resource.local().load("custom/paginae/default/wnd/study"),
-		(pag) -> ui.gui.study.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.StudyWindow))));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),
@@ -355,13 +373,13 @@ public class MenuGrid extends MovableWidget {
 		(pag) -> ui.gui.zerg.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::lmap",
 		Resource.local().load("custom/paginae/default/wnd/lmap"),
-		(pag) -> ui.gui.mapfile.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.MiniMap))));
 	addCustom(new CustomPagina(this, "management::opts",
 		Resource.local().load("custom/paginae/default/wnd/opts"),
 		(pag) -> ui.gui.opts.toggleVisibility()));
 	addCustom(new CustomPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
-		(pag) -> ui.gui.chatwnd.toggleVisibility()));
+		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.ChatWindow))));
 	//Keybinds
 	binds.put(KeyBind.KB_SCM_ROOT, () -> {
 	    if(this.cur != null) {
@@ -399,7 +417,15 @@ public class MenuGrid extends MovableWidget {
     @Override
     protected void added() {
 	super.added();
+	mailbox = new MailBox<>(ui.office);
+	MessageBus.subscribe(mailbox);
 	updlayoutsize();
+    }
+
+    @Override
+    public void dispose() {
+	MessageBus.unsubscribe(mailbox);
+	super.dispose();
     }
 
     public void updlayoutsize() {
@@ -593,6 +619,8 @@ public class MenuGrid extends MovableWidget {
     public void tick(double dt) {
 	if(recons)
 	    updlayout();
+	if(mailbox != null)
+	    mailbox.processMail(mail -> mail.apply(this));
     }
 
     public boolean mouseup(Coord c, int button) {

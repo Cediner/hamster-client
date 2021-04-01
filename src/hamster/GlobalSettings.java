@@ -44,6 +44,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWHIDDEN = new IndirSetting<>(tmp, "session.show-hidden", false);
     public static final IndirSetting<Boolean> SHOWHITBOX = new IndirSetting<>(tmp, "session.show-hitbox", false);
     public static final IndirSetting<Boolean> SHOWHOVERTOOLTIPS = new IndirSetting<>(tmp, "session.show-hover-tooltips", false);
+    public static final IndirSetting<Boolean> SHOWPCLAIM = new IndirSetting<>(tmp, "session.show-pclaim", false);
+    public static final IndirSetting<Boolean> SHOWVCLAIM = new IndirSetting<>(tmp, "session.show-vclaim", false);
+    public static final IndirSetting<Boolean> SHOWKCLAIM = new IndirSetting<>(tmp, "session.show-kclaim", false);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
@@ -136,6 +139,8 @@ public class GlobalSettings {
     public static final IndirSetting<BaseColor> GOBPATHCOL = new IndirSetting<>(global, "gob.gob-path-color", new BaseColor(Color.GREEN));
     public static final IndirSetting<BaseColor> ANIMALPATHCOL = new IndirSetting<>(global, "gob.animal-path-color", new BaseColor(Color.RED));
     public static final IndirSetting<BaseColor> VEHPATHCOL = new IndirSetting<>(global, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
+    public static final IndirSetting<Boolean> SHOWGOBSPEED = new IndirSetting<>(global, "gob.show-speed-on-humans", false);
+    public static final IndirSetting<Boolean> SHOWANIMALSPEED = new IndirSetting<>(global, "gob.show-speed-on-animals", false);
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);

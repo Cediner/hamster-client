@@ -70,6 +70,12 @@ public class Glob {
     public void attach(final UI ui) {
 	this.ui = new WeakReference<>(ui);
 	oc.attached(ui);
+	map.attached(ui);
+    }
+
+    public void dispose() {
+        oc.dispose();
+        map.dispose();
     }
 
     @Resource.PublishedCode(name = "wtr")

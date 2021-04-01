@@ -42,6 +42,8 @@ import hamster.ui.chr.StudyWnd;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 
 import java.util.*;
 import java.util.function.*;
@@ -159,6 +161,90 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     //Session
     public final SessionSettings settings;
 
+    // MessageBus / MailBox System Message
+    public static final hamster.util.msg.MessageBus<GameUIMail> MessageBus = new MessageBus<>();
+    private MailBox<GameUIMail> mailbox;
+    public static abstract class GameUIMail extends hamster.util.msg.Message {
+	public abstract void apply(final GameUI gui);
+    }
+
+    public enum Wdg {
+	PlayerAvatar,
+	PlayerSpeed,
+	PlayerHealth,
+	PlayerEnergy,
+	PlayerStamina,
+	ChatWindow,
+	Calendar,
+	SessionDisplay,
+	Hotbar1, Hotbar2, Hotbar3,
+	MiniInv, MiniEqu,
+	LRHandSlots,
+	StudyWindow,
+	MiniMap
+    }
+
+    public static class SetVisiblity extends GameUIMail {
+	private final Wdg wnd;
+        private final boolean visible;
+
+        public SetVisiblity(final Wdg wnd, final boolean visible) {
+            this.wnd = wnd;
+            this.visible = visible;
+	}
+
+	@Override
+	public void apply(GameUI gui) {
+            switch (wnd) {
+		case PlayerAvatar -> gui.portrait.setVisible(visible);
+		case PlayerSpeed -> gui.speed.setVisible(visible);
+		case PlayerHealth -> gui.hp.setVisible(visible);
+		case PlayerEnergy -> gui.energy.setVisible(visible);
+		case PlayerStamina -> gui.stam.setVisible(visible);
+		case ChatWindow -> gui.chatwnd.setVisible(visible);
+		case Calendar -> gui.cal.setVisible(visible);
+		case SessionDisplay -> gui.ui.root.sessionDisplay.setVisible(visible);
+		case Hotbar1 -> gui.hotbar1.setVisible(visible);
+		case Hotbar2 -> gui.hotbar2.setVisible(visible);
+		case Hotbar3 -> gui.hotbar3.setVisible(visible);
+		case MiniInv -> gui.mminv.setVisible(visible);
+		case MiniEqu -> gui.mmequ.setVisible(visible);
+		case LRHandSlots -> gui.lrhandview.setVisible(visible);
+		case StudyWindow -> gui.study.setVisible(visible);
+		case MiniMap -> gui.mapfile.setVisible(visible);
+	    }
+	}
+    }
+
+    public static class ToggleVisibility extends GameUIMail {
+	private final Wdg wnd;
+	public ToggleVisibility(final Wdg wnd) {
+	    this.wnd = wnd;
+	}
+
+	@Override
+	public void apply(GameUI gui) {
+	    switch (wnd) {
+		case PlayerAvatar -> gui.portrait.toggleVisibility();
+		case PlayerSpeed -> gui.speed.toggleVisibility();
+		case PlayerHealth -> gui.hp.toggleVisibility();
+		case PlayerEnergy -> gui.energy.toggleVisibility();
+		case PlayerStamina -> gui.stam.toggleVisibility();
+		case ChatWindow -> gui.chatwnd.toggleVisibility();
+		case Calendar -> gui.cal.toggleVisibility();
+		case SessionDisplay -> gui.ui.root.sessionDisplay.toggleVisibility();
+		case Hotbar1 -> gui.hotbar1.toggleVisibility();
+		case Hotbar2 -> gui.hotbar2.toggleVisibility();
+		case Hotbar3 -> gui.hotbar3.toggleVisibility();
+		case MiniInv -> gui.mminv.toggleVisibility();
+		case MiniEqu -> gui.mmequ.toggleVisibility();
+		case LRHandSlots -> gui.lrhandview.toggleVisibility();
+		case StudyWindow -> gui.study.toggleVisibility();
+		case MiniMap -> gui.mapfile.toggleVisibility();
+	    }
+	}
+    }
+
     private static final OwnerContext.ClassResolver<BeltSlot> beltctxr = new OwnerContext.ClassResolver<BeltSlot>()
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
 	.add(Session.class, slot -> slot.wdg().ui.sess);
@@ -271,6 +357,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		public void flush() {}
 	    });
 	Debug.log = ui.cons.out;
+	mailbox = new MailBox<>(ui.office);
+	MessageBus.subscribe(mailbox);
 	// Adding local widgets / custom stuff
 	final Coord stdloc = UI.scale(200, 200);
 	ui.root.sessionDisplay.unlink();
@@ -295,6 +383,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     }
 
     public void dispose() {
+	MessageBus.unsubscribe(mailbox);
 	ui.root.add(ui.root.sessionDisplay = new SessionDisplay());
 	savewndpos();
 	Debug.log = new java.io.PrintWriter(System.err);
@@ -788,6 +877,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	    delayedAdd.clear();
 	}
+	if(mailbox != null)
+	    mailbox.processMail(mail -> mail.apply(this));
     }
     
     public void uimsg(String msg, Object... args) {

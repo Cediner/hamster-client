@@ -267,11 +267,11 @@ public class MapViewExt {
                         break;
                     case "Unhide":
                         Hidden.remove(name);
-                        mv.ui.sess.glob.oc.mailbox.mail(new OCache.UnhideGobsByName(name));
+                        OCache.MessageBus.send(new OCache.UnhideGobsByName(name));
                         break;
                     case "Hide":
                         Hidden.add(name);
-                        mv.ui.sess.glob.oc.mailbox.mail(new OCache.HideGobsByName(name));
+                        OCache.MessageBus.send(new OCache.HideGobsByName(name));
                         break;
                     case "Remove Sound":
                         Alerted.remove(name);
@@ -281,7 +281,7 @@ public class MapViewExt {
                         break;
                     case "Delete":
                         Deleted.add(name);
-                        mv.ui.sess.glob.oc.mailbox.mail(new OCache.RemoveGobByRes(name));
+                       OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
                         break;
                     case "Delete this":
                         g.dispose();
@@ -345,9 +345,7 @@ public class MapViewExt {
                         }
                     });
                 }
-                case "Mark for script" -> {
-                    mv.ui.sess.details.context.dispatchmsg(mv, "click-tile", mc);
-                }
+                case "Mark for script" -> mv.ui.sess.details.context.dispatchmsg(mv, "click-tile", mc);
                 case "Slaves" -> selectSlavesAndDo((slaves) -> tileSlaveActMenu(mc, slaves));
             }
         }, opts.toArray(new String[0]));

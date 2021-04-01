@@ -714,8 +714,7 @@
     res: "gfx/kritter/sheep/sheep",
     tags: [
       "ANIMAL",
-      "CAN_FIGHT",
-      "CAN_TAME"
+      "TAMED_ANIMAL"
     ]
   },
   {

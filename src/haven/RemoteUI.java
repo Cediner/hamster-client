@@ -105,6 +105,12 @@ public class RemoteUI implements UI.Receiver, UI.Runner {
 	}
     }
 
+    public void dispose() {
+        if(sess != null) {
+            sess.glob.dispose();
+	}
+    }
+
     public String title() {
 	return(sess.username);
     }

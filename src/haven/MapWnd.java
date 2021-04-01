@@ -130,9 +130,24 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		.changed(GlobalSettings.MMSHOWGRID::set)
 		.set(GlobalSettings.MMSHOWGRID.get());
 	addBtn("buttons/wnd/markers", "Open Markers list", () -> ui.gui.mapmarkers.toggleVisibility());
-	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims")).changed(a -> toggleol("realm", a));
-	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims")).changed(a -> toggleol("vlg", a));
-	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims")).changed(a -> toggleol("cplot", a));
+	addBtn(new ICheckBox("buttons/wnd/realm", "Show Kingdom Claims"))
+		.state(GlobalSettings.SHOWKCLAIM::get)
+		.set(a -> {
+		    GlobalSettings.SHOWKCLAIM.set(a);
+		    MapView.MessageBus.send(new MapView.ToggleOverlay("realm", a));
+		});
+	addBtn(new ICheckBox("buttons/wnd/vclaim", "Show Village Claims"))
+		.state(GlobalSettings.SHOWVCLAIM::get)
+		.set(a -> {
+		    GlobalSettings.SHOWVCLAIM.set(a);
+		    MapView.MessageBus.send(new MapView.ToggleOverlay("vlg", a));
+		});
+	addBtn(new ICheckBox("buttons/wnd/claim", "Show Personal Claims"))
+		.state(GlobalSettings.SHOWPCLAIM::get)
+		.set(a -> {
+		    GlobalSettings.SHOWPCLAIM.set(a);
+		    MapView.MessageBus.send(new MapView.ToggleOverlay("cplot", a));
+		});
 
 	addBtn("buttons/wnd/two", "2nd remembered window size",
 		() -> recall(GlobalSettings.MMMEMSIZETWO, GlobalSettings.MMMEMPOSTWO),
@@ -153,15 +168,6 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     public void close() {
 	hide();
 	GlobalSettings.SHOWMINIMAP.set(false);
-    }
-
-    private void toggleol(String tag, boolean a) {
-	if(ui.gui.map != null) {
-	    if(a)
-		ui.gui.map.enol(tag);
-	    else
-		ui.gui.map.disol(tag);
-	}
     }
 
     private void remember(final IndirSetting<Coord> size, final IndirSetting<Coord> pos) {

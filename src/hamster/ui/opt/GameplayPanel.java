@@ -31,11 +31,8 @@ public class GameplayPanel extends Scrollport {
             overall.add(sys);
         }
         { //Camera
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA, (camera) -> {
-                if(ui.gui != null) {
-                    ui.gui.map.setcam(camera);
-                }
-            });
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA,
+                    (camera) -> MapView.MessageBus.send(new MapView.SetCamera(camera)));
             {
                 rgrp.add("Ortho Cam", "sortho");
                 rgrp.add("Angle Locked Ortho Cam", "ortho");
@@ -56,7 +53,8 @@ public class GameplayPanel extends Scrollport {
 
             cam.add(rgrp);
             cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", GlobalSettings.CAMERAPROJFAR.get())));
-            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR, (val) -> ui.gui.map.camera.resized()));
+            cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR,
+                    (val) -> MapView.MessageBus.send(new MapView.CameraResized())));
             cam.add(freeg);
             cam.pack();
             overall.add(cam);
@@ -72,8 +70,8 @@ public class GameplayPanel extends Scrollport {
         }
         { // Map related
             //Display related
-            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> ui.gui.map.toggleMap(val)));
-            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> ui.gui.map.toggleGobs(val)));
+            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> MapView.MessageBus.send(new MapView.ToggleMap(val))));
+            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> MapView.MessageBus.send(new MapView.ToggleGobs(val))));
             map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
             map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
             map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
@@ -81,20 +79,14 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
             //Grid related
-            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> ui.gui.map.terrain.toggleFlav(val)));
-            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> MapView.MessageBus.send(new MapView.ToggleFlavObjs(val))));
+            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Ocean related
-            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> ui.sess.glob.map.invalidateAll()));
-            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> {
-                ui.sess.glob.map.updateWaterTiles();
-                ui.sess.glob.map.invalidateAll();
-            }));
+            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
+            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
             //Cave related
-            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> ui.sess.glob.map.invalidateAll()));
+            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             map.pack();
             overall.add(map);
         }
@@ -113,6 +105,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Make Cave dust larger", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops (Requires reload of gobs in view)", GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Player Speed", SHOWGOBSPEED));
             gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
             gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
             gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
@@ -126,6 +119,7 @@ public class GameplayPanel extends Scrollport {
         }
         { //Animals
             animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
+            animal.add(new IndirCheckBox("Show Animal Speed", SHOWANIMALSPEED));
             animal.add(new IndirCheckBox("Show Animal Paths", GlobalSettings.SHOWANIMALPATH));
             animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
             animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));

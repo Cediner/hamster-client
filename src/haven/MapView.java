@@ -28,7 +28,6 @@ package haven;
 
 import static hamster.KeyBind.*;
 import static hamster.MouseBind.*;
-import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 import java.awt.Color;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
-import java.lang.ref.*;
 import java.lang.reflect.*;
 
 import com.google.common.flogger.FluentLogger;
@@ -49,6 +47,8 @@ import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
 import hamster.ui.MapViewExt;
 import hamster.util.JobSystem;
+import hamster.util.msg.MailBox;
+import hamster.util.msg.MessageBus;
 import haven.render.*;
 import haven.MCache.OverlayInfo;
 import haven.render.sl.Uniform;
@@ -84,6 +84,108 @@ public class MapView extends PView implements DTarget, Console.Directory {
     //Ext
     public final MapViewExt ext = new MapViewExt(this);
     private final Outlines outlines;
+
+    /*
+     * MessageBus / MailBox System Message
+     */
+    public static final MessageBus<MapViewMail> MessageBus = new MessageBus<>();
+    private MailBox<MapViewMail> mailbox;
+    public static abstract class MapViewMail extends hamster.util.msg.Message {
+	public abstract void apply(final MapView mv);
+    }
+
+    public static class SetCamera extends MapViewMail {
+        private final String name;
+        public SetCamera(final String name) {
+            this.name = name;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.setcam(name);
+	}
+    }
+
+    public static class CameraResized extends MapViewMail {
+	@Override
+	public void apply(MapView mv) {
+	    mv.camera.resized();
+	}
+    }
+
+    public static class ToggleFlavObjs extends MapViewMail {
+        private final boolean visible;
+        public ToggleFlavObjs(final boolean visible) {
+            this.visible = visible;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.terrain.toggleFlav(visible);
+	}
+    }
+
+    public static class ToggleGobs extends MapViewMail {
+	private final boolean visible;
+	public ToggleGobs(final boolean visible) {
+	    this.visible = visible;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.toggleGobs(visible);
+	}
+    }
+
+    public static class ToggleMap extends MapViewMail {
+	private final boolean visible;
+	public ToggleMap(final boolean visible) {
+	    this.visible = visible;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.toggleMap(visible);
+	}
+    }
+
+
+    public static class ToggleOutlines extends MapViewMail {
+	private final boolean visible;
+	public ToggleOutlines(final boolean visible) {
+	    this.visible = visible;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    mv.toggleOutlines(visible);
+	}
+    }
+
+
+    public static class ToggleOverlay extends MapViewMail {
+        private final String name;
+	private final boolean visible;
+	public ToggleOverlay(final String name, final boolean visible) {
+	    this.name = name;
+	    this.visible = visible;
+	}
+
+	@Override
+	public void apply(MapView mv) {
+	    if(visible)
+		mv.enol(name);
+	    else
+		mv.disol(name);
+	}
+    }
+
+    public static class ResetShadows extends MapViewMail {
+	@Override
+	public void apply(MapView mv) {
+	    mv.resetshadows();
+	}
+    }
 
     public interface Delayed {
 	public void run(GOut g);
@@ -886,6 +988,13 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	setupKeyBinds();
     }
 
+    @Override
+    protected void added() {
+	super.added();
+	mailbox = new MailBox<>(ui.office);
+	MessageBus.subscribe(mailbox);
+    }
+
     protected void envdispose() {
 	if(smap != null) {
 	    smap.dispose(); smap = null;
@@ -895,6 +1004,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
 
     public void dispose() {
+	MessageBus.unsubscribe(mailbox);
 	gobs.slot.remove();
 	clmaplist.dispose();
 	clobjlist.dispose();
@@ -1415,7 +1525,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static final int[] shadowdepthmap = {100, 1000, 3000, 5000, 10000, 25000, 50000};
     public AtomicBoolean resetsmap = new AtomicBoolean(false);
 
-    public void resetshadows() {
+    private void resetshadows() {
 	resetsmap.set(true);
     }
 
@@ -2291,7 +2401,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     }
     /*****/
 
-    public void toggleGobs(final boolean show) {
+    private void toggleGobs(final boolean show) {
         if(show) {
             basic.add(gobs);
 	} else {
@@ -2299,7 +2409,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
-    public void toggleMap(final boolean show) {
+    private void toggleMap(final boolean show) {
 	if(show) {
 	    basic.add(terrain);
 	} else {
@@ -2307,7 +2417,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
-    public void toggleOutlines(final boolean show) {
+    private void toggleOutlines(final boolean show) {
         if(show) {
             basic.add(outlines);
 	} else {
@@ -2355,6 +2465,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		}
 	    }
 	}
+
+	if(mailbox != null)
+	    mailbox.processMail(mail -> mail.apply(this));
     }
     
     public void resize(Coord sz) {
@@ -2947,8 +3060,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	});
         binds.put(KB_TOGGLE_HIDDEN, () -> {
 	    GlobalSettings.SHOWHIDDEN.set(!GlobalSettings.SHOWHIDDEN.get());
-	    //TODO: I really should apply this to all sessions somehow...
-	    ui.sess.glob.oc.mailbox.mail(new OCache.RefreshGobByAttr(Hidden.class));
+	    OCache.MessageBus.send(new OCache.RefreshGobByAttr(Hidden.class));
 	    if(this.placing != null && this.placing.done()) {
 	        final var plob = this.placing.get();
 	        plob.refresh();

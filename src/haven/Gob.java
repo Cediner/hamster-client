@@ -1305,7 +1305,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
 	    if ((tags.contains(Tag.HUMAN) || tags.contains(Tag.ANIMAL) || name.startsWith("gfx/kritter"))
 		    && !tags.contains(Tag.TAMED_ANIMAL)) {
-		deltas.add((gob) -> gob.setattr(new Speed(gob)));
+		deltas.add((gob) -> gob.setattr(new SpeedMonitor(gob)));
 	    }
 
 	    Alerted.checkAlert(name, plgobid, this, ui);
