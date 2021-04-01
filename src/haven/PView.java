@@ -121,6 +121,10 @@ public abstract class PView extends Widget {
 	conf.ostate(frame());
     }
 
+    public Coord rsz() {
+        return rsz;
+    }
+
     public void resize(Coord sz) {
 	super.resize(sz);
 	reconf();

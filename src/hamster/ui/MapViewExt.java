@@ -8,6 +8,7 @@ import hamster.gob.Tag;
 import hamster.gob.sprites.DamageText;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
+import hamster.ui.map.ObjPreview;
 import haven.*;
 
 import java.util.*;
@@ -201,6 +202,8 @@ public class MapViewExt {
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
             opts.add("Delete");
             opts.add("Delete this");
+            if(!g.resname().orElse("").contains("/trees/"))
+                opts.add("Clone in previewer");
             if(g.findol(DamageText.id) != null) {
                 opts.add("Delete Damage Text");
             }
@@ -296,8 +299,7 @@ public class MapViewExt {
                         mv.ui.sess.glob.oc.remove(g);
                         break;
                     case "Clone in previewer":
-                        //TODO: Bring back Obj preview windows?
-                        //mv.ui.gui.add(new ObjPreview(g, mv.ui));
+                        mv.ui.gui.add(new ObjPreview(g));
                         break;
                     case "Add as master":
                         addMaster(g.id);
