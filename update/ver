@@ -1,5 +1,5 @@
 {
-  "version": "16add3387fbc4428956de937d57f16ab16e0eacb",
+  "version": "afb2fb906bd7fae4321cec039c81494267c99484",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -96,7 +96,7 @@
     "data\\res\\custom\\sfx\\default\\you-lose.res": "zcLsnrvV5xrDtHdx7/F7dUJSj1LdIFOhObHAIe8lezI=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
     "data\\res\\custom\\sfx\\default\\quern.res": "Adt60Nr5SfjVi8sR9wbFBt8rnIxGgnu/MtOAI1gq3CE=",
-    "hafen.jar": "07FrAaeIb6gnhzQXvCqShtj+IkMPlcqeDJtOkVFTj5I=",
+    "hafen.jar": "tWsX6oYxEdckTlaC/GM4gLOM0vf7CBXErwD1tm7hsrY=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "LXfAecDnC3vFQKaLH6i4c3UnUMWwa0zzpk5HOXxHsJc=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "Xcp1HnccKct/PDVNOQuspm1UYPmp78zqKfYMs7X+RQQ=",
@@ -237,7 +237,7 @@
     "data\\res\\custom\\sfx\\default\\clank.res": "N4Eq1Gg+3Tk8TyCIMzAeVboyjLx7Ubu1ZA+QrP8o62A=",
     "data\\res\\custom\\hud\\sloth\\scframe.res": "HJtxkLgQw/WuOodllO6NV1IKX68HL0hQONbMRvmVhJw=",
     "data\\res\\custom\\mm\\icons\\cave.res": "TItZvdBqfrIF9NQPthrNoSNkzJ4+PL6Bu/SF0coRa/4=",
-    "data\\ObjData.json5": "n/j6P0FK61lZp3WJB2msKb+krbs+J+H+36+Vkj9W5h4=",
+    "data\\ObjData.json5": "B9n5QNT5Tz08J0wKKn5wRC2tyoZQW/WZzE68kMIXAe8=",
     "data\\scripts\\deforester.lisp": "P5NON+m7U1oHvx5bMQL46np8o3DcghxO4GCPXXBz/DI=",
     "data\\scripts\\lib\\_config_discord.lisp": "2RS4GZLVfXNK4RaREMWIZlzPrPSTPwQAqh38dgL99Ts=",
     "data\\scripts\\lib\\_config_script.lisp": "emhcp4GoxmjINFKfBprIYwflu0iHoKwRaDoaQr8sc3I=",
