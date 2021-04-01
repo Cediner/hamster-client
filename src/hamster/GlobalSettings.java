@@ -139,6 +139,8 @@ public class GlobalSettings {
     public static final IndirSetting<BaseColor> GOBPATHCOL = new IndirSetting<>(global, "gob.gob-path-color", new BaseColor(Color.GREEN));
     public static final IndirSetting<BaseColor> ANIMALPATHCOL = new IndirSetting<>(global, "gob.animal-path-color", new BaseColor(Color.RED));
     public static final IndirSetting<BaseColor> VEHPATHCOL = new IndirSetting<>(global, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
+    public static final IndirSetting<Boolean> SHOWGOBSPEED = new IndirSetting<>(global, "gob.show-speed-on-humans", false);
+    public static final IndirSetting<Boolean> SHOWANIMALSPEED = new IndirSetting<>(global, "gob.show-speed-on-animals", false);
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);

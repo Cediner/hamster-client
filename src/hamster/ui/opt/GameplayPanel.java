@@ -105,6 +105,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox("Make Cave dust larger", LARGEDUSTSIZE));
             gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
             gob.add(new IndirCheckBox("Show Simple Crops (Requires reload of gobs in view)", GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox("Show Player Speed", SHOWGOBSPEED));
             gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
             gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
             gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
@@ -118,6 +119,7 @@ public class GameplayPanel extends Scrollport {
         }
         { //Animals
             animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
+            animal.add(new IndirCheckBox("Show Animal Speed", SHOWANIMALSPEED));
             animal.add(new IndirCheckBox("Show Animal Paths", GlobalSettings.SHOWANIMALPATH));
             animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
             animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));
