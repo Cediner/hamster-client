@@ -1,5 +1,5 @@
 {
-  "version": "afb2fb906bd7fae4321cec039c81494267c99484",
+  "version": "b3a3654b7c5d897c8934cf4c2133f913d6687a42",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -96,7 +96,7 @@
     "data\\res\\custom\\sfx\\default\\you-lose.res": "zcLsnrvV5xrDtHdx7/F7dUJSj1LdIFOhObHAIe8lezI=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
     "data\\res\\custom\\sfx\\default\\quern.res": "Adt60Nr5SfjVi8sR9wbFBt8rnIxGgnu/MtOAI1gq3CE=",
-    "hafen.jar": "tWsX6oYxEdckTlaC/GM4gLOM0vf7CBXErwD1tm7hsrY=",
+    "hafen.jar": "j3g51c/UhbpX8DXF2UJ7qIdaRgQsk3Ju1vKL+C3ugYw=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "LXfAecDnC3vFQKaLH6i4c3UnUMWwa0zzpk5HOXxHsJc=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "Xcp1HnccKct/PDVNOQuspm1UYPmp78zqKfYMs7X+RQQ=",
@@ -343,7 +343,7 @@
     "data\\scripts\\lualib\\api.lua": "06yaGwp7jiuqLYr6trc3YA0AfWvpMuzhrJ0fL3vmsio=",
     "data\\res\\custom\\hud\\sloth\\buttons\\hide.res": "4/jVkmHdE/HyqLq2rVKtW/Wyv7jNBdc/E7rYuQTZxp8=",
     "data\\res\\custom\\paginae\\default\\wnd\\highlight.res": "2/XE+iDm6u6cmV7EvkdpdCgh6/qzfx8dCpZkF47M8iE=",
-    "data\\scripts\\lib\\_config_utilities.lisp": "09mN1vC00TaDJFeapT9NAOc2xTRaBrElRb+sio8HwmM=",
+    "data\\scripts\\lib\\_config_utilities.lisp": "8aDdHe/cv+CUjsU9BZ3tjwFuI8e+BqEsLbiCKh5tgRs=",
     "data\\res\\custom\\paginae\\default\\wnd\\alerted.res": "2gOYxSa6ufQe9wEmH4BOX+aFCdQix7YwP9UkoU7yVjQ=",
     "data\\res\\custom\\sfx\\default\\drum.res": "MWUG8ykdtopJQnKXg8du1P0OBQBD91JlhUoAQQY1j9o=",
     "data\\scripts\\lib\\_config_hotkey.lisp": "vbYKKJNdFSb9YBd3BEA1K5zgUe/COrLjkUWoCUtSrZI=",
@@ -369,7 +369,7 @@
     "data\\scripts\\lib\\_config_core.lisp": "94TfLPgik+lx9k17kR7N22g2U4LtRbCYsi2mxD4a/kg=",
     "data\\res\\custom\\mm\\icons\\minehole.res": "ZNnSLYeRhjTRZ+EebcsOHuRCDtMvc/+EAZBl3hY83AQ=",
     "data\\scripts\\questgiver-locator.lisp": "ZUvxQ/U/o6tGGERi9k1zahHEc65w1n5SGdK08nI9JCE=",
-    "logging.properties": "6PPDYobxwsbn8YS9H5zQzsNPD1ADJQDG6/hos1q+Jvs=",
+    "logging.properties": "+xFmt41gYtVQaLHh+nDaTyqBUqKEjHIjD6/P7jDs3G8=",
     "data\\res\\custom\\hud\\default\\buttons\\lock.res": "9nRbFWCkKx8fLN60aPw5GE8V85/+OGyDcqgGouktT7Q=",
     "data\\res\\custom\\sfx\\omni\\Z_OOT_Navi_Listen.res": "ZrBvkNFbE4QzjJS8jNgLcLoGTTYxIakEPbYwlHluF+0=",
     "luaj-jse-3.0.2.jar": "WveG3azDVYfur5qCt2OebRJZv9r5cYuivXvpBgHez6U=",
