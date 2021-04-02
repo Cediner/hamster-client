@@ -5626,5 +5626,176 @@
         "CosmeticHat"
       ]
     }
+  },
+
+  /*** Cosmetic hats (W13+) ***/
+  {
+    name: "",
+    res: "gfx/invobjs/hats/anarchistsbowler",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "",
+    res: "gfx/invobjs/hats/venetianmerchantscap",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "",
+    res: "gfx/invobjs/hats/carrottop",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "",
+    res: "gfx/invobjs/hats/admiralsbicorne",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "",
+    res: "gfx/invobjs/hats/nemoshelmet",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Weirding Hat",
+    res: "gfx/invobjs/hats/weirdinghat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Rat Catcher's Hat",
+    res: "gfx/invobjs/hats/ratcatchershat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Chimney Sweep's Hat",
+    res: "gfx/invobjs/hats/chimneysweepshat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Foul Hat",
+    res: "gfx/invobjs/hats/foulhat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Gardener's Hat",
+    res: "gfx/invobjs/hats/gardenhat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Heart of Gold",
+    res: "gfx/invobjs/hats/heartofgold",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Barbarossa's Hat",
+    res: "gfx/invobjs/hats/barbarossashat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Inkblot Top",
+    res: "gfx/invobjs/hats/inkblothat",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
+  },
+  {
+    name: "Cyclopean Cap",
+    res: "gfx/invobjs/hats/cyclopeancap",
+    tags: [
+      "CAN_EQUIP"
+    ],
+    geardata: {
+      slots: [
+        "CosmeticHat"
+      ]
+    }
   }
+
 ]
