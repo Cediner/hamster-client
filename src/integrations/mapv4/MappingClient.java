@@ -260,7 +260,7 @@ public class MappingClient {
                     }).filter(m -> m != null).collect(Collectors.toList());
                 } catch (Exception ex) {
                     if (retries-- > 0) {
-//                        System.out.println("rescheduling upload");
+                        System.out.println("rescheduling upload");
                         scheduler.schedule(this, 5, TimeUnit.SECONDS);
                     }
                     return;
@@ -272,7 +272,7 @@ public class MappingClient {
                 scheduler.execute(new ProcessMapper(mapfile, markers));
             } else {
                 if (retries-- > 0) {
-//                    System.out.println("rescheduling upload");
+                    System.out.println("rescheduling upload");
                     scheduler.schedule(this, 5, TimeUnit.SECONDS);
                 }
             }
@@ -340,7 +340,7 @@ public class MappingClient {
             try {
                 scheduler.execute(new MarkerUpdate(new JSONArray(loadedMarkers.toArray())));
             } catch (Exception ex) {
-//                System.out.println(ex);
+                System.out.println(ex);
             }
         }
     }
@@ -367,7 +367,7 @@ public class MappingClient {
                 }
 //                System.out.println("Marker upload " + connection.getResponseCode());
             } catch (Exception ex) {
-//                System.out.println("MarkerUpdate " + ex);
+                System.out.println("MarkerUpdate " + ex);
             }
         }
     }
@@ -412,11 +412,11 @@ public class MappingClient {
                                 upload.put(String.valueOf(gob.id), j);
                             }
                         } catch (Exception ex) {
-//                            System.out.println("MappintClient run : " + ex);
+                            System.out.println("MappintClient run : " + ex);
                         }
                     }
                 } catch (Exception ex) {
-//                    System.out.println("PositionUpdates " + ex);
+                    System.out.println("PositionUpdates " + ex);
                     return;
                 }
 
@@ -432,7 +432,7 @@ public class MappingClient {
                     }
                     connection.getResponseCode();
                 } catch (final Exception ex) {
-//                    System.out.println("PositionUpdates endpoint " + ex);
+                    System.out.println("PositionUpdates endpoint " + ex);
                 }
             }
         }
@@ -508,7 +508,7 @@ public class MappingClient {
                     connection.setDoOutput(true);
                     try (DataOutputStream out = new DataOutputStream(connection.getOutputStream())) {
                         String json = new JSONObject(dataToSend).toString();
-                        //System.out.println("Sending grid update " + json);
+                        System.out.println("Sending grid update " + json);
                         out.write(json.getBytes(StandardCharsets.UTF_8));
                     }
                     if (connection.getResponseCode() == 200) {
@@ -577,12 +577,12 @@ public class MappingClient {
 
                         MultipartUtility.Response response = multipart.finish();
                         if (response.statusCode != 200) {
-//                            System.out.println("Upload Error: Code" + response.statusCode + " - " + response.response);
+                            System.out.println("Upload Error: Code" + response.statusCode + " - " + response.response);
                         } else {
-//                            System.out.println("Uploaded " + gridID);
+                            System.out.println("Uploaded " + gridID);
                         }
                     } catch (IOException e) {
-//                        System.out.println("Cannot upload " + gridID + ": " + e.getMessage());
+                        System.out.println("Cannot upload " + gridID + ": " + e.getMessage());
                     }
                 }
             } catch (Loading ex) {

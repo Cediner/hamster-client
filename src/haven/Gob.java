@@ -1365,21 +1365,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     public boolean isplayer() {
 	try {
 	    final UI ui = glob.ui.get();
-	    final Optional<Resource> res = res();
-	    if(ui == null || res.isEmpty()) {
-		throw new JobSystem.DependencyNotMet();
-	    }
-	    final GameUI gui = ui.gui;
-	    if(gui == null) {
-		throw new JobSystem.DependencyNotMet();
-	    }
-	    final MapView map = gui.map;
-	    final MapWnd mapfile = gui.mapfile;
-	    if(map == null || mapfile == null) {
-		throw new JobSystem.DependencyNotMet();
-	    }
-	    final long plgobid = map.rlplgob;
-	    return plgobid == id;
+	    return ui.gui.map.plgob == id;
 	} catch (Exception e) {
 	    return false;
 	}
