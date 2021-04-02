@@ -55,7 +55,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     int clprio = 0;
     public long id;
     public final Glob glob;
-    Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
+    public Map<Class<? extends GAttrib>, GAttrib> attr = new HashMap<Class<? extends GAttrib>, GAttrib>();
     public final Collection<Overlay> ols = new ArrayList<Overlay>();
     public final Collection<RenderTree.Slot> slots = new ArrayList<>(1);
     private final Collection<SetupMod> setupmods = new ArrayList<>();
@@ -260,12 +260,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    a.ctick(dt);
 	loadrattr();
 	final Hidden hidden = getattr(Hidden.class);
-	final UI ui = glob.ui.get();
-	final GameUI gui = ui != null ? ui.gui : null;
 	for(Iterator<Overlay> i = ols.iterator(); i.hasNext();) {
 	    Overlay ol = i.next();
 	    if(ol.slots == null) {
-		if(hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get()) {
+		if(hidden == null || GlobalSettings.SHOWHIDDEN.get()) {
 		    try {
 			ol.init();
 		    } catch (Loading ignored) {
@@ -325,7 +323,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     public void dispose() {
-	glob.gobhitmap.remove(this);
+        if(glob != null)
+		glob.gobhitmap.remove(this);
 	for(GAttrib a : attr.values())
 	    a.dispose();
 	for(ResAttr.Cell rd : rdata) {
@@ -405,8 +404,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     private void setattr(Class<? extends GAttrib> ac, GAttrib a) {
 	final Hidden hidden = getattr(Hidden.class);
-	final UI ui = glob.ui.get();
-	final GameUI  gui = ui != null ? ui.gui : null;
 	GAttrib prev = attr.remove(ac);
 	if(prev != null) {
 	    if((prev instanceof RenderTree.Node) && (prev.slots != null))
@@ -415,7 +412,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		setupmods.remove(prev);
 	}
 	if(a != null) {
-	    if(a instanceof RenderTree.Node && (hidden == null || gui == null ||  GlobalSettings.SHOWHIDDEN.get())) {
+	    if(a instanceof RenderTree.Node && (hidden == null || GlobalSettings.SHOWHIDDEN.get())) {
 		try {
 		    RUtils.multiadd(this.slots, (RenderTree.Node)a);
 		} catch(Loading l) {
@@ -635,18 +632,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     public void added(RenderTree.Slot slot) {
 	if (!virtual)
 	    slot.ostate(curstate());
-	final UI ui = glob.ui.get();
-	if (ui != null && ui.gui != null) {
-	    slot.ostate(curstate());
-	    final Hidden hidden = getattr(Hidden.class);
-	    if (GlobalSettings.SHOWHIDDEN.get() || hidden == null) {
-		_added(slot);
-	    } else {
-		slot.add(hidden);
-	    }
-	} else {
-	    //Do a normal added if ui/gui can't be retrieved.
+	final Hidden hidden = getattr(Hidden.class);
+	if (GlobalSettings.SHOWHIDDEN.get() || hidden == null) {
 	    _added(slot);
+	} else {
+	    slot.add(hidden);
 	}
 	slots.add(slot);
     }
@@ -1163,15 +1153,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     @SuppressWarnings("unused") // For scripting api
     public boolean isFriendly() {
 	final KinInfo kin = getattr(KinInfo.class);
-	final UI ui = glob.ui.get();
-	if(ui != null) {
-	    final GameUI gui = ui.gui;
-	    final int badkin = gui != null ? GlobalSettings.BADKIN.get() : 2;
-	    if (kin != null) {
-		return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
-	    }
+	final int badkin = GlobalSettings.BADKIN.get();
+	if (kin != null) {
+	    return badkin != kin.group || (kin.isVillager() && (kin.name == null || kin.name.equals("") || kin.name.equals(" ")));
+	} else {
+	    return false;
 	}
-	return false;
     }
 
     @SuppressWarnings("unused") // For scripting api

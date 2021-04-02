@@ -1,17 +1,20 @@
 package hamster.ui.core.indir;
 
 import hamster.GlobalSettings;
+import hamster.gfx.TextureAtlas;
 import haven.Resource;
 
 
 public class IndirThemeRes {
     private static final String fmt = "custom/hud/%s/%s";
     private final String res;
+    private final TextureAtlas atlas;
     private String theme;
     private Resource cached;
 
-    public IndirThemeRes(final String res) {
+    public IndirThemeRes(final String res, final TextureAtlas atlas) {
         this.res = res;
+        this.atlas = atlas;
         this.theme = "";
         this.cached = null;
     }
@@ -29,18 +32,18 @@ public class IndirThemeRes {
     }
 
     public IndirThemeTex tex() {
-        return new IndirThemeTex(res, -1);
+        return new IndirThemeTex(res, -1, atlas);
     }
 
     public IndirThemeTex tex(final int id) {
-        return new IndirThemeTex(res, id);
+        return new IndirThemeTex(res, id, atlas);
     }
 
     public IndirThemeTex img() {
-        return new IndirThemeTex(res, -1);
+        return new IndirThemeTex(res, -1, atlas);
     }
 
     public IndirThemeTex img(final int id) {
-        return new IndirThemeTex(res, id);
+        return new IndirThemeTex(res, id, atlas);
     }
 }

@@ -1,6 +1,7 @@
 package hamster.ui.core.indir;
 
 import hamster.GlobalSettings;
+import hamster.gfx.TextureAtlas;
 import haven.Resource;
 import haven.TexI;
 
@@ -9,13 +10,15 @@ import java.awt.image.BufferedImage;
 public class IndirThemeTex {
     private static final String fmt = "custom/hud/%s/%s";
     private final String res;
+    private final TextureAtlas atlas;
     private String theme;
     private final int id;
     private Resource cached;
 
-    public IndirThemeTex(final String res, final int id) {
+    public IndirThemeTex(final String res, final int id, final TextureAtlas atlas) {
         this.res = res;
         this.id =  id;
+        this.atlas = atlas;
         this.theme = "";
         this.cached = null;
     }

@@ -94,6 +94,11 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> LONGLIVINGDUST = new IndirSetting<>(global, "map.long-living-cave-dust", false);
     public static final IndirSetting<Boolean> COLORFULDUST = new IndirSetting<>(global, "map.colorful-cave-dust", false);
     public static final IndirSetting<Boolean> LARGEDUSTSIZE = new IndirSetting<>(global, "map.large-cave-dust", false);
+    public static final IndirSetting<Boolean> SHOWSNOW =  new IndirSetting<>(global, "map.spawn-snowflakes", false);
+    public static final IndirSetting<Boolean> LARGESNOWFLAKE =  new IndirSetting<>(global, "map.large-snowflakes", false);
+    public static final IndirSetting<Integer> SNOWDENSITY =  new IndirSetting<>(global, "map.snow-density", 1);
+    public static final IndirSetting<Integer> SNOWFALLSPEED =  new IndirSetting<>(global, "map.snow-speed", 1);
+    public static final IndirSetting<Integer> SNOWGUSTSPEED =  new IndirSetting<>(global, "map.snow-gust-speed", 100);
 
     //Minimap
     public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "minimap.show-gobs", true);
@@ -141,6 +146,8 @@ public class GlobalSettings {
     public static final IndirSetting<BaseColor> VEHPATHCOL = new IndirSetting<>(global, "gob.vehicle-path-color", new BaseColor(Color.ORANGE));
     public static final IndirSetting<Boolean> SHOWGOBSPEED = new IndirSetting<>(global, "gob.show-speed-on-humans", false);
     public static final IndirSetting<Boolean> SHOWANIMALSPEED = new IndirSetting<>(global, "gob.show-speed-on-animals", false);
+    public static final IndirSetting<Boolean> SHOWPLAYERDMG = new IndirSetting<>(global, "gob.show-player-dmg", true);
+    public static final IndirSetting<Boolean> SHOWANIMALDMG = new IndirSetting<>(global, "gob.show-animal-dmg", true);
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);

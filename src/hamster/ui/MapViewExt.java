@@ -5,8 +5,10 @@ import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
+import hamster.gob.sprites.DamageText;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
+import hamster.ui.map.ObjPreview;
 import haven.*;
 
 import java.util.*;
@@ -200,6 +202,11 @@ public class MapViewExt {
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
             opts.add("Delete");
             opts.add("Delete this");
+            if(!g.resname().orElse("").contains("/trees/"))
+                opts.add("Clone in previewer");
+            if(g.findol(DamageText.id) != null) {
+                opts.add("Delete Damage Text");
+            }
             if (g.hasTag(Tag.HUMAN) && g.id != mv.plgob) {
                 if (!masters.contains(g.id))
                     opts.add("Add as master");
@@ -259,6 +266,10 @@ public class MapViewExt {
                            mv.ui.gui.chat.party.send(String.format(TargetSprite.target_pat, g.id));
                     }
                     break;
+                    case "Delete Damage Text":
+                        if(g.findol(DamageText.id) != null)
+                            ((DamageText)g.findol(DamageText.id).spr).rem();
+                        break;
                     case "Highlight": //Highlight for yourself
                         HighlightData.add(name);
                         break;
@@ -288,8 +299,7 @@ public class MapViewExt {
                         mv.ui.sess.glob.oc.remove(g);
                         break;
                     case "Clone in previewer":
-                        //TODO: Bring back Obj preview windows?
-                        //mv.ui.gui.add(new ObjPreview(g, mv.ui));
+                        mv.ui.gui.add(new ObjPreview(g));
                         break;
                     case "Add as master":
                         addMaster(g.id);

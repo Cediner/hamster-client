@@ -95,7 +95,7 @@ public class TestClient implements Runnable, UI.Context {
 	}
 	
 	public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
-	    super.newwidget(id, type, parent, pargs, cargs);
+	    super.rnewwidget(id, type, parent, pargs, cargs);
 	    Widget w = getwidget(id);
 	    synchronized(robots) {
 		for(Robot r : robots)

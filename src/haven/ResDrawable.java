@@ -91,4 +91,7 @@ public class ResDrawable extends Drawable {
 	}
     }
 
+    public ResDrawable cloneFor(final Gob g) {
+        return new ResDrawable(g, res, sdt.clone());
+    }
 }

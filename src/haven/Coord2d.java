@@ -169,6 +169,10 @@ public class Coord2d implements Comparable<Coord2d>, java.io.Serializable {
 	return(new Coord2d(Math.cos(a) * r, Math.sin(a) * r));
     }
 
+    public Coord3f withHeight(final float z) {
+        return new Coord3f((float)x, (float)y, z);
+    }
+
     public Coord toGridCoordinate() {
         return new Coord(((int) x / 1100), ((int) y / 1100));
     }

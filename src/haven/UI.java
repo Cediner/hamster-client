@@ -38,6 +38,7 @@ import java.awt.event.InputEvent;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.flogger.LazyArgs;
 import hamster.GlobalSettings;
+import hamster.util.msg.MailBox;
 import hamster.util.msg.Office;
 import haven.render.Environment;
 import haven.render.Render;
@@ -66,8 +67,78 @@ public class UI {
     public ActAudio.Root audio = new ActAudio.Root();
     private static final double scalef;
 
-    // UI MessageBus
+    // UI MessageBus / Mail
     public Office office;
+    private MailBox<UIMail> mailbox;
+
+    public static abstract class UIMail extends hamster.util.msg.Message {
+        public abstract void apply(final UI ui);
+    }
+
+    public static class DestroyWdg extends UIMail {
+        private final int id;
+        public DestroyWdg(final int id) { this.id = id; }
+
+	@Override
+	public void apply(UI ui) {
+	    ui.destroy(id);
+	}
+    }
+
+    public static class NewWdg extends UIMail {
+	final int id;
+	final String type;
+	final Widget.Factory factory;
+	final int parent;
+	final Object[] pargs;
+	final Object[] cargs;
+	public NewWdg(final int id, final String type, final Widget.Factory factory,
+		      final int pid, final Object[] pargs, final Object[] cargs) {
+	    this.id = id;
+	    this.type = type;
+	    this.factory = factory;
+	    this.parent = pid;
+	    this.pargs = pargs;
+	    this.cargs = cargs;
+	}
+
+	@Override
+	public void apply(UI ui) {
+	    ui.newwidget(id, type, factory, parent, pargs, cargs);
+	}
+    }
+
+    public static class AddWdg extends UIMail {
+	final int id;
+	final int pid;
+	final Object[] pargs;
+	public AddWdg(final int id, final int pid, final Object[] pargs) {
+	    this.id = id;
+	    this.pid = pid;
+	    this.pargs = pargs;
+	}
+
+	@Override
+	public void apply(UI ui) {
+	    ui.addwidget(id, pid, pargs);
+	}
+    }
+
+    public static class UIMsg extends UIMail {
+	final int id;
+	final String msg;
+	final Object[] args;
+	public UIMsg(final int id, final String msg, final Object... args) {
+	    this.id = id;
+	    this.msg = msg;
+	    this.args = args;
+	}
+
+	@Override
+	public void apply(UI ui) {
+	    ui.uimsg(id, msg, args);
+	}
+    }
     
     {
 	lastevent = lasttick = Utils.rtime();
@@ -186,6 +257,7 @@ public class UI {
 
     public void setupMail(final Thread thr) {
 	office = new Office(thr);
+	mailbox = new MailBox<>(office);
     }
 
     public void reset(final Coord sz, final Runner fun) {
@@ -239,6 +311,7 @@ public class UI {
 
     public void tick() {
 	office.processTransfers();
+	mailbox.processMail(mail -> mail.apply(this));
 	double now = Utils.rtime();
 	root.tick(now - lasttick);
 	lasttick = now;
@@ -264,15 +337,7 @@ public class UI {
     //ids go sequential, 2^16 limit judging by parent != 65535...
     //At 65535 it wraps back to 1 and breaks your client :)
     public int next_predicted_id = 2;
-    public void newwidget(int id, String type, int parent, Object[] pargs, Object... cargs) throws InterruptedException {
-	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
-		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
-	if(this.sess != null)
-	    sess.details.context.dispatchmsg(null, "new-widget", id, type, parent, cargs);
-	next_predicted_id = id + 1;
-	Widget.Factory f = Widget.gettype2(type);
-	if(f == null)
-	    throw(new UIException("Bad widget name", type, cargs));
+    public void newwidget(int id, String type, Widget.Factory f, int parent, Object[] pargs, Object... cargs)  {
 	synchronized(this) {
 	    Widget wdg = f.create(this, cargs);
 	    wdg.attach(this);
@@ -286,10 +351,21 @@ public class UI {
 	}
     }
 
-    public void addwidget(int id, int parent, Object[] pargs) {
-        logger.atFine().log("Add Widget [%d] to [%d] - %s", id, parent, LazyArgs.lazy(() -> Arrays.toString(pargs)));
+
+    public void rnewwidget(final int id, final String type, final int parent, final Object[] pargs,
+			   final Object... cargs) throws InterruptedException {
+	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
+		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
+	next_predicted_id = id + 1;
+	Widget.Factory f = Widget.gettype2(type);
+	if(f == null)
+	    throw(new UIException("Bad widget name", type, cargs));
+	mailbox.mail(new NewWdg(id, type, f, parent, pargs, cargs));
 	if(this.sess != null)
-	    sess.details.context.dispatchmsg(null, "add-widget", id, parent);
+	    sess.details.context.dispatchmsg(null, "new-widget", id, type, parent, cargs);
+    }
+
+    public void addwidget(int id, int parent, Object[] pargs) {
 	synchronized(this) {
 	    Widget wdg = getwidget(id);
 	    if(wdg == null)
@@ -299,6 +375,13 @@ public class UI {
 		throw(new UIException("Null parent widget " + parent + " for " + id, null, pargs));
 	    pwdg.addchild(wdg, pargs);
 	}
+    }
+
+    public void raddwidget(final int id, final int pid, final Object[] pargs) {
+	logger.atFine().log("Remote Add Widget [%d] to [%d] - %s", id, pid, LazyArgs.lazy(() -> Arrays.toString(pargs)));
+	mailbox.mail(new AddWdg(id, pid, pargs));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "add-widget", id, pid);
     }
 
     public abstract class Grab {
@@ -368,6 +451,11 @@ public class UI {
 	}
     }
 
+    public void rdestroy(final int id) {
+	logger.atFiner().log("Remote Destroy Wdg [id %d]", id);
+        mailbox.mail(new DestroyWdg(id));
+    }
+
     /**
      * For scripting only
      */
@@ -387,8 +475,6 @@ public class UI {
     }
 	
     public void uimsg(int id, String msg, Object... args) {
-        if(this.sess != null)
-            sess.details.context.dispatchmsg(null, "uimsg", id, msg, args);
 	Widget wdg = getwidget(id);
 	if(wdg != null) {
 	    synchronized(this) {
@@ -397,6 +483,13 @@ public class UI {
 	} else {
 	    throw(new UIException("Uimsg to non-existent widget " + id, msg, args));
 	}
+    }
+
+    public void ruimsg(final int id, final String msg, final Object... args) {
+	logger.atFiner().log("Remote UIMSG [id %d] [msg %s]", id, msg);
+	mailbox.mail(new UIMsg(id, msg, args));
+	if(this.sess != null)
+	    sess.details.context.dispatchmsg(null, "uimsg", id, msg, args);
     }
 
     // This is for overriding mod flags with mousebinds / keybinds

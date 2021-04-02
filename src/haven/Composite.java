@@ -55,7 +55,33 @@ public class Composite extends Drawable {
 	comp = new Composited(base.get().layer(Skeleton.Res.class).s);
 	comp.eqowner = gob;
     }
-    
+
+    public Composite cloneFor(final Gob g) {
+        final var comp = new Composite(g, base);
+        if(this.oldposes != null) {
+            comp.nposes = new ArrayList<>();
+            comp.nposesold = nposesold;
+	    comp.nposes.addAll(this.oldposes);
+	}
+        if(this.oldtposes != null) {
+	    comp.tposes = new ArrayList<>();
+	    comp.tpmode = tpmode;
+	    comp.tptime = tptime;
+	    comp.tposes.addAll(this.oldtposes);
+	}
+        if(lastnmod != null) {
+            comp.nmod = new ArrayList<>();
+            for(final var mod : lastnmod)
+                comp.nmod.add(mod.clone());
+	}
+        if(lastnequ != null) {
+	    comp.nequ = new ArrayList<>();
+	    for(final var equ : lastnequ)
+		comp.nequ.add(equ.clone());
+	}
+        return comp;
+    }
+
     public void added(RenderTree.Slot slot) {
 	slot.add(comp);
 	super.added(slot);
