@@ -87,6 +87,33 @@ public class GameplayPanel extends Scrollport {
             map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
             //Cave related
             map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            //Winter / Snow related
+            map.add(new IndirCheckBox("Spawn snowflakes", SHOWSNOW));
+            map.add(new IndirCheckBox("Make snowflakes larger", LARGESNOWFLAKE, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            final IndirRadioGroup<Integer> sfs = map.add(new IndirRadioGroup<>("Snow Fall Speed", UI.scale(450), SNOWFALLSPEED));
+            {
+                sfs.add("Standard Speed", 1);
+                sfs.add("5×", 2);
+                sfs.add("50×", 50);
+                sfs.add("100×", 100);
+                sfs.add("1000×", 1000);
+            }
+            final IndirRadioGroup<Integer> sgs = map.add(new IndirRadioGroup<>("Snow Gust Speed", UI.scale(450), SNOWGUSTSPEED));
+            {
+                sgs.add("Standard Speed", 1);
+                sgs.add("2×", 2);
+                sgs.add("50×", 50);
+                sgs.add("100×", 100);
+                sgs.add("1000×", 1000);
+            }
+            final IndirRadioGroup<Integer> sd = map.add(new IndirRadioGroup<>("Snow Density", UI.scale(450), SNOWDENSITY));
+            {
+                sd.add("Flake every 1s", 1);
+                sd.add("Flake every 500ms", 2);
+                sd.add("Flake every 200ms", 5);
+                sd.add("Flake every 100ms", 10);
+                sd.add("Flake every 10ms", 100);
+            }
             map.pack();
             overall.add(map);
         }
