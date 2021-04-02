@@ -198,7 +198,7 @@ public class CustomPointer extends Widget {
     }
 
     private void updtt() {
-        if(ui.gui.map != null) {
+        if(ui != null && ui.gui != null && ui.gui.map != null) {
 	    final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
 	    if (me != null) {
 		final Coord2d ltc;
