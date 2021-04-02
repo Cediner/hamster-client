@@ -27,31 +27,26 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
          * ...
          * }
          */
-        public ItemInfo build(Owner owner, Raw raw, Object... args) {
-            Resource.Resolver resolver = owner.context(Resource.Resolver.class);
-            int i = 1;
-            double pmin = ((Number) args[(i++)]).doubleValue();
-            double pmax = ((Number) args[(i++)]).doubleValue();
-            LinkedList<Resource> resources = new LinkedList<>();
-            while (args[i] != null) {
-                resources.add(resolver.getres(((Integer) args[(i++)])).get());
+        public ItemInfo build(ItemInfo.Owner owner, ItemInfo.Raw rawi, Object... args) {
+            Resource.Resolver rr = owner.context(Resource.Resolver.class);
+            int a = 1;
+            double pmin = ((Number)args[a++]).doubleValue();
+            double pmax = ((Number)args[a++]).doubleValue();
+            List<Resource> attrs = new LinkedList<>();
+            while(args[a] != null)
+                attrs.add(rr.getres((Integer)args[a++]).get());
+            a++;
+            int left = (Integer)args[a++];
+            ISlots ret = new ISlots(owner, left, pmin, pmax, attrs.toArray(new Resource[0]));
+            while(a < args.length) {
+                Indir<Resource> res = rr.getres((Integer)args[a++]);
+                Message sdt = Message.nil;
+                if(args[a] instanceof byte[])
+                    sdt = new MessageBuf((byte[])args[a++]);
+                Object[] raw = (Object[])args[a++];
+                ret.s.add(new SItem(ret,new ResData(res, sdt), raw));
             }
-            i++;
-            int left = ((Integer) args[(i++)]);
-            ISlots islots = new ISlots(owner, left, pmin, pmax, resources.toArray(new Resource[0]));
-
-            while (i < args.length) {
-                final Indir<Resource> res = resolver.getres(((Integer) args[(i++)]));
-                final Message msg;
-                if ((args[i] instanceof byte[])) {
-                    msg = new MessageBuf((byte[]) args[(i++)]);
-                } else {
-                    msg = Message.nil;
-                }
-                final Object[] sargs = (Object[]) args[(i++)];
-                islots.s.add(new SItem(islots, new ResData(res, msg), sargs));
-            }
-            return islots;
+            return(ret);
         }
     }
 
@@ -89,7 +84,7 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
         }
     }
 
-    public static final Object[] defn = {Resource.remote().loadwait("ui/tt/defn", 4)};
+    public static final Object[] defn = {Resource.remote().loadwait("ui/tt/defn")};
     public static final Color avail = new Color(128, 192, 255);
     public static final Text ch = Text.render("Gilding:");
     public static final Text.Foundry progf = new Text.Foundry(Text.dfont.deriveFont(Font.ITALIC), new Color(0, 169, 224));
