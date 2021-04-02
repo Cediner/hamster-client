@@ -307,19 +307,21 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	private void drawTracking(GOut g, final Location ploc) {
 	    final Coord pc = new Coord2d(mv.getcc()).floor(tilesz);
 	    final double dist = 90000.0D;
-	    synchronized (ui.gui.dowsewnds) {
-		for(final DowseWnd wnd : ui.gui.dowsewnds) {
-		    final Coord mc = new Coord2d(wnd.startc).floor(tilesz);
-		    final Coord lc = mc.add((int)(Math.cos(Math.toRadians(wnd.a1())) * dist), (int)(Math.sin(Math.toRadians(wnd.a1())) * dist));
-		    final Coord rc = mc.add((int)(Math.cos(Math.toRadians(wnd.a2())) * dist), (int)(Math.sin(Math.toRadians(wnd.a2())) * dist));
-		    final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
-		    final Coord mlc = xlate(new Location(ploc.seg, ploc.tc.add(lc.sub(pc))));
-		    final Coord mrc = xlate(new Location(ploc.seg, ploc.tc.add(rc.sub(pc))));
-		    if(gc != null && mlc != null && mrc != null) {
-			g.chcolor(Color.MAGENTA);
-			g.dottedline(gc, mlc, 1);
-			g.dottedline(gc, mrc, 1);
-			g.chcolor();
+	    if(ui.gui != null) {
+		synchronized (ui.gui.dowsewnds) {
+		    for (final DowseWnd wnd : ui.gui.dowsewnds) {
+			final Coord mc = new Coord2d(wnd.startc).floor(tilesz);
+			final Coord lc = mc.add((int) (Math.cos(Math.toRadians(wnd.a1())) * dist), (int) (Math.sin(Math.toRadians(wnd.a1())) * dist));
+			final Coord rc = mc.add((int) (Math.cos(Math.toRadians(wnd.a2())) * dist), (int) (Math.sin(Math.toRadians(wnd.a2())) * dist));
+			final Coord gc = xlate(new Location(ploc.seg, ploc.tc.add(mc.sub(pc))));
+			final Coord mlc = xlate(new Location(ploc.seg, ploc.tc.add(lc.sub(pc))));
+			final Coord mrc = xlate(new Location(ploc.seg, ploc.tc.add(rc.sub(pc))));
+			if (gc != null && mlc != null && mrc != null) {
+			    g.chcolor(Color.MAGENTA);
+			    g.dottedline(gc, mlc, 1);
+			    g.dottedline(gc, mrc, 1);
+			    g.chcolor();
+			}
 		    }
 		}
 	    }
