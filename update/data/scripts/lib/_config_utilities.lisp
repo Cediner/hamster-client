@@ -140,20 +140,20 @@
 (defun get-bbox (prompt)
   (chat-send-message (bot-chat) prompt)
   (bbox-trigger)
-  (let ((msg (wait-for-message "(bot-select)")))
+  (let ((msg (wait-for-message "(^bot-select$)")))
 	(bbox-make (aref (msg-args msg) 0) (aref (msg-args msg) 1)) ))
 
 (defun prompt-for-input (prompt)
   (chat-send-message (bot-chat) prompt)
-  (aref (msg-args (wait-for-message "(msg)")) 0))
+  (aref (msg-args (wait-for-message "(^msg$)")) 0))
 
 (defun prompt-for-selected-gob (prompt)
   (chat-send-message (bot-chat) prompt)
-  (aref (msg-args (wait-for-message "(click-gob)")) 0))
+  (aref (msg-args (wait-for-message "(^click-gob$)")) 0))
 
 (defun prompt-for-coord (prompt)
   (chat-send-message (bot-chat) prompt)
-  (aref (msg-args (wait-for-message "(click-tile)")) 0))
+  (aref (msg-args (wait-for-message "(^click-tile$)")) 0))
 
 
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory

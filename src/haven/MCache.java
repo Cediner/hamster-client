@@ -32,6 +32,7 @@ import java.lang.ref.*;
 import java.util.regex.Pattern;
 
 import hamster.GlobalSettings;
+import hamster.gob.sprites.SnowFall;
 import hamster.script.pathfinding.Tile;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
@@ -46,6 +47,8 @@ public class MCache implements MapSource {
     private static final Pattern shallowater = Pattern.compile("(gfx/tiles/water)|(gfx/tiles/owater)");
     private static final Pattern cave = Pattern.compile("(gfx/tiles/cave)|(gfx/tiles/rocks/.+)");
     private static final Pattern nil = Pattern.compile("(gfx/tiles/nil)");
+    private static final Pattern underground = Pattern.compile("(gfx/tiles/cave)|(gfx/tiles/mine)|(gfx/tiles/rocks/.+)");
+    private static final Pattern indoors = Pattern.compile("(gfx/tiles/nil)|(gfx/tiles/boards)");
     private static final Tile[] id2tile = new Tile[256];
     //
     public static final Coord2d tilesz = new Coord2d(11, 11);
@@ -241,6 +244,13 @@ public class MCache implements MapSource {
 	.put(16, Resource.remote().loadwait("gfx/tiles/overlay/cplot-s"))
 	.put(17, Resource.remote().loadwait("gfx/tiles/overlay/sel"))
 	.map();
+    public enum GridType {
+        OUTDOOR,
+	INDOOR, // Contains gfx/tiles/nil & gfx/tiles/boards
+	UNDERGROUND, // Contains gfx/tiles/cave & gfx/tiles/mine & gfx/tiles/rocks/*, sometimes pavements
+	UNKNOWN
+    }
+
     public class Grid {
 	public final Coord gc, ul;
 	public final int tiles[] = new int[cmaps.x * cmaps.y];
@@ -253,6 +263,7 @@ public class MCache implements MapSource {
 	private int olseq = -1;
 	private final Cut cuts[];
 	private Flavobjs[] fo = new Flavobjs[cutn.x * cutn.y];
+	private GridType type = GridType.UNKNOWN;
 
 	private class Cut {
 	    //Basic visible textured mapmesh
@@ -285,6 +296,9 @@ public class MCache implements MapSource {
 		cuts[i] = new Cut();
 	}
 
+	public GridType type() {
+	    return type;
+	}
 
 	public Tile gethitmap(Coord tc) {
 	    return hitmap[tc.x + (tc.y * cmaps.x)];
@@ -318,8 +332,9 @@ public class MCache implements MapSource {
 	private class Flavobjs implements RenderTree.Node {
 	    final RenderTree.Node[] mats;
 	    final Gob[] all;
+	    final Gob snow;
 
-	    Flavobjs(Map<NodeWrap, Collection<Gob>> flavobjs) {
+	    Flavobjs(Map<NodeWrap, Collection<Gob>> flavobjs, final Gob snow) {
 		Collection<Gob> all = new ArrayList<>();
 		RenderTree.Node[] mats = new RenderTree.Node[flavobjs.size()];
 		int i = 0;
@@ -338,6 +353,7 @@ public class MCache implements MapSource {
 			mats[i] = mat.apply(mats[i]);
 		    i++;
 		}
+		this.snow = snow;
 		this.mats = mats;
 		this.all = all.toArray(new Gob[0]);
 	    }
@@ -345,16 +361,22 @@ public class MCache implements MapSource {
 	    public void added(RenderTree.Slot slot) {
 		for(RenderTree.Node mat : mats)
 		    slot.add(mat);
+		if(snow != null)
+		    slot.add(snow.placed);
 	    }
 
 	    void tick(double dt) {
 		for(Gob fo : all)
 		    fo.ctick(dt);
+		if(snow != null)
+		    snow.ctick(dt);
 	    }
 
 	    void gtick(Render g) {
 		for(Gob fo : all)
 		    fo.gtick(g);
+		if(snow != null)
+		    snow.gtick(g);
 	    }
 	}
 
@@ -384,7 +406,9 @@ public class MCache implements MapSource {
 		    }
 		}
 	    }
-	    return(new Flavobjs(buf));
+	    final Gob snow = new Flavobj(new Coord2d(cutc.x / 2d, cutc.y / 2d).add(gul.x, gul.y).mul(tilesz).add(tilesz.div(2)), 0);
+	    snow.addol(new SnowFall(snow, this));
+	    return(new Flavobjs(buf, snow));
 	}
 
 	public RenderTree.Node getfo(Coord cc) {
@@ -549,7 +573,20 @@ public class MCache implements MapSource {
 		} else if (nil.matcher(resnm).matches()) {
 		    id2tile[tileid] = Tile.NIL;
 		}
+
+		if(type == GridType.UNKNOWN) {
+		    if (underground.matcher(resnm).matches()) {
+			type = GridType.UNDERGROUND;
+		    } else if (indoors.matcher(resnm).matches()) {
+			type = GridType.INDOOR;
+		    }
+		}
 	    }
+	    if(type == GridType.UNKNOWN) {
+		//Still unknown => Outdoors
+		type = GridType.OUTDOOR;
+	    }
+
 	    for(int i = 0; i < tiles.length; i++) {
 		tiles[i] = blob.uint8();
 		//we can figure out shallow vs deep hitmap from this info, ridges will come later
@@ -628,6 +665,17 @@ public class MCache implements MapSource {
 		} else if (nil.matcher(resnm).matches()) {
 		    id2tile[tileid] = Tile.NIL;
 		}
+		if(type == GridType.UNKNOWN) {
+		    if (underground.matcher(resnm).matches()) {
+			type = GridType.UNDERGROUND;
+		    } else if (indoors.matcher(resnm).matches()) {
+			type = GridType.INDOOR;
+		    }
+		}
+	    }
+	    if(type == GridType.UNKNOWN) {
+		//Still unknown => Outdoors
+		type = GridType.OUTDOOR;
 	    }
 	    for(int i = 0; i < tiles.length; i++) {
 		tiles[i] = buf.uint8();
