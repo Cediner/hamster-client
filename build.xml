@@ -10,6 +10,7 @@
     </copy>
     <copy todir="build/data/res/">
       <fileset dir="etc/res/built/" includes="**"/>
+      <fileset dir="etc/geolocres/" includes="**"/>
     </copy>
     <copy todir="build/data/scripts">
       <fileset dir="etc/scripts/" includes="**" excludes="forage/**"/>
@@ -155,6 +156,7 @@
     </copy>
     <copy todir="update/data/res">
       <fileset dir="etc/res/built/" includes="**"/>
+      <fileset dir="etc/geolocres/" includes="**"/>
     </copy>
     <copy todir="update/data/scripts">
       <fileset dir="etc/scripts/" includes="**" excludes="forage/**"/>

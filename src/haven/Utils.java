@@ -216,7 +216,7 @@ public class Utils {
 	return(prefs);
     }
 
-    static String getpref(String prefname, String def) {
+    public static String getpref(String prefname, String def) {
 	try {
 	    return(prefs().get(prefname, def));
 	} catch(SecurityException e) {
@@ -224,7 +224,7 @@ public class Utils {
 	}
     }
 	
-    static void setpref(String prefname, String val) {
+    public static void setpref(String prefname, String val) {
 	try {
 	    prefs().put(prefname, val);
 	} catch(SecurityException e) {

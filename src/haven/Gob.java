@@ -45,6 +45,8 @@ import hamster.gob.sprites.TargetSprite;
 import hamster.script.pathfinding.Hitbox;
 import hamster.util.JobSystem;
 import haven.render.*;
+import integrations.mapv4.MapConfig;
+import integrations.mapv4.MappingClient;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
     public Coord2d rc;
@@ -341,6 +343,16 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	if(m != null)
 	    m.move(c);
 	this.rc = c;
+	if (isplayer()) {
+	    if (glob.ui != null) {
+		UI ui = glob.ui.get();
+		if (ui != null && ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+		    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+			MappingClient.getInstance(ui.sess.username).CheckGridCoord(c);
+		    }
+		}
+	    }
+	}
 	this.a = a;
 	if(hitbox != null) {
 	    glob.gobhitmap.update(this);
@@ -1360,6 +1372,29 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    queueDeltas(deltas);
 	} else {
 	    ui.sess.glob.oc.mailbox.mail(new OCache.RemoveGobById(this.id));
+	}
+    }
+
+    public boolean isplayer() {
+	try {
+	    final UI ui = glob.ui.get();
+	    final Optional<Resource> res = res();
+	    if(ui == null || res.isEmpty()) {
+		throw new JobSystem.DependencyNotMet();
+	    }
+	    final GameUI gui = ui.gui;
+	    if(gui == null) {
+		throw new JobSystem.DependencyNotMet();
+	    }
+	    final MapView map = gui.map;
+	    final MapWnd mapfile = gui.mapfile;
+	    if(map == null || mapfile == null) {
+		throw new JobSystem.DependencyNotMet();
+	    }
+	    final long plgobid = map.rlplgob;
+	    return plgobid == id;
+	} catch (Exception e) {
+	    return false;
 	}
     }
 }

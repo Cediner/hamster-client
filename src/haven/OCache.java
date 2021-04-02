@@ -230,6 +230,11 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    public GameUI getGUI() {
+        final GameUI gui = glob.ui.get().gui;
+        return gui;
+    }
+
 
     public interface ChangeCallback {
 	public void added(Gob ob);

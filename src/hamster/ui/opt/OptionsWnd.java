@@ -96,6 +96,7 @@ public class OptionsWnd extends Window {
         final Panel theme = add(new Panel());
         final Panel mbinds = add(new Panel());
         final Panel kbinds = add(new Panel());
+        final Panel mapping = add(new Panel());
         final int spacer = 5;
 
         { //Main Menu
@@ -105,6 +106,7 @@ public class OptionsWnd extends Window {
             y += main.add(new PButton(UI.scale(200), "Theme settings", 't', theme), new Coord(0, y)).sz.y + spacer;
             y += main.add(new PButton(UI.scale(200), "Mousebind settings", 'm', mbinds), new Coord(0, y)).sz.y + spacer;
             y += main.add(new PButton(UI.scale(200), "Keybind settings", 'b', kbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), "Mapping", 'j', mapping), new Coord(0, y)).sz.y + spacer;
             if (gopts) {
                 y += main.add(new PButton(UI.scale(200), "UI settings", 'u', uip), new Coord(0, y)).sz.y + spacer;
                 y += main.add(new PButton(UI.scale(200), "Gameplay settings", 'g', gp), new Coord(0, y)).sz.y + spacer;
@@ -163,6 +165,13 @@ public class OptionsWnd extends Window {
             kbinds.pack();
             kbinds.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
             kbinds.pack();
+        }
+        { //Mapping panel
+            int y = 0;
+            y += mapping.add(new MappingPanel(ui)).sz.y + 5;
+            mapping.pack();
+            mapping.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
+            mapping.pack();
         }
         if (gopts) {
             { //UI Panel

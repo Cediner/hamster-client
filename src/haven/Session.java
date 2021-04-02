@@ -27,6 +27,7 @@
 package haven;
 
 import hamster.script.SessionDetails;
+import integrations.mapv4.MappingClient;
 
 import java.net.*;
 import java.util.*;
@@ -629,6 +630,12 @@ public class Session implements Resource.Resolver {
     }
 
     public void close() {
+	if (this.alive() && this.username != null) {
+	    MappingClient.getInstance(username).SetEndpoint("");
+	    MappingClient.getInstance(username).EnableGridUploads(false);
+	    MappingClient.getInstance(username).EnableTracking(false);
+	    MappingClient.removeInstance(username);
+	}
 	sworker.interrupt();
     }
 

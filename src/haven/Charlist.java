@@ -26,6 +26,9 @@
 
 package haven;
 
+import integrations.mapv4.MapConfig;
+import integrations.mapv4.MappingClient;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.*;
@@ -92,6 +95,12 @@ public class Charlist extends Widget {
     }
 
     protected void added() {
+	if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+	    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+		MappingClient.getInstance(ui.sess.username).SetEndpoint(Utils.getpref("vendan-mapv4-endpoint", ""));
+		MappingClient.getInstance(ui.sess.username).EnableGridUploads(MapConfig.loadMapSetting(ui.sess.username, "mapper"));
+	    }
+	}
 	parent.setfocus(this);
     }
 
@@ -162,8 +171,14 @@ public class Charlist extends Widget {
 	if(sender instanceof Button) {
 	    synchronized(chars) {
 		for(Char c : chars) {
-		    if(sender == c.plb)
+		    if(sender == c.plb) {
 			wdgmsg("play", c.name);
+			if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+			    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+				MappingClient.getInstance(ui.sess.username).SetPlayerName(c.name);
+			    }
+			}
+		    }
 		}
 	    }
 	} else if(!(sender instanceof Avaview)) {
@@ -293,5 +308,10 @@ public class Charlist extends Widget {
     @SuppressWarnings("unused")
     public void login(final Char character) {
         wdgmsg("play", character.name);
+	if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+	    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+		MappingClient.getInstance(ui.sess.username).SetPlayerName(character.name);
+	    }
+	}
     }
 }

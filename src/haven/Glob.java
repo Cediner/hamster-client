@@ -60,11 +60,18 @@ public class Glob {
     //Last time a Global Alerts for this session went out
     public long lastAlert = 0;
 
+    private static Map<String, Glob> reference = new HashMap<>();
+
+    public static Glob getByReference(String name) {
+	return reference.get(name);
+    }
+
     public Glob(Session sess) {
 	this.sess = sess;
 	gobhitmap = new GobHitmap();
 	map = new MCache(sess);
 	party = new Party(this);
+	reference.put(sess.username, this);
     }
 
     public void attach(final UI ui) {

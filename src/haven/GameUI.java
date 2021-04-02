@@ -44,6 +44,8 @@ import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
+import integrations.mapv4.MapConfig;
+import integrations.mapv4.MappingClient;
 
 import java.util.*;
 import java.util.function.*;
@@ -618,6 +620,16 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		ResCache mapstore = SQLResCache.mapdb;
 		if (mapstore != null) {
 		    MapFile file = MapFile.load(mapstore, mapfilename());
+		    if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+			if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+			    MappingClient.getInstance(ui.sess.username).ProcessMap(file, (m) -> {
+				if (m instanceof MapFile.PMarker && MapConfig.loadMapSetting(ui.sess.username, "green")) {
+				    return ((MapFile.PMarker) m).color.equals(Color.GREEN);
+				}
+				return true;
+			    });
+			}
+		    }
 		    mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		    mapmarkers = new MapMarkerWnd(mapfile);
 		    mapmarkers.hide();

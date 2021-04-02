@@ -26,9 +26,10 @@
 
 package haven;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.io.*;
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import hamster.GlobalSettings;
@@ -44,6 +45,8 @@ import haven.MapFile.Marker;
 import haven.MapFile.PMarker;
 import haven.MapFile.SMarker;
 import haven.MiniMap.*;
+import integrations.mapv4.MapConfig;
+import integrations.mapv4.MappingClient;
 
 import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
@@ -155,6 +158,83 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	addBtn("buttons/wnd/one", "1st remembered window size",
 		() -> recall(GlobalSettings.MMMEMSIZEONE, GlobalSettings.MMMEMPOSONE),
 		() -> remember(GlobalSettings.MMMEMSIZEONE, GlobalSettings.MMMEMPOSONE));
+	IButton geoloc = new IButton("custom/geoloc/geoloc", "", "", "") {
+	    private Coord2d locatedAC = null;
+	    private Coord2d detectedAC = null;
+	    private BufferedImage green = Resource.loadimg("custom/geoloc/geoloc-green");
+	    private BufferedImage red = Resource.loadimg("custom/geoloc/geoloc-red");
+	    private BufferedImage up  = Resource.loadimg("custom/geoloc/geoloc");
+
+	    private int state = 0;
+
+	    @Override
+	    public Object tooltip(Coord c, Widget prev) {
+		if (this.locatedAC != null) {
+		    tooltip = Text.render("Located absolute coordinates: " + this.locatedAC.toGridCoordinate());
+		} else if (this.detectedAC != null) {
+		    tooltip = Text.render("Detected login absolute coordinates: " + this.detectedAC.toGridCoordinate());
+		} else {
+		    tooltip = Text.render("Unable to determine your current location.");
+		}
+		if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+		    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+			MappingClient.MapRef mr = MappingClient.getInstance(ui.sess.username).lastMapRef;
+			if (mr != null) {
+			    tooltip = Text.render("Coordinates: " + mr);
+			}
+		    }
+		}
+		return super.tooltip(c, prev);
+	    }
+
+	    @Override
+	    public void click() {
+		if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+		    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+			MappingClient.MapRef mr = MappingClient.getInstance(ui.sess.username).GetMapRef(true);
+			if (mr != null) {
+			    MappingClient.getInstance(ui.sess.username).OpenMap(mr);
+			    return;
+			}
+		    }
+		}
+	    }
+
+	    @Override
+	    public void draw(GOut g) {
+		boolean redraw = false;
+		if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+		    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+			MappingClient.MapRef mr = MappingClient.getInstance(ui.sess.username).lastMapRef;
+			if (state != 2 && mr != null) {
+			    state = 2;
+			    redraw = true;
+			}
+			if (state != 0 && mr == null) {
+			    state = 0;
+			    redraw = true;
+			}
+		    }
+		}
+		if (redraw) this.redraw();
+		super.draw(g);
+	    }
+
+	    @Override
+	    public void draw(BufferedImage buf) {
+		Graphics2D g = (Graphics2D) buf.getGraphics();
+		if (state == 2) {
+		    g.drawImage(green, 0, 0, null);
+		} else if (state == 1) {
+		    g.drawImage(red, 0, 0, null);
+		} else {
+		    g.drawImage(up, 0, 0, null);
+		}
+		g.dispose();
+	    }
+	};
+	add(geoloc);
+	btns.add(geoloc);
 	pack();
     }
 
@@ -275,6 +355,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		file.add(nm);
 		ui.gui.mapmarkers.list.change(nm);
 		domark = false;
+		uploadMarks();
 		return(true);
 	    }
 	    if(!press && (sessloc != null) && (loc.seg == sessloc.seg)) {
@@ -435,6 +516,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
 				new Resource.Spec(Resource.remote(), marker.res));
 			view.file.add(mark);
+			uploadMarks();
 		    } finally {
 			view.file.lock.writeLock().unlock();
 		    }
@@ -486,6 +568,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 				    new Resource.Spec(Resource.remote(), marker.res), ui.gui.curvil);
 			}
 			view.file.add(mark);
+			uploadMarks();
 		    } finally {
 			view.file.lock.writeLock().unlock();
 		    }
@@ -515,6 +598,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    final Marker mark = new MapFile.LinkedMarker(info.seg, sc, marker.defname,
 			    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res), view.file.markerids.next(), marker.ltype);
 		    view.file.add(mark);
+		    uploadMarks();
 		} finally {
 		    view.file.lock.writeLock().unlock();
 		}
@@ -565,11 +649,25 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 				    view.file.update(prev);
 				}
 			    }
+			    uploadMarks();
 			} finally {
 			    view.file.lock.writeLock().unlock();
 			}
 		    }
 		});
+	}
+    }
+
+    public void uploadMarks() {
+	if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
+	    if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
+		MappingClient.getInstance(ui.sess.username).ProcessMap(view.file, (m) -> {
+		    if (m instanceof MapFile.PMarker && MapConfig.loadMapSetting(ui.sess.username, "green")) {
+			return ((MapFile.PMarker) m).color.equals(Color.GREEN);
+		    }
+		    return true;
+		});
+	    }
 	}
     }
 
