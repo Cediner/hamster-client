@@ -1,5 +1,5 @@
 {
-  "version": "7d5610d5844d5061ce57698aa3fc4ff1803487bb",
+  "version": "2c65748093a1594493ea66b423829186b1395e20",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -17,7 +17,6 @@
     "data\\res\\custom\\gridgrad.res": "Wp//dP0wtG2CCjWURcI1v7FBD/VottQsq9AdAZuDVuI=",
     "data\\scripts\\farm-area.lisp": "8qTxe9Erl3Jm4QvSc6Dt6hM7kATKvQH1LqEU/Jf3O34=",
     "data\\res\\custom\\hud\\sloth\\drop.res": "m9lfOVXJJeNCC8LtalsBkQ3C5beEUw4V18Z6PeL0CcI=",
-    "data\\static.sqlite": "qOKr91bZuUh8gBP60bWmCkPwPYcvdFFrvD8sRvPc3ro=",
     "data\\res\\custom\\hud\\default\\buttons\\square\\view.res": "uL5ngVF1EESTjkVl6qCdduXpA5J13dLDgw/q8mxf78E=",
     "data\\res\\custom\\sfx\\default\\hammer.res": "cvumpi6y8dddD49RPzHkCezVbxDMGtrgL3+LsmiFkwc=",
     "hafen-res.jar": "8oMyo5pYWaVWLBHhJg8Po9zu6myd9cVb8RvaTqJnnY4=",
@@ -358,7 +357,6 @@
     "data\\scripts\\lib\\_config_mapview.lisp": "xYORjf408R5z3EEsvVPuhKM2nFPG+zyg1JPqLO7jwPU=",
     "data\\res\\custom\\hud\\sloth\\window.res": "0AeqGpbq2xfkDXQrHGjBNtl1IbTIN3/vkvdtrQxxE5o=",
     "data\\res\\custom\\hud\\default\\scframe.res": "HJtxkLgQw/WuOodllO6NV1IKX68HL0hQONbMRvmVhJw=",
-    "data\\dynamic.sqlite": "YSMeD6TLM9oGD96EeZ0n81DxQNd7lXbMnLdZVPvwB0Y=",
     "data\\res\\custom\\sfx\\default\\metalhit.res": "O58/tbO4mqdJYq+qcfk3iMZBVYXtkSaGD6D8hv4jNMU=",
     "data\\scripts\\lib\\_config_kin.lisp": "7NuvaEBEiF7MmJmNfGz2p4/+5CmVPLhrnDkSvDsivlk=",
     "gson-2.8.6.jar": "yPtIOQVNKAswM/gA0fWpfeLwKOuLoutFitKH5Tbz8l8=",
@@ -376,7 +374,6 @@
     "data\\scripts\\party-perms.lisp": "KqN5ALVKkdmFEeU6v2/x7HpAhF/OqJ0UsVSLUUMtXOA=",
     "data\\res\\custom\\sfx\\omni\\Z_PH_Fanfare_GetRupoor.res": "QNW6IiHCoLEy12JE44HHzHNl487Eoj/QiPQxth93qmk=",
     "data\\scripts\\stockpile-blocks.lisp": "jyaUPInH6cLeRdbjacKBTq5Oxug+ZEaX9PlWLWlPg8M=",
-    "data\\static.db": "/OEwLsMC9qG5u5dS0kc7LD82/V/BiLLDmZHRGFYwGOo=",
     "data\\scripts\\lib\\_config_gob.lisp": "YWne2w4n4k/HvwG69KiHTmnaFLyZsw4o3Z/n51P9VX8=",
     "data\\res\\custom\\hud\\default\\buttons\\wnd\\two.res": "6QvHMRnj6St53WSFkq+IMwULZ4UjDQOWLi8kp94V1NA=",
     "data\\res\\custom\\hud\\default\\buttons\\square\\two.res": "HKdUvY3fRm/phjvHVpJ58uq1cho/Q7EtVMz7abAekQE="
