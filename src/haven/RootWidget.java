@@ -32,6 +32,8 @@ import hamster.ui.ProfWnd;
 import hamster.ui.SessionDisplay;
 
 import java.awt.event.KeyEvent;
+import java.util.List;
+
 import static hamster.KeyBind.*;
 
 public class RootWidget extends ConsoleHost {
@@ -54,8 +56,8 @@ public class RootWidget extends ConsoleHost {
     public boolean globtype(char key, KeyEvent ev) {
         if(!super.globtype(key, ev)) {
 	    final String cmdstr = KeyBind.generateSequence(ev, ui);
-	    if(!KB_TOGGLE_PROFILER.check(cmdstr, () -> {
-	        if(Config.profile || Config.profilegpu) {
+	    if(KB_TOGGLE_PROFILER.match(cmdstr)) {
+		if(Config.profile || Config.profilegpu) {
 		    final Widget par = ui.gui != null ? ui.gui : ui.root;
 		    final ProfWnd wnd = par.add(new ProfWnd());
 		    if (Config.profile) {
@@ -67,15 +69,25 @@ public class RootWidget extends ConsoleHost {
 		    }
 		    return true;
 		} else {
-	            return false;
+		    return false;
 		}
-	    }) && !KB_TOGGLE_CMD.check(cmdstr, () -> {
-	        entercmd();
-		return true;
-	    }) && !KB_TOGGLE_PAUSE.check(cmdstr, () -> {
+	    } else if(KB_TOGGLE_CMD.match(cmdstr)) {
+		entercmd();
+	    } else if(KB_TOGGLE_PAUSE.match(cmdstr)) {
 		GlobalSettings.PAUSED.set(!GlobalSettings.PAUSED.get());
-		return true;
-	    }) && (key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500))) {
+	    } else if(KB_SESSION_CYCLE_BACK.match(cmdstr)) {
+	        final var uis = sessionDisplay.uis();
+	        if(uis.size() > 0) {
+		    final var idx = Math.floorMod(uis.indexOf(ui) - 1, uis.size());
+		    MainFrame.instance.p.setActiveUI(uis.get(idx));
+		}
+	    } else if(KB_SESSION_CYCLE_FORWARD.match(cmdstr)) {
+		final var uis = sessionDisplay.uis();
+		if(uis.size() > 0) {
+		    final var idx = Math.floorMod(uis.indexOf(ui) + 1, uis.size());
+		    MainFrame.instance.p.setActiveUI(uis.get(idx));
+		}
+	    } else if (key != 0 && (last_gk != key || (System.currentTimeMillis() - last_gk_time) >= 500)) {
 		wdgmsg("gk", (int) key);
 		last_gk = key;
 		last_gk_time = System.currentTimeMillis();

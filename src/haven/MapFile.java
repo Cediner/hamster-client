@@ -38,6 +38,8 @@ import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.util.IDPool;
 import haven.Defer.Future;
+import haven.resutil.Ridges;
+
 import static haven.MCache.cmaps;
 
 public class MapFile {
@@ -618,6 +620,55 @@ public class MapFile {
 	    return(texes[t]);
 	}
 
+	private Tiler tiler(int t, Tiler[] tilers, boolean[] cached) {
+	    if (cached[t])
+		return tilers[t];
+	    else {
+		final Resource r = loadsaved(Resource.remote(), tilesets[t].res);
+		final Tileset ts = r.layer(Tileset.class);
+		if (ts != null) {
+		    //This can be null because some tiles are `notile`...
+		    final Tiler tile = ts.tfac().create(t, ts);
+		    tilers[t] = tile;
+		}
+		cached[t] = true;
+		return tilers[t];
+	    }
+	}
+
+	private static final Coord[] tecs = {
+		new Coord(0, -1),
+		new Coord(1, 0),
+		new Coord(0, 1),
+		new Coord(-1, 0)
+	};
+	private static final Coord[] tccs = {
+		new Coord(0, 0),
+		new Coord(1, 0),
+		new Coord(1, 1),
+		new Coord(0, 1)
+	};
+
+	private boolean brokenp(Tiler t, Coord tc, final Tiler[] tilers, final boolean[] tlcache) {
+	    double bz = ((Ridges.RidgeTile) t).breakz();  //The distance at which a ridge is formed
+	    //Look at the four tiles around us to get the minimum break distance
+	    for (Coord ec : tecs) {
+		t = tiler(gettile(tc.add(ec)), tilers, tlcache);
+		if (t instanceof Ridges.RidgeTile)
+		    bz = Math.min(bz, ((Ridges.RidgeTile) t).breakz());
+	    }
+
+	    //Now figure out based on other tiles around us if we hit that break limit and should be a ridge
+	    for (int i = 0; i < 4; i++) {
+		final double z1 = getfz(tc.add(tccs[i]));
+		final double z2 = getfz(tc.add(tccs[(i + 1) % 4]));
+		if (Math.abs(z2 - z1) > bz) {
+		    return (true);
+		}
+	    }
+	    return (false);
+	}
+
 	public BufferedImage render(Coord off) {
 	    BufferedImage[] texes = new BufferedImage[256];
 	    boolean[] cached = new boolean[256];
@@ -649,6 +700,27 @@ public class MapFile {
 			buf.setSample(c.x, c.y, 1, 0);
 			buf.setSample(c.x, c.y, 2, 0);
 			buf.setSample(c.x, c.y, 3, 255);
+		    }
+		}
+	    }
+	    //Check ridges
+	    Tiler[] tilers = new Tiler[256];
+	    boolean[] tlcached = new boolean[256];
+	    for (c.y = 1; c.y < MCache.cmaps.y - 1; ++c.y) {
+		for (c.x = 1; c.x < MCache.cmaps.x - 1; ++c.x) {
+		    final Tiler t = tiler(gettile(c), tilers, tlcached);
+		    if (t instanceof Ridges.RidgeTile && brokenp(t, c, tilers, tlcached)) {
+			for (int y = c.y - 1; y <= c.y + 1; ++y) {
+			    for (int x = c.x - 1; x <= c.x + 1; ++x) {
+				Color cc = new Color(buf.getSample(x, y, 0), buf.getSample(x, y, 1),
+					buf.getSample(x, y, 2), buf.getSample(x, y, 3));
+				final Color blended = Utils.blendcol(cc, Color.BLACK, x == c.x && y == c.y ? 1.0 : 0.1);
+				buf.setSample(x, y, 0, blended.getRed());
+				buf.setSample(x, y, 1, blended.getGreen());
+				buf.setSample(x, y, 2, blended.getBlue());
+				buf.setSample(x, y, 3, blended.getAlpha());
+			    }
+			}
 		    }
 		}
 	    }
