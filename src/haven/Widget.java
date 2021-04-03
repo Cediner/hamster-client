@@ -524,7 +524,7 @@ public class Widget {
     }
 	
     public Coord parentpos(Widget in) {
-	if(in == this)
+	if(in == this || parent == null)
 	    return(new Coord(0, 0));
 	return(parent.xlate(parent.parentpos(in).add(c), true));
     }
