@@ -935,7 +935,8 @@ public class OCache implements Iterable<Gob> {
 			    break;
 		    }
 		    synchronized(gob) {
-			d.apply(gob);
+		        if(gob != null)
+		            d.apply(gob);
 		    }
 		    synchronized(this) {
 			if((pending.poll()) != d)

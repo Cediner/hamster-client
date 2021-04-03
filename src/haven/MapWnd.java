@@ -91,7 +91,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    .state(() -> hmarkers).set(a -> hmarkers = a)
 	    .settip("Hide markers");
 	final var chk = toolbar.add(new ICheckBox("gfx/hud/lbtn-ico", "", "-d", "-h", "-dh"))
-		.state(() -> ui.gui.wndstate(ui.gui.iconwnd)).click(() -> {
+		.state(() -> ui.gui != null && ui.gui.wndstate(ui.gui.iconwnd))
+		.click(() -> {
 		    if(ui.gui.iconconf == null)
 			return;
 		    if(ui.gui.iconwnd == null) {
