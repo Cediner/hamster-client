@@ -693,8 +693,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    case "qq" -> {
 	        //TODO: this isn't always from UI thread? Causes issues with removing qqview because of it if done
 		//      during a frame
-		System.out.println(Thread.currentThread().toString());
-		Thread.dumpStack();
 		if (qqview != null)
 		    qqview.reqdestroy();
 		qqview = child;

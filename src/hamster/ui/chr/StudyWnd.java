@@ -70,18 +70,40 @@ public class StudyWnd extends Window {
         }
     }
 
-    public StudyWnd(final Widget study) {
+    private final CharWnd cwnd;
+    private final Widget study;
+    private final StudyInfo info;
+
+    public StudyWnd(final CharWnd cwnd, final Widget study) {
         super(Coord.z, "Study Report", "study-report");
-        final StudyInfo info = new StudyInfo(study);
+        info = new StudyInfo(study);
+        this.cwnd = cwnd;
+        this.study = study;
         add(study);
         add(info, study.c.add(0, study.sz.y + 5));
         pack();
     }
 
     @Override
+    public void show() {
+        super.show();
+        study.unlink();
+        add(study, Coord.z);
+        info.move(study.c.add(0, study.sz.y + 5));
+        pack();
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        study.unlink();
+        cwnd.placeStudy(study);
+    }
+
+    @Override
     protected void added() {
         super.added();
-        visible = GlobalSettings.SHOWSTUDY.get();
+        setVisible(GlobalSettings.SHOWSTUDY.get());
     }
 
     @Override
