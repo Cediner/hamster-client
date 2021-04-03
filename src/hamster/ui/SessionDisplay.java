@@ -7,9 +7,7 @@ import hamster.ui.core.layout.Grouping;
 import hamster.util.ObservableListener;
 import haven.*;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SessionDisplay extends MovableWidget implements ObservableListener<UI> {
     private static class UIDisplay extends Widget {
@@ -86,6 +84,16 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
                 show();
             }
         }
+    }
+
+    public List<UI> uis() {
+        final List<UI> uis = new ArrayList<>();
+        Widget wdg;
+        for(wdg = grp.child; wdg != null; wdg = wdg.next) {
+            if(wdg instanceof UIDisplay)
+                uis.add(((UIDisplay)wdg).ui);
+        }
+        return uis;
     }
 
     public void init(Collection<UI> base) {

@@ -15,7 +15,8 @@ public class KeyBind {
     public static final KeyBind // UI
     	KB_TOGGLE_MINIMAP, KB_TOGGLE_INV, KB_TOGGLE_EQU, KB_TOGGLE_CHAR, KB_TOGGLE_KIN, KB_TOGGLE_OPTS,
     	KB_TOGGLE_CHAT, KB_TOGGLE_FORAGE, KB_TOGGLE_LIVESTOCK, KB_TOGGLE_CMD, KB_TOGGLE_PROFILER, KB_FOCUS_MAP,
-    	KB_RECALL_MAP_ONE, KB_RECALL_MAP_TWO, KB_LOCK_ITEM_ON_MOUSE, KB_SCREENSHOT,
+    	KB_RECALL_MAP_ONE, KB_RECALL_MAP_TWO, KB_LOCK_ITEM_ON_MOUSE, KB_SCREENSHOT, KB_SESSION_CYCLE_BACK,
+	KB_SESSION_CYCLE_FORWARD,
     	//Misc UI stuff
     	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
     public static final KeyBind // Gameplay
@@ -86,6 +87,8 @@ public class KeyBind {
 	    KB_SCM_ROOT = addKB("Return MenuGrid to Root", UI_GRP, "S-Escape");
 	    KB_SCM_BACK = addKB("Go back a page in MenuGrid", UI_GRP, "Backspace");
 	    KB_SCM_NEXT = addKB("Go to next page in MenuGrid", UI_GRP, "N");
+	    KB_SESSION_CYCLE_BACK = addKB("Cycle session backwards", UI_GRP, "C-Left");
+	    KB_SESSION_CYCLE_FORWARD = addKB("Cycle session forwards", UI_GRP, "C-Right");
 	}
 	{ // Gameplay Keybinds
 	    final String GP_GRP = "Gameplay";
