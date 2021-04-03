@@ -45,6 +45,7 @@ import hamster.gob.sprites.TargetSprite;
 import hamster.script.pathfinding.Hitbox;
 import hamster.util.JobSystem;
 import haven.render.*;
+import haven.resutil.WaterTile;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
     public Coord2d rc;
@@ -731,6 +732,11 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 			Coord3f oc = Gob.this.getc();
 			Coord3f rc = new Coord3f(oc);
 			rc.y = -rc.y;
+			if(hasTag(Tag.ANIMAL)) {
+			    final var tl = glob.map.tiler(glob.map.gettile_safe(Gob.this.rc.floor(MCache.tilesz)));
+			    if(tl instanceof WaterTile)
+			        rc.z += 5;
+			}
 			this.flw = null;
 			this.oc = oc;
 			this.rc = rc;
