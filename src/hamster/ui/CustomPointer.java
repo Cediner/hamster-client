@@ -163,7 +163,7 @@ public class CustomPointer extends Widget {
 	    gobrc = tc;
 	    sl = getparent(GameUI.class).map.screenxf(tc);
 	}
-	if(gobrc != null) {
+	if(gobrc != null && ui != null && ui.gui != null) {
 	    final Double angle = ui.gui.map.screenangle(gobrc, true);
 	    if (!angle.equals(Double.NaN)) {
 		drawarrow(g, ui.gui.map.screenangle(gobrc, true));
