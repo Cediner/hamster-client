@@ -29,6 +29,7 @@ package haven;
 import java.util.*;
 import java.awt.Color;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.MouseBind;
 import hamster.data.map.MarkerData;
@@ -381,12 +382,12 @@ public class MiniMap extends Widget {
 		    SMarker sm = (SMarker) m;
 		    try {
 			if (cc == null) {
-			    Resource res = MapFile.loadsaved(Resource.remote(), sm.res);
+			    Resource res = sm.res.loadsaved(Resource.remote());
 			    img = res.layer(Resource.imgc);
 			    Resource.Neg neg = res.layer(Resource.negc);
-			    cc = (neg != null) ? neg.cc : img.sz.div(2);
+			    cc = (neg != null) ? neg.cc : img.ssz.div(2);
 			    if (hit == null)
-				hit = Area.sized(cc.inv(), img.sz);
+				hit = Area.sized(cc.inv(), img.ssz);
 			}
 		    } catch (Loading ignored) {
 		    } catch (Exception e) {
@@ -396,7 +397,7 @@ public class MiniMap extends Widget {
 			final Coord ul = c.sub(cc);
 			g.image(img, ul);
 			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    final Coord tipc = new Coord(ul.x + img.ssz.x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
 		    }
