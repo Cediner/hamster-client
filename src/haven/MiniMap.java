@@ -952,6 +952,13 @@ public class MiniMap extends Widget {
 	    DisplayMarker mark = markerat(tc);
 	    if(mark != null) {
 		return(mark.tip);
+	    } else if (GlobalSettings.SHOWHOVERTOOLTIPS.get()) {
+		final Coord gc = tc.div(cmaps);
+		try {
+		    return tc + " - " + gc + " - " + curloc.seg.gridid(gc) + " [" + curloc.seg.gridtilename(tc, gc) + "]";
+		} catch (Exception e) {
+		    //Ignore
+		}
 	    }
 	}
 	return(super.tooltip(c, prev));
