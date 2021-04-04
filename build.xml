@@ -120,7 +120,7 @@
 
   <target name="build-custom-res">
     <delete dir="etc/res/built/" includes="**"/>
-    <java jar="etc\res\hafen-resource-tool-1.0.jar" fork="true" dir="etc/res/">
+    <java jar="etc\res\hafen-resource-tool-1.1.jar" fork="true" dir="etc/res/">
       <arg value="-encode"/>
       <arg value="unbuilt\"/>
       <arg value="built\"/>

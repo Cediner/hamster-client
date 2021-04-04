@@ -1,0 +1,21 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\clonk\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\clonk\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\clonk\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\clonk\\audio2-3.dat"
+    }
+  ]
+}

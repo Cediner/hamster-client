@@ -1,0 +1,50 @@
+{
+  "ver": 8,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 0,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt/custom\\sfx\\default\\you-win\\image-0.png"
+    },
+    {
+      "layer-name": "src",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\src-0.dat"
+    },
+    {
+      "layer-name": "src",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\src-1.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\code-0.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\code-1.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\code-2.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\code-3.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\code-4.dat"
+    },
+    {
+      "layer-name": "codeentry",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\codeentry-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\you-win\\audio2-0.dat"
+    }
+  ]
+}

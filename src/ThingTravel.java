@@ -58,8 +58,8 @@ public class ThingTravel extends Window {
     }
 
     public static class Compass extends Widget {
-	public static final Tex bg = Resource.classres(ThingTravel.class).layer(Resource.imgc, 0).tex();
-	public static final Tex mark = Resource.classres(ThingTravel.class).layer(Resource.imgc, 1).tex();
+	public static final Tex bg = Resource.remote().loadwait("ui/thingwall").layer(Resource.imgc, 0).tex();
+	public static final Tex mark = Resource.remote().loadwait("ui/thingwall").layer(Resource.imgc, 1).tex();
 	public static final int cr = UI.scale(60), pr = UI.scale(5);
 	public final ThingTravel tr;
 	private double mr;

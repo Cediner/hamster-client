@@ -91,6 +91,7 @@ public class StudyWnd extends Window {
         add(study, Coord.z);
         info.move(study.c.add(0, study.sz.y + 5));
         pack();
+        GlobalSettings.SHOWSTUDY.set(true);
     }
 
     @Override
@@ -98,6 +99,7 @@ public class StudyWnd extends Window {
         super.hide();
         study.unlink();
         cwnd.placeStudy(study);
+        GlobalSettings.SHOWSTUDY.set(false);
     }
 
     @Override

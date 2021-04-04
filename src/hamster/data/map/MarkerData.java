@@ -44,7 +44,7 @@ public class MarkerData {
     }
 
     public enum Type {
-        LINKED, SLOTH, REALM, VILLAGE, SCRIPT
+        LINKED, CUSTOM, REALM, VILLAGE, SCRIPT
     }
 
     private static final Map<String, Marker> markable = new HashMap<>();

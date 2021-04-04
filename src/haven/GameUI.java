@@ -39,6 +39,7 @@ import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
 import hamster.ui.chr.SkillnCredoWnd;
 import hamster.ui.chr.StudyWnd;
+import hamster.ui.core.Theme;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
@@ -760,22 +761,28 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	}
 	meters.remove(w);
     }
-    
-    private static final Resource.Anim progt = Resource.local().loadwait("gfx/hud/prog").layer(Resource.animc);
+
+    private static final Resource.Anim progt = Theme.res("prog").layer(Resource.animc);
     private Tex curprog = null;
     private int curprogf, curprogb;
     private void drawprog(GOut g, double prog) {
-	int fr = Utils.clip((int)Math.floor(prog * progt.f.length), 0, progt.f.length - 2);
-	int bf = Utils.clip((int)(((prog * progt.f.length) - fr) * 255), 0, 255);
-	if((curprog == null) || (curprogf != fr) || (curprogb != bf)) {
-	    if(curprog != null)
+	int fr = Utils.clip((int) Math.floor(prog * progt.f.length), 0, progt.f.length - 2);
+	int bf = Utils.clip((int) (((prog * progt.f.length) - fr) * 255), 0, 255);
+	if ((curprog == null) || (curprogf != fr) || (curprogb != bf)) {
+	    if (curprog != null)
 		curprog.dispose();
-	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].ssz);
-	    PUtils.blit(buf, progt.f[fr][0].scaled().getRaster(), Coord.z);
-	    PUtils.blendblit(buf, progt.f[fr + 1][0].scaled().getRaster(), Coord.z, bf);
-	    curprog = new TexI(PUtils.rasterimg(buf)); curprogf = fr; curprogb = bf;
+	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].sz);
+	    PUtils.blit(buf, progt.f[fr][0].img.getRaster(), Coord.z);
+	    PUtils.blendblit(buf, progt.f[fr + 1][0].img.getRaster(), Coord.z, bf);
+	    curprog = new TexI(PUtils.rasterimg(buf));
+	    curprogf = fr;
+	    curprogb = bf;
 	}
 	g.aimage(curprog, new Coord(sz.x / 2, (sz.y * 4) / 10), 0.5, 0.5);
+	g.chcolor(new java.awt.Color(128, 128, 128, 128));
+	g.frect(new Coord(sz.x / 2 + 30, (sz.y * 4) / 10), new Coord(40, 15));
+	g.chcolor();
+	FastText.printf(g, new Coord(sz.x / 2 + 30, (sz.y * 4) / 10), "%.2f%%", (prog * 100));
     }
 
     public void draw(GOut g) {

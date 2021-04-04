@@ -757,7 +757,7 @@
     }
   },
   {
-    name: "Bone Saw",
+    name: "Bonesaw",
     res: "",
     tags: [
       "CAN_EQUIP"

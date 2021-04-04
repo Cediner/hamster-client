@@ -463,7 +463,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 			//Check for duplicate
 			for (final Marker mark : view.file.markers) {
-			    if (marker.type == MarkerData.Type.SLOTH && mark instanceof MapFile.CustomMarker &&
+			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof MapFile.CustomMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
 			    else if (marker.type == MarkerData.Type.REALM && mark instanceof MapFile.RealmMarker &&
@@ -475,7 +475,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			}
 
 			final Marker mark;
-			if (marker.type == MarkerData.Type.SLOTH) {
+			if (marker.type == MarkerData.Type.CUSTOM) {
 			    mark = new MapFile.CustomMarker(info.seg, sc, marker.defname,
 				    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
 			} else if (marker.type == MarkerData.Type.REALM) {

@@ -10,7 +10,7 @@ public class Grouping extends Widget {
     private final Text cap;
     private final boolean showbox;
 
-    private Coord ctl;
+    private Coord ctl = Coord.z;
     private Coord capy = new Coord(0, 0);
 
     public Grouping(final String cap, final boolean showbox, final Text.Foundry foundry) {

@@ -1,0 +1,25 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\exp\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\exp\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\exp\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\exp\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\exp\\audio2-4.dat"
+    }
+  ]
+}

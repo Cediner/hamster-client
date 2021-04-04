@@ -401,11 +401,14 @@ public class Fightview extends Widget {
 	    final String roip = String.format("IP %d", rel.ip);
 	    FastText.print(g, new Coord(UI.scale(12), y + UI.scale(44)), roip);
 	    final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
-	    if (gob != null){
+	    final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
+	    if (gob != null) {
 		g.chcolor(Color.WHITE);
 		FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(32)), "Speed: %.2f", gob.getv());
-		FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(44)), "Distance: %.2f",
-			gob.getc().dist(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc()) / 11.0);
+		if (pl != null) {
+		    FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(44)), "Distance: %.2f",
+			    gob.getc().dist(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc()) / 11.0);
+		}
 	    }
 	    // Bottom Row
 	    g.chcolor();
