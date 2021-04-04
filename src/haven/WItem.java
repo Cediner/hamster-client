@@ -38,6 +38,7 @@ import hamster.ui.equip.EquipmentType;
 import haven.ItemInfo.AttrCache;
 import haven.res.ui.tt.Wear;
 import haven.res.ui.tt.q.qbuff.Quality;
+import haven.resutil.Curiosity;
 
 import static haven.Inventory.sqsz;
 
@@ -224,6 +225,7 @@ public class WItem extends Widget implements DTarget {
 	}
     }
 
+    private static final Color bgcol = new Color(128, 128, 128, 128);
     public void draw(GOut g) {
 	GSprite spr = item.spr();
 	if(spr != null) {
@@ -239,11 +241,40 @@ public class WItem extends Widget implements DTarget {
 		    ol.draw(g);
 	    }
 	    Double meter = (item.meter > 0) ? Double.valueOf(item.meter / 100.0) : itemmeter.get();
+	    final var curio = item.getinfo(Curiosity.class);
 	    if((meter != null) && (meter > 0)) {
 		g.chcolor(255, 255, 255, 64);
 		Coord half = sz.div(2);
 		g.prect(half, half.inv(), half, meter * Math.PI * 2);
 		g.chcolor();
+
+		final String text;
+		if(curio.isPresent() && GlobalSettings.SHOWTIMELEFTCURIO.get()) {
+		    text = Curiosity.timeleft((int)(curio.get().getRealTime() - (curio.get().getRealTime() * meter)));
+		} else if (GlobalSettings.SHOWMETERPER.get()) {
+		    text = String.format("%s%%", (int)(meter * 100));
+		} else {
+		    text = null;
+		}
+
+		if(text != null) {
+		    final int width = FastText.textw(text);
+		    final Coord tsz = new Coord(width, 15);
+		    final Coord c = new Coord(0, sz.y - tsz.y);
+		    g.chcolor(bgcol);
+		    g.frect(c, tsz);
+		    g.chcolor();
+		    FastText.print(g, c, text);
+		}
+	    } else if(GlobalSettings.SHOWTIMELEFTCURIO.get() && curio.isPresent()) {
+		final var text = Curiosity.timeleft((int)(curio.get().getRealTime()));
+		final int width = FastText.textw(text);
+		final Coord tsz = new Coord(width, 15);
+		final Coord c = new Coord(0, sz.y - tsz.y);
+		g.chcolor(bgcol);
+		g.frect(c, tsz);
+		g.chcolor();
+		FastText.print(g, c, text);
 	    }
 
 	    if (GlobalSettings.SHOWITEMWEAR.get()) {

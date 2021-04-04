@@ -86,6 +86,8 @@ public class UIPanel extends Scrollport {
             inv.add(new IndirCheckBox("Show Item Quality", GlobalSettings.SHOWITEMQ));
             inv.add(new IndirCheckBox("Show Item Wear Bar", GlobalSettings.SHOWITEMWEAR));
             inv.add(new IndirCheckBox("Show Item Contents Bar", GlobalSettings.SHOWITEMCONT));
+            inv.add(new IndirCheckBox("Show Item Meter Percent", GlobalSettings.SHOWMETERPER));
+            inv.add(new IndirCheckBox("Show Curio Time Left", GlobalSettings.SHOWTIMELEFTCURIO));
             inv.add(new IndirCheckBox("Always show longtip on items", GlobalSettings.ALWAYSITEMLONGTIPS));
             inv.add(new IndirCheckBox("Use special mousebind when dropping held items in water", GlobalSettings.WATERDROPITEMCTRL));
             inv.pack();
