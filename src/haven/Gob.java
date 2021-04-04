@@ -1278,6 +1278,10 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
      */
     public void discover(final String name) {
         //Ensure we have everything needed to do a discovery first
+	if(glob == null)
+	    return;
+	if(glob.ui == null)
+	    throw new JobSystem.DependencyNotMet();
 	final UI ui = glob.ui.get();
 	final Optional<Resource> res = res();
 	if(ui == null || res.isEmpty()) {

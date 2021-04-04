@@ -2135,15 +2135,17 @@ public class CharWnd extends Window {
 	resize(contentsz().add(UI.scale(15, 10)));
     }
 
+    public void placeStudy(final Widget child) {
+	sattr.add(child, studyc.add(wbox.btloff()));
+	Widget f = Frame.around(sattr, Collections.singletonList(child));
+	Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
+	Frame.around(sattr, Collections.singletonList(inf));
+    }
+
     public void addchild(Widget child, Object... args) {
 	String place = (args[0] instanceof String)?(((String)args[0]).intern()):null;
 	if(place == "study") {
-	    ui.gui.study = ui.gui.add(new StudyWnd(child));
-	    /*
-	    sattr.add(child, studyc.add(wbox.btloff()));
-	    Widget f = Frame.around(sattr, Collections.singletonList(child));
-	    Widget inf = sattr.add(new StudyInfo(new Coord(attrw - child.sz.x - wbox.bisz().x - margin1, child.sz.y), child), child.pos("ur").add(wbox.bisz().x + margin1, 0));
-	    Frame.around(sattr, Collections.singletonList(inf));*/
+	    ui.gui.study = ui.gui.add(new StudyWnd(this, child));
 	} else if(place == "fmg") {
 	    fight = (FightWnd) child;
 	    fgt.add(child, 0, 0);

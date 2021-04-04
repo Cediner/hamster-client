@@ -328,11 +328,11 @@ public class WaterTile extends Tiler {
     private static Pipe.Op dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
 
     public static Pipe.Op getBottomMat(final int tileid) {
-        if(GlobalSettings.COLORIZEDEEPWATER.get() && tileid == 188) {
+        if(GlobalSettings.COLORIZEDEEPWATER.get() && tileid == 204) {
 	    if (DEEPWATERCOL.get() != deepfogcol) {
 		deepfogcol = DEEPWATERCOL.get();
 		deepfog = new BottomFog(deepfogcol);
-		dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));;
+		dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
 	    }
 	    return dbotmat;
 	} else {

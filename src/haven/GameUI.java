@@ -703,6 +703,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    }
 	    case "buff" -> buffs.addchild(child);
 	    case "qq" -> {
+	        //TODO: this isn't always from UI thread? Causes issues with removing qqview because of it if done
+		//      during a frame
 		if (qqview != null)
 		    qqview.reqdestroy();
 		qqview = child;
