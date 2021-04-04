@@ -42,8 +42,10 @@ public class Curiosity extends ItemInfo.Tip {
     }
 
     public double lpperhour() {
-	return exp / (time / 3.0f) * TimeUnit.HOURS.toSeconds(1);
+	return exp / getRealTime() * TimeUnit.HOURS.toSeconds(1);
     }
+
+    public double getRealTime() { return (time / Glob.gametimefac); }
 
     static String[] units = {"s", "m", "h", "d"};
     static int[] div = {60, 60, 24};
@@ -66,12 +68,41 @@ public class Curiosity extends ItemInfo.Tip {
 	return(buf.toString());
     }
 
+    public static String timeleft(int time) {
+	int[] vals = new int[units.length];
+	int start = 0;
+	vals[0] = time;
+	for(int i = 0; i < div.length; i++) {
+	    vals[i + 1] = vals[i] / div[i];
+	    vals[i] = vals[i] % div[i];
+	    if(vals[i + 1] > 0)
+		start = i + 1;
+	    else if(vals[i] > 0)
+	        start = i;
+	}
+
+	StringBuilder buf = new StringBuilder();
+	for(int i = start; i >= Math.max(start-1, 1); i--) {
+	    if(vals[i] > 0) {
+		buf.append(vals[i]);
+		buf.append(units[i]);
+	    }
+	}
+
+	if(buf.isEmpty()) {
+	    buf.append(vals[0]);
+	    buf.append("s");
+	}
+
+	return(buf.toString());
+    }
+
     public BufferedImage tipimg() {
 	StringBuilder buf = new StringBuilder();
 	if(exp > 0)
 	    buf.append(String.format("Learning points: $col[192,192,255]{%s}\n", Utils.thformat(exp)));
 	if(time > 0)
-	    buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt(time)));
+	    buf.append(String.format("Study time: $col[192,255,192]{%s}\n", timefmt((int)(getRealTime()))));
 	if(mw > 0)
 	    buf.append(String.format("Mental weight: $col[255,192,255]{%d}\n", mw));
 	if (exp > 0 && time > 0) {
