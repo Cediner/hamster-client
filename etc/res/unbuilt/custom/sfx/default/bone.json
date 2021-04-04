@@ -1,0 +1,9 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\bone\\audio2-0.dat"
+    }
+  ]
+}

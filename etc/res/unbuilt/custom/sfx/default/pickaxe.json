@@ -1,0 +1,29 @@
+{
+  "ver": 3,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-4.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\pickaxe\\audio2-5.dat"
+    }
+  ]
+}

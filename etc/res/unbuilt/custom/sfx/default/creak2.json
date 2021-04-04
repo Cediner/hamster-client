@@ -1,0 +1,77 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-4.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-5.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-6.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-7.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-8.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-9.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-10.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-11.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-12.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-13.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-14.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-15.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-16.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt/custom\\sfx\\default\\creak2\\audio2-17.dat"
+    }
+  ]
+}
