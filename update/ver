@@ -1,5 +1,5 @@
 {
-  "version": "96433fcb2aacef1d022691da97c9c36ecb559b0c",
+  "version": "2374b07aeaec736ecc09c3cb52c187337a9638fc",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -95,7 +95,7 @@
     "data\\res\\custom\\sfx\\default\\you-lose.res": "LpCkNpClVHm27NzzoCL5g6lr7RP0WsFX7H0f7Qjb/oQ=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
     "data\\res\\custom\\sfx\\default\\quern.res": "Adt60Nr5SfjVi8sR9wbFBt8rnIxGgnu/MtOAI1gq3CE=",
-    "hafen.jar": "F1uIZ4UR3+hf+e34b5qD3ZUCMq5Y8zr2uqjoAzZow/s=",
+    "hafen.jar": "b3F3EOpDCZ/hAfzS3wfwCk9/Lp2Bq+ph4+oqpL1AoTM=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "LXfAecDnC3vFQKaLH6i4c3UnUMWwa0zzpk5HOXxHsJc=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "Xcp1HnccKct/PDVNOQuspm1UYPmp78zqKfYMs7X+RQQ=",
