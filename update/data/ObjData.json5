@@ -2169,5 +2169,22 @@
       autumn: "YES",
       winter: "YES"
     }
+  },
+  /*** Trees / Bushes ***/
+  {
+    res: "gfx/terobjs/trees/((?!.+(stump|log)).)+",
+    regex: true,
+    names: "Tree",
+    tags: [
+      "TREE"
+    ]
+  },
+  {
+    res: "gfx/terobjs/bushes/.+",
+    regex: true,
+    names: "Bush",
+    tags: [
+      "BUSH"
+    ]
   }
 ]

@@ -3,11 +3,11 @@
   "layers": [
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\arm-soak2\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\arm-soak2\\audio2-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\arm-soak2\\audio2-1.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\arm-soak2\\audio2-1.dat"
     }
   ]
 }

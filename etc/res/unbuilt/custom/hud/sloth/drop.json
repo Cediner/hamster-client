@@ -5,10 +5,10 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
-      "img": "unbuilt\\custom\\hud\\default\\drop\\image-0.png",
-      "fl": 4,
+      "img": "unbuilt\\custom\\hud\\sloth\\drop\\image-0.png",
       "scale": 4.0
     }
   ]

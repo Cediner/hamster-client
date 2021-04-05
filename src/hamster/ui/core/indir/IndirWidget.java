@@ -1,6 +1,7 @@
 package hamster.ui.core.indir;
 
 import haven.Coord;
+import haven.DTarget;
 import haven.GOut;
 import haven.Widget;
 
@@ -9,7 +10,7 @@ import java.awt.event.KeyEvent;
 /**
  * Ways to display a widget that is bound elsewhere without unlinking/linking it or keeping it in multiple places
  */
-public class IndirWidget extends Widget {
+public class IndirWidget extends Widget implements DTarget {
     private final Widget backer;
 
     public IndirWidget(final Widget wdg) {
@@ -33,8 +34,26 @@ public class IndirWidget extends Widget {
     }
 
     @Override
+    public boolean drop(Coord cc, Coord ul) {
+        if(backer instanceof DTarget) {
+            return ((DTarget)backer).drop(cc, ul);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean iteminteract(Coord cc, Coord ul) {
+        if(backer instanceof DTarget) {
+            return ((DTarget)backer).iteminteract(cc, ul);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public boolean mousedown(Coord c, int button) {
-        return backer.mousedown(c, button);
+        return !(ui.modmeta && button == 3) && backer.mousedown(c, button);
     }
 
     @Override

@@ -5,66 +5,60 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-1.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-2.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 3,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-3.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 4,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-4.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 5,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\tabs\\image-5.png",
-      "fl": 4,
       "scale": 4.0
     }
   ]

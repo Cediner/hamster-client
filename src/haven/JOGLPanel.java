@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.awt.Toolkit;
 import java.awt.Robot;
@@ -449,6 +450,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 			tt = () -> r;
 			free = r;
 		    }
+		} else if(tooltip instanceof BufferedImage) {
+		    Tex t = new TexI((BufferedImage) tooltip);
+		    tt = () -> t;
+		    free = t;
 		}
 	    }
 	    prevtooltip = tooltip;

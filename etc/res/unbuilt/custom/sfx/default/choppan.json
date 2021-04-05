@@ -3,23 +3,23 @@
   "layers": [
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\choppan\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\choppan\\audio2-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\choppan\\audio2-1.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\choppan\\audio2-1.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\choppan\\audio2-2.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\choppan\\audio2-2.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\choppan\\audio2-3.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\choppan\\audio2-3.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\choppan\\audio2-4.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\choppan\\audio2-4.dat"
     }
   ]
 }

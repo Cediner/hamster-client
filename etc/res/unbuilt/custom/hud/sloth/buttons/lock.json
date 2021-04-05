@@ -5,33 +5,30 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\buttons\\lock\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\buttons\\lock\\image-1.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\buttons\\lock\\image-2.png",
-      "fl": 4,
       "scale": 4.0
     }
   ]

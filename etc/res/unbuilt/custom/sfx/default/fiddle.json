@@ -3,19 +3,19 @@
   "layers": [
     {
       "layer-name": "src",
-      "data": "unbuilt/custom\\sfx\\default\\fiddle\\src-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\fiddle\\src-0.dat"
     },
     {
       "layer-name": "code",
-      "data": "unbuilt/custom\\sfx\\default\\fiddle\\code-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\fiddle\\code-0.dat"
     },
     {
       "layer-name": "codeentry",
-      "data": "unbuilt/custom\\sfx\\default\\fiddle\\codeentry-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\fiddle\\codeentry-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\fiddle\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\fiddle\\audio2-0.dat"
     }
   ]
 }

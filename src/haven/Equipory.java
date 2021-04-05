@@ -150,7 +150,7 @@ public class Equipory extends Widget implements DTarget {
 	    if(!ui.gui.hand.isEmpty()) {
 		wdgmsg("drop", EquipmentType.RightHand.slot);
 		return true;
-	    } else if(leftHand() != null) {
+	    } else if(rightHand() != null) {
 		rightHand().wdgmsg("take", Coord.o);
 		return true;
 	    }

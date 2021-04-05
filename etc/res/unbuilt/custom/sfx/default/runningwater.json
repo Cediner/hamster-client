@@ -3,35 +3,35 @@
   "layers": [
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-1.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-1.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-2.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-2.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-3.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-3.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-4.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-4.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-5.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-5.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-6.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-6.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\runningwater\\audio2-7.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\runningwater\\audio2-7.dat"
     }
   ]
 }

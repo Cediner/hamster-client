@@ -5,13 +5,39 @@
       "layer-name": "anim",
       "id": 0,
       "d": 120,
-      "ids": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+      "ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ]
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-0.png"
@@ -20,7 +46,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-1.png"
@@ -29,7 +55,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-2.png"
@@ -38,7 +64,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 3,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-3.png"
@@ -47,7 +73,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 4,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-4.png"
@@ -56,7 +82,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 5,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-5.png"
@@ -65,7 +91,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 6,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-6.png"
@@ -74,7 +100,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 7,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-7.png"
@@ -83,7 +109,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 8,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-8.png"
@@ -92,7 +118,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 9,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-9.png"
@@ -101,7 +127,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 10,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-10.png"
@@ -110,7 +136,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 11,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-11.png"
@@ -119,7 +145,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 12,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-12.png"
@@ -128,7 +154,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 13,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-13.png"
@@ -137,7 +163,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 14,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-14.png"
@@ -146,7 +172,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 15,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-15.png"
@@ -155,7 +181,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 16,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-16.png"
@@ -164,7 +190,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 17,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-17.png"
@@ -173,7 +199,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 18,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-18.png"
@@ -182,7 +208,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 19,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-19.png"
@@ -191,7 +217,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 20,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-20.png"
@@ -200,7 +226,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 21,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-21.png"
@@ -209,7 +235,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 22,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-22.png"
@@ -218,7 +244,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 23,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-23.png"
@@ -227,7 +253,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 24,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\prog\\image-24.png"

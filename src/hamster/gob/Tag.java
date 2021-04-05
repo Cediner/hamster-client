@@ -14,5 +14,7 @@ public enum Tag {
     CAN_OPEN,
     CAN_RIDE,
     CAN_FIGHT,
-    CAN_AGGRO
+    CAN_AGGRO,
+    TREE,
+    BUSH
 }
