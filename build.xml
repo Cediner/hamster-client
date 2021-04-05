@@ -146,7 +146,6 @@
       <fileset dir="lib/jogl-natives"/>
       <fileset dir="build">
         <include name="hafen.jar"/>
-        <include name="logging.properties"/>
       </fileset>
     </copy>
     <copy todir="update/data">
