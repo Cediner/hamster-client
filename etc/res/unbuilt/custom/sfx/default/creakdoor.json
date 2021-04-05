@@ -3,15 +3,15 @@
   "layers": [
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\creakdoor\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\creakdoor\\audio2-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\creakdoor\\audio2-1.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\creakdoor\\audio2-1.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\creakdoor\\audio2-2.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\creakdoor\\audio2-2.dat"
     }
   ]
 }

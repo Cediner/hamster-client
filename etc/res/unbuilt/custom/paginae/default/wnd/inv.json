@@ -3,22 +3,26 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\inv\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Inventory",
+      "preq": "",
+      "hk": "I",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\inv\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Toggle Inventory"
+      "t": "Toggle Inventory\u0000"
     }
   ]
 }

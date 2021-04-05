@@ -3,22 +3,26 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\kithnkin\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Kith \u0026 Kin",
+      "preq": "",
+      "hk": "K",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\kithnkin\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Toggle Kith \u0026 Kin Window"
+      "t": "Toggle Kith \u0026 Kin Window\u0000"
     }
   ]
 }

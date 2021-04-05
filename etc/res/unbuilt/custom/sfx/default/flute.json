@@ -3,23 +3,23 @@
   "layers": [
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\flute\\audio2-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\flute\\audio2-0.dat"
     },
     {
       "layer-name": "src",
-      "data": "unbuilt/custom\\sfx\\default\\flute\\src-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\flute\\src-0.dat"
     },
     {
       "layer-name": "code",
-      "data": "unbuilt/custom\\sfx\\default\\flute\\code-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\flute\\code-0.dat"
     },
     {
       "layer-name": "codeentry",
-      "data": "unbuilt/custom\\sfx\\default\\flute\\codeentry-0.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\flute\\codeentry-0.dat"
     },
     {
       "layer-name": "audio2",
-      "data": "unbuilt/custom\\sfx\\default\\flute\\audio2-1.dat"
+      "data": "unbuilt\\custom\\sfx\\default\\flute\\audio2-1.dat"
     }
   ]
 }

@@ -5,7 +5,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-0.png"
@@ -14,7 +14,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-1.png"
@@ -23,7 +23,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-2.png"
@@ -32,7 +32,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 3,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-3.png"
@@ -41,7 +41,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 4,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-4.png"
@@ -50,7 +50,7 @@
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 0,
       "id": 5,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\default\\tabs\\image-5.png"

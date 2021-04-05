@@ -35,10 +35,13 @@ import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.core.MovableWidget;
+import hamster.ui.script.ScriptManager;
 import hamster.util.ObservableCollection;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
 import haven.Resource.AButton;
+
+import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -95,12 +98,11 @@ public class MenuGrid extends MovableWidget {
 	}
 
 	public BufferedImage img() {return(res.layer(Resource.imgc).scaled());}
-	public String name() {return(res.layer(Resource.action).name);}
+	public String name() {
+	    return pag.name();
+	}
 	public String hotkey() {
-	    char hk = res.layer(Resource.action).hk;
-	    if(hk == 0)
-		return "";
-	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0).name());
+	    return pag.hotkey();
 	}
 	public KeyBind binding() {
 	    return KeyBind.getDynamicKB(res.name, "MenuGrid", hotkey());
@@ -221,6 +223,17 @@ public class MenuGrid extends MovableWidget {
 	    this.onUse = onUse;
 	}
 
+	public String name() {
+	    return(res().layer(Resource.action).name);
+	}
+
+	public String hotkey() {
+	    char hk = res().layer(Resource.action).hk;
+	    if(hk == 0)
+		return "";
+	    return(KeyMatch.forchar(Character.toUpperCase(hk), KeyMatch.MODS & ~KeyMatch.S, 0).name());
+	}
+
 	public Resource res() {
 	    return(res.get());
 	}
@@ -258,6 +271,33 @@ public class MenuGrid extends MovableWidget {
 	private CustomPagina(MenuGrid scm, String key, Indir<Resource> res, final Consumer<Pagina> onUse) {
 	    super(scm, res, onUse);
 	    this.key = key;
+	}
+    }
+
+    public static class ScriptPagina extends CustomPagina {
+        private final AButton act;
+        private final String name;
+
+        public ScriptPagina(final MenuGrid scm, final String script,
+			    final Indir<Resource> res, final Consumer<Pagina> onUse) {
+            super(scm, String.format("Script::%s", script), res, onUse);
+            this.name = script;
+	    final Resource tmp = new Resource(Resource.local(),  String.format("script::%s", script), 1);
+	    this.act = tmp.new AButton(Resource.local().load("custom/paginae/default/scripts"), script);
+	}
+
+	public AButton act() {
+            return act;
+	}
+
+	@Override
+	public String name() {
+	    return name;
+	}
+
+	@Override
+	public String hotkey() {
+	    return "";
 	}
     }
 
@@ -380,6 +420,27 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::chat",
 		Resource.local().load("custom/paginae/default/wnd/chat"),
 		(pag) -> GameUI.MessageBus.send(new GameUI.ToggleVisibility(GameUI.Wdg.ChatWindow))));
+	//Scripts
+	final File dir = new File("data/scripts/");
+	if (dir.exists()) {
+	    final File[] files = dir.listFiles((fdir, name) -> (name.endsWith(".lisp") || name.endsWith(".lua"))
+		    && !name.startsWith("_config"));
+	    if (files != null) {
+	        final var res = Resource.local().load("custom/paginae/default/script");
+		for (final File f : files) {
+		    if (f.getName().endsWith(".lisp")) {
+		        final var name = f.getName().substring(0, f.getName().lastIndexOf(".lisp"));
+		        addCustom(new ScriptPagina(this, name, res,
+				(pag) -> ui.sess.details.context.launchLispScript(name, ui.sess.details)));
+		    } else if (f.getName().endsWith(".lua")) {
+			final var name = f.getName().substring(0, f.getName().lastIndexOf(".lua"));
+			addCustom(new ScriptPagina(this, name, res,
+				(pag) -> ui.sess.details.context.launchLuaScript(name, ui.sess.details)));
+		    }
+		}
+	    }
+	}
+
 	//Keybinds
 	binds.put(KeyBind.KB_SCM_ROOT, () -> {
 	    if(this.cur != null) {
