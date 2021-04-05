@@ -129,7 +129,7 @@ public class MenuGrid extends MovableWidget {
 
 	public BufferedImage rendertt(boolean withpg) {
 	    Resource.Pagina pg = res.layer(Resource.pagina);
-	    String tt = name() + (GlobalSettings.DEBUG.get() ? " (" + res.name + ")" : "");
+	    String tt = name();
 	    final String key = kb.bind.get();
 	    int pos = -1;
 	    char vkey = key.length() > 0 ? key.charAt(0) : '\0';
