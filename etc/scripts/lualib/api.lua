@@ -882,9 +882,17 @@ api.mv = {
   -------------------------
   -- Interacting with gobs
   -------------------------
+  click_gob = function(gob, btn, mflags, overlayid, fastmeshid)
+    overlayid = overlayid or 0
+    fastmeshid = fastmeshid or -1
+
+    api.core.mv():wdgmsg("click", api.coord.coord2i(1, 1), api.oc.posres(gob.rc), btn, mflags,
+                         overlayid, gob.id, api.oc.posres(gob.rc), overlayid, fastmeshid)
+  end,
+
   interact_held_item_with_gob = function(gob, mflags, overlayid, fastmeshid)
     overlayid = overlayid or 0
-    local fashmeshid = fastmeshid or -1
+    fastmeshid = fastmeshid or -1
 
     api.core.mv():wdgmsg("itemact", api.coord.coord2i(1, 1), api.oc.posres(gob.rc), mflags,
                          overlayid, gob.id, api.oc.posres(gob.rc), overlayid, fastmeshid)
