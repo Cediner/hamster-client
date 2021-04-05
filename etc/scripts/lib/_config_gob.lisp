@@ -10,6 +10,8 @@
 (defconstant +tamed-animal+ (svar +tag+ "TAMED_ANIMAL"))
 (defconstant +water-vehicle+ (svar +tag+ "WATER_VEHICLE"))
 (defconstant +vehicle+ (svar +tag+ "VEHICLE"))
+(defconstant +tree+ (svar +tag+ "TREE"))
+(defconstant +bush+ (svar +tag+ "BUSH"))
 
 (java-func +gob+ gob-c "getc")
 (java-func +gob+ gob-name "name")

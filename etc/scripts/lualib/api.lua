@@ -586,6 +586,10 @@ api.pointer = {
 api.minimap = {
   mark = function(name, color, mc)
     api.core.gui().mapfile:mark(name, color, mc)
+  end,
+  
+  mark_with_icon = function(icon, name, color, mc)
+    api.core.gui().mapfile:mark(icon, name, color, mc)
   end
 }
 
