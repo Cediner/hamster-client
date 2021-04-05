@@ -277,10 +277,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    }
 	}
 	//This is to avoid Iterator state conflicts of adding overlays while in an overlay tick
-	for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
-	    Overlay ol = i.next();
-	    addol(ol);
-	    i.remove();
+	synchronized (dols) {
+	    for (Iterator<Overlay> i = dols.iterator(); i.hasNext(); ) {
+		Overlay ol = i.next();
+		addol(ol);
+		i.remove();
+	    }
 	}
 	updstate();
 	if(virtual && ols.isEmpty() && (getattr(Drawable.class) == null))
@@ -317,6 +319,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	for(Overlay ol : ols) {
 	    if(ol.id == id)
 		return(ol);
+	}
+	synchronized (dols) {
+	    for(Overlay ol : dols) {
+	        if(ol.id == id)
+	            return ol;
+	    }
 	}
 	return(null);
     }
@@ -1029,7 +1037,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     public Overlay daddol(final Overlay ol) {
-	dols.add(ol);
+        synchronized (dols) {
+	    dols.add(ol);
+	}
 	return ol;
     }
 
