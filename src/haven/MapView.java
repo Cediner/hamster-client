@@ -2873,6 +2873,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    } else {
 		if (clickb == 1 || clickargs.length > 4)
 		    clearmovequeue();
+		if(GlobalSettings.DEBUG.get())
+		    logger.atInfo().log("Map Click %s", Arrays.toString(clickargs));
 		wdgmsg("click", clickargs);
 	    }
 	}
