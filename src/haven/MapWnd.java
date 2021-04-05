@@ -446,6 +446,27 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	}
     }
 
+    @SuppressWarnings("unused") // For scripting API with custom icons
+    public void mark(final String icon, final String nm, final Color col, final Coord2d mc) {
+	synchronized (deferred) {
+	    deferred.add(() -> {
+		final Coord2d prc = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob).rc;
+		final Coord offset = mc.sub(prc).floor(tilesz);
+		view.resolveo(player).ifPresent(loc -> {
+		    if (!view.file.lock.writeLock().tryLock())
+			throw (new Loading());
+		    try {
+			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+				new Resource.Spec(Resource.remote(), icon));
+			view.file.add(mark);
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		});
+	    });
+	}
+    }
+
     void markobj(MarkerData.Marker marker, Coord2d mc) {
 	if (marker instanceof MarkerData.LinkedMarker) {
 	    markobj((MarkerData.LinkedMarker) marker, mc);
