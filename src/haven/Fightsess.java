@@ -190,6 +190,8 @@ public class Fightsess extends Widget {
     }
 
     public void tick(double dt) {
+        if(parent.child != this)
+            raise();
 	for(Iterator<Effect> i = curfx.iterator(); i.hasNext();) {
 	    Effect fx = i.next();
 	    if(!fx.used) {

@@ -28,7 +28,7 @@ api.const = {
     -- the given speed in units.
     -- tiles are made up of units and can be thought of
     -- tilesz x tilesz square units
-   
+
     -- If you want  to get units/s just do:
     -- (speed / tick_rate) * 1000
     tick_rate   = 60,
@@ -587,7 +587,7 @@ api.minimap = {
   mark = function(name, color, mc)
     api.core.gui().mapfile:mark(name, color, mc)
   end,
-  
+
   mark_with_icon = function(icon, name, color, mc)
     api.core.gui().mapfile:mark(icon, name, color, mc)
   end
