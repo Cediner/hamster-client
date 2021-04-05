@@ -163,10 +163,10 @@ public class MenuGrid extends MovableWidget {
 	    {pag.button = this;}
 
 	    public void use() {
-		if((curoff + 14) >= curbtns.size())
+		if((curoff + (gsz.x*gsz.y)-2) >= curbtns.size())
 		    curoff = 0;
 		else
-		    curoff += 14;
+		    curoff += (gsz.x*gsz.y)-2;
 	    }
 
 	    public String name() {return("More...");}
