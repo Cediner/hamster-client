@@ -207,6 +207,13 @@ public class Window extends MovableWidget implements DTarget {
 	}
     }
 
+    @Override
+    public void show() {
+	super.show();
+	if(parent != null)
+	    raise();
+    }
+
     public void toggleHide() {
 	hidable = !hidable;
 	hidden = false;
