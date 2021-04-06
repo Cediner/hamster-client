@@ -1,5 +1,5 @@
 {
-  "version": "b711085ed397d971bbea36b49cf4ac0c9529e77f",
+  "version": "86f655f859684d93746d78abea07b66c4942f832",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "A6PVllHOx14AFlxHnaGm+690ZvW45mSXYHHQSW5nwUQ=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -83,6 +83,7 @@
     "data\\res\\custom\\hud\\sloth\\scroll\\horizontal.res": "RoFoqrzAh6JdYtK3LrCEDq2nFaLr4LN+7szHnIxT1Nc=",
     "data\\res\\custom\\mm\\icons\\banner.res": "vnZ+2g+YgIGXakWZZ8e7+o4s5WNCOm95mmovaahTuXg=",
     "data\\res\\custom\\hud\\default\\vm.res": "UmFl1A9RQJOpjhwvBkcJw6+ekDbeIe5lHHdq27tVMOU=",
+    "data\\res\\custom\\paginae\\default\\wnd\\food.res": "Fnb9TxNZzMXlfRAxL7iE5J1jEAZCZTaez5R5IHE9f3w=",
     "data\\res\\custom\\hud\\sloth\\belt\\rotate.res": "tWPkg/O6rgfZOP4BdpVdz4FwpE7rNPbkJzsopgwoILg=",
     "data\\res\\custom\\sfx\\default\\squeak.res": "8NL0re5sbOHHIEqZkuHViB1u22jwnTBLmj2PTQQkxc0=",
     "data\\res\\custom\\hud\\default\\scroll\\horizontal.res": "DYncYRpRP1Ma5mChFfABG5Y8qxoNbVUiz6oBeVuoAOc=",
@@ -95,7 +96,7 @@
     "data\\res\\custom\\sfx\\default\\you-lose.res": "LpCkNpClVHm27NzzoCL5g6lr7RP0WsFX7H0f7Qjb/oQ=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
     "data\\res\\custom\\sfx\\default\\quern.res": "Adt60Nr5SfjVi8sR9wbFBt8rnIxGgnu/MtOAI1gq3CE=",
-    "hafen.jar": "9Lg540dotdO3N7qFy9kLMIdm/yuvH8oXIggwsjU8Ddo=",
+    "hafen.jar": "AyrJBLYPQQZZGTg6h//bAhMXj43zfqFmrmDJRPNVW8k=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "LXfAecDnC3vFQKaLH6i4c3UnUMWwa0zzpk5HOXxHsJc=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "sHF+3WoJLiIFLI7hU4Z061IxDeKpgWn5Pk1Lkh4n/HA=",
@@ -280,6 +281,7 @@
     "data\\scripts\\chickens-debone.lua": "tqMQ/E9EXPiqABS7gURxgo4W3XZQY1af2URpvnxEUjc=",
     "jogl-natives-linux-aarch64.jar": "m4YHvw2uad2J/WPx6Qq2isAHWsYKU5KjthgAvPCrX94=",
     "data\\scripts\\create-character.lisp": "xz2CPPjzoDtvs1sroXgNRqheD9HwcIduxr4sNfyolYw=",
+    "data\\FoodData.json5": "YSE9rwl62wqR9Dbg2ACsFYqkPGcJ4LU2RRPsnbJdJmc=",
     "gluegen-rt-natives-linux-i586.jar": "l7mfLIXVNqJowyUDt6+j1vDEYZYcG79nxPqCfhw1V6g=",
     "data\\res\\custom\\paginae\\default\\wnd\\kithnkin.res": "724TaA6qPBNldSELBjB/jjMo6ATqzc9rUj02xWNd1qY=",
     "data\\scripts\\lib\\_config_coords.lisp": "iR+p6rEjnr9UCbN4d1gSC1MMP0Mh3Okc2LazVYkr50Q=",
