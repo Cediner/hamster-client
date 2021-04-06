@@ -41,7 +41,9 @@ public class Halo extends GAttrib {
         final UI ui = gob.glob.ui.get();
         final boolean nshow;
         if (ui != null && ui.gui != null) {
-            if (GlobalSettings.SHOWGOBHALO.get()){
+            final var plid = ui.gui.map != null ? ui.gui.map.rlplgob : -1;
+
+            if (GlobalSettings.SHOWGOBHALO.get() || (GlobalSettings.SHOWPLAYERHALO.get() && gob.id == plid)){
                 nshow = true;
             } else if (GlobalSettings.SHOWGOBHALOONHEARTH.get()) {
                 nshow = isHearthingOrKnocked();
