@@ -61,10 +61,11 @@ public class FoodExpressionCreator extends Window {
 		}
 	    });
 	    lstcont.add(new Button(UI.scale(200), "Remove", () -> {
-	        if(filterlst.sel != null) {
-	            filters.remove(filterlst.sel);
+		if(filterlst.sel != null) {
+		    filters.remove(filterlst.sel);
 		}
 	    }));
+	    lstcont.add(new Button(UI.scale(200), "Clear", () -> filters.removeIf(itm -> true)));
 	    lstcont.add(new Button(UI.scale(200), "Finish", () -> {
 		final StringBuilder sb = new StringBuilder();
 		for(final var filter : filters) {
@@ -111,6 +112,10 @@ public class FoodExpressionCreator extends Window {
 			    expcont.pack();
 			}
 		    }
+		    nameopinput.sel = null;
+		    nameinput.settext("");
+		    attrinput.sel = null;
+		    attropinput.sel = null;
 		}
 	    });
 	    namecont = expcont.add(new LinearGrouping(spacer, false));

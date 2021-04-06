@@ -36,7 +36,7 @@ public class IngredientFilter implements Filter {
 
     @Override
     public void render(GOut g) {
-	FastText.aprintf(g, g.sz().div(2), 0.5, 0.5, "%s %s", op, ingredient);
+	FastText.aprintf(g, g.sz().div(2), 0.5, 0.5, "Ingredients %s %s", op, ingredient);
     }
 
     @Override
