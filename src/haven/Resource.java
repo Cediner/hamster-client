@@ -180,7 +180,7 @@ public class Resource implements Serializable {
 	}
     }
 
-    private Resource(Pool pool, String name, int ver) {
+    public Resource(Pool pool, String name, int ver) {
 	this.pool = pool;
 	this.name = name;
 	this.ver = ver;
@@ -1117,6 +1117,13 @@ public class Resource implements Serializable {
 	public final Named parent;
 	public final char hk;
 	public final String[] ad;
+
+	public AButton(Named parent, String name) {
+	    this.name = name;
+	    this.parent = parent;
+	    ad = new String[0];
+	    hk = '\0';
+	}
 		
 	public AButton(Message buf) {
 	    String pr = buf.string();

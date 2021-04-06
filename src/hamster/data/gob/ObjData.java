@@ -9,10 +9,12 @@ import haven.Gob;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ObjData {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private static final Map<String, ObjData> objmap = new HashMap<>();
+    private static final List<ObjData> regobjlst = new ArrayList<>();
     private static final Map<String, CropData> cropmap = new HashMap<>();
     private static final List<ForageData> forageables = new ArrayList<>();
 
@@ -22,10 +24,11 @@ public class ObjData {
         try {
             final var objs = gson.fromJson(new FileReader("data/ObjData.json5"), ObjData[].class);
             for(final var obj : objs) {
-                objmap.put(obj.res, obj);
-                if(obj.tags != null) {
-                    obj.tagset = new HashSet<>(Arrays.asList(obj.tags));
-                    obj.tags = null;
+                if(!obj.regex)
+                    objmap.put(obj.res, obj);
+                else {
+                    obj.resregex = Pattern.compile(obj.res);
+                    regobjlst.add(obj);
                 }
                 if(obj.cropdata != null)
                    cropmap.put(obj.res, obj.cropdata);
@@ -65,16 +68,24 @@ public class ObjData {
     }
 
     public static Set<Tag> getTags(final String name) {
-        return objmap.containsKey(name) ? objmap.get(name).tagset : new HashSet<>();
+        final Set<Tag> tags = objmap.containsKey(name) ? objmap.get(name).tags : new HashSet<>();
+        if(tags.size() == 0) {
+            for(final var obj : regobjlst) {
+                if(obj.resregex.matcher(name).matches())
+                    return obj.tags;
+            }
+        }
+        return tags;
     }
 
     // Resource file name
     private String res = "";
+    private Pattern resregex;
+    private boolean regex = false;
     // Simplified name, if has any
     private String name = "";
     //tmp to generate tagset
-    private Tag[] tags;
-    private Set<Tag> tagset;
+    private Set<Tag> tags;
     //If Obj has a radius that can be toggled
     private int range = -1;
     private CropData cropdata = null;

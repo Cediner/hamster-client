@@ -3,22 +3,26 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\selector\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Land Manager",
+      "preq": "",
+      "hk": "L",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\selector\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Toggle Land Manager"
+      "t": "Toggle Land Manager\u0000"
     }
   ]
 }

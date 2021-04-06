@@ -19,6 +19,7 @@
 (defconstant +string+ "java.lang.String")
 (defconstant +double+ "double")
 (defconstant +boolean+ "boolean")
+(defconstant +color+ "java.awt.Color")
 
 (defconstant +script+ "hamster.script.Script")
 (defconstant +context+ "hamster.script.Context")
@@ -93,3 +94,5 @@
 (load "data/scripts/lib/_config_bbox.lisp")
 (load "data/scripts/lib/_config_utilities.lisp")
 (load "data/scripts/lib/_config_equip.lisp")
+(load "data/scripts/lib/_config_color.lisp")
+(load "data/scripts/lib/_config_minimap.lisp")

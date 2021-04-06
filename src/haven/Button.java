@@ -225,6 +225,14 @@ public class Button extends SIWidget {
 		click();
 	    }
 	    return(true);
+	} else if(d != null) {
+	    //XXX: Seems like if you click down, then click another button and let up it'll
+	    // bug this out and only send mouseup for the last button up and not each
+	    d.remove();
+	    d = null;
+	    a = false;
+	    redraw();
+	    unpress();
 	}
 	return(false);
     }

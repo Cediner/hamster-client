@@ -1,0 +1,21 @@
+{
+  "ver": 5,
+  "layers": [
+    {
+      "layer-name": "src",
+      "data": "unbuilt\\custom\\sfx\\default\\drum\\src-0.dat"
+    },
+    {
+      "layer-name": "code",
+      "data": "unbuilt\\custom\\sfx\\default\\drum\\code-0.dat"
+    },
+    {
+      "layer-name": "codeentry",
+      "data": "unbuilt\\custom\\sfx\\default\\drum\\codeentry-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\drum\\audio2-0.dat"
+    }
+  ]
+}

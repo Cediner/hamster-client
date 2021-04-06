@@ -35,6 +35,7 @@ import haven.render.*;
 import haven.render.sl.*;
 
 public class Glob {
+    public static final double gametimefac = 3.29d;
     public WeakReference<UI> ui;
     public final GobHitmap gobhitmap;
 

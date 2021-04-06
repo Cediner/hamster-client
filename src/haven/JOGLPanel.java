@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.awt.Toolkit;
 import java.awt.Robot;
@@ -40,6 +41,7 @@ import hamster.util.JobSystem;
 import hamster.util.msg.MailBox;
 import hamster.util.ObservableCollection;
 import hamster.util.ObservableListener;
+import hamster.util.msg.Message;
 import hamster.util.msg.Office;
 import haven.render.*;
 import haven.render.States;
@@ -81,7 +83,35 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
+    public static abstract class SessionMessage extends Message {
+        public abstract void apply(final JOGLPanel panel);
+    }
+
+    public static class ListenToSessions extends SessionMessage {
+        final ObservableListener<UI> wdg;
+        public ListenToSessions(final ObservableListener<UI> wdg) {
+            this.wdg = wdg;
+	}
+
+	public void apply(final JOGLPanel panel) {
+            panel._listenToSessions(wdg);
+	}
+    }
+
+    public static class StopListeningToSessions extends SessionMessage {
+	final ObservableListener<UI> wdg;
+	public StopListeningToSessions(final ObservableListener<UI> wdg) {
+	    this.wdg = wdg;
+	}
+
+	public void apply(final JOGLPanel panel) {
+	    panel._stopListeningToSessions(wdg);
+	}
+    }
+
+
     private Office UIThreadOffice;
+    private MailBox<SessionMessage> sessionbox;
     private MailBox<AddUIMessage> adduibox;
     private MailBox<RemoveUIMessage> remuibox;
     private MailBox<CloseUIMessage> closeuibox;
@@ -184,6 +214,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
     public void setupMail(final Thread owner) {
 	UIThreadOffice = new Office(owner);
+	sessionbox = new MailBox<>(UIThreadOffice);
 	adduibox = new MailBox<>(UIThreadOffice);
 	remuibox = new MailBox<>(UIThreadOffice);
 	closeuibox = new MailBox<>(UIThreadOffice);
@@ -419,6 +450,10 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 			tt = () -> r;
 			free = r;
 		    }
+		} else if(tooltip instanceof BufferedImage) {
+		    Tex t = new TexI((BufferedImage) tooltip);
+		    tt = () -> t;
+		    free = t;
 		}
 	    }
 	    prevtooltip = tooltip;
@@ -544,8 +579,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
     }
 
     private void processMail() {
-	{ //Handle transfers
+	{ //Handle transfers & Mail
 	    UIThreadOffice.processTransfers();
+	    sessionbox.processMail(mail -> mail.apply(this));
 	}
 	{ //Handle new UIs
 	    adduibox.processMail(mail -> {
@@ -843,18 +879,27 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 	}
     }
 
-    @Override
-    public void listenToSessions(ObservableListener<UI> listener) {
+    public void _listenToSessions(ObservableListener<UI> listener) {
 	synchronized (sessions) {
 	    sessions.addListener(listener);
 	}
     }
 
-    @Override
-    public void stopListeningToSessions(ObservableListener<UI> listener) {
+    public void _stopListeningToSessions(ObservableListener<UI> listener) {
 	synchronized (sessions) {
 	    sessions.removeListener(listener);
 	}
+    }
+
+
+    @Override
+    public void listenToSessions(ObservableListener<UI> listener) {
+        sessionbox.mail(new ListenToSessions(listener));
+    }
+
+    @Override
+    public void stopListeningToSessions(ObservableListener<UI> listener) {
+        sessionbox.mail(new StopListeningToSessions(listener));
     }
 
     public void closeCurrentSession() {

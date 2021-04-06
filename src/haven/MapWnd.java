@@ -528,6 +528,28 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	}
     }
 
+    @SuppressWarnings("unused") // For scripting API with custom icons
+    public void mark(final String icon, final String nm, final Color col, final Coord2d mc) {
+	synchronized (deferred) {
+	    deferred.add(() -> {
+		final Coord2d prc = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob).rc;
+		final Coord offset = mc.sub(prc).floor(tilesz);
+		view.resolveo(player).ifPresent(loc -> {
+		    if (!view.file.lock.writeLock().tryLock())
+			throw (new Loading());
+		    try {
+			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+				new Resource.Spec(Resource.remote(), icon));
+			view.file.add(mark);
+			uploadMarks();
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		});
+	    });
+	}
+    }
+
     void markobj(MarkerData.Marker marker, Coord2d mc) {
 	if (marker instanceof MarkerData.LinkedMarker) {
 	    markobj((MarkerData.LinkedMarker) marker, mc);
@@ -545,7 +567,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 			//Check for duplicate
 			for (final Marker mark : view.file.markers) {
-			    if (marker.type == MarkerData.Type.SLOTH && mark instanceof MapFile.CustomMarker &&
+			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof MapFile.CustomMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
 			    else if (marker.type == MarkerData.Type.REALM && mark instanceof MapFile.RealmMarker &&
@@ -557,7 +579,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			}
 
 			final Marker mark;
-			if (marker.type == MarkerData.Type.SLOTH) {
+			if (marker.type == MarkerData.Type.CUSTOM) {
 			    mark = new MapFile.CustomMarker(info.seg, sc, marker.defname,
 				    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
 			} else if (marker.type == MarkerData.Type.REALM) {

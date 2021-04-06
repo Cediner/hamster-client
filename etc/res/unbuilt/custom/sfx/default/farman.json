@@ -1,0 +1,33 @@
+{
+  "ver": 12,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-1.dat"
+    },
+    {
+      "layer-name": "clamb",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\clamb-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-4.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\farman\\audio2-5.dat"
+    }
+  ]
+}

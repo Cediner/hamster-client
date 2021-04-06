@@ -3,26 +3,30 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\alerted\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Alerted",
+      "preq": "",
+      "hk": "A",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\alerted\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Used to manage what objects you have sound alerts setup for."
+      "t": "Used to manage what objects you have sound alerts setup for.\u0000"
     },
     {
       "layer-name": "tooltip",
-      "t": "Open Alerted Management"
+      "t": "Open Alerted Management\u0000"
     }
   ]
 }

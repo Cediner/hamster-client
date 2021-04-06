@@ -327,8 +327,8 @@ public class WaterTile extends Tiler {
     public static BottomFog deepfog = new BottomFog(deepfogcol);
     private static Pipe.Op dbotmat = Pipe.Op.compose(deepfog, new States.DepthBias(4, 4));
 
-    public static Pipe.Op getBottomMat(final int tileid) {
-        if(GlobalSettings.COLORIZEDEEPWATER.get() && tileid == 204) {
+    public static Pipe.Op getBottomMat(final String name) {
+        if(GlobalSettings.COLORIZEDEEPWATER.get() && name.equals("gfx/tiles/odeeper")) {
 	    if (DEEPWATERCOL.get() != deepfogcol) {
 		deepfogcol = DEEPWATERCOL.get();
 		deepfog = new BottomFog(deepfogcol);
@@ -380,28 +380,30 @@ public class WaterTile extends Tiler {
 		    bottom = (Tiler.MCons)b;
 		}
 	    }
-	    return(new WaterTile(id, bottom, depth));
+	    return(new WaterTile(id, set.getres().name, bottom, depth));
 	}
     }
 
+    private final String name;
     private Pipe.Op fog;
     private Pipe.Op mat;
 
-    public WaterTile(int id, Tiler.MCons bottom, int depth) {
+    public WaterTile(int id, final String name, Tiler.MCons bottom, int depth) {
 	super(id);
+	this.name = name;
 	this.bottom = bottom;
 	this.depth = depth;
-	this.mat = getBottomMat(id);
+	this.mat = getBottomMat(name);
 	this.fog = obfog;
     }
 
     @Deprecated
     public WaterTile(int id, Tileset set, int depth) {
-	this(id, new GroundTile(0, set), depth);
+	this(id, set.getres().name, new GroundTile(0, set), depth);
     }
 
     public void updateMat() {
-	this.mat = getBottomMat(id);
+	this.mat = getBottomMat(name);
 	this.fog = obfog;
     }
 

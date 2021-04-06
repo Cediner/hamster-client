@@ -26,6 +26,8 @@
 
 package haven;
 
+import hamster.GlobalSettings;
+
 import java.util.*;
 import java.io.*;
 import java.awt.image.*;
@@ -252,8 +254,9 @@ public class GobIcon extends GAttrib {
 		    for(Icon icon : ordered) {
 			if(icon.name == null) {
 			    try {
-				Resource.Tooltip name = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip);
-				icon.name = elf.render((name == null) ? "???" : name.t);
+			        Resource.Tooltip name = icon.conf.res.loadsaved(Resource.remote()).layer(Resource.tooltip);
+				final String nm = (name == null ? "???" : name.t) + (GlobalSettings.DEBUG.get() ? "("+icon.conf.res.name+")" : "");
+				icon.name = elf.render(nm);
 			    } catch(Loading l) {
 				reorder = true;
 			    }

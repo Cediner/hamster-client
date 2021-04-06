@@ -46,6 +46,7 @@
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:-options" />
+      <compilerarg value="-Xdiags:verbose"/>
       <!-- <compilerarg value="-Xbarda" /> -->
     </javac>
     <copy todir="build/classes">
@@ -121,7 +122,7 @@
 
   <target name="build-custom-res">
     <delete dir="etc/res/built/" includes="**"/>
-    <java jar="etc\res\hafen-resource-tool-1.0.jar" fork="true" dir="etc/res/">
+    <java jar="etc\res\hafen-resource-tool-1.2.jar" fork="true" dir="etc/res/">
       <arg value="-encode"/>
       <arg value="unbuilt\"/>
       <arg value="built\"/>
@@ -147,7 +148,6 @@
       <fileset dir="lib/jogl-natives"/>
       <fileset dir="build">
         <include name="hafen.jar"/>
-        <include name="logging.properties"/>
       </fileset>
     </copy>
     <copy todir="update/data">

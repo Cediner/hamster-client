@@ -1,0 +1,17 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\hammer\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\hammer\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\hammer\\audio2-2.dat"
+    }
+  ]
+}

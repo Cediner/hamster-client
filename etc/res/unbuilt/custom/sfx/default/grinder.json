@@ -1,0 +1,49 @@
+{
+  "ver": 4,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-4.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-5.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-6.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-7.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-8.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-9.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\grinder\\audio2-10.dat"
+    }
+  ]
+}

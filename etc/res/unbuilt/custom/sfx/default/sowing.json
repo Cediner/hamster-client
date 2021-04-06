@@ -1,0 +1,41 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-4.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-5.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-6.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-7.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\sowing\\audio2-8.dat"
+    }
+  ]
+}

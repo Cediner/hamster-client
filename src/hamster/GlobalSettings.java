@@ -1,6 +1,7 @@
 package hamster;
 
 import hamster.data.*;
+import hamster.data.food.FoodData;
 import hamster.data.gob.ObjData;
 import hamster.data.itm.ItemData;
 import hamster.data.map.MarkerData;
@@ -36,6 +37,7 @@ public class GlobalSettings {
         Deleted.init();
         Hidden.init();
         HighlightData.init();
+        FoodData.init();
     }
 
     //Non-saved globals
@@ -217,6 +219,8 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> QUICKFLMENU = new IndirSetting<>(global, "ui.flowermenu.quick-menu", false);
     public static final IndirSetting<Boolean> KEEPFLOPEN = new IndirSetting<>(global, "ui.flowermenu.never-close-on-click", false);
     public static final IndirSetting<Boolean> SHOWEXPWND = new IndirSetting<>(global, "ui.show-experience-window", true);
+    public static final IndirSetting<Boolean> SHOWMETERPER = new IndirSetting<>(global, "ui.show-per-for-meter", true);
+    public static final IndirSetting<Boolean> SHOWTIMELEFTCURIO = new IndirSetting<>(global, "ui.show-time-left-for-curio", true);
 
     //Hotkey related
     public static final IndirSetting<String> KB_F_STYLE = new IndirSetting<>(global, "keybind.hotkey-f-style", "GRID");

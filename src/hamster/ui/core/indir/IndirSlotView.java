@@ -55,11 +55,16 @@ public class IndirSlotView extends MovableWidget implements DTarget {
 
     @Override
     public boolean iteminteract(Coord cc, Coord ul) {
+        for (Widget wdg = lchild; wdg != null; wdg = wdg.prev) {
+            if(wdg instanceof DTarget && ((DTarget)wdg).iteminteract(cc, ul)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     protected boolean moveHit(Coord c, int btn) {
-        return btn == 3;
+        return ui.modmeta && btn == 3;
     }
 }

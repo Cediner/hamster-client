@@ -364,7 +364,9 @@ public class Makewindow extends LinearGrouping {
 		parent.pack();
 	    }
 	    case "qmod" -> {
-		modlst.add(new QualityWdg(ui.sess.getres((Integer) args[0])));
+	        for(final var arg : args) {
+		    modlst.add(new QualityWdg(ui.sess.getres((Integer)arg)));
+		}
 		modlst.pack();
 		items.pack();
 		pack();

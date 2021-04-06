@@ -52,13 +52,8 @@ public class ActList extends Listbox<ActList.ActItem> {
     }
 
     @Override
-    public Object tooltip(Coord c, Widget prev) {
-        final ActItem itm = itemat(c);
-        if (itm != null) {
-            return itm.pagina.button().rendertt(true);
-        } else {
-            return super.tooltip(c, prev);
-        }
+    protected Object itemtooltip(Coord c, ActItem item) {
+        return item.pagina.button().rendertt(true);
     }
 
     @Override

@@ -1,0 +1,25 @@
+{
+  "ver": 5,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\thud-wood\\audio2-0.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\thud-wood\\audio2-1.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\thud-wood\\audio2-2.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\thud-wood\\audio2-3.dat"
+    },
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\thud-wood\\audio2-4.dat"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ public class PreviewGob extends Gob {
 	    }
 	}
 	for(Gob.Overlay ol : org.ols) {
-	    addol(new Overlay(this, ol.id, ol.res, ol.sdt.clone()));
+	    addol(new Overlay(this, ol.id, ol.res, ol.sdt != null ? ol.sdt.clone() : null));
 	}
     }
 

@@ -8,6 +8,11 @@
   },
   // Basic Markers
   basic: {
+    "gfx/terobjs/wonders/tarpit": {
+      defname: "Tarpit",
+      res: "custom/mm/icons/tarpit",
+      type: "CUSTOM"
+    },
     "gfx/terobjs/coronationstone": {
       defname: "Coronation Stone",
       res: "custom/mm/icons/realmcairn",

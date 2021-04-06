@@ -3,26 +3,30 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\deleted\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Deleted",
+      "preq": "",
+      "hk": "D",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\deleted\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Used to manage what objects you have deleted."
+      "t": "Used to manage what objects you have deleted.\u0000"
     },
     {
       "layer-name": "tooltip",
-      "t": "Open Deleted Window"
+      "t": "Open Deleted Window\u0000"
     }
   ]
 }

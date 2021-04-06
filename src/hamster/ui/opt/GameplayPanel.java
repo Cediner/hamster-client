@@ -88,7 +88,7 @@ public class GameplayPanel extends Scrollport {
             //Cave related
             map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Winter / Snow related
-            map.add(new IndirCheckBox("Spawn snowflakes", SHOWSNOW));
+            map.add(new IndirCheckBox("Spawn snowflakes (requires flavor objs on)", SHOWSNOW));
             map.add(new IndirCheckBox("Make snowflakes larger", LARGESNOWFLAKE, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             final IndirRadioGroup<Integer> sfs = map.add(new IndirRadioGroup<>("Snow Fall Speed", UI.scale(450), SNOWFALLSPEED));
             {

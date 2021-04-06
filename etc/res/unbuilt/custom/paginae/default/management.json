@@ -3,22 +3,26 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\management\\action-0.dat"
+      "parent": "",
+      "parentver": 1,
+      "name": "Management",
+      "preq": "",
+      "hk": "M",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\management\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Management Widgets"
+      "t": "Management Widgets\u0000"
     }
   ]
 }

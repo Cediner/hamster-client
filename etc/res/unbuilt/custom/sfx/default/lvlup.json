@@ -1,0 +1,9 @@
+{
+  "ver": 3,
+  "layers": [
+    {
+      "layer-name": "audio2",
+      "data": "unbuilt\\custom\\sfx\\default\\lvlup\\audio2-0.dat"
+    }
+  ]
+}

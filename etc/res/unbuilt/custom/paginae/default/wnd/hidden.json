@@ -3,26 +3,30 @@
   "layers": [
     {
       "layer-name": "action",
-      "data": "unbuilt\\custom\\paginae\\default\\wnd\\hidden\\action-0.dat"
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Hidden",
+      "preq": "",
+      "hk": "H",
+      "ad": []
     },
     {
       "layer-name": "image",
       "z": 0,
       "subz": 0,
-      "nooff": false,
+      "fl": 4,
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\paginae\\default\\wnd\\hidden\\image-0.png",
-      "fl": 4,
       "scale": 4.0
     },
     {
       "layer-name": "tooltip",
-      "t": "Used to manage what objects you have hidden."
+      "t": "Used to manage what objects you have hidden.\u0000"
     },
     {
       "layer-name": "tooltip",
-      "t": "Open Hidden Window"
+      "t": "Open Hidden Window\u0000"
     }
   ]
 }
