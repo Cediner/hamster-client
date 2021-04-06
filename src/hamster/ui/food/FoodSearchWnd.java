@@ -5,6 +5,7 @@ import hamster.ui.core.layout.LinearGrouping;
 import hamster.ui.food.filters.*;
 import hamster.ui.food.sort.*;
 import haven.*;
+import haven.Button;
 import haven.Scrollbar;
 import haven.Window;
 
@@ -311,6 +312,25 @@ public class FoodSearchWnd extends Window {
         }
     }
 
+    private class SearchBar extends LinearGrouping {
+        final TextEntry search;
+        public SearchBar(final int width) {
+            super(UI.scale(5), false, Direction.HORIZONTAL);
+            search = new TextEntry(UI.scale(200), "", FoodSearchWnd.this::refilter, FoodSearchWnd.this::refilter);
+            add(new Button("Clear", () -> search.settext("")));
+            add(new Button("Make Expression", () -> ui.gui.add(new FoodExpressionCreator(this::refilterExt), ui.mc)));
+            add(search);
+            pack();
+            if(search.c.x + search.sz.x < width)
+                search.resize(width - search.c.x);
+            pack();
+        }
+
+        private void refilterExt(final String filter) {
+            search.settext(filter);
+        }
+    }
+
     private final FoodList lst;
     private final Header header;
 
@@ -318,13 +338,18 @@ public class FoodSearchWnd extends Window {
         super(Coord.z, "Food Searcher", "Food Searcher");
         final var cont = new LinearGrouping(UI.scale(0), false);
         lst = new FoodList();
-        cont.add(new TextEntry(lst.sz.x, "", this::refilter, this::refilter));
+        cont.add(new SearchBar(lst.sz.x));
         header = cont.add(new Header(this));
         cont.add(lst);
         cont.pack();
         add(cont);
         pack();
         refilter("");
+    }
+
+    private void refilter(final List<Filter> filters) {
+        final Filter flt = new AndFilter(filters);
+        lst.apply(flt, header.sortmethod);
     }
 
     private void refilter(final String filters) {
@@ -335,10 +360,10 @@ public class FoodSearchWnd extends Window {
             if(filter.contains(":") && !filter.endsWith(":")) {
                 final var exp = filter.split(":");
                 switch (exp[0]) {
-                    case "-name" -> flts.add(new NameFilter(exp[1], NameFilter.Op.EXCLUDE));
-                    case "name" -> flts.add(new NameFilter(exp[1], NameFilter.Op.INCLUDE));
-                    case "-from" -> flts.add(new IngredientFilter(exp[1], IngredientFilter.Op.EXCLUDE));
-                    case "from" -> flts.add(new IngredientFilter(exp[1], IngredientFilter.Op.INCLUDE));
+                    case "-name" -> flts.add(new NameFilter(exp[1], NameFilter.Op.Exclude));
+                    case "name" -> flts.add(new NameFilter(exp[1], NameFilter.Op.Include));
+                    case "-from" -> flts.add(new IngredientFilter(exp[1], IngredientFilter.Op.Exclude));
+                    case "from" -> flts.add(new IngredientFilter(exp[1], IngredientFilter.Op.Include));
                 }
             } else {
                 final var exp = filter.split("((<=)|(>=)|=|<|>)");
@@ -347,11 +372,11 @@ public class FoodSearchWnd extends Window {
                         case "str", "agi", "int", "con", "per", "cha", "dex", "wil", "psy",
                                 "str2", "agi2", "int2", "con2", "per2", "cha2", "dex2", "wil2", "psy2" -> {
                             final AttrFilter.Op op;
-                            if(filter.contains("<=")) op = AttrFilter.Op.LESSOREQUAL;
-                            else if(filter.contains(">=")) op = AttrFilter.Op.GREATEROREQUAL;
-                            else if(filter.contains("=")) op = AttrFilter.Op.EQUAL;
-                            else if(filter.contains("<")) op = AttrFilter.Op.LESS;
-                            else op = AttrFilter.Op.GREATER;
+                            if(filter.contains("<=")) op = AttrFilter.Op.LessThanOrEqual;
+                            else if(filter.contains(">=")) op = AttrFilter.Op.GreaterThanOrEqual;
+                            else if(filter.contains("=")) op = AttrFilter.Op.Equal;
+                            else if(filter.contains("<")) op = AttrFilter.Op.Less;
+                            else op = AttrFilter.Op.Greater;
 
                             flts.add(new AttrFilter(FoodData.feptypemap.get(exp[0]), op, Float.parseFloat(exp[1])));
                         }
@@ -359,9 +384,7 @@ public class FoodSearchWnd extends Window {
                 }
             }
         }
-
-        final Filter flt = new AndFilter(flts);
-        lst.apply(flt, header.sortmethod);
+        refilter(flts);
     }
 
     @Override

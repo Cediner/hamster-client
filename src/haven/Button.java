@@ -118,6 +118,14 @@ public class Button extends SIWidget {
 	this.cont = cont;
     }
 
+
+    public Button(final String text, Runnable action) {
+        this(0, false);
+	change(text);
+	sz = new Coord(cont.getWidth() + ul.imgs().getWidth() + um.imgs().getWidth() + ur.imgs().getWidth(), ul.imgs().getHeight());
+	this.action = action;
+    }
+
     public Button(final String text) {
 	this(0, false);
 	change(text);
