@@ -45,6 +45,7 @@
       </classpath>
       <compilerarg value="-Xlint:unchecked" />
       <compilerarg value="-Xlint:-options" />
+      <compilerarg value="-Xdiags:verbose"/>
       <!-- <compilerarg value="-Xbarda" /> -->
     </javac>
     <copy todir="build/classes">

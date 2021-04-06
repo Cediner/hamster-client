@@ -1,6 +1,7 @@
 package hamster;
 
 import hamster.data.*;
+import hamster.data.food.FoodData;
 import hamster.data.gob.ObjData;
 import hamster.data.itm.ItemData;
 import hamster.data.map.MarkerData;
@@ -36,6 +37,7 @@ public class GlobalSettings {
         Deleted.init();
         Hidden.init();
         HighlightData.init();
+        FoodData.init();
     }
 
     //Non-saved globals

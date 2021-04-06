@@ -41,6 +41,7 @@ import hamster.ui.chr.SkillnCredoWnd;
 import hamster.ui.chr.StudyWnd;
 import hamster.ui.core.Theme;
 import hamster.ui.core.indir.IndirSlotView;
+import hamster.ui.food.FoodSearchWnd;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 import hamster.util.msg.MailBox;
@@ -89,6 +90,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     //Crafting
     public Window makewnd;
+    public Window foodwnd;
 
     //Menu Searching
     public ActWnd paginasearch;
@@ -322,6 +324,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	timers.hide();
 	foragehelper = new ForageHelperWnd();
 	foragehelper.hide();
+	foodwnd = new FoodSearchWnd();
+	foodwnd.hide();
 	scwnd = new SkillnCredoWnd();
 	scwnd.hide();
 	pointer = new CustomPointer("Queued Move");
@@ -380,6 +384,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(timers, stdloc);
 	add(foragehelper, stdloc);
 	add(scwnd, stdloc);
+	add(foodwnd, stdloc);
 	add(pointer);
     }
 
