@@ -682,6 +682,7 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		        ui = nextUI;
 		        this.ui.set(ui);
 		        oui.audio.amb.clear();
+		        oui.setmods(false, false, false);
 		    } else {
 		        ui = this.ui.get();
 		    }
