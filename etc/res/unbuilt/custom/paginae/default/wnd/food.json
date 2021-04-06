@@ -1,0 +1,28 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "action",
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Food Search",
+      "preq": "",
+      "hk": "C",
+      "ad": []
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\paginae\\default\\wnd\\food\\image-0.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "tooltip",
+      "t": "Toggle Food Search "
+    }
+  ]
+}
