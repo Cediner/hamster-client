@@ -2170,21 +2170,69 @@
       winter: "YES"
     }
   },
-  /*** Trees / Bushes ***/
+  /*** Trees / Bushes / Stockpiles ***/
+  {
+    res: "gfx/terobjs/trees/oldtrunk",
+    name: "Old Trunk",
+    tags: [
+      "LOG",
+      "CAN_OPEN"
+    ]
+  },
+  {
+    res: "gfx/terobjs/trees/oldstump",
+    name: "Old Stump",
+    tags: [
+      "STUMP",
+      "CAN_OPEN"
+    ]
+  },
   {
     res: "gfx/terobjs/trees/((?!.+(stump|log)).)+",
     regex: true,
-    names: "Tree",
+    name: "Tree",
     tags: [
       "TREE"
     ]
   },
   {
+    res: "gfx/terobjs/trees/.+log",
+    regex: true,
+    name: "Log",
+    tags: [
+      "LOG"
+    ]
+  },
+  {
+    res: "gfx/terobjs/trees/.+stump",
+    regex: true,
+    name: "Stump",
+    tags: [
+      "STUMP"
+    ]
+  },
+  {
     res: "gfx/terobjs/bushes/.+",
     regex: true,
-    names: "Bush",
+    name: "Bush",
     tags: [
       "BUSH"
+    ]
+  },
+  {
+    res: "gfx/terobjs/bumlings/.+",
+    regex: true,
+    name: "Rock",
+    tags: [
+      "ROCK"
+    ]
+  },
+  {
+    res: "gfx/terobjs/stockpile-.+",
+    regex: true,
+    name: "Stockpile",
+    tags: [
+      "STOCKPILE"
     ]
   }
 ]

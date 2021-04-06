@@ -12,6 +12,10 @@
 (defconstant +vehicle+ (svar +tag+ "VEHICLE"))
 (defconstant +tree+ (svar +tag+ "TREE"))
 (defconstant +bush+ (svar +tag+ "BUSH"))
+(defconstant +log+ (svar +tag+ "LOG"))
+(defconstant +rock+ (svar +tag+ "ROCK"))
+(defconstant +stump+ (svar +tag+ "STUMP"))
+(defconstant +stockpile+ (svar +tag+ "STOCKPILE"))
 
 (java-func +gob+ gob-c "getc")
 (java-func +gob+ gob-name "name")
@@ -120,7 +124,7 @@
 (defmacro gob-get-closest-by-name (name)
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
-(export '(+plant+ +human+ +animal+ +tamed-animal+ +water-vehicle+ +vehicle+
+(export '(+plant+ +human+ +animal+ +tamed-animal+ +water-vehicle+ +vehicle+ +tree+ +bush+ +log+ +rock+ +stump+ +stockpile+
           gob-c gob-name gob-type gob-overlays gob-poses gob-heldBy gob-holding gob-sdt is-gob-dead
           gob-kinname gob-equipment
           gob-id gob-rc gob-v

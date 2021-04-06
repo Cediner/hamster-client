@@ -1,10 +1,20 @@
 package hamster.ui.food.filters;
 
 import hamster.data.food.FoodData;
+import haven.FastText;
+import haven.GOut;
 
 public class AttrFilter implements Filter {
     public enum Op {
-        LESS, LESSOREQUAL, EQUAL, GREATEROREQUAL, GREATER
+	Less("<"), LessThanOrEqual("<="), Equal("="), GreaterThanOrEqual(">="), Greater(">");
+
+	final String text;
+	Op(final String text) { this.text = text; }
+
+	@Override
+	public String toString() {
+	    return text;
+	}
     }
 
     private final FoodData.FepType feptype;
@@ -22,24 +32,34 @@ public class AttrFilter implements Filter {
         for(final var fep : item.feps) {
             if(fep.type == feptype) {
                 switch (op) {
-		    case LESS -> {
+		    case Less -> {
 			return fep.value < value;
 		    }
-		    case LESSOREQUAL -> {
+		    case LessThanOrEqual -> {
 			return fep.value <= value;
 		    }
-		    case EQUAL -> {
+		    case Equal -> {
 			return fep.value == value;
 		    }
-		    case GREATEROREQUAL -> {
+		    case GreaterThanOrEqual -> {
 			return fep.value >= value;
 		    }
-		    case GREATER -> {
+		    case Greater -> {
 			return fep.value > value;
 		    }
 		}
 	    }
 	}
         return false;
+    }
+
+    @Override
+    public void render(GOut g) {
+	FastText.aprintf(g, g.sz().div(2), 0.5, 0.5, "%s %s %.2f", feptype, op, value);
+    }
+
+    @Override
+    public String toString() {
+	return String.format("%s%s%.2f", feptype.toString().toLowerCase(), op, value);
     }
 }

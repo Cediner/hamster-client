@@ -120,6 +120,7 @@ public class GameplayPanel extends Scrollport {
         { //Gob
             gob.add(new Label("Bad Kin Group:"));
             gob.add(new IndirGroupSelector(GlobalSettings.BADKIN, BuddyWnd.gc));
+            gob.add(new IndirCheckBox("Show halo on yourself", GlobalSettings.SHOWPLAYERHALO));
             gob.add(new IndirCheckBox("Show halo on players", GlobalSettings.SHOWGOBHALO));
             gob.add(new IndirCheckBox("Show halo on players on hearth", GlobalSettings.SHOWGOBHALOONHEARTH));
             gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", GlobalSettings.COLORIZEAGGRO));

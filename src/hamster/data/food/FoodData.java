@@ -12,6 +12,7 @@ public class FoodData {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final List<FoodData> foods = new ArrayList<>();
     public static final Map<String, FepType> feptypemap = new HashMap<>();
+    public static final Map<String, FepType> fepmap = new HashMap<>();
     public static int longestname;
 
     public static class Ingredient {
@@ -55,7 +56,6 @@ public class FoodData {
 
     public static void init() {
 	logger.atInfo().log("Loading Food Data");
-	final Map<String, FepType> fepmap = new HashMap<>();
 	fepmap.put("Strength +1", FepType.STR); feptypemap.put("str", FepType.STR);
 	fepmap.put("Agility +1", FepType.AGI); feptypemap.put("agi", FepType.AGI);
 	fepmap.put("Intelligence +1", FepType.INT); feptypemap.put("int", FepType.INT);

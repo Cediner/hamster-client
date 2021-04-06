@@ -604,6 +604,29 @@ api.minimap = {
 -- Ex: g.id to get id
 --------------------------------------------------
 api.gob = {
+  tag = {
+    plant = luajava.bindClass("hamster.gob.Tag").PLANT,
+    multistage_plant = luajava.bindClass("hamster.gob.Tag").MULTISTAGE_PLANT,
+    human = luajava.bindClass("hamster.gob.Tag").HUMAN,
+    vehicle = luajava.bindClass("hamster.gob.Tag").VEHICLE,
+    water_vehicle = luajava.bindClass("hamster.gob.Tag").WATER_VEHICLE,
+    land_vehicle = luajava.bindClass("hamster.gob.Tag").LAND_VEHICLE,
+    siege_vehicle = luajava.bindClass("hamster.gob.Tag").SIEGE_VEHICLE,
+    animal = luajava.bindClass("hamster.gob.Tag").ANIMAL,
+    tamed_animal = luajava.bindClass("hamster.gob.Tag").TAMED_ANIMAL,
+    can_pick_up = luajava.bindClass("hamster.gob.Tag").CAN_PICK_UP,
+    can_open = luajava.bindClass("hamster.gob.Tag").CAN_OPEN,
+    can_ride = luajava.bindClass("hamster.gob.Tag").CAN_RIDE,
+    can_fight = luajava.bindClass("hamster.gob.Tag").CAN_FIGHT,
+    can_aggro = luajava.bindClass("hamster.gob.Tag").CAN_AGGRO,
+    tree = luajava.bindClass("hamster.gob.Tag").TREE,
+    bush = luajava.bindClass("hamster.gob.Tag").BUSH,
+    log = luajava.bindClass("hamster.gob.Tag").LOG,
+    stump = luajava.bindClass("hamster.gob.Tag").STUMP,
+    rock = luajava.bindClass("hamster.gob.Tag").ROCK,
+    stockpile = luajava.bindClass("hamster.gob.Tag").STOCKPILE
+  },
+
   plgobid = function()
     return api.core.mv().rlplgob
   end,
@@ -630,10 +653,14 @@ api.gob = {
   --   - Returns the sdt number, used mostly to determine
   --     rendering state of gob (ie: crop stage, drying frame status)
   -- g:overlays()   returns Overlay[]
-  --   - Returns and array of current overlays
+  --   - Returns an array of current overlays
   --   - For a given Overlay `o` you can do:
   --     o:id()  returns long - Overlay id
   --     o:name() returns String - Overlay resource name
+  --
+  -- g:hasTag(Tag) returns boolean
+  --   - Returns true if the gob has the specified tag, false otherwise
+  --   - See: api.gob.tag
   --
   -- States:
   -- g:isDead()
