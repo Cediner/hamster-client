@@ -81,14 +81,18 @@ public class AudioSprite {
 	    }
 	};
 
-    public static class IgnoreSprite extends Sprite {
+    public static class IgnoreSprite extends Sprite implements Sprite.CDel {
 	public IgnoreSprite(Owner owner, Resource res) {
 	    super(owner, res);
 	}
 
-	public boolean tick(int dt) {
+	@Override
+	public boolean tick(double dt) {
 	    return true;
 	}
+
+	@Override
+	public void delete() { }
     }
 
     public static class ClipSprite extends Sprite {
