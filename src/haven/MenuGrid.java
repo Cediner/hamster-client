@@ -638,10 +638,10 @@ public class MenuGrid extends MovableWidget {
 	if((button == 1) && (h != null)) {
 	    pressed = h;
 	    grab = ui.grabmouse(this);
-	    return (true);
 	} else {
-	    return super.mousedown(c, button);
+	    super.mousedown(c, button);
 	}
+	return true;
     }
 
     public void mousemove(Coord c) {
@@ -704,10 +704,10 @@ public class MenuGrid extends MovableWidget {
 	    }
 	    grab.remove();
 	    grab = null;
-	    return(true);
 	} else {
-	    return super.mouseup(c, button);
+	    super.mouseup(c, button);
 	}
+	return(true);
     }
 
     public void uimsg(String msg, Object... args) {
