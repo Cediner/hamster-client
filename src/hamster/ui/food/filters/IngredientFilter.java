@@ -1,10 +1,12 @@
 package hamster.ui.food.filters;
 
 import hamster.data.food.FoodData;
+import haven.FastText;
+import haven.GOut;
 
 public class IngredientFilter implements Filter {
     public enum Op {
-	INCLUDE, EXCLUDE
+	Include, Exclude
     }
 
     private final String ingredient;
@@ -17,7 +19,7 @@ public class IngredientFilter implements Filter {
 
     @Override
     public boolean included(FoodData item) {
-	if(op == Op.INCLUDE) {
+	if(op == Op.Include) {
 	    for(final var ing : item.ingredients) {
 		if(ing.name.toLowerCase().contains(ingredient))
 		    return true;
@@ -30,5 +32,15 @@ public class IngredientFilter implements Filter {
 	    }
 	    return true;
 	}
+    }
+
+    @Override
+    public void render(GOut g) {
+	FastText.aprintf(g, g.sz().div(2), 0.5, 0.5, "Ingredients %s %s", op, ingredient);
+    }
+
+    @Override
+    public String toString() {
+	return String.format("%sfrom:%s", op  == Op.Include ? "" : "-", ingredient);
     }
 }

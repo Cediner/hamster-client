@@ -34,6 +34,10 @@ public class LinearGrouping extends Grouping {
         this(cap, new Coord(0, spacer), true, Direction.VERTICAL);
     }
 
+    public LinearGrouping(final String cap,  final Text.Foundry fnd, final int spacer) {
+        this(cap, fnd, new Coord(0, spacer), true, Direction.VERTICAL);
+    }
+
     public LinearGrouping(final String cap, final int spacer, final Direction dir) {
         this(cap, new Coord(dir == Direction.VERTICAL ? 0 : spacer, dir == Direction.VERTICAL ? spacer: 0),
                 true, dir);

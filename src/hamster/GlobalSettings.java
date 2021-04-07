@@ -137,6 +137,7 @@ public class GlobalSettings {
     public static final IndirSetting<BaseColor> GOBHIDDENCOL = new IndirSetting<>(global, "gob.hidden-col", new BaseColor(Color.WHITE));
     public static final IndirSetting<BaseColor> GOBHITBOXCOL = new IndirSetting<>(global, "gob.hitbox-col", new BaseColor(Color.WHITE));
     public static final IndirSetting<Boolean> SHOWGOBHALO = new IndirSetting<>(global, "gob.show-gob-halo", false);
+    public static final IndirSetting<Boolean> SHOWPLAYERHALO = new IndirSetting<>(global, "gob.show-player-halo", false);
     public static final IndirSetting<Boolean> SHOWGOBHALOONHEARTH = new IndirSetting<>(global, "gob.show-gob-halo-on-hearth", true);
     public static final IndirSetting<Boolean> SHOWGOBHP = new IndirSetting<>(global, "gob.show-gob-hp", true);
     public static final IndirSetting<Integer> PATHWIDTH = new IndirSetting<>(global, "gob.path-width", 4);

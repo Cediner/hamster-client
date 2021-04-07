@@ -24,7 +24,7 @@ public class CredoTree extends Widget {
     private static final Tex unlocked = Resource.loadtex("custom/credos/states", 1);
     private static final Tex locked = Resource.loadtex("custom/credos/states", 2);
     private static final List<CredoData> credoData = new ArrayList<>();
-    private static final Coord csz = new Coord(90, 130);
+    private static final Coord csz = new Coord(90, 150);
     public static void init() {
         logger.atInfo().log("Loading Credo Data");
         final var gson = new Gson();
@@ -194,6 +194,7 @@ public class CredoTree extends Widget {
         final BufferedImage img = new BufferedImage(sz.x, sz.y, BufferedImage.TYPE_INT_ARGB);
         final Graphics g = img.getGraphics();
         final int mid = 17;
+        final Map<Integer, Integer> rowsuby = new HashMap<>();
         for (final Credo sk : children(Credo.class)) {
             if (sk.data.parents.size() > 0) {
                 final List<Integer> pars = new ArrayList<>(sk.data.parents);
@@ -210,7 +211,7 @@ public class CredoTree extends Widget {
                     }
                 });
 
-                int sub = 0;
+                int sub = 0, suby = rowsuby.getOrDefault(sk.c.y, 0);
                 for (final int pid : pars) {
                     final CredoWidget parent = id2credo.get(pid);
                     final Color col = parent.credo() == null ? Color.RED : parent.credo().on ? Color.ORANGE : parent.credo().has ? Color.GREEN : Color.RED;
@@ -218,14 +219,16 @@ public class CredoTree extends Widget {
                     //Draw line up from our skill
                     g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y, sk.c.x + sk.sz.x / 2 + sub - 3, sk.c.y - 5);
                     g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y, sk.c.x + sk.sz.x / 2 + sub + 3, sk.c.y - 5);
-                    g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y, sk.c.x + sk.sz.x / 2 + sub, sk.c.y - (mid - sub));
+                    g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y, sk.c.x + sk.sz.x / 2 + sub, sk.c.y - (mid - suby));
                     //Draw line over to the right column center
-                    g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y - (mid - sub), parent.c().x + parent.sz().x / 2 + sub, sk.c.y - (mid - sub));
+                    g.drawLine(sk.c.x + sk.sz.x / 2 + sub, sk.c.y - (mid - suby), parent.c().x + parent.sz().x / 2 + sub, sk.c.y - (mid - suby));
                     //Draw up to parent
-                    g.drawLine(parent.c().x + parent.sz().x / 2 + sub, sk.c.y - (mid - sub),
+                    g.drawLine(parent.c().x + parent.sz().x / 2 + sub, sk.c.y - (mid - suby),
                             parent.c().x + parent.sz().x / 2 + sub, parent.c().y + parent.sz().y);
                     sub -= 3;
+                    suby -= 2;
                 }
+                rowsuby.put(sk.c.y, suby);
             }
         }
         g.dispose();

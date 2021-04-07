@@ -16,5 +16,9 @@ public enum Tag {
     CAN_FIGHT,
     CAN_AGGRO,
     TREE,
-    BUSH
+    BUSH,
+    LOG,
+    STUMP,
+    ROCK,
+    STOCKPILE
 }

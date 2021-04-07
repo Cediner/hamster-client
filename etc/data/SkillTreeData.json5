@@ -232,8 +232,7 @@
       y: 2
     },
     parents: [
-      1,
-      7
+      7, 52
     ]
   },
   {
@@ -354,7 +353,7 @@
       y: 3
     },
     parents: [
-      19
+      19, 51
     ]
   },
   {
@@ -623,6 +622,16 @@
     loc: {
       x: 10,
       y: 2
+    },
+    parents: []
+  },
+  {
+    id: 52,
+    name: "custom/skills/shortcut:wzm",
+    expected_lp: -1,
+    loc: {
+      x: 9,
+      y: 1
     },
     parents: []
   }
