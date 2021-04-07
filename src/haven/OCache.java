@@ -62,10 +62,10 @@ public class OCache implements Iterable<Gob> {
     public static final int OD_END = 255;
     public static final Coord2d posres = new Coord2d(0x1.0p-10, 0x1.0p-10).mul(11, 11);
     /* XXX: Use weak refs */
-    private Collection<Collection<Gob>> local = new LinkedList<Collection<Gob>>();
-    private HashMultiMap<Long, Gob> objs = new HashMultiMap<Long, Gob>();
-    private Glob glob;
-    private final Collection<ChangeCallback> cbs = new WeakList<ChangeCallback>();
+    private final Collection<Collection<Gob>> local = new LinkedList<>();
+    private final HashMultiMap<Long, Gob> objs = new HashMultiMap<>();
+    private final Glob glob;
+    private final Collection<ChangeCallback> cbs = new WeakList<>();
 
     /*
      * MessageBus / MailBox System Message
@@ -113,6 +113,7 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    @SuppressWarnings("unused") // May use at a later date
     public static class RefreshGobByTag extends OCMail {
 	public final Tag tag;
 
@@ -148,6 +149,7 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    @SuppressWarnings("unused") // May use at a later date
     public static class RefreshAllGobs extends OCMail {
 	public RefreshAllGobs() {
 	}
@@ -191,17 +193,15 @@ public class OCache implements Iterable<Gob> {
 
 	@Override
 	public void apply(OCache oc, final List<Gob> gobs) {
-	    gobs.parallelStream().forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			gob.setattr(new Hidden(gob));
-			for (final ChangeCallback cb : oc.cbs) {
-			    cb.removed(gob);
-			    cb.added(gob);
-			}
+	    gobs.parallelStream().forEach(gob -> gob.res().ifPresent(res -> {
+		if (res.name.equals(name)) {
+		    gob.setattr(new Hidden(gob));
+		    for (final ChangeCallback cb : oc.cbs) {
+			cb.removed(gob);
+			cb.added(gob);
 		    }
-		});
-	    });
+		}
+	    }));
 	}
     }
 
@@ -214,19 +214,17 @@ public class OCache implements Iterable<Gob> {
 
 	@Override
 	public void apply(OCache oc, final List<Gob> gobs) {
-	    gobs.parallelStream().forEach(gob -> {
-		gob.res().ifPresent(res -> {
-		    if (res.name.equals(name)) {
-			if (gob.getattr(Hidden.class) != null) {
-			    gob.delattr(Hidden.class);
-			    for (final ChangeCallback cb : oc.cbs) {
-				cb.removed(gob);
-				cb.added(gob);
-			    }
+	    gobs.parallelStream().forEach(gob -> gob.res().ifPresent(res -> {
+		if (res.name.equals(name)) {
+		    if (gob.getattr(Hidden.class) != null) {
+			gob.delattr(Hidden.class);
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(gob);
+			    cb.added(gob);
 			}
 		    }
-		});
-	    });
+		}
+	    }));
 	}
     }
 

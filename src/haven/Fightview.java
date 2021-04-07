@@ -398,7 +398,7 @@ public class Fightview extends Widget {
 	    final String rip = String.format("IP %d", rel.ip);
 	    FastText.print(g, new Coord(UI.scale(12), y + UI.scale(32)), rip);
 	    g.chcolor(Color.RED);
-	    final String roip = String.format("IP %d", rel.ip);
+	    final String roip = String.format("IP %d", rel.oip);
 	    FastText.print(g, new Coord(UI.scale(12), y + UI.scale(44)), roip);
 	    final Gob gob = ui.sess.glob.oc.getgob(rel.gobid);
 	    final Gob pl = ui.sess.glob.oc.getgob(ui.gui.map.plgob);
