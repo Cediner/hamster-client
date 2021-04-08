@@ -78,6 +78,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SYMMETRICOUTLINES = new IndirSetting<>(global, "display.outlines.symmetric", false);
     public static final IndirSetting<Double> UISCALE = new IndirSetting<>(global, "display.ui-scale", 1.0);
     public static final IndirSetting<String> FRAMESYNCMODE = new IndirSetting<>(global, "display.frame-sync-mode", JOGLPanel.SyncMode.FRAME.name());
+    public static final IndirSetting<Boolean> WIREFRAMEMODE = new IndirSetting<>(global, "display.wireframe-mode", false);
 
     // Map options
     public static final IndirSetting<Boolean> KEEPGOBS = new IndirSetting<>(global, "map.keep-gobs", false);

@@ -30,6 +30,7 @@ public class VideoPanel extends Scrollport {
             fsm.add("CPU-sequential", JOGLPanel.SyncMode.SEQ.name());
             fsm.add("GPU-sequential", JOGLPanel.SyncMode.FINISH.name());
 
+            disp.add(new IndirCheckBox("Wireframe Mode", WIREFRAMEMODE));
             disp.add(new IndirCheckBox("VSync Mode", VSYNC));
             disp.add(new IndirLabel(() -> String.format("FPS: %d", FPS.get())));
             disp.add(new IndirHSlider(UI.scale(210), 5, 240, FPS));
