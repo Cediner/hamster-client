@@ -26,14 +26,12 @@
 
 package haven;
 
-import haven.res.ui.tt.ArmorFactory;
-import haven.res.ui.tt.ISlots;
-import haven.res.ui.tt.Level;
-import haven.res.ui.tt.Wear;
+import haven.res.ui.tt.*;
 import haven.res.ui.tt.defn.DefName;
 import haven.res.ui.tt.q.qbuff.Quality;
 import haven.res.ui.tt.wpn.Armpen;
 import haven.res.ui.tt.wpn.Damage;
+import haven.res.ui.tt.wpn.Weight;
 
 import java.util.*;
 import java.util.function.*;
@@ -340,8 +338,14 @@ public abstract class ItemInfo {
 	builtinfacts.put("ui/tt/wear", new Wear.Fac());
 	builtinfacts.put("ui/tt/wpn/dmg", new Damage.Fac());
 	builtinfacts.put("ui/tt/wpn/armpen", new Armpen.Fac());
+	builtinfacts.put("ui/tt/wpn/weight", new Weight.Fac());
 	builtinfacts.put("ui/tt/q/quality", new Quality.Fac());
 	builtinfacts.put("ui/tt/level", new Level.Fac());
+	builtinfacts.put("ui/tt/inputs", new Inputs.Fac());
+	builtinfacts.put("ui/tt/ingred", new Ingredient.Fac());
+	builtinfacts.put("ui/tt/gast", new Gast.Fac());
+	builtinfacts.put("ui/tt/enc-cost", new Cost.Fac());
+	builtinfacts.put("ui/tt/equed", new Equed.Fac());
     }
 
     public static List<ItemInfo> buildinfo(Owner owner, Raw raw) {
