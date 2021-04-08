@@ -3,6 +3,8 @@ package hamster.data.itm;
 public enum ItemTag {
     CAN_EQUIP,
     CAN_DRINK,
+    CAN_EAT,
+    CAN_STUDY,
     CAN_FILL_WITH_WATER,
     CAN_FILL_WITH_SEED,
     CAN_FILL_WITH_MATERIAL,
@@ -12,5 +14,7 @@ public enum ItemTag {
     WEAPON,
     MELEE,
     RANGED,
-    AMMO
+    AMMO,
+    FOOD,
+    CURIOSITY
 }
