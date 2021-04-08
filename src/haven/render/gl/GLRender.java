@@ -48,7 +48,7 @@ public class GLRender implements Render, Disposable {
 
     public GLEnvironment env() {return(env);}
 
-    BGL gl() {
+    public BGL gl() {
 	if(this.gl == null) {
 	    this.gl = new BufferBGL();
 	    this.init = state.clone();

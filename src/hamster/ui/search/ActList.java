@@ -1,4 +1,4 @@
-package hamster.ui;
+package hamster.ui.search;
 
 import haven.*;
 

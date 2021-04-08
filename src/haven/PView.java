@@ -27,9 +27,13 @@
 package haven;
 
 import java.util.*;
+
+import com.jogamp.opengl.GL2;
+import hamster.GlobalSettings;
 import haven.render.*;
 import haven.RenderContext.PostProcessor;
 import haven.render.Texture2D.Sampler2D;
+import haven.render.gl.GLRender;
 
 public abstract class PView extends Widget {
     public final RenderTree tree;
@@ -272,6 +276,9 @@ public abstract class PView extends Widget {
 	}
 	lights();
 	FColor cc = clearcolor();
+
+	if(GlobalSettings.WIREFRAMEMODE.get() && g.out instanceof GLRender)
+	    ((GLRender)g.out).gl().glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 	if(cc != null)
 	    g.out.clear(basic.state(), FragColor.fragcol, cc);
 	g.out.clear(basic.state(), 1.0);
@@ -279,6 +286,8 @@ public abstract class PView extends Widget {
 	    instancer.commit(g.out);
 	    maindraw(g.out);
 	}
+	if(GlobalSettings.WIREFRAMEMODE.get() && g.out instanceof GLRender)
+	    ((GLRender)g.out).gl().glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 	resolve(g);
 	list2d.draw(g);
     }
