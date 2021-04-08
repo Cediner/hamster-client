@@ -136,7 +136,11 @@ public class Window extends MovableWidget implements DTarget {
 	    Coord sz = UI.scale((Coord)args[0]);
 	    String cap = (args.length > 1) ? (String)args[1] : null;
 	    boolean lg = args.length > 2 && ((Integer) args[2] != 0);
-	    return(new Window(sz, cap, lg, Coord.z, Coord.z));
+	    if (cap == null || !cap.equals("Belt")) {
+		return (new Window(sz, cap, lg, Coord.z, Coord.z));
+	    } else {
+		return (new Window(sz, cap, cap, lg, Coord.z, Coord.z));
+	    }
 	}
     }
 

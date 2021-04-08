@@ -44,6 +44,8 @@ import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.food.FoodSearchWnd;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
+import hamster.ui.search.ActWnd;
+import hamster.ui.search.MakeWnd;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
 import integrations.mapv4.MapConfig;
