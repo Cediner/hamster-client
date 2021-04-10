@@ -26,6 +26,7 @@
 
 package haven.resutil;
 
+import hamster.data.character.Attribute;
 import haven.*;
 import java.util.*;
 import java.awt.Color;
@@ -69,6 +70,23 @@ public class FoodInfo extends ItemInfo.Tip {
 	public final double p;
 
 	public Effect(List<ItemInfo> info, double p) {this.info = info; this.p = p;}
+    }
+
+    public Optional<Event> event(final Attribute attr) {
+        for(final var ev : evs) {
+            if(attr.is(ev.ev.nm)) {
+                return Optional.of(ev);
+	    }
+	}
+        return Optional.empty();
+    }
+
+    public double energy() {
+        return Math.round(end * 100d);
+    }
+
+    public double hunger() {
+        return Math.round(glut * 100d);
     }
 
     public BufferedImage tipimg() {

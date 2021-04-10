@@ -1,5 +1,23 @@
 package hamster.ui.search;
 
+import hamster.ui.search.filters.InclusionOp;
+import hamster.ui.search.filters.InputFilter;
+import hamster.ui.search.filters.NameFilter;
+import hamster.ui.search.filters.TypeFilter;
+import hamster.ui.search.filters.curio.LPFilter;
+import hamster.ui.search.filters.curio.LPHFilter;
+import hamster.ui.search.filters.curio.MentalWeightFilter;
+import hamster.ui.search.filters.curio.StudyTimeFilter;
+import hamster.ui.search.filters.food.AttrFilter;
+import hamster.ui.search.filters.food.EnergyFilter;
+import hamster.ui.search.filters.food.HungerFilter;
+import hamster.ui.search.filters.gear.*;
+import hamster.ui.search.filters.gildable.ChanceFilter;
+import hamster.ui.search.filters.gildable.GildAttrFilter;
+import hamster.ui.search.filters.gilding.AttrModFilter;
+import hamster.ui.search.filters.symbol.BonusFilter;
+import hamster.ui.search.filters.symbol.ReductionFilter;
+import hamster.util.JobSystem;
 import hamster.util.ObservableListener;
 import haven.*;
 
@@ -9,7 +27,6 @@ import java.util.*;
 public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagina> {
     public static final int WIDTH = 200;
     private final TextEntry entry;
-    private final List<MenuGrid.Pagina> crafts = new ArrayList<>();
     private final ActList list;
 
     public MakeWnd() {
@@ -60,25 +77,35 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
 		}
 	    }
 	}, 0, entry.sz.y + 5);
+	list.add(NameFilter.pattern, NameFilter::make);
+	list.add(InputFilter.pattern, InputFilter::make);
+	list.add(TypeFilter.pattern, TypeFilter::make);
+	list.add(LPFilter.pattern, LPFilter::make);
+	list.add(LPHFilter.pattern, LPHFilter::make);
+	list.add(MentalWeightFilter.pattern, MentalWeightFilter::make);
+	list.add(StudyTimeFilter.pattern, StudyTimeFilter::make);
+	list.add(AttrFilter.pattern, AttrFilter::make);
+	list.add(EnergyFilter.pattern, EnergyFilter::make);
+	list.add(HungerFilter.pattern, HungerFilter::make);
+	list.add(ArmorPenFilter.pattern, ArmorPenFilter::make);
+	list.add(AttackWeightFilter.pattern, AttackWeightFilter::make);
+	list.add(DmgFilter.pattern, DmgFilter::make);
+	list.add(GrievousDmgFilter.pattern, GrievousDmgFilter::make);
+	list.add(HardArmorFilter.pattern, HardArmorFilter::make);
+	list.add(SlotFilter.pattern, SlotFilter::make);
+	list.add(SoftArmorFilter.pattern, SoftArmorFilter::make);
+	list.add(StatFilter.pattern, StatFilter::make);
+	list.add(GildAttrFilter.pattern, GildAttrFilter::make);
+	list.add(ChanceFilter.pattern, ChanceFilter::make);
+	list.add(AttrModFilter.pattern, AttrModFilter::make);
+	list.add(BonusFilter.pattern, BonusFilter::make);
+	list.add(ReductionFilter.pattern, ReductionFilter::make);
 	pack();
 	hide();
     }
 
     private void refilter() {
-	list.clear();
-	for (MenuGrid.Pagina p : crafts) {
-	    if (p.res.get().layer(Resource.action).name.toLowerCase().contains(entry.text.toLowerCase()))
-		list.add(p);
-	}
-	list.sort(new ItemComparator());
-	if (list.listitems() > 0) {
-	    final Optional<Integer> idx = list.selindex();
-	    if (idx.isPresent()) {
-		list.change(Math.max(idx.get() - 1, 0));
-	    } else {
-		list.change(0);
-	    }
-	}
+	list.filter(entry.text.toLowerCase());
     }
 
     public void act(MenuGrid.Pagina act) {
@@ -90,73 +117,32 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
     @Override
     public void init(Collection<MenuGrid.Pagina> base) {
 	for (final MenuGrid.Pagina pag : base) {
-	    if (isAllowed(pag)) {
-		crafts.add(pag);
-		if (isIncluded(pag)) {
-		    list.add(pag);
+	    JobSystem.submit(() -> {
+		try {
+		    if(pag.res().name.startsWith("paginae/craft/"))
+		    	list.add(pag);
+		} catch (Loading e) {
+		    throw new JobSystem.DependencyNotMet();
 		}
-	    }
+	    });
 	}
     }
 
     @Override
-    public void added(MenuGrid.Pagina item) {
-	if (isAllowed(item)) {
-	    crafts.add(item);
-	    if (isIncluded(item)) {
-		list.add(item);
+    public void added(final MenuGrid.Pagina item) {
+	JobSystem.submit(() -> {
+	    try {
+		if(item.res().name.startsWith("paginae/craft/"))
+		    list.add(item);
+	    } catch (Loading e) {
+		throw new JobSystem.DependencyNotMet();
 	    }
-	}
+	});
     }
 
     @Override
     public void remove(MenuGrid.Pagina item) {
-	if (isAllowed(item)) {
-	    crafts.remove(item);
-	    if (isIncluded(item)) {
-		list.remove(item);
-	    }
-	}
-    }
-
-    private static class ItemComparator implements Comparator<ActList.ActItem> {
-	public int compare(ActList.ActItem a, ActList.ActItem b) {
-	    return a.name.text.compareTo(b.name.text);
-	}
-    }
-
-    private boolean isAllowed(MenuGrid.Pagina pagina) {
-	//ensure it's loaded
-	try {
-	    pagina.res();
-	} catch (Loading e) {
-	    try {
-		e.waitfor();
-	    } catch (InterruptedException ex) {
-		//Ignore
-	    }
-	}
-	try {
-	    return pagina.res().name.contains("paginae/craft/");
-	} catch (Exception e) {
-	    //Ignore it for now.
-	    //TODO: maybe fix this later.
-	    return false;
-	}
-    }
-
-    private boolean isIncluded(MenuGrid.Pagina pagina) {
-	//ensure it's loaded
-	try {
-	    pagina.res();
-	} catch (Loading e) {
-	    try {
-		e.waitfor();
-	    } catch (InterruptedException ex) {
-		//Ignore
-	    }
-	}
-	return pagina.res.get().layer(Resource.action).name.toLowerCase().contains(entry.text.toLowerCase());
+	list.remove(item);
     }
 
     @Override

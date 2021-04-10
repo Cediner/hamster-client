@@ -1,5 +1,23 @@
 package hamster.ui.search;
 
+import hamster.ui.search.filters.InclusionOp;
+import hamster.ui.search.filters.InputFilter;
+import hamster.ui.search.filters.NameFilter;
+import hamster.ui.search.filters.TypeFilter;
+import hamster.ui.search.filters.curio.LPFilter;
+import hamster.ui.search.filters.curio.LPHFilter;
+import hamster.ui.search.filters.curio.MentalWeightFilter;
+import hamster.ui.search.filters.curio.StudyTimeFilter;
+import hamster.ui.search.filters.food.AttrFilter;
+import hamster.ui.search.filters.food.EnergyFilter;
+import hamster.ui.search.filters.food.HungerFilter;
+import hamster.ui.search.filters.gear.*;
+import hamster.ui.search.filters.gildable.ChanceFilter;
+import hamster.ui.search.filters.gildable.GildAttrFilter;
+import hamster.ui.search.filters.gilding.AttrModFilter;
+import hamster.ui.search.filters.symbol.BonusFilter;
+import hamster.ui.search.filters.symbol.ReductionFilter;
+import hamster.util.JobSystem;
 import hamster.util.ObservableListener;
 import haven.*;
 
@@ -10,7 +28,6 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
     private static final int WIDTH = 200;
 
     private final TextEntry entry;
-    private final List<MenuGrid.Pagina> all = new ArrayList<>();
     private final ActList list;
 
     public ActWnd(String caption) {
@@ -61,6 +78,29 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
                 }
             }
         }, 0, entry.sz.y + 5);
+        list.add(NameFilter.pattern, NameFilter::make);
+        list.add(InputFilter.pattern, InputFilter::make);
+        list.add(TypeFilter.pattern, TypeFilter::make);
+        list.add(LPFilter.pattern, LPFilter::make);
+        list.add(LPHFilter.pattern, LPHFilter::make);
+        list.add(MentalWeightFilter.pattern, MentalWeightFilter::make);
+        list.add(StudyTimeFilter.pattern, StudyTimeFilter::make);
+        list.add(AttrFilter.pattern, AttrFilter::make);
+        list.add(EnergyFilter.pattern, EnergyFilter::make);
+        list.add(HungerFilter.pattern, HungerFilter::make);
+        list.add(ArmorPenFilter.pattern, ArmorPenFilter::make);
+        list.add(AttackWeightFilter.pattern, AttackWeightFilter::make);
+        list.add(DmgFilter.pattern, DmgFilter::make);
+        list.add(GrievousDmgFilter.pattern, GrievousDmgFilter::make);
+        list.add(HardArmorFilter.pattern, HardArmorFilter::make);
+        list.add(SlotFilter.pattern, SlotFilter::make);
+        list.add(SoftArmorFilter.pattern, SoftArmorFilter::make);
+        list.add(StatFilter.pattern, StatFilter::make);
+        list.add(GildAttrFilter.pattern, GildAttrFilter::make);
+        list.add(ChanceFilter.pattern, ChanceFilter::make);
+        list.add(AttrModFilter.pattern, AttrModFilter::make);
+        list.add(BonusFilter.pattern, BonusFilter::make);
+        list.add(ReductionFilter.pattern, ReductionFilter::make);
         pack();
     }
 
@@ -93,65 +133,37 @@ public class ActWnd extends Window implements ObservableListener<MenuGrid.Pagina
     }
 
     private void refilter() {
-        list.clear();
-        for (MenuGrid.Pagina p : all) {
-            if (p.act().name.toLowerCase().contains(entry.text.toLowerCase()))
-                list.add(p);
-        }
-        list.sort(new ItemComparator());
-        if (list.listitems() > 0) {
-            final Optional<Integer> idx = list.selindex();
-            if (idx.isPresent()) {
-                list.change(Math.max(idx.get() - 1, 0));
-            } else {
-                list.change(0);
-            }
-        }
+        list.filter(entry.text.toLowerCase());
     }
 
     @Override
     public void init(Collection<MenuGrid.Pagina> base) {
         for (final MenuGrid.Pagina pag : base) {
-            all.add(pag);
-            if (isIncluded(pag)) {
-                list.add(pag);
-            }
+            JobSystem.submit(() -> {
+                try {
+                    pag.res();
+                    list.add(pag);
+                } catch (Loading e) {
+                    throw new JobSystem.DependencyNotMet();
+                }
+            });
         }
     }
 
     @Override
-    public void added(MenuGrid.Pagina item) {
-        all.add(item);
-        if (isIncluded(item)) {
-            list.add(item);
-        }
+    public void added(final MenuGrid.Pagina item) {
+        JobSystem.submit(() -> {
+            try {
+                item.res();
+                list.add(item);
+            } catch (Loading e) {
+                throw new JobSystem.DependencyNotMet();
+            }
+        });
     }
 
     @Override
     public void remove(MenuGrid.Pagina item) {
-        all.remove(item);
-        if (isIncluded(item)) {
-            list.remove(item);
-        }
-    }
-
-    private static class ItemComparator implements Comparator<ActList.ActItem> {
-        public int compare(ActList.ActItem a, ActList.ActItem b) {
-            return a.name.text.compareTo(b.name.text);
-        }
-    }
-
-    private boolean isIncluded(MenuGrid.Pagina pagina) {
-        //ensure it's loaded
-        try {
-            pagina.res();
-        } catch (Loading e) {
-            try {
-                e.waitfor();
-            } catch (InterruptedException ex) {
-                //Ignore
-            }
-        }
-        return pagina.act().name.toLowerCase().contains(entry.text.toLowerCase());
+        list.remove(item);
     }
 }

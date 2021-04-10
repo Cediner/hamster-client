@@ -1,5 +1,6 @@
 package haven.res.ui.tt;
 
+import hamster.data.character.Attribute;
 import haven.*;
 import haven.res.lib.tspec.Spec;
 
@@ -10,7 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
+public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo, Gild {
     public static class Fac implements InfoFactory {
         /**
          * args -> {
@@ -140,9 +141,18 @@ public class ISlots extends ItemInfo.Tip implements GItem.NumberInfo {
         return this.s.size();
     }
 
-
     public Color numcolor() {
         return this.left > 0 ? avail : Color.WHITE;
+    }
+
+    public double pmin() { return Math.round(100d*pmin); }
+    public double pmax() { return Math.round(100d*pmax); }
+    public boolean hasAttr(final Attribute attr) {
+        for(final var res : attrs) {
+            if(attr.is(res.name))
+                return true;
+        }
+        return false;
     }
 }
 

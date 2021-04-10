@@ -18,6 +18,7 @@ public class ItemData {
 	    final var itms = gson.fromJson(new FileReader("data/ItemData.json5"), ItemData[].class);
 	    for(final var  itm : itms) {
 	        itmmap.put(itm.name, itm);
+		itmmap.put(itm.name.toLowerCase(), itm);
 	    }
 	} catch (FileNotFoundException e) {
 	    logger.atSevere().withCause(e).log("Failed to load item data");

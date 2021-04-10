@@ -1,6 +1,6 @@
 package hamster.data.itm;
 
-import hamster.ui.equip.EquipmentType;
+import hamster.data.character.EquipmentType;
 
 import java.util.Set;
 
