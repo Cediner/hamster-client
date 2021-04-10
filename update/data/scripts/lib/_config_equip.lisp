@@ -38,10 +38,12 @@
 (java-sfield cape +equ-type+ "Cape")
 (java-sfield shoes +equ-type+ "Shoes")
 (java-sfield cosmetic-hat +equ-type+ "CosmeticHat")
+(java-sfield eyes +equ-type+ "Eyes")
+(java-sfield mouth +equ-type+ "Mouth")
 
 
 (export '(equipment-get-all-items
           equip-type equip-item
           equip-type-name
           head-gear accessory shirt torso-armor gloves belt left-hand right-hand
-          left-ring right-ring robe back pants leg-armor cape shoes cosmetic-hat))
+          left-ring right-ring robe back pants leg-armor cape shoes eyes mouth cosmetic-hat))
