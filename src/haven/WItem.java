@@ -29,12 +29,11 @@ package haven;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import hamster.GlobalSettings;
 import hamster.MouseBind;
 import hamster.data.itm.ItemData;
-import hamster.ui.equip.EquipmentType;
+import hamster.data.character.EquipmentType;
 import haven.ItemInfo.AttrCache;
 import haven.res.ui.tt.Wear;
 import haven.res.ui.tt.q.qbuff.Quality;

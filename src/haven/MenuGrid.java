@@ -99,7 +99,10 @@ public class MenuGrid extends MovableWidget {
 
 	public BufferedImage img() {return(res.layer(Resource.imgc).scaled());}
 	public String name() {
-	    return pag.name();
+	    if(!GlobalSettings.DEBUG.get())
+	    	return pag.name();
+	    else
+	        return String.format("%s (%s)", pag.name(), pag.res().name);
 	}
 	public String hotkey() {
 	    return pag.hotkey();
@@ -149,6 +152,11 @@ public class MenuGrid extends MovableWidget {
 		    ret = ItemInfo.catimgs(0, ret, ItemInfo.longtip(info));
 		if(pg != null)
 		    ret = ItemInfo.catimgs(0, ret, ttfnd.render("\n" + pg.text, UI.scale(200)).img);
+		if(GlobalSettings.DEBUG.get()) {
+		    for(final var inf : info) {
+			ret = ItemInfo.catimgs(0, ret, Text.render("\n" + inf).img);
+		    }
+		}
 	    }
 	    return(ret);
 	}

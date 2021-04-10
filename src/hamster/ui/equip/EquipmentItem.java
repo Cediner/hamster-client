@@ -1,5 +1,6 @@
 package hamster.ui.equip;
 
+import hamster.data.character.EquipmentType;
 import haven.GItem;
 
 public class EquipmentItem {

@@ -29,14 +29,13 @@ package haven;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
 import hamster.ui.equip.EquipmentItem;
-import hamster.ui.equip.EquipmentType;
+import hamster.data.character.EquipmentType;
 import haven.res.ui.tt.wpn.Damage;
 
 import java.awt.event.KeyEvent;
 import java.util.*;
 
 import static hamster.KeyBind.*;
-import static hamster.KeyBind.KB_FOCUS_MAP;
 import static haven.Inventory.invsq;
 
 public class Equipory extends Widget implements DTarget {

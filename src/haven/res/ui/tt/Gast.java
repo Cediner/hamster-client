@@ -37,6 +37,14 @@ public class Gast extends ItemInfo.Tip implements GItem.NumberInfo {
 	return(RichText.render(buf.toString(), 0).img);
     }
 
+    public double bonus() {
+        return Math.round(100d * fev);
+    }
+
+    public double reduction() {
+        return Math.round(100d * glut);
+    }
+
     public int itemnum() {
 	Wear wear = find(Wear.class, owner.info());
 	if(wear == null)

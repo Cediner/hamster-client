@@ -16,7 +16,7 @@
   `(equipment-get-all-items-1 (equ)))
 
 (defconstant +equ-itm+ "hamster.ui.equip.EquipmentItem")
-(defconstant +equ-type+ "hamster.ui.equip.EquipmentType")
+(defconstant +equ-type+ "hamster.data.character.EquipmentType")
 (java-func +equ-itm+ equip-type "getType")
 (java-func +equ-itm+ equip-item "getItem")
 (java-func +equ-type+ equip-type-name "name")

@@ -761,7 +761,7 @@ public class ChatUI extends Widget {
 
 	public void uimsg(String msg, Object... args) {
 	    super.uimsg(msg, args);
-	    if(msg.equals("msg") && args[1] instanceof String) {
+	    if(msg.equals("msg") && args.length > 1 && args[1] instanceof String) {
 		String line = (String)args[1];
 
 		try { // Handle any extensions from party chat that we can parse out

@@ -1,8 +1,8 @@
 package hamster.util;
 
-
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A HashMap for Resource file names.
@@ -10,7 +10,7 @@ import java.util.Optional;
  * ie: gfx/terobjs/trees/laurel -> gfx/terobjs/trees -> gfx/terobjs -> gfx -> ''
  */
 public class ResHashMap<E> {
-    private final HashMap<String, E> map = new HashMap<>();
+    private final Map<String, E> map = new ConcurrentHashMap<>();
 
     public void put(final String key, final E value) {
         map.put(key, value);
