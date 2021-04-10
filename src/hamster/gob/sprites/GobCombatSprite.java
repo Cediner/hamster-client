@@ -19,7 +19,7 @@ public class GobCombatSprite extends Sprite implements PView.Render2D {
 
     public void draw(GOut g, Pipe state) {
         if (rel != null) {
-            Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 15), state).round2();
+            Coord sc = Homo3D.obj2view(new Coord3f(0, 0, 15), state, Area.sized(g.sz())).round2();
             final Coord c = sc.sub(0, 90);
             final Coord bc = c.copy();
 
