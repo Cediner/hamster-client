@@ -302,7 +302,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     //XXX: Can only addol when inside Hafen UI Thread or you risk concurrent mod exceptions unless synchronized(gob)
     public void addol(Overlay ol, boolean async) {
-	if(!Thread.holdsLock(this)) {
+	if(!Thread.holdsLock(this) && !(this instanceof MapView.Plob)) {
 	    logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
 	    Thread.dumpStack();
 	}
@@ -407,7 +407,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     //XXX: Can only addol when inside Hafen UI Thread or you risk concurrent mod exceptions unless synchronized(gob)
     private void setattr(Class<? extends GAttrib> ac, GAttrib a) {
-	if(!Thread.holdsLock(this)) {
+	if(!Thread.holdsLock(this) && !(this instanceof MapView.Plob)) {
 	    logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
 	    Thread.dumpStack();
 	}
