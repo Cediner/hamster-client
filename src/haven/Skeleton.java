@@ -852,7 +852,7 @@ public class Skeleton {
 		    return;
 		}
 		gob.glob.loader.defer(() -> {
-			Gob n = gob.glob.oc.new Virtual(gob.rc, gob.a) {
+			final Gob n = gob.glob.oc.new Virtual(gob.rc, gob.a) {
 				public Coord3f getc() {
 				    return(new Coord3f(fc));
 				}
@@ -865,7 +865,9 @@ public class Skeleton {
 				   }
 				*/
 			    };
-			n.addol(new Gob.Overlay(n, -1, res, new MessageBuf(sdt)), false);
+			synchronized (n) {
+			    n.addol(new Gob.Overlay(n, -1, res, new MessageBuf(sdt)), false);
+			}
 			gob.glob.oc.add(n);
 		    }, null);
 	    }

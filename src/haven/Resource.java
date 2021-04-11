@@ -1197,7 +1197,7 @@ public class Resource implements Serializable {
 		    final String path = "data/dump/compiled/" + resname;
 		    final String fn = path + "/" + Code.this.name + ".class";
 		    final File file = new File(path);
-		    if (file.mkdirs()) {
+		    if (file.exists() || file.mkdirs()) {
 			try {
 			    final File cls = new File(fn);
 			    boolean exists = cls.exists();
@@ -1232,7 +1232,7 @@ public class Resource implements Serializable {
 		    final String path = "data/dump/source/" + resname;
 		    final String fn = path + "/" + name;
 		    final File file = new File(path);
-		    if (file.mkdirs()) {
+		    if (file.exists() || file.mkdirs()) {
 			try {
 			    final File cls = new File(fn);
 			    boolean exists = cls.exists();
