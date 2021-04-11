@@ -95,10 +95,12 @@ public class ActList extends Listbox<ActList.ActItem> {
 
     public synchronized void filter(final Filter filter) {
         this.currentFilter = filter;
-        filtered = items.parallelStream()
-                .filter(filter::included)
-                .sorted(Comparator.comparing(l -> l.name.text))
-                .collect(Collectors.toList());
+        synchronized (items) {
+            filtered = items.parallelStream()
+                    .filter(filter::included)
+                    .sorted(Comparator.comparing(l -> l.name.text))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
