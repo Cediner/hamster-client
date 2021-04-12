@@ -140,4 +140,9 @@ public class ItemDrag extends WItem {
     public void mousemove(Coord c) {
 	this.c = this.c.add(c.add(doff.inv()));
     }
+
+    @Override
+    public Object tooltip(Coord c, Widget prev) {
+	return !locked() ? super.tooltip(c, prev) : null;
+    }
 }
