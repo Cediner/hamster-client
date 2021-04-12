@@ -129,14 +129,14 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
     private final AttrCache<Tex> nmeteri = new AttrCache<>(this::info, AttrCache.map1s(GItem.NumberInfo.class, ninf -> new TexI(GItem.NumberInfo.numrender(ninf.itemnum(), ninf.numcolor()))));
     private final AttrCache<Double> cmeteri = new AttrCache<>(this::info, AttrCache.map1(GItem.MeterInfo.class, minf -> minf::meter));
 
-    private static final Map<String, Color> openings = new HashMap<String, Color>(4) {{
+    private static final Map<String, Color> openings = new HashMap<>(4) {{
 	put("paginae/atk/dizzy", new Color(8, 103, 136));
 	put("paginae/atk/offbalance", new Color(8, 103, 1));
 	put("paginae/atk/cornered", new Color(221, 28, 26));
 	put("paginae/atk/reeling", new Color(203, 168, 6));
     }};
-    private final Coord simpleOpeningSz = new Coord(32, 32);
-    private final Coord simpleOpeningSmallSz = new Coord(22, 21);
+    private final Coord simpleOpeningSz = UI.scale(32, 32);
+    private final Coord simpleOpeningSmallSz = UI.scale(22, 21);
 
     public boolean isOpening() {
 	try {
