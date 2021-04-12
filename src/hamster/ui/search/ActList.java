@@ -2,6 +2,7 @@ package hamster.ui.search;
 
 import hamster.ui.search.filters.AndFilter;
 import hamster.ui.search.filters.Filter;
+import hamster.util.JobSystem;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.Message;
 import haven.*;
@@ -58,6 +59,8 @@ public class ActList extends Listbox<ActList.ActItem> {
     }
 
     public void add(MenuGrid.Pagina pagina) {
+        if(mail == null)
+            throw new JobSystem.DependencyNotMet();
         ActItem item = new ActItem(pagina);
         map.put(pagina, item);
         synchronized (items) {
@@ -67,6 +70,8 @@ public class ActList extends Listbox<ActList.ActItem> {
     }
 
     public void remove(MenuGrid.Pagina pagina) {
+        if(mail == null)
+            throw new JobSystem.DependencyNotMet();
         ActItem item = map.remove(pagina);
         synchronized (items) {
             items.remove(item);
