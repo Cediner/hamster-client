@@ -551,20 +551,22 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 		last_sess_upd = System.currentTimeMillis();
 	    }
 
-	    if (GlobalSettings.SHOWSTATS.get()) {
-		final Runtime rt = Runtime.getRuntime();
-		final long free = rt.freeMemory(), total = rt.totalMemory();
-		if(free < prevfree)
-		    framealloc = ((prevfree - free) + (framealloc * 19)) / 20;
-		prevfree = free;
+	    if (GlobalSettings.SHOWSTATS.get() || GlobalSettings.SHOWFPS.get()) {
 		final int w = getWidth();
 		FastText.aprintf(g, new Coord(w, 0), 1, 0, "FPS: %d (%d%%, %d%% idle)", fps, (int) (uidle * 100.0), (int) (ridle * 100.0));
-		FastText.aprintf(g, new Coord(w, 15), 1, 0, "Mem: %,03d/%,03d/%,04d/%,04d (%,d)",
-			free / 1024 / 1024, (total - free) / 1024 / 1024, total / 1024 / 1024, rt.maxMemory() / 1024 / 1024, framealloc);
-		FastText.aprintf(g, new Coord(w, 30), 1, 0, "S: %d | R: %d | P: %d | RT: %d", sent, recv, ui.sess.pend, retran);
-		FastText.aprintf(g, new Coord(getWidth(), 45), 1, 0, "JS: %s", JobSystem.status());
-		if (ui.gui != null && ui.gui.map != null) {
-		    FastText.aprintf(g, new Coord(w, 60), 1, 0, "%.2f units/s | %.2f units/s", ui.gui.map.speed(), ui.gui.map.rspeed());
+		if(GlobalSettings.SHOWSTATS.get()) {
+		    final Runtime rt = Runtime.getRuntime();
+		    final long free = rt.freeMemory(), total = rt.totalMemory();
+		    if (free < prevfree)
+			framealloc = ((prevfree - free) + (framealloc * 19)) / 20;
+		    prevfree = free;
+		    FastText.aprintf(g, new Coord(w, UI.scale(15)), 1, 0, "Mem: %,03d/%,03d/%,04d/%,04d (%,d)",
+			    free / 1024 / 1024, (total - free) / 1024 / 1024, total / 1024 / 1024, rt.maxMemory() / 1024 / 1024, framealloc);
+		    FastText.aprintf(g, new Coord(w, UI.scale(30)), 1, 0, "S: %d | R: %d | P: %d | RT: %d", sent, recv, ui.sess.pend, retran);
+		    FastText.aprintf(g, new Coord(getWidth(), UI.scale(45)), 1, 0, "JS: %s", JobSystem.status());
+		    if (ui.gui != null && ui.gui.map != null) {
+			FastText.aprintf(g, new Coord(w, UI.scale(60)), 1, 0, "%.2f units/s | %.2f units/s", ui.gui.map.speed(), ui.gui.map.rspeed());
+		    }
 		}
 	    }
 	}

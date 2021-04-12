@@ -52,6 +52,7 @@ public class GlobalSettings {
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
+    public static final IndirSetting<Boolean> SHOWFPS = new IndirSetting<>(global, "system.show-fps", false);
     public static final IndirSetting<Boolean> SHOWSTATS = new IndirSetting<>(global, "system.show-stats", false);
 
     //Audio options

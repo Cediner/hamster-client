@@ -26,7 +26,8 @@ public class GameplayPanel extends Scrollport {
 
         { //System
             sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
-            sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
+            sys.add(new IndirCheckBox("Display fps in top right", SHOWFPS));
+            sys.add(new IndirCheckBox("Display stats in top right (includes FPS)", GlobalSettings.SHOWSTATS));
             sys.pack();
             overall.add(sys);
         }
