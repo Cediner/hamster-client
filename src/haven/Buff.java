@@ -207,8 +207,8 @@ public class Buff extends Widget implements ItemInfo.ResOwner, Bufflist.Managed 
 		g.image(Buff.frame, bc);
 	    }
 
-	    bc.x += 3;
-	    bc.y += 3;
+	    bc.x += UI.scale(3);
+	    bc.y += UI.scale(3);
 
 	    g.chcolor(clr);
 	    g.frect(bc, simpleOpeningSz);

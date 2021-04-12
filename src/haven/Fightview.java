@@ -80,8 +80,8 @@ public class Fightview extends Widget {
         public Relation(long gobid) {
             this.gobid = gobid;
             add(this.ava = new Avaview(avasz, gobid, "avacam")).canactivate = true;
-	    add(this.give = new GiveButton(0, UI.scale(new Coord(30, 30))));
-	    add(this.purs = new Button(70, "Pursue"));
+	    add(this.give = new GiveButton(0, UI.scale(30, 30)));
+	    add(this.purs = new Button(UI.scale(70), "Pursue"));
 	    for (DefenseType type : DefenseType.values()) {
 		defweights.put(type, 0.0);
 		preweights.put(type, 0.0);
@@ -415,7 +415,7 @@ public class Fightview extends Widget {
 		final Buff buf = (Buff) wdg;
 		if (buf.ameter >= 0 && buf.isOpening()) {
 		    buf.fightdraw(g.reclip(c.copy(), Buff.scframe.tex().sz()));
-		    c.x += Buff.scframe.tex().sz().x + 2;
+		    c.x += Buff.scframe.tex().sz().x + UI.scale(2);
 		}
 	    }
             y += bg.sz().y + ymarg;

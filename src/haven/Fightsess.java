@@ -40,7 +40,7 @@ import java.awt.event.KeyEvent;
 
 import static hamster.KeyBind.*;
 
-public class Fightsess extends Widget {
+public class  Fightsess extends Widget {
     private static final Coord off = new Coord(UI.scale(32), UI.scale(32));
     public static final Tex cdframe = Resource.loadtex("gfx/hud/combat/cool");
     public static final Tex actframe = Buff.frame;
@@ -128,12 +128,12 @@ public class Fightsess extends Widget {
 	final Coord center = sz.div(2);
 	actionAnchor = center.add(0, center.y / 2);
 	cooldownAnchor = center.sub(0, (int) (center.y / 1.5f));
-	enemyBuffAnchor = cooldownAnchor.add(50, 0);
-	enemyIPAnchor = cooldownAnchor.add(75, 15);
-	enemyLastMoveAnchor = cooldownAnchor.add(50, 50);
-	buffAnchor = cooldownAnchor.sub(50, 0);
-	IPAnchor = cooldownAnchor.add(-75, 15);
-	lastMoveAnchor = cooldownAnchor.add(-50, 50);
+	enemyBuffAnchor = cooldownAnchor.add(UI.scale(50, 0));
+	enemyIPAnchor = cooldownAnchor.add(UI.scale(75, 15));
+	enemyLastMoveAnchor = cooldownAnchor.add(UI.scale(50, 50));
+	buffAnchor = cooldownAnchor.sub(UI.scale(50, 0));
+	IPAnchor = cooldownAnchor.add(UI.scale(-75, 15));
+	lastMoveAnchor = cooldownAnchor.add(UI.scale(-50, 50));
     }
 
     private void updatepos() {
@@ -251,7 +251,7 @@ public class Fightsess extends Widget {
 
 	if(fv.current != null) {
 	    for (Buff buff : fv.current.buffs.children(Buff.class)) {
-		buff.sessdraw(g, enemyBuffAnchor.add(buff.c.x + 20, buff.c.y - Buff.cframe.sz().y));
+		buff.sessdraw(g, enemyBuffAnchor.add(buff.c.x + UI.scale(20), buff.c.y - Buff.cframe.sz().y));
 	    }
 
 	    g.aimage(ip.get().tex(), IPAnchor, 1, 0.5);
@@ -266,7 +266,7 @@ public class Fightsess extends Widget {
 	    if (now < fv.atkct) {
 		double a = (now - fv.atkcs) / (fv.atkct - fv.atkcs);
 		g.chcolor(255, 0, 128, 224);
-		g.fellipse(cdc, new Coord(24, 24), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)),
+		g.fellipse(cdc, UI.scale(24, 24), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)),
 			Math.PI / 2);
 		g.chcolor();
 	    }
