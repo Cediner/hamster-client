@@ -1,5 +1,5 @@
 {
-  "version": "d6a08ee8d6244e62a3d02c6fc10cbec527024d7b",
+  "version": "faf04c1975bf680f9fe52e357f1592d4395a5f56",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "f45QxfQWw/cHnVvRsZiBaRa3batwCPhJcYMISqEOgqU=",
     "data\\res\\custom\\hud\\default\\buttons\\hide.res": "4WTKs3qMklUt4OBtGePmD0nG1VG1ISV4IfQrDmZbuT4=",
@@ -83,7 +83,7 @@
     "data\\res\\custom\\hud\\sloth\\scroll\\horizontal.res": "RoFoqrzAh6JdYtK3LrCEDq2nFaLr4LN+7szHnIxT1Nc=",
     "data\\res\\custom\\mm\\icons\\banner.res": "vnZ+2g+YgIGXakWZZ8e7+o4s5WNCOm95mmovaahTuXg=",
     "data\\res\\custom\\hud\\default\\vm.res": "UmFl1A9RQJOpjhwvBkcJw6+ekDbeIe5lHHdq27tVMOU=",
-    "data\\res\\custom\\paginae\\default\\wnd\\food.res": "Fnb9TxNZzMXlfRAxL7iE5J1jEAZCZTaez5R5IHE9f3w=",
+    "data\\res\\custom\\paginae\\default\\wnd\\food.res": "QvN5laZnJxtyPrtNapalhSAE/cKaINLp6yAgaVcqnWo=",
     "data\\res\\custom\\hud\\sloth\\belt\\rotate.res": "tWPkg/O6rgfZOP4BdpVdz4FwpE7rNPbkJzsopgwoILg=",
     "data\\res\\custom\\sfx\\default\\squeak.res": "8NL0re5sbOHHIEqZkuHViB1u22jwnTBLmj2PTQQkxc0=",
     "data\\res\\custom\\hud\\default\\scroll\\horizontal.res": "DYncYRpRP1Ma5mChFfABG5Y8qxoNbVUiz6oBeVuoAOc=",
@@ -96,7 +96,7 @@
     "data\\res\\custom\\sfx\\default\\you-lose.res": "LpCkNpClVHm27NzzoCL5g6lr7RP0WsFX7H0f7Qjb/oQ=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_StaminaFruit.res": "6ThgOFaIP9r2lofaVtduh7VaRVoHXaIo/522Kj6LjS0=",
     "data\\res\\custom\\sfx\\default\\quern.res": "Adt60Nr5SfjVi8sR9wbFBt8rnIxGgnu/MtOAI1gq3CE=",
-    "hafen.jar": "mykFPs5in38XbqClP3ERWmWpfVQ/8TDk0Iu9eqt2bLE=",
+    "hafen.jar": "9lBP7/KcKo1fTcDKaKb6UARzz7KTDKkRYwiB/luVdjc=",
     "data\\res\\custom\\hud\\sloth\\chkbox\\small.res": "LXfAecDnC3vFQKaLH6i4c3UnUMWwa0zzpk5HOXxHsJc=",
     "data\\res\\custom\\mm\\hud\\view.res": "2DP1AmkdfTPrWbmhbQ9wGhS64IOnZktUD+H+1RLoDsQ=",
     "data\\scripts\\fish-bot.lisp": "Xcp1HnccKct/PDVNOQuspm1UYPmp78zqKfYMs7X+RQQ=",
@@ -301,7 +301,7 @@
     "data\\res\\custom\\hud\\default\\frame.res": "9j7Tsux0fgu6g+FaUl4u7Zhm1wHamrqZL2O1tEDF2Vs=",
     "data\\scripts\\fuel-smelter-12.lisp": "q9aDKIFVjh3BA8cjmYQKaxCVb9lPd0M8JLMj43Ye0wI=",
     "data\\res\\custom\\paginae\\default\\wnd\\chat.res": "Ulp3581paeQBqNBQlFD0bpYu2O5ExtdfEOVJuNYM9BI=",
-    "data\\scripts\\lib\\_config_equip.lisp": "JaGxUT8Xl4UcDIYLg65Gm2y+Y5Updqpr4TLYoyDdW48=",
+    "data\\scripts\\lib\\_config_equip.lisp": "GclpCKO5V9dCV+CvXq5OfA2jkimRLi3wwIGqWh9NQgA=",
     "data\\res\\custom\\sfx\\default\\cauldron.res": "RpDa66RmIlEEis8K1xJl6pySk8UyJ9Dukm6vsd0Iz/0=",
     "data\\res\\custom\\paginae\\default\\wnd\\lmap.res": "HBAdlQlIHSScRfbAcwUcg5N3UBOYkbFpM7Yyrew1onI=",
     "data\\res\\custom\\sfx\\omni\\AOE2_Dock.res": "2quaxC003dMbLQX3C8qJhr+vT3Fb0rNo+Vuo90KOoF0=",
