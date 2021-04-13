@@ -49,7 +49,11 @@ public class BeltWnd extends MovableWidget {
                     return Optional.empty();
                 }
             } else if (pag != null) {
-                return Optional.of(pag.img.get());
+                try {
+                    return Optional.of(pag.img.get());
+                } catch (Loading l) {
+                    return Optional.empty();
+                }
             }
             return Optional.empty();
         }

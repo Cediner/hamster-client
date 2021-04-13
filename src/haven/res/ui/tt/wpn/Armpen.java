@@ -31,4 +31,8 @@ public class Armpen extends WeaponInfo {
     public int order() {
         return 100;
     }
+
+    public double pen() {
+        return deg * 100d;
+    }
 }

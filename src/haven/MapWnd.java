@@ -51,6 +51,7 @@ import integrations.mapv4.MappingClient;
 import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
+import static haven.MapFile.NOLINK;
 import static haven.Utils.eq;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
@@ -333,6 +334,11 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		if(!press && !domark) {
 		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
+		}
+	    } else if(button ==3 && mark.m instanceof MapFile.LinkedMarker && ((MapFile.LinkedMarker) mark.m).lid != NOLINK) {
+		final Marker target = view.file.lmarkers.get(((MapFile.LinkedMarker) mark.m).lid);
+		if (target != null) {
+		    view.center(new MiniMap.SpecLocator(target.seg, target.tc));
 		}
 	    } else if(mark.m instanceof SMarker) {
 		Gob gob = MarkerID.find(ui.sess.glob.oc, ((SMarker)mark.m).oid);

@@ -7,7 +7,7 @@
       "parentver": 1,
       "name": "Food Search",
       "preq": "",
-      "hk": "C",
+      "hk": "W",
       "ad": []
     },
     {
@@ -22,7 +22,7 @@
     },
     {
       "layer-name": "tooltip",
-      "t": "Toggle Food Search "
+      "t": "Toggle Food Search"
     }
   ]
 }

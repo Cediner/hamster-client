@@ -1,10 +1,12 @@
 package haven.res.ui.tt.attrmod;
 
+import hamster.data.character.Attribute;
 import haven.*;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 public class AttrMod extends ItemInfo.Tip {
     public static class Mod {
@@ -60,5 +62,21 @@ public class AttrMod extends ItemInfo.Tip {
 
     public BufferedImage tipimg() {
         return modimg(this.mods);
+    }
+
+    public boolean hasAttr(final Attribute attr) {
+        for(final var mod : mods) {
+            if(attr.is(mod.attr.name))
+                return true;
+        }
+        return false;
+    }
+
+    public Optional<Mod> mod(final Attribute attr) {
+        for(final var mod : mods) {
+            if(attr.is(mod.attr.name))
+                return Optional.of(mod);
+        }
+        return Optional.empty();
     }
 }
