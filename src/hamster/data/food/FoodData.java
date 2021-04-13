@@ -2,14 +2,18 @@ package hamster.data.food;
 
 import com.google.common.flogger.FluentLogger;
 import com.google.gson.Gson;
+import hamster.util.TimedCache;
 import haven.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-public class FoodData {
+public class FoodData implements Disposable {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    //XXX: may be better to just do a size limited cache, but this works for now.
+    private static final TimedCache<FoodData> textcache = new TimedCache<>(TimeUnit.SECONDS.toMillis(5));
     public static final List<FoodData> foods = new ArrayList<>();
     public static final Map<String, FepType> feptypemap = new HashMap<>();
     public static final Map<String, FepType> fepmap = new HashMap<>();
@@ -104,22 +108,15 @@ public class FoodData {
 		    if(ing.name.matches("\\(.+\\)"))
 			ing.name = ing.name.substring(ing.name.indexOf('(')+1, ing.name.indexOf(')'));
 		}
-
-	        final StringBuilder sb = new StringBuilder();
-	        for(final var ing : itm.ingredients) {
-	            if(sb.length() > 0)
-	                sb.append(", ");
-	            sb.append(ing.name);
-	            sb.append(": ");
-	            sb.append(ing.percentage);
-	            sb.append('%');
-		}
-	        itm.ingredientsText = RichText.render(sb.toString(), UI.scale(300));
 	    }
 	    longestname = max;
 	} catch (FileNotFoundException fe) {
 	    logger.atSevere().withCause(fe).log("Failed to load food data");
 	}
+    }
+
+    public static void tick() {
+        textcache.tick();
     }
 
     public String itemName;
@@ -130,7 +127,8 @@ public class FoodData {
     public List<Ingredient> ingredients;
     public List<Fep> feps;
 
-    public Text ingredientsText;
+    private Text ingredientsText = null;
+    private Defer.Future<Text> dIngText = null;
 
     public float fepPerHunger() {
         return totalFep / hunger;
@@ -142,5 +140,48 @@ public class FoodData {
                 return fep;
 	}
         return null;
+    }
+
+    public Optional<Tex> ingredientsText() {
+        textcache.access(this);
+        if(ingredientsText != null)
+            return Optional.of(ingredientsText.tex());
+        if(dIngText != null) {
+            if(dIngText.done()) {
+                ingredientsText = dIngText.get();
+                dIngText = null;
+		return Optional.of(ingredientsText.tex());
+	    }
+	} else {
+	    dIngText = Defer.later(() -> {
+		final StringBuilder sb = new StringBuilder();
+		for (final var ing : ingredients) {
+		    if (sb.length() > 0)
+			sb.append(", ");
+		    sb.append(ing.name);
+		    sb.append(": ");
+		    sb.append(ing.percentage);
+		    sb.append('%');
+		}
+		return RichText.render(sb.toString(), UI.scale(300));
+	    });
+	}
+	return Optional.empty();
+    }
+
+    @Override
+    public void dispose() {
+        if(ingredientsText != null) {
+            ingredientsText.tex().dispose();
+	}
+        if(dIngText != null) {
+	    if (dIngText.done())
+		dIngText.get().tex().dispose();
+	    else {
+		dIngText.cancel();
+	    }
+	}
+	ingredientsText = null;
+	dIngText = null;
     }
 }

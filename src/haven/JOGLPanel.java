@@ -37,6 +37,7 @@ import com.google.common.flogger.FluentLogger;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.*;
 import hamster.GlobalSettings;
+import hamster.data.food.FoodData;
 import hamster.util.JobSystem;
 import hamster.util.msg.MailBox;
 import hamster.util.ObservableCollection;
@@ -682,6 +683,9 @@ public class JOGLPanel extends GLCanvas implements Runnable, UIPanel, Console.Di
 
 		    //Process any incoming mail
 		    processMail();
+
+		    //Tick Food Data cache
+		    FoodData.tick();
 
 		    //Get next UI to render this frame off
 		    final UI ui;
