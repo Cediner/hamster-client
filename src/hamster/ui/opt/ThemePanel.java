@@ -1,5 +1,6 @@
 package hamster.ui.opt;
 
+import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirLabel;
 import hamster.ui.core.indir.IndirRadioGroup;
@@ -18,7 +19,7 @@ public class ThemePanel extends Scrollport {
         super(new Coord(UI.scale(500), UI.scale(395)));
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
-        final Grouping theme = new LinearGrouping("Theme Settings", spacer, false);
+        final Grouping theme = new LinearGrouping( TranslationLookup.get("opt_theme_settings"), spacer, false);
 
         { //theme
             final ArrayList<String> huds = new ArrayList<>();
@@ -33,16 +34,16 @@ public class ThemePanel extends Scrollport {
             }
 
             //TODO: Most windows should repack on theme change
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Main Hud Theme (requires restart)", 450, HUDTHEME);
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>(TranslationLookup.get("opt_theme_hud_theme"), 450, HUDTHEME);
             for (final String name : huds) {
                 rgrp.add(name, name);
             }
             theme.add(rgrp);
-            theme.add(new IndirLabel(() -> String.format("Settings for %s", HUDTHEME.get())));
-            theme.add(OptionsWnd.ColorPreWithLabel("Window Color: ", WNDCOL));
-            theme.add(OptionsWnd.ColorPreWithLabel("Button Color: ", BTNCOL));
-            theme.add(OptionsWnd.ColorPreWithLabel("Textbox Color: ", TXBCOL));
-            theme.add(OptionsWnd.ColorPreWithLabel("Slider Color: ", SLIDERCOL));
+            theme.add(new IndirLabel(() -> String.format("%s%s", TranslationLookup.get("opt_theme_for"), HUDTHEME.get())));
+            theme.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_theme_win_col"), WNDCOL));
+            theme.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_theme_btn_col"), BTNCOL));
+            theme.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_theme_txtbox_col"), TXBCOL));
+            theme.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_theme_slider_col"), SLIDERCOL));
             theme.pack();
         }
 

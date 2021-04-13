@@ -38,6 +38,7 @@ public class GlobalSettings {
         Hidden.init();
         HighlightData.init();
         FoodData.init();
+        TranslationLookup.init();
     }
 
     //Non-saved globals
@@ -192,6 +193,7 @@ public class GlobalSettings {
             Color.WHITE);
 
     //UI
+    public static final IndirSetting<String> LANG = new IndirSetting<>(global, "ui.language", "english");
     public static final IndirSetting<Boolean> SHOWPLAVA = new IndirSetting<>(global, "ui.show-player-avatar", true);
     public static final IndirSetting<Boolean> SHOWSPEED = new IndirSetting<>(global, "ui.show-player-speed", true);
     public static final IndirSetting<Boolean> SHOWHEALTH = new IndirSetting<>(global, "ui.show-player-health", true);
