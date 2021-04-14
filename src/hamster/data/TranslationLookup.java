@@ -42,6 +42,6 @@ public class TranslationLookup {
 
     public static String get(final String tag) {
         final String str = langs.get(GlobalSettings.LANG.get()).get(tag);
-        return str != null ? str : langs.get("english").get(tag);
+        return str != null ? str : langs.get("english").translations.getOrDefault(tag, tag);
     }
 }

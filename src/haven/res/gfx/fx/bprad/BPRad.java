@@ -11,7 +11,7 @@ import java.awt.Color;
 @SuppressWarnings("unused") //Dynamically created by resources
 public class BPRad extends Sprite {
     public static final int CUSTOM_BPRAD_ID = -541924911;
-    static final Pipe.Op smat = new BaseColor(new Color(192, 0, 0, 128));
+    static final Pipe.Op smat = Pipe.Op.compose(new BaseColor(new Color(192, 0, 0, 128)), Clickable.No);
     static final Pipe.Op emat = Pipe.Op.compose(new BaseColor(new Color(255, 224, 96)), new States.LineWidth(4));
     final VertexBuf.VertexData posa;
     final VertexBuf vbuf;
