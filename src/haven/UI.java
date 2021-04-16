@@ -354,7 +354,8 @@ public class UI {
 
     public void rnewwidget(final int id, final String type, final int parent, final Object[] pargs,
 			   final Object... cargs) throws InterruptedException {
-	logger.atFine().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
+        if(GlobalSettings.DEBUG.get())
+            logger.atInfo().log("New Widget [%d] of type %s to [%d] - pargs: %s - cargs: %s", id, type, parent,
 		LazyArgs.lazy(() -> Arrays.toString(pargs)), LazyArgs.lazy(() -> Arrays.toString(cargs)));
 	next_predicted_id = id + 1;
 	Widget.Factory f = Widget.gettype2(type);
@@ -378,7 +379,8 @@ public class UI {
     }
 
     public void raddwidget(final int id, final int pid, final Object[] pargs) {
-	logger.atFine().log("Remote Add Widget [%d] to [%d] - %s", id, pid, LazyArgs.lazy(() -> Arrays.toString(pargs)));
+	if(GlobalSettings.DEBUG.get())
+	    logger.atInfo().log("Remote Add Widget [%d] to [%d] - %s", id, pid, LazyArgs.lazy(() -> Arrays.toString(pargs)));
 	mailbox.mail(new AddWdg(id, pid, pargs));
 	if(this.sess != null)
 	    sess.details.context.dispatchmsg(null, "add-widget", id, pid);
@@ -486,7 +488,8 @@ public class UI {
     }
 
     public void ruimsg(final int id, final String msg, final Object... args) {
-	logger.atFiner().log("Remote UIMSG [id %d] [msg %s]", id, msg);
+	if(GlobalSettings.DEBUG.get())
+	    logger.atInfo().log("Remote UIMSG [id %d] [msg %s]", id, msg);
 	mailbox.mail(new UIMsg(id, msg, args));
 	if(this.sess != null)
 	    sess.details.context.dispatchmsg(null, "uimsg", id, msg, args);

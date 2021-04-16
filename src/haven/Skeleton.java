@@ -28,6 +28,8 @@ package haven;
 
 import java.util.*;
 import java.util.function.*;
+
+import hamster.gob.sprites.ShakeOl;
 import haven.render.*;
 
 public class Skeleton {
@@ -457,6 +459,50 @@ public class Skeleton {
 	public abstract boolean done();
     }
 
+    public class TreeChop extends Skeleton.PoseMod implements Skeleton.FxTrack.EventListener {
+	public final Skeleton.TrackMod rp;
+	private final Resource res;
+	public final long tgob;
+
+	public TreeChop(Skeleton paramSkeleton, Skeleton.ModOwner paramModOwner, long paramLong,
+			final Skeleton.ResPose choppan, final Resource res) {
+	    super(paramModOwner);
+	    this.rp = choppan.forskel(paramModOwner, paramSkeleton, choppan.defmode);
+	    this.rp.listen(this);
+	    this.tgob = paramLong;
+	    this.res = res;
+	}
+
+	public void apply(Skeleton.Pose paramPose) {
+	    this.rp.apply(paramPose);
+	}
+
+	public boolean tick(float paramFloat) {
+	    return this.rp.tick(paramFloat);
+	}
+
+	public boolean stat() {
+	    return this.rp.stat();
+	}
+
+	public boolean done() {
+	    return this.rp.done();
+	}
+
+	public void event(Skeleton.FxTrack.Event paramEvent) {
+	    if (paramEvent instanceof Skeleton.FxTrack.Trigger &&
+		    ((FxTrack.Trigger) paramEvent).id.equals("chop")) {
+		Gob gob = (this.owner.context(Glob.class)).oc.getgob(this.tgob);
+		if (gob != null) {
+		    double d = -((Gob) this.owner).rc.angle(gob.rc) + 1.5707963267948966D;
+		    synchronized (gob) {
+			gob.addol(new Gob.Overlay(gob, new ShakeOl(gob, d, res)));
+		    }
+		}
+	    }
+	}
+    }
+
     public PoseMod nilmod() {
 	return(new PoseMod(ModOwner.nil) {
 		public boolean stat() {return(true);}
@@ -529,8 +575,18 @@ public class Skeleton {
 	    };
     }
 
+    private static final Map<String, ModFactory> resfacts = new HashMap<>();
+    static {
+        resfacts.put("gfx/borka/treechop", ((skel, owner, res, sdt) -> {
+	    final Skeleton.ResPose choppan = (Loading.waitfor(res.pool.load("gfx/borka/choppan", 21))).layer(Skeleton.ResPose.class);
+	    if (sdt.eom())
+		return choppan.forskel(owner, skel, choppan.defmode);
+	    return skel.new TreeChop(skel, owner, sdt.uint32(), choppan, res);
+	}));
+    }
+
     public PoseMod mkposemod(ModOwner owner, Resource res, Message sdt) {
-	ModFactory f = res.getcode(ModFactory.class, false);
+	ModFactory f = resfacts.getOrDefault(res.name, res.getcode(ModFactory.class, false));
 	if(f == null)
 	    f = ModFactory.def;
 	return(f.create(this, owner, res, sdt));
@@ -852,7 +908,7 @@ public class Skeleton {
 		    return;
 		}
 		gob.glob.loader.defer(() -> {
-			Gob n = gob.glob.oc.new Virtual(gob.rc, gob.a) {
+			final Gob n = gob.glob.oc.new Virtual(gob.rc, gob.a) {
 				public Coord3f getc() {
 				    return(new Coord3f(fc));
 				}
@@ -865,7 +921,9 @@ public class Skeleton {
 				   }
 				*/
 			    };
-			n.addol(new Gob.Overlay(n, -1, res, new MessageBuf(sdt)), false);
+			synchronized (n) {
+			    n.addol(new Gob.Overlay(n, -1, res, new MessageBuf(sdt)), false);
+			}
 			gob.glob.oc.add(n);
 		    }, null);
 	    }

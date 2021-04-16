@@ -1,6 +1,7 @@
 package hamster.ui.opt;
 
 import hamster.GlobalSettings;
+import hamster.data.TranslationLookup;
 import hamster.gob.Tag;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.*;
@@ -12,47 +13,48 @@ import static hamster.GlobalSettings.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
-        final Grouping sys = new LinearGrouping("System Settings", spacer, false);
-        final Grouping lighting = new LinearGrouping("Light Settings", spacer, false);
-        final Grouping map = new LinearGrouping("Map Settings", spacer, false);
-        final Grouping cam = new LinearGrouping("Camera Settings", spacer, false);
-        final Grouping gob = new LinearGrouping("Gob Settings", spacer, false);
-        final Grouping animal = new LinearGrouping("Animal Settings", spacer, false);
-        final Grouping pf = new LinearGrouping("Pathfinding Settings", spacer, false);
+        final Grouping sys = new LinearGrouping(TranslationLookup.get("opt_gameplay_sys"), spacer, false);
+        final Grouping lighting = new LinearGrouping(TranslationLookup.get("opt_gameplay_light"), spacer, false);
+        final Grouping map = new LinearGrouping(TranslationLookup.get("opt_gameplay_map"), spacer, false);
+        final Grouping cam = new LinearGrouping(TranslationLookup.get("opt_gameplay_cam"), spacer, false);
+        final Grouping gob = new LinearGrouping(TranslationLookup.get("opt_gameplay_gob"), spacer, false);
+        final Grouping animal = new LinearGrouping(TranslationLookup.get("opt_gameplay_animal"), spacer, false);
+        final Grouping pf = new LinearGrouping(TranslationLookup.get("opt_gameplay_pf"), spacer, false);
 
         { //System
-            sys.add(new IndirCheckBox("Debug Mode", GlobalSettings.DEBUG));
-            sys.add(new IndirCheckBox("Display stats in top right", GlobalSettings.SHOWSTATS));
+            sys.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_sys_debug"), GlobalSettings.DEBUG));
+            sys.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_sys_fps"), SHOWFPS));
+            sys.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_sys_stats"), GlobalSettings.SHOWSTATS));
             sys.pack();
             overall.add(sys);
         }
         { //Camera
-            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>("Camera Type", UI.scale(500), GlobalSettings.CAMERA,
+            final IndirRadioGroup<String> rgrp = new IndirRadioGroup<>(TranslationLookup.get("opt_gameplay_cam_type"), UI.scale(500), GlobalSettings.CAMERA,
                     (camera) -> MapView.MessageBus.send(new MapView.SetCamera(camera)));
             {
-                rgrp.add("Ortho Cam", "sortho");
-                rgrp.add("Angle Locked Ortho Cam", "ortho");
-                rgrp.add("Non-smoothed Free Cam", "worse");
-                rgrp.add("Smoothed Free Cam", "bad");
-                rgrp.add("Follow Cam", "follow");
-                rgrp.add("Top Down Cam", "topdown");
-                rgrp.add("Fixator", "fixator");
-                rgrp.add("Freestyle", "freestyle");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_ortho"), "sortho");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_locked_ortho"), "ortho");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_free"), "worse");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_smooth_free"), "bad");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_follow"), "follow");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_topdown"), "topdown");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_fixator"), "fixator");
+                rgrp.add(TranslationLookup.get("opt_gameplay_cam_freestyle"), "freestyle");
             }
-            final Grouping freeg = new LinearGrouping("Free Cam Settings", spacer, false);
+            final Grouping freeg = new LinearGrouping(TranslationLookup.get("opt_gameplay_cam_free_set"), spacer, false);
             { //Free Cam Settings
-                freeg.add(new IndirCheckBox("Reverse X Axis for Free Cam", GlobalSettings.FREECAMREXAXIS));
-                freeg.add(new IndirCheckBox("Reverse Y Axis for Free Cam", GlobalSettings.FREECAMREYAXIS));
-                freeg.add(new IndirCheckBox("Free Cam lock elevation", GlobalSettings.FREECAMLOCKELAV));
+                freeg.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_cam_free_reverse_x"), GlobalSettings.FREECAMREXAXIS));
+                freeg.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_cam_free_reverse_y"), GlobalSettings.FREECAMREYAXIS));
+                freeg.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_cam_free_lock_elev"), GlobalSettings.FREECAMLOCKELAV));
                 freeg.pack();
             }
 
             cam.add(rgrp);
-            cam.add(new IndirLabel(() -> String.format("Camera Projection: %d", GlobalSettings.CAMERAPROJFAR.get())));
+            cam.add(new IndirLabel(() -> String.format("%s%d", TranslationLookup.get("opt_gameplay_cam_projection"), GlobalSettings.CAMERAPROJFAR.get())));
             cam.add(new IndirHSlider(UI.scale(200), 5000, 50000, GlobalSettings.CAMERAPROJFAR,
                     (val) -> MapView.MessageBus.send(new MapView.CameraResized())));
             cam.add(freeg);
@@ -60,111 +62,111 @@ public class GameplayPanel extends Scrollport {
             overall.add(cam);
         }
         { // Lights
-            lighting.add(new IndirCheckBox("Nightvision", NIGHTVISION));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Ambient: ", NVAMBIENTCOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Diffuse: ", NVDIFFUSECOL));
-            lighting.add(OptionsWnd.ColorPreWithLabel("Nightvision Specular: ", NVSPECCOL));
-            lighting.add(new IndirCheckBox("Dark Mode (Restart client when changing this)", DARKMODE));
+            lighting.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_light_nv"), NIGHTVISION));
+            lighting.add(OptionsWnd.ColorPreWithLabel( TranslationLookup.get("opt_gameplay_light_nv_amb"), NVAMBIENTCOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel( TranslationLookup.get("opt_gameplay_light_nv_dif"), NVDIFFUSECOL));
+            lighting.add(OptionsWnd.ColorPreWithLabel( TranslationLookup.get("opt_gameplay_light_nv_spc"), NVSPECCOL));
+            lighting.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_light_dark"), DARKMODE));
             lighting.pack();
             overall.add(lighting);
         }
         { // Map related
             //Display related
-            map.add(new IndirCheckBox("Show map", SHOWMAP, (val) -> MapView.MessageBus.send(new MapView.ToggleMap(val))));
-            map.add(new IndirCheckBox("Show gobs", SHOWGOBS, (val) -> MapView.MessageBus.send(new MapView.ToggleGobs(val))));
-            map.add(new IndirCheckBox("Keep gobs forever (Use with caution)", KEEPGOBS));
-            map.add(new IndirCheckBox("Keep grids forever (Use with caution)", KEEPGRIDS));
-            map.add(new IndirCheckBox("Skip loading", SKIPLOADING));
-            map.add(new IndirLabel(() -> String.format("Map grid draw distance: %d", DRAWGRIDRADIUS.get())));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_map"), SHOWMAP, (val) -> MapView.MessageBus.send(new MapView.ToggleMap(val))));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_gob"), SHOWGOBS, (val) -> MapView.MessageBus.send(new MapView.ToggleGobs(val))));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_keep_gob"), KEEPGOBS));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_keep_grid"), KEEPGRIDS));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_skip"), SKIPLOADING));
+            map.add(new IndirLabel(() -> String.format("%s%d", TranslationLookup.get("opt_gameplay_map_draw_dist"), DRAWGRIDRADIUS.get())));
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
-            map.add(new IndirCheckBox("Flatworld (Not implemented)", FLATWORLD));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_flat"), FLATWORLD));
             //Grid related
-            map.add(new IndirCheckBox("Show Flavor Objects", SHOWFLAVOBJS, (val) -> MapView.MessageBus.send(new MapView.ToggleFlavObjs(val))));
-            map.add(new IndirCheckBox("Show Transition tiles", SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_flav"), SHOWFLAVOBJS, (val) -> MapView.MessageBus.send(new MapView.ToggleFlavObjs(val))));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_tran"), SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Ocean related
-            map.add(new IndirCheckBox("Show water surface top", SHOWWATERSURF, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
-            map.add(new IndirCheckBox("Colorize Deep Ocean tiles", COLORIZEDEEPWATER, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
-            map.add(OptionsWnd.ColorPreWithLabel("Deep Ocean tile color: ", DEEPWATERCOL, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_water"), SHOWWATERSURF, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_colorize_ocean"), COLORIZEDEEPWATER, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
+            map.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_gameplay_map_ocean_col"), DEEPWATERCOL, (val) -> MCache.MessageBus.send(new MCache.UpdateWaterTile())));
             //Cave related
-            map.add(new IndirCheckBox("Short cave walls", GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_short_cave"), GlobalSettings.SHORTCAVEWALLS, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
             //Winter / Snow related
-            map.add(new IndirCheckBox("Spawn snowflakes (requires flavor objs on)", SHOWSNOW));
-            map.add(new IndirCheckBox("Make snowflakes larger", LARGESNOWFLAKE, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
-            final IndirRadioGroup<Integer> sfs = map.add(new IndirRadioGroup<>("Snow Fall Speed", UI.scale(450), SNOWFALLSPEED));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_snow"), SHOWSNOW));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_snow_large"), LARGESNOWFLAKE, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));
+            final IndirRadioGroup<Integer> sfs = map.add(new IndirRadioGroup<>(TranslationLookup.get("opt_gameplay_map_snow_fall_spd"), UI.scale(450), SNOWFALLSPEED));
             {
-                sfs.add("Standard Speed", 1);
+                sfs.add(TranslationLookup.get("opt_gameplay_map_snow_standard"), 1);
                 sfs.add("5×", 2);
                 sfs.add("50×", 50);
                 sfs.add("100×", 100);
                 sfs.add("1000×", 1000);
             }
-            final IndirRadioGroup<Integer> sgs = map.add(new IndirRadioGroup<>("Snow Gust Speed", UI.scale(450), SNOWGUSTSPEED));
+            final IndirRadioGroup<Integer> sgs = map.add(new IndirRadioGroup<>(TranslationLookup.get("opt_gameplay_map_snow_gust_spd"), UI.scale(450), SNOWGUSTSPEED));
             {
-                sgs.add("Standard Speed", 1);
+                sgs.add(TranslationLookup.get("opt_gameplay_map_snow_standard"), 1);
                 sgs.add("2×", 2);
                 sgs.add("50×", 50);
                 sgs.add("100×", 100);
                 sgs.add("1000×", 1000);
             }
-            final IndirRadioGroup<Integer> sd = map.add(new IndirRadioGroup<>("Snow Density", UI.scale(450), SNOWDENSITY));
+            final IndirRadioGroup<Integer> sd = map.add(new IndirRadioGroup<>(TranslationLookup.get("opt_gameplay_map_snow_density"), UI.scale(450), SNOWDENSITY));
             {
-                sd.add("Flake every 1s", 1);
-                sd.add("Flake every 500ms", 2);
-                sd.add("Flake every 200ms", 5);
-                sd.add("Flake every 100ms", 10);
-                sd.add("Flake every 10ms", 100);
+                sd.add(String.format("%s1s", TranslationLookup.get("opt_gameplay_map_snow_flake_every")), 1);
+                sd.add(String.format("%s500ms", TranslationLookup.get("opt_gameplay_map_snow_flake_every")), 2);
+                sd.add(String.format("%s200ms", TranslationLookup.get("opt_gameplay_map_snow_flake_every")), 5);
+                sd.add(String.format("%s100ms", TranslationLookup.get("opt_gameplay_map_snow_flake_every")), 10);
+                sd.add(String.format("%s10ms", TranslationLookup.get("opt_gameplay_map_snow_flake_every")), 100);
             }
             map.pack();
             overall.add(map);
         }
         { //Gob
-            gob.add(new Label("Bad Kin Group:"));
+            gob.add(new Label(TranslationLookup.get("opt_gameplay_gob_badkin")));
             gob.add(new IndirGroupSelector(GlobalSettings.BADKIN, BuddyWnd.gc));
-            gob.add(new IndirCheckBox("Show halo on yourself", GlobalSettings.SHOWPLAYERHALO));
-            gob.add(new IndirCheckBox("Show halo on players", GlobalSettings.SHOWGOBHALO));
-            gob.add(new IndirCheckBox("Show halo on players on hearth", GlobalSettings.SHOWGOBHALOONHEARTH));
-            gob.add(new IndirCheckBox("Colorize Aggro'd Gobs", GlobalSettings.COLORIZEAGGRO));
-            gob.add(new IndirCheckBox("Colorize Drying Frames", GlobalSettings.COLORFULFARMES));
-            gob.add(new IndirCheckBox("Colorize Tanning Tubs", GlobalSettings.COLORFULTUBS));
-            gob.add(new IndirCheckBox("Colorize Cupboards", GlobalSettings.COLORFULCUPBOARDS));
-            gob.add(new IndirCheckBox("Colorize Cheese Racks", GlobalSettings.COLORFULCHEESERACKS));
-            gob.add(new IndirCheckBox("Colorize Cave dust", COLORFULDUST));
-            gob.add(new IndirCheckBox("Cave dust last longer", LONGLIVINGDUST));
-            gob.add(new IndirCheckBox("Make Cave dust larger", LARGEDUSTSIZE));
-            gob.add(new IndirCheckBox("Show Crop Stage", GlobalSettings.SHOWCROPSTAGE));
-            gob.add(new IndirCheckBox("Show Simple Crops (Requires reload of gobs in view)", GlobalSettings.SIMPLECROPS));
-            gob.add(new IndirCheckBox("Show Player Speed", SHOWGOBSPEED));
-            gob.add(new IndirCheckBox("Show Gob damage", GlobalSettings.SHOWGOBHP));
-            gob.add(new IndirCheckBox("Show Player Damage (shp, hhp, armor)", SHOWPLAYERDMG));
-            gob.add(new IndirCheckBox("Show Player Paths", GlobalSettings.SHOWGOBPATH));
-            gob.add(new IndirLabel(() -> String.format("Path Width: %d", GlobalSettings.PATHWIDTH.get()), Text.std));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_urself"), GlobalSettings.SHOWPLAYERHALO));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_players"), GlobalSettings.SHOWGOBHALO));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_hearth"), GlobalSettings.SHOWGOBHALOONHEARTH));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_aggro"), GlobalSettings.COLORIZEAGGRO));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_drying"), GlobalSettings.COLORFULFARMES));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_tanning"), GlobalSettings.COLORFULTUBS));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_cupboards"), GlobalSettings.COLORFULCUPBOARDS));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_cheese"), GlobalSettings.COLORFULCHEESERACKS));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_dust"), COLORFULDUST));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_dust_longer"), LONGLIVINGDUST));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_dust_larger"), LARGEDUSTSIZE));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_crop_stage"), GlobalSettings.SHOWCROPSTAGE));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_simple_crop"), GlobalSettings.SIMPLECROPS));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_speed"), SHOWGOBSPEED));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_damage"), GlobalSettings.SHOWGOBHP));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_player_dmg"), SHOWPLAYERDMG));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_player_path"), GlobalSettings.SHOWGOBPATH));
+            gob.add(new IndirLabel(() -> String.format("%s%d", TranslationLookup.get("opt_gameplay_gob_path_width"), GlobalSettings.PATHWIDTH.get()), Text.std));
             gob.add(new IndirHSlider(200, 1, 8, GlobalSettings.PATHWIDTH));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Player Path color (self): ", GlobalSettings.GOBPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Vehicle Path color: ", GlobalSettings.VEHPATHCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hidden color: ", GlobalSettings.GOBHIDDENCOL));
-            gob.add(OptionsWnd.BaseColorPreWithLabel("Hitbox color: ", GlobalSettings.GOBHITBOXCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel(TranslationLookup.get("opt_gameplay_gob_player_path_col"), GlobalSettings.GOBPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel(TranslationLookup.get("opt_gameplay_gob_vehicle_path_col"), GlobalSettings.VEHPATHCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel(TranslationLookup.get("opt_gameplay_gob_hidden_col"), GlobalSettings.GOBHIDDENCOL));
+            gob.add(OptionsWnd.BaseColorPreWithLabel(TranslationLookup.get("opt_gameplay_gob_hitbox_col"), GlobalSettings.GOBHITBOXCOL));
             gob.pack();
             overall.add(gob);
         }
         { //Animals
-            animal.add(new IndirCheckBox("Forage small animals with keybind", GlobalSettings.FORAGEANIMALS));
-            animal.add(new IndirCheckBox("Show Animal Damage (shp, hhp, armor)", SHOWANIMALDMG));
-            animal.add(new IndirCheckBox("Show Animal Speed", SHOWANIMALSPEED));
-            animal.add(new IndirCheckBox("Show Animal Paths", GlobalSettings.SHOWANIMALPATH));
-            animal.add(new IndirCheckBox("Show Dangerous Animal Radius", GlobalSettings.SHOWANIMALRADIUS));
-            animal.add(OptionsWnd.BaseColorPreWithLabel("Animal Path color: ", GlobalSettings.ANIMALPATHCOL));
+            animal.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_animal_forage"), GlobalSettings.FORAGEANIMALS));
+            animal.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_animal_dmg"), SHOWANIMALDMG));
+            animal.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_animal_speed"), SHOWANIMALSPEED));
+            animal.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_animal_path"), GlobalSettings.SHOWANIMALPATH));
+            animal.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_animal_radius"), GlobalSettings.SHOWANIMALRADIUS));
+            animal.add(OptionsWnd.BaseColorPreWithLabel( TranslationLookup.get("opt_gameplay_animal_path_col"), GlobalSettings.ANIMALPATHCOL));
             animal.pack();
             overall.add(animal);
         }
         { //Pathfinding
-            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>("Pathfinding Tier", UI.scale(450), GlobalSettings.PATHFINDINGTIER));
+            final IndirRadioGroup<Integer> rg = pf.add(new IndirRadioGroup<>( TranslationLookup.get("opt_gameplay_pf_tier"), UI.scale(450), GlobalSettings.PATHFINDINGTIER));
             {
-                rg.add("Perfect", 1);
-                rg.add("Decent", 2);
-                rg.add("Fastest", 3);
+                rg.add( TranslationLookup.get("opt_gameplay_pf_perfect"), 1);
+                rg.add( TranslationLookup.get("opt_gameplay_pf_decent"), 2);
+                rg.add( TranslationLookup.get("opt_gameplay_pf_fastest"), 3);
             }
-            pf.add(new IndirCheckBox("Limit pathfinding to view distance", GlobalSettings.LIMITPATHFINDING));
-            pf.add(new IndirCheckBox("Re-search goal until reached", GlobalSettings.RESEARCHUNTILGOAL));
+            pf.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_pf_limit"), GlobalSettings.LIMITPATHFINDING));
+            pf.add(new IndirCheckBox( TranslationLookup.get("opt_gameplay_pf_research"), GlobalSettings.RESEARCHUNTILGOAL));
             pf.pack();
             overall.add(pf);
         }

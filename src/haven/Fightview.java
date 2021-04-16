@@ -42,10 +42,7 @@ public class Fightview extends Widget {
     public static final int ymarg = UI.scale(5);
     public static final int width = UI.scale(165);
     public static final Coord avasz = UI.scale(new Coord(27, 27));
-    public static final Coord cavac = new Coord(width - Avaview.dasz.x - UI.scale(10), UI.scale(10));
-    public static final Coord cgivec = new Coord(cavac.x - UI.scale(35), cavac.y);
-    public static final Coord cpursc = new Coord(cavac.x - UI.scale(75), cgivec.y + UI.scale(35));
-    public final LinkedList<Relation> lsrel = new LinkedList<Relation>();
+    public final LinkedList<Relation> lsrel = new LinkedList<>();
     public final Bufflist buffs = add(new Bufflist()); {buffs.hide();}
     public final Map<Long, Widget> obinfo = new HashMap<>();
     public Relation current = null;
@@ -53,9 +50,6 @@ public class Fightview extends Widget {
     public double atkcs, atkct;
     public Indir<Resource> lastact = null;
     public double lastuse = 0;
-    private GiveButton curgive;
-    private Avaview curava;
-    private Button curpurs;
 
     // Enhanced Combat UI
     public Maneuver maneuver;
@@ -86,8 +80,8 @@ public class Fightview extends Widget {
         public Relation(long gobid) {
             this.gobid = gobid;
             add(this.ava = new Avaview(avasz, gobid, "avacam")).canactivate = true;
-	    add(this.give = new GiveButton(0, UI.scale(new Coord(15, 15))));
-	    add(this.purs = new Button(70, "Pursue"));
+	    add(this.give = new GiveButton(0, UI.scale(30, 30)));
+	    add(this.purs = new Button(UI.scale(70), "Pursue"));
 	    for (DefenseType type : DefenseType.values()) {
 		defweights.put(type, 0.0);
 		preweights.put(type, 0.0);
@@ -285,6 +279,7 @@ public class Fightview extends Widget {
 	}
     }
 
+    @SuppressWarnings("unused")
     public <T extends Widget> T obinfo(long gobid, Class<T> cl, boolean creat) {
 	Widget cnt = obinfo(gobid, creat);
 	if(cnt == null)
@@ -301,6 +296,7 @@ public class Fightview extends Widget {
 	return(ret);
     }
 
+    @SuppressWarnings("unused")
     public static interface ObInfo {
 	public default int prio() {return(1000);}
 	public default Coord2d grav() {return(new Coord2d(0, 1));}
@@ -419,7 +415,7 @@ public class Fightview extends Widget {
 		final Buff buf = (Buff) wdg;
 		if (buf.ameter >= 0 && buf.isOpening()) {
 		    buf.fightdraw(g.reclip(c.copy(), Buff.scframe.tex().sz()));
-		    c.x += Buff.scframe.tex().sz().x + 2;
+		    c.x += Buff.scframe.tex().sz().x + UI.scale(2);
 		}
 	    }
             y += bg.sz().y + ymarg;
@@ -445,16 +441,6 @@ public class Fightview extends Widget {
     }
     
     public void wdgmsg(Widget sender, String msg, Object... args) {
-	if(sender == curava) {
-	    wdgmsg("click", (int)current.gobid, args[0]);
-	    return;
-	} else if(sender == curgive) {
-	    wdgmsg("give", (int)current.gobid, args[0]);
-	    return;
-	} else if(sender == curpurs) {
-	    wdgmsg("prs", (int)current.gobid);
-	    return;
-	}
 	for(Relation rel : lsrel) {
 	    if(sender == rel.ava) {
 		wdgmsg("click", (int)rel.gobid, args[0]);

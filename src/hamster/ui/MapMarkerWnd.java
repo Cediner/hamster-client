@@ -318,6 +318,12 @@ public class MapMarkerWnd extends Window {
                                 FastText.aprintf(g, new Coord(5, itemh / 2), 0.0, 0.5, "[%d] %s", ((MapFile.LinkedMarker) item).id, item.nm);
                             }
                         }, colsel.c.add(0, colsel.sz.y + 10));
+                        mremove = MapMarkerWnd.this.add(new Button(200, "Remove", false) {
+                            public void click() {
+                                map.view.file.remove(mark);
+                                change2(null);
+                            }
+                        }, linker.c.add(0, linker.sz.y + 10));
                     } else {
                         mremove = MapMarkerWnd.this.add(new Button(200, "Remove", false) {
                             public void click() {

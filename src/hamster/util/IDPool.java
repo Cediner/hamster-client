@@ -22,7 +22,8 @@ public class IDPool {
         this.min = fp.int64();
         this.max = fp.int64();
         this.next = fp.int64();
-        for (int i = 0; i < fp.int32(); ++i) {
+        final var len = fp.int32();
+        for (int i = 0; i < len; ++i) {
             sparse.add(fp.int64());
         }
     }

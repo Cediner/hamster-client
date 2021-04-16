@@ -141,7 +141,7 @@ public class Pointer extends Widget {
 	}
 
 
-	if(gobrc != null) {
+	if(gobrc != null && ui.gui != null && ui.gui.map != null) {
 	    final Double angle = ui.gui.map.screenangle(gobrc, true);
 	    if (!angle.equals(Double.NaN)) {
 		drawarrow(g, ui.gui.map.screenangle(gobrc, true));
