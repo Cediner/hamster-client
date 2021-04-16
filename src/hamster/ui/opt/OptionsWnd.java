@@ -106,9 +106,9 @@ public class OptionsWnd extends Window {
             y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_theme_settings"), 't', theme), new Coord(0, y)).sz.y + spacer;
             y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_mb_settings"), 'm', mbinds), new Coord(0, y)).sz.y + spacer;
             y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_kb_settings"), 'b', kbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_ui_settings"), 'u', uip), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_gameplay_settings"), 'g', gp), new Coord(0, y)).sz.y + spacer;
             if (gopts) {
-                y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_ui_settings"), 'u', uip), new Coord(0, y)).sz.y + spacer;
-                y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_gameplay_settings"), 'g', gp), new Coord(0, y)).sz.y + spacer;
                 y += main.add(new Button(UI.scale(200), TranslationLookup.get("opt_switch_char")) {
                     public void click() {
                         getparent(GameUI.class).act("lo", "cs");
@@ -132,7 +132,7 @@ public class OptionsWnd extends Window {
             int y = 0;
             y += audio.add(new AudioPanel(ui)).sz.y + 5;
             audio.pack();
-            final var t = audio.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(audio.sz.x / 2, y), 0.5, 0);
+            audio.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(audio.sz.x / 2, y), 0.5, 0);
             audio.pack();
         }
 
@@ -165,21 +165,19 @@ public class OptionsWnd extends Window {
             kbinds.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
             kbinds.pack();
         }
-        if (gopts) {
-            { //UI Panel
-                int y = 0;
-                y += uip.add(new UIPanel(ui)).sz.y + 5;
-                uip.pack();
-                uip.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(uip.sz.x / 2, y), 0.5, 0);
-                uip.pack();
-            }
-            { //Gameplay Panel
-                int y = 0;
-                y += gp.add(new GameplayPanel(ui)).sz.y + 5;
-                gp.pack();
-                gp.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(gp.sz.x / 2, y), 0.5, 0);
-                gp.pack();
-            }
+        { //UI Panel
+            int y = 0;
+            y += uip.add(new UIPanel(ui)).sz.y + 5;
+            uip.pack();
+            uip.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(uip.sz.x / 2, y), 0.5, 0);
+            uip.pack();
+        }
+        { //Gameplay Panel
+            int y = 0;
+            y += gp.add(new GameplayPanel(ui)).sz.y + 5;
+            gp.pack();
+            gp.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(gp.sz.x / 2, y), 0.5, 0);
+            gp.pack();
         }
 
 

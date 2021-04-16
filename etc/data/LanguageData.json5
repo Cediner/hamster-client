@@ -59,7 +59,7 @@
       opt_ui_meter: "Meter Settings",
       opt_ui_inv: "Inventory Settings",
       opt_ui_fmenu: "Flowermenu Settings",
-      opt_ui_lang_sel: "Choose Language: ",
+      opt_ui_lang_sel: "Choose Language (Requires Restart): ",
       opt_ui_vis_ava: "Show Player Avatar",
       opt_ui_vis_spd: "Show Player Speed",
       opt_ui_vis_hp: "Show Player Health",
@@ -192,6 +192,7 @@
       opt_gameplay_pf_research: "Re-search goal until reached",
       // Mousebind Options
       opt_mb_description: "Click on the black box to start editing. Escape to cancel or Enter to confirm. You must click on the box when changing the binding! If your choice shows up Red/Purple then it conflicts with another bind in that group.",
+      mb_mousebind: "Mousebinds",
       mb_mv: "Map",
       mb_mv_lock_placing_obj: "Lock placing object",
       mb_mv_show_spec_menu: "Show special menu",
@@ -217,6 +218,7 @@
       mb_hitm_iact: "Interact with Held Item (only when locked)",
       // Keybind Options
       opt_kb_description: "Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.",
+      kb_keybind: "Keybinds",
       kb_ui: "UI",
       kb_ui_mm: "Toggle Minimap",
       kb_ui_inv: "Toggle Inventory",

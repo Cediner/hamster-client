@@ -35,7 +35,7 @@ public class KeyBindPanel extends Widget {
             final Map<String, List<KeyBind>> groupings = KeyBind.generateGroupings();
             for (final String group : groupings.keySet()) {
                 final Scrollport view = new Scrollport(new Coord(UI.scale(480), UI.scale(400)));
-                final Grouping binds = new GridGrouping(group + " Keybinds", spacer, spacer.x, UI.scale(600), false);
+                final Grouping binds = new GridGrouping(String.format("%s %s", group, TranslationLookup.get("kb_keybind")), spacer, spacer.x, UI.scale(600), false);
                 for (final KeyBind kb : groupings.get(group)) {
                     binds.add(KeyBindEditWithLabel(kb.name, kb.bind));
                 }
