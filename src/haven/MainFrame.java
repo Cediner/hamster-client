@@ -444,9 +444,7 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
     private static void main2(String[] args) {
 	logger.atInfo().log("Parse command line into Config");
 	Config.cmdline(args);
-	logger.atInfo().log("Init custom data");
 	TranslationLookup.init();
-	GlobalSettings.init();
 	try {
 	    javabughack();
 	} catch(InterruptedException e) {
@@ -454,6 +452,8 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	}
 	logger.atInfo().log("Setup res");
 	setupres();
+	logger.atInfo().log("Init custom data");
+	GlobalSettings.init();
 	logger.atInfo().log("Create the MainFrame");
 	UI.Runner fun = null;
 	if(Config.servargs != null)
