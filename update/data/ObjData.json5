@@ -450,6 +450,15 @@
     range: 110
   },
   {
+    res: "gfx/kritter/moose/moose",
+    tags: [
+      "ANIMAL",
+      "CAN_AGGRO",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
     res: "gfx/kritter/walrus/walrus",
     tags: [
       "ANIMAL",
@@ -663,13 +672,6 @@
   },
   {
     res: "gfx/kritter/ants/ants",
-    tags: [
-      "ANIMAL",
-      "CAN_FIGHT"
-    ]
-  },
-  {
-    res: "gfx/kritter/moose/moose",
     tags: [
       "ANIMAL",
       "CAN_FIGHT"
