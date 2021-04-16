@@ -2,6 +2,7 @@ package hamster.ui.opt;
 
 import hamster.IndirSetting;
 import hamster.MouseBind;
+import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
@@ -25,7 +26,7 @@ public class MouseBindsPanel extends Scrollport {
         final Coord spacer = new Coord(0,  UI.scale(5));
         final Grouping binds = new LinearGrouping("Mousebinds", spacer, false, LinearGrouping.Direction.VERTICAL);
         {
-            binds.add(new Img(RichText.render("Click on the black box to start editing. Escape to cancel or Enter to confirm. You must click on the box when changing the binding! If your choice shows up Red/Purple then it conflicts with another bind in that group.", UI.scale(400)).tex()));
+            binds.add(new Img(RichText.render(TranslationLookup.get("opt_mb_description"), UI.scale(400)).tex()));
             for (final String grp : MouseBind.bindgrps.keySet()) {
                 final Grouping bindgrp = new LinearGrouping(grp, spacer, false);
                 for (final MouseBind mb : MouseBind.bindgrps.get(grp)) {

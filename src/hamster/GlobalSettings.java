@@ -38,7 +38,6 @@ public class GlobalSettings {
         Hidden.init();
         HighlightData.init();
         FoodData.init();
-        TranslationLookup.init();
     }
 
     //Non-saved globals

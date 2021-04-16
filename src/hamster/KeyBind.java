@@ -1,5 +1,6 @@
 package hamster;
 
+import hamster.data.TranslationLookup;
 import haven.UI;
 
 import java.awt.event.KeyEvent;
@@ -39,11 +40,15 @@ public class KeyBind {
     public static final KeyBind[] KB_HK_F, KB_HK_N, KB_HK;
     public static final KeyBind[] KB_HK_FP, KB_HK_NP, KB_HK_P;
 
-    private static KeyBind addKB(final String name, final String grp, final String bind) {
-        final KeyBind kb = new KeyBind(name, grp,
+    private static KeyBind addKB(final String display, final String name, final String grp, final String bind) {
+	final KeyBind kb = new KeyBind(display, grp,
 		new IndirSetting<>(datastore, name.replaceAll("\\s", "-").toLowerCase(), bind));
-        keybinds.add(kb);
-        return kb;
+	keybinds.add(kb);
+	return kb;
+    }
+
+    private static KeyBind addKB(final String name, final String grp, final String bind) {
+        return addKB(TranslationLookup.get(name), name, grp, bind);
     }
 
     public static KeyBind getDynamicKB(final String name, final String grp, final String bind) {
@@ -65,83 +70,83 @@ public class KeyBind {
 
     static {
 	{ // UI Keybinds
-	    final String UI_GRP = "UI";
-	    KB_TOGGLE_MINIMAP = addKB("Toggle Minimap", UI_GRP, "C-A"); //GameUI
-	    KB_TOGGLE_INV = addKB("Toggle Inventory", UI_GRP, "Tab"); //GameUI
-	    KB_TOGGLE_EQU = addKB("Toggle Equipment", UI_GRP, "C-E"); //GameUI
-	    KB_TOGGLE_CHAR = addKB("Toggle Charsheet", UI_GRP, "C-T"); //GameUI
-	    KB_TOGGLE_KIN = addKB("Toggle Kin List", UI_GRP, "C-B"); //GameUI
-	    KB_TOGGLE_OPTS = addKB("Toggle Options", UI_GRP, "C-O"); //GameUI
-	    KB_TOGGLE_CHAT = addKB("Toggle Chat", UI_GRP, "C-C"); //GameUI
-	    KB_TOGGLE_FORAGE = addKB("Toggle Forage", UI_GRP, "S-F");
-	    KB_TOGGLE_LIVESTOCK = addKB("Toggle Livestock Manager", UI_GRP, "S-L");
-	    KB_TOGGLE_CMD = addKB("Toggle Console", UI_GRP, "S-Semicolon"); //GameUI / Root
-	    KB_TOGGLE_PROFILER = addKB("Toggle Profiler", UI_GRP, "C-L");
-	    KB_FOCUS_MAP = addKB("Focus Map", UI_GRP, "Escape"); //GameUI
-	    KB_RECALL_MAP_ONE = addKB("Recall First map pos/size", UI_GRP, "C-Z"); //MapWnd
-	    KB_RECALL_MAP_TWO = addKB("Recall Second map pos/size", UI_GRP, "C-X"); //MapWnd
-	    KB_LOCK_ITEM_ON_MOUSE = addKB("Lock item on mouse", UI_GRP, "Back Quote");
-	    KB_SCREENSHOT = addKB("Screenshot", UI_GRP, "M-S"); //GameUI
-	    KB_MAKE_ONE = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "Enter");
-	    KB_MAKE_ALL = addKB("Make one item (Only applies when MakeWindow is shown)", UI_GRP, "C-Enter");
-	    KB_SCM_ROOT = addKB("Return MenuGrid to Root", UI_GRP, "S-Escape");
-	    KB_SCM_BACK = addKB("Go back a page in MenuGrid", UI_GRP, "Backspace");
-	    KB_SCM_NEXT = addKB("Go to next page in MenuGrid", UI_GRP, "N");
-	    KB_SESSION_CYCLE_BACK = addKB("Cycle session backwards", UI_GRP, "C-Left");
-	    KB_SESSION_CYCLE_FORWARD = addKB("Cycle session forwards", UI_GRP, "C-Right");
+	    final String UI_GRP = TranslationLookup.get("kb_ui");
+	    KB_TOGGLE_MINIMAP = addKB("kb_ui_mm", UI_GRP, "C-A"); //GameUI
+	    KB_TOGGLE_INV = addKB("kb_ui_inv", UI_GRP, "Tab"); //GameUI
+	    KB_TOGGLE_EQU = addKB("kb_ui_equ", UI_GRP, "C-E"); //GameUI
+	    KB_TOGGLE_CHAR = addKB("kb_ui_char", UI_GRP, "C-T"); //GameUI
+	    KB_TOGGLE_KIN = addKB("kb_ui_kin", UI_GRP, "C-B"); //GameUI
+	    KB_TOGGLE_OPTS = addKB("kb_ui_opts", UI_GRP, "C-O"); //GameUI
+	    KB_TOGGLE_CHAT = addKB("kb_ui_chat", UI_GRP, "C-C"); //GameUI
+	    KB_TOGGLE_FORAGE = addKB("kb_ui_forage", UI_GRP, "S-F");
+	    KB_TOGGLE_LIVESTOCK = addKB("kb_ui_livestock", UI_GRP, "S-L");
+	    KB_TOGGLE_CMD = addKB("kb_ui_cmd", UI_GRP, "S-Semicolon"); //GameUI / Root
+	    KB_TOGGLE_PROFILER = addKB("kb_ui_profiler", UI_GRP, "C-L");
+	    KB_FOCUS_MAP = addKB("kb_ui_focus_map", UI_GRP, "Escape"); //GameUI
+	    KB_RECALL_MAP_ONE = addKB("kb_ui_recall_map_one", UI_GRP, "C-Z"); //MapWnd
+	    KB_RECALL_MAP_TWO = addKB("kb_ui_recall_map_two", UI_GRP, "C-X"); //MapWnd
+	    KB_LOCK_ITEM_ON_MOUSE = addKB("kb_ui_lock_item", UI_GRP, "Back Quote");
+	    KB_SCREENSHOT = addKB("kb_ui_screenshot", UI_GRP, "M-S"); //GameUI
+	    KB_MAKE_ONE = addKB("kb_ui_make_one", UI_GRP, "Enter");
+	    KB_MAKE_ALL = addKB("kb_ui_make_all", UI_GRP, "C-Enter");
+	    KB_SCM_ROOT = addKB("kb_ui_scm_root", UI_GRP, "S-Escape");
+	    KB_SCM_BACK = addKB("kb_ui_scm_back", UI_GRP, "Backspace");
+	    KB_SCM_NEXT = addKB("kb_ui_scm_next", UI_GRP, "N");
+	    KB_SESSION_CYCLE_BACK = addKB("kb_ui_session_cycle_back", UI_GRP, "C-Left");
+	    KB_SESSION_CYCLE_FORWARD = addKB("kb_ui_session_cycle_forward", UI_GRP, "C-Right");
 	}
 	{ // Gameplay Keybinds
-	    final String GP_GRP = "Gameplay";
-	    KB_TOGGLE_GRID = addKB("Toggle Grid Lines", GP_GRP, "C-G");
-	    KB_TOGGLE_TIPS = addKB("Toggle Hovertips", GP_GRP, "C-Q");
-	    KB_TOGGLE_HITBOXES = addKB("Toggle Hitboxes", GP_GRP, "C-H");
-	    KB_TOGGLE_HIDDEN = addKB("Toggle Gob When Hidden", GP_GRP, "S-G");
-	    KB_TOGGLE_PAUSE = addKB("Toggle Pause", GP_GRP, "C-P"); //Root
-	    KB_QUICK_ACTION = addKB("Quick Action", GP_GRP, "Q");
-	    KB_QUICK_BOARD = addKB("Quick Board", GP_GRP, "S-Q");
-	    KB_EQ_HELD_INTO_LH = addKB("Equip Held Item Into Left Hand", GP_GRP, "M-Z");
-	    KB_EQ_HELD_INTO_RH = addKB("Equip Held Item Into Right Hand", GP_GRP, "M-X");
+	    final String GP_GRP = TranslationLookup.get("kb_gameplay");
+	    KB_TOGGLE_GRID = addKB("kb_gameplay_grid", GP_GRP, "C-G");
+	    KB_TOGGLE_TIPS = addKB("kb_gameplay_tips", GP_GRP, "C-Q");
+	    KB_TOGGLE_HITBOXES = addKB("kb_gameplay_hitboxes", GP_GRP, "C-H");
+	    KB_TOGGLE_HIDDEN = addKB("kb_gameplay_hidden", GP_GRP, "S-G");
+	    KB_TOGGLE_PAUSE = addKB("kb_gameplay_pause", GP_GRP, "C-P"); //Root
+	    KB_QUICK_ACTION = addKB("kb_gameplay_quick_action", GP_GRP, "Q");
+	    KB_QUICK_BOARD = addKB("kb_gameplay_quick_board", GP_GRP, "S-Q");
+	    KB_EQ_HELD_INTO_LH = addKB("kb_gameplay_eq_held_into_lh", GP_GRP, "M-Z");
+	    KB_EQ_HELD_INTO_RH = addKB("kb_gameplay_eq_held_into_rh", GP_GRP, "M-X");
 	}
 	{ // Movement Keybinds
-	    final String MV_GRP = "Movement";
-	    KB_CYCLE_SPEED = addKB("Cycle Character Speed", MV_GRP, "C-R"); //Speedget
-	    KB_CRAWL = addKB("Change to Crawl Speed", MV_GRP, "M-Q"); //Speedget
-	    KB_WALK = addKB("Change to Walk Speed", MV_GRP, "M-W"); //Speedget
-	    KB_RUN = addKB("Change to Run Speed", MV_GRP, "M-E"); //Speedget
-	    KB_SPRINT = addKB("Change to Sprint Speed", MV_GRP, "M-R"); //Speedget
-	    KB_MOVE_NORTH = addKB("Move North", MV_GRP, "S-Up");
-	    KB_MOVE_SOUTH = addKB("Move South", MV_GRP, "S-Down");
-	    KB_MOVE_EAST = addKB("Move East", MV_GRP, "S-Left");
-	    KB_MOVE_WEST = addKB("Move West", MV_GRP, "S-Right");
+	    final String MV_GRP = TranslationLookup.get("kb_move");
+	    KB_CYCLE_SPEED = addKB("kb_move_cycle_speed", MV_GRP, "C-R"); //Speedget
+	    KB_CRAWL = addKB("kb_move_crawl", MV_GRP, "M-Q"); //Speedget
+	    KB_WALK = addKB("kb_move_walk", MV_GRP, "M-W"); //Speedget
+	    KB_RUN = addKB("kb_move_run", MV_GRP, "M-E"); //Speedget
+	    KB_SPRINT = addKB("kb_move_sprint", MV_GRP, "M-R"); //Speedget
+	    KB_MOVE_NORTH = addKB("kb_move_north", MV_GRP, "S-Up");
+	    KB_MOVE_SOUTH = addKB("kb_move_south", MV_GRP, "S-Down");
+	    KB_MOVE_EAST = addKB("kb_move_east", MV_GRP, "S-Left");
+	    KB_MOVE_WEST = addKB("kb_move_west", MV_GRP, "S-Right");
 	}
 	{ // Combat Keybinds
-	    final String CBT_GRP = "Combat";
-	    KB_AGGRO_NEAREST_ANIMAL_TO_MOUSE = addKB("Aggro animal nearest to mouse", CBT_GRP, "C-F");
-	    KB_AGGRO_NEAREST_PLAYER_TO_MOUSE = addKB("Aggro player nearest to mouse", CBT_GRP, "C-D");
-	    KB_TARGET_NEAREST_ANIMAL_TO_MOUSE = addKB("Target nearest animal to mouse", CBT_GRP, "S-A");
-	    KB_TARGET_NEAREST_PLAYER_TO_MOUSE = addKB("Target nearest player to mouse", CBT_GRP, "S-D");
-	    KB_AGGRO_TARGET = addKB("Aggro targeted gob", CBT_GRP, "S-T");
-	    KB_TARGET_CURRENT = addKB("Target current gob", CBT_GRP, "S-C");
-	    KB_PEACE_CURRENT = addKB("Peace current target", CBT_GRP, "S-P");
-	    KB_CYCLEUP_OPP = addKB("Cycle Up Current Opponent", CBT_GRP, "");
-	    KB_CYCLEDOWN_OPP = addKB("Cycle Down Current Opponent", CBT_GRP, "");
+	    final String CBT_GRP = TranslationLookup.get("kb_combat");
+	    KB_AGGRO_NEAREST_ANIMAL_TO_MOUSE = addKB("kb_combat_aggro_nearest_animal", CBT_GRP, "C-F");
+	    KB_AGGRO_NEAREST_PLAYER_TO_MOUSE = addKB("kb_combat_aggro_nearest_player", CBT_GRP, "C-D");
+	    KB_TARGET_NEAREST_ANIMAL_TO_MOUSE = addKB("kb_combat_target_nearest_animal", CBT_GRP, "S-A");
+	    KB_TARGET_NEAREST_PLAYER_TO_MOUSE = addKB("kb_combat_target_nearest_player", CBT_GRP, "S-D");
+	    KB_AGGRO_TARGET = addKB("kb_combat_aggro_target", CBT_GRP, "S-T");
+	    KB_TARGET_CURRENT = addKB("kb_combat_target_current", CBT_GRP, "S-C");
+	    KB_PEACE_CURRENT = addKB("kb_combat_peace_current", CBT_GRP, "S-P");
+	    KB_CYCLEUP_OPP = addKB("kb_combat_cycleup_opp", CBT_GRP, "");
+	    KB_CYCLEDOWN_OPP = addKB("kb_combat_cycledown_opp", CBT_GRP, "");
 	    final int moves = 10;
 	    KB_FIGHT_MOVE = new KeyBind[moves];
 	    for(var i = 1; i <= moves; ++i) {
-		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, CBT_GRP, i == 10 ? "0" : Integer.toString(i));
+		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, String.format("%s %d", TranslationLookup.get("kb_combat_fight_move"), i), CBT_GRP, i == 10 ? "0" : Integer.toString(i));
 	    }
 	}
 	{ // Camera Keybinds
-	    final String CAM_GRP = "Camera";
-	    KB_RECENTER_CAMERA = addKB("Recenter Camera on Player", CAM_GRP, "S-C");
-	    KB_CAM_RESET = addKB("Reset Camera", CAM_GRP, "Home");
-	    KB_CAM_LEFT = addKB("Move Camera Left", CAM_GRP, "Left");
-	    KB_CAM_RIGHT = addKB("Move Camera Right", CAM_GRP, "Right");
-	    KB_CAM_IN = addKB("Zoom Camera In", CAM_GRP, "Up");
-	    KB_CAM_OUT = addKB("Zoom Camera Out", CAM_GRP, "Down");
+	    final String CAM_GRP = TranslationLookup.get("kb_camera");
+	    KB_RECENTER_CAMERA = addKB("kb_camera_recenter", CAM_GRP, "S-C");
+	    KB_CAM_RESET = addKB("kb_camera_reset", CAM_GRP, "Home");
+	    KB_CAM_LEFT = addKB("kb_camera_left", CAM_GRP, "Left");
+	    KB_CAM_RIGHT = addKB("kb_camera_right", CAM_GRP, "Right");
+	    KB_CAM_IN = addKB("kb_camera_in", CAM_GRP, "Up");
+	    KB_CAM_OUT = addKB("kb_camera_out", CAM_GRP, "Down");
 	}
 	{ // Setup Hotkey keybinds
-	    final String HB_GRP = "Hotbar";
+	    final String HB_GRP = TranslationLookup.get("kb_hotbar");
 	    final int slots = 10;
 	    KB_HK_F = new KeyBind[slots];
 	    KB_HK_FP = new KeyBind[5];
@@ -154,19 +159,22 @@ public class KeyBind {
 	    final String[] prefix = { "F", "NumPad-", "" };
 	    for(var j = 1; j <= hotkeys.length; j++) {
 	        for(var i = 1; i <= hotkeys[j-1].length; i++) {
-	            hotkeys[j-1][i-1] = addKB("Hotbar " + j + " - Slot " + i, HB_GRP, prefix[j-1]+(i == 10 ? "0" : Integer.toString(i)));
+	            hotkeys[j-1][i-1] = addKB(String.format("Hotbar %d - Slot %d", j, i),
+			    String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i), HB_GRP,
+			    prefix[j-1]+(i == 10 ? "0" : Integer.toString(i)));
 		}
 	        for(var i = 1; i < pages[j-1].length; i++) {
-	            pages[j-1][i-1] = addKB("Hotbar " + j + " - Page " + i, HB_GRP, "");
+	            pages[j-1][i-1] = addKB(String.format("Hotbar %d - Page %d", j, i),
+			    String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_page"), i), HB_GRP, "");
 		}
 	    }
 	}
 	{ // MapWnd Keybinds
-	    final String MAP_GRP = "Minimap";
-	    KB_MAP_HOME = addKB("Recenter minimap on player", MAP_GRP, "C-Home");
-	    KB_MAP_MARK = addKB("Add marker to minimap", MAP_GRP, "");
-	    KB_MAP_HIDE_MARKERS = addKB("Hide all markers on minimap", MAP_GRP, "C-M");
-	    KB_MAP_COMPACT = addKB("Hide borders of minimap", MAP_GRP, "");
+	    final String MAP_GRP = TranslationLookup.get("kb_mm");
+	    KB_MAP_HOME = addKB("kb_mm_home", MAP_GRP, "C-Home");
+	    KB_MAP_MARK = addKB("kb_mm_mark", MAP_GRP, "");
+	    KB_MAP_HIDE_MARKERS = addKB("kb_mm_hide_markers", MAP_GRP, "C-M");
+	    KB_MAP_COMPACT = addKB("kb_mm_compact", MAP_GRP, "");
 	}
     }
 

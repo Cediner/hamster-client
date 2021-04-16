@@ -2,6 +2,7 @@ package hamster.ui.opt;
 
 import hamster.IndirSetting;
 import hamster.KeyBind;
+import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.TabManager;
 import hamster.ui.core.layout.GridGrouping;
@@ -28,7 +29,7 @@ public class KeyBindPanel extends Widget {
         super(new Coord(UI.scale(500), UI.scale(395)));
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
         final LinearGrouping grp = new LinearGrouping(UI.scale(5), false);
-        grp.add(new Img(RichText.render("Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.", UI.scale(400)).tex()));
+        grp.add(new Img(RichText.render(TranslationLookup.get("opt_kb_description"), UI.scale(400)).tex()));
         final TabManager tabs = grp.add(new TabManager(UI.scale(500)));
         {//Key Binds
             final Map<String, List<KeyBind>> groupings = KeyBind.generateGroupings();

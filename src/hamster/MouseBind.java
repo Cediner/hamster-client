@@ -1,5 +1,6 @@
 package hamster;
 
+import hamster.data.TranslationLookup;
 import haven.UI;
 
 import java.util.ArrayList;
@@ -24,7 +25,8 @@ public class MouseBind {
         HITM_DROP_WATER;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
-        final MouseBind mb = new MouseBind(name, group,
+        final String display = TranslationLookup.get(name);
+        final MouseBind mb = new MouseBind(display, group,
                 new IndirSetting<>(datastore, name.replaceAll("\\s","").toLowerCase(), bind));
         if (bindgrps.containsKey(mb.grouping))
             bindgrps.get(mb.grouping).add(mb);
@@ -38,32 +40,32 @@ public class MouseBind {
 
     static {
         //Map related
-        final String MV_GRP = "Map";
-        MV_LOCK_PLACING_OBJ = addMB("Lock placing object", MV_GRP, "C-B3");
-        MV_SHOW_SPEC_MENU = addMB("Show special menu", MV_GRP, "M-B3");
-        MV_QUEUE_MOVE = addMB("Queue move", MV_GRP, "M-B1");
-        MV_PATHFIND_MOVE = addMB("Pathfind move", MV_GRP, "S-C-M-B1");
+        final String MV_GRP = TranslationLookup.get("mb_mv");
+        MV_LOCK_PLACING_OBJ = addMB(("mb_mv_lock_placing_obj"), MV_GRP, "C-B3");
+        MV_SHOW_SPEC_MENU = addMB(("mb_mv_show_spec_menu"), MV_GRP, "M-B3");
+        MV_QUEUE_MOVE = addMB(("mb_mv_queue_move"), MV_GRP, "M-B1");
+        MV_PATHFIND_MOVE = addMB(("mb_mv_pathfind_move"), MV_GRP, "S-C-M-B1");
         //Item related
-        final String ITM_GRP = "Item";
-        ITM_TRANSFER = addMB("Transfer item", ITM_GRP, "S-B1");
-        ITM_TRANSFER_ALL_ALIKE = addMB("Transfer all alike items", ITM_GRP, "M-B1");
-        ITM_DROP = addMB("Drop item", ITM_GRP, "C-B1");
-        ITM_DROP_ALL_ALIKE = addMB("Drop all alike items", ITM_GRP, "M-B1");
-        ITM_TAKE = addMB("Take item", ITM_GRP, "B1");
-        ITM_TOGGLE_LOCK = addMB("Toggle lock on item", ITM_GRP, "C-B3");
-        ITM_AUTO_EQUIP = addMB("Auto equip item", ITM_GRP, "M-B3");
-        ITM_AUTO_EQUIP_LH = addMB("Auto equip item into left hand", ITM_GRP, "S-B2");
-        ITM_AUTO_EQUIP_RH = addMB("Auto equip item into right hand", ITM_GRP, "C-B2");
+        final String ITM_GRP = TranslationLookup.get("mb_itm");
+        ITM_TRANSFER = addMB(("mb_itm_transfer"), ITM_GRP, "S-B1");
+        ITM_TRANSFER_ALL_ALIKE = addMB(("mb_itm_transfer_all_alike"), ITM_GRP, "M-B1");
+        ITM_DROP = addMB(("mb_itm_drop"), ITM_GRP, "C-B1");
+        ITM_DROP_ALL_ALIKE = addMB(("mb_itm_drop_all_alike"), ITM_GRP, "M-B1");
+        ITM_TAKE = addMB(("mb_itm_take"), ITM_GRP, "B1");
+        ITM_TOGGLE_LOCK = addMB(("mb_itm_toggle_lock"), ITM_GRP, "C-B3");
+        ITM_AUTO_EQUIP = addMB(("mb_auto_equip"), ITM_GRP, "M-B3");
+        ITM_AUTO_EQUIP_LH = addMB(("mb_auto_equip_lh"), ITM_GRP, "S-B2");
+        ITM_AUTO_EQUIP_RH = addMB(("mb_auto_equip_rh"), ITM_GRP, "C-B2");
         //Held Item related
-        final String HITM_GRP = "Held Item";
-        HITM_TOGGLE_LOCK = addMB("Toggle lock on held item", HITM_GRP, "C-B3");
-        HITM_DROP = addMB("Drop Held Item", HITM_GRP, "B1");
-        HITM_DROP_WATER = addMB("Drop Held Item into Water", HITM_GRP, "C-B1");
-        HITM_IACT_OBJ = addMB("Interact Held Item with Object", HITM_GRP, "B3");
-        HITM_TRANS_OBJ_SHIFT = addMB("Transfer Held Item with Object", HITM_GRP, "S-B3");
-        HITM_TRANS_ALL_OBJ = addMB("Transfer Held Item and alike items with Object", HITM_GRP, "S-C-B3");
+        final String HITM_GRP = TranslationLookup.get("mb_hitm");
+        HITM_TOGGLE_LOCK = addMB(("mb_hitm_toggle_lock"), HITM_GRP, "C-B3");
+        HITM_DROP = addMB(("mb_hitm_drop"), HITM_GRP, "B1");
+        HITM_DROP_WATER = addMB(("mb_hitm_drop_water"), HITM_GRP, "C-B1");
+        HITM_IACT_OBJ = addMB(("mb_hitm_iact_obj"), HITM_GRP, "B3");
+        HITM_TRANS_OBJ_SHIFT = addMB(("mb_hitm_trans_obj_shift"), HITM_GRP, "S-B3");
+        HITM_TRANS_ALL_OBJ = addMB(("mb_hitm_trans_all_obj"), HITM_GRP, "S-C-B3");
         //XXX: This one may no longer be possible due to server-side updates
-        HITM_IACT = addMB("Interact with Held Item (only when locked)", HITM_GRP, "M-B3");
+        HITM_IACT = addMB(("mb_hitm_iact"), HITM_GRP, "M-B3");
     }
 
     @FunctionalInterface
