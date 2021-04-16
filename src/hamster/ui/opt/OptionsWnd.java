@@ -226,7 +226,7 @@ public class OptionsWnd extends Window {
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if ((sender == this) && (msg.equals("close"))) {
             hide();
-        } else {
+        } else if(!msg.equals("select-tab")) {
             super.wdgmsg(sender, msg, args);
         }
     }
