@@ -45,6 +45,7 @@ import java.util.function.Consumer;
 
 
 public class OptionsWnd extends Window {
+    public static final Coord PANEL_SIZE = UI.scale(600, 395);
     public final Panel main, audio;
     public Panel current;
 

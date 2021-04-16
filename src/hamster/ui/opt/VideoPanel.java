@@ -17,7 +17,7 @@ import static hamster.GlobalSettings.*;
 
 public class VideoPanel extends Scrollport {
     public VideoPanel(final UI ui, final GSettings gprefs) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping disp = new LinearGrouping(TranslationLookup.get("opt_video_display"), spacer, false);

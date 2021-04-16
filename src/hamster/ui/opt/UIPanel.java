@@ -14,7 +14,7 @@ import haven.*;
 
 public class UIPanel extends Scrollport {
     public UIPanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);

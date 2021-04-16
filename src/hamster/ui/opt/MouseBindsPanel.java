@@ -27,7 +27,7 @@ public class MouseBindsPanel extends Scrollport {
     }
 
     public MouseBindsPanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(0,  UI.scale(5));
         final LinearGrouping grp = new LinearGrouping(UI.scale(5), false);
         grp.add(new Img(RichText.render(TranslationLookup.get("opt_mb_description"), UI.scale(400)).tex()));

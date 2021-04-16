@@ -26,7 +26,7 @@ public class KeyBindPanel extends Widget {
     }
 
     public KeyBindPanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
         final LinearGrouping grp = new LinearGrouping(UI.scale(5), false);
         grp.add(new Img(RichText.render(TranslationLookup.get("opt_kb_description"), UI.scale(400)).tex()));

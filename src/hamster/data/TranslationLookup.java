@@ -6,6 +6,10 @@ import hamster.GlobalSettings;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +31,11 @@ public class TranslationLookup {
 	logger.atInfo().log("Loading Language Data");
 	final var gson = new Gson();
 	try {
-	    final var langs = gson.fromJson(new FileReader("data/LanguageData.json5"), Language[].class);
+	    final var langs = gson.fromJson(Files.newBufferedReader(Paths.get("data/LanguageData.json5"), StandardCharsets.UTF_8), Language[].class);
 	    for(final var lang : langs) {
 	        TranslationLookup.langs.put(lang.name, lang);
 	    }
-	} catch (FileNotFoundException e) {
+	} catch (IOException e) {
 	    logger.atSevere().withCause(e).log("Failed to load language data");
 	}
     }

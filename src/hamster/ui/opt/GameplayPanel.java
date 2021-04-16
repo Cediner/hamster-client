@@ -13,7 +13,7 @@ import static hamster.GlobalSettings.*;
 
 public class GameplayPanel extends Scrollport {
     public GameplayPanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);

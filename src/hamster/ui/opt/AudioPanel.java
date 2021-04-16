@@ -17,7 +17,7 @@ import static hamster.GlobalSettings.*;
 
 public class AudioPanel extends Scrollport {
     public AudioPanel(final UI ui) {
-	super(new Coord(UI.scale(500), UI.scale(395)));
+	super(OptionsWnd.PANEL_SIZE);
 	final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 	final LinearGrouping grp = new LinearGrouping(TranslationLookup.get("opt_audio_settings"), spacer, false);
 

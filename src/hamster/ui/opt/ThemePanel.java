@@ -16,7 +16,7 @@ import static hamster.GlobalSettings.*;
 
 public class ThemePanel extends Scrollport {
     public ThemePanel(final UI ui) {
-        super(new Coord(UI.scale(500), UI.scale(395)));
+        super(OptionsWnd.PANEL_SIZE);
         final Coord spacer = new Coord(UI.scale(20), UI.scale(5));
 
         final Grouping theme = new LinearGrouping( TranslationLookup.get("opt_theme_settings"), spacer, false);

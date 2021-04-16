@@ -133,7 +133,7 @@ public class KeyBind {
 	    final int moves = 10;
 	    KB_FIGHT_MOVE = new KeyBind[moves];
 	    for(var i = 1; i <= moves; ++i) {
-		KB_FIGHT_MOVE[i-1] = addKB("Fight Move " + i, String.format("%s %d", TranslationLookup.get("kb_combat_fight_move"), i), CBT_GRP, i == 10 ? "0" : Integer.toString(i));
+		KB_FIGHT_MOVE[i-1] = addKB(String.format("%s %d", TranslationLookup.get("kb_combat_fight_move"), i), "Fight Move " + i, CBT_GRP, i == 10 ? "0" : Integer.toString(i));
 	    }
 	}
 	{ // Camera Keybinds
@@ -159,13 +159,14 @@ public class KeyBind {
 	    final String[] prefix = { "F", "NumPad-", "" };
 	    for(var j = 1; j <= hotkeys.length; j++) {
 	        for(var i = 1; i <= hotkeys[j-1].length; i++) {
-	            hotkeys[j-1][i-1] = addKB(String.format("Hotbar %d - Slot %d", j, i),
-			    String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i), HB_GRP,
+	            hotkeys[j-1][i-1] = addKB(String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i),
+			    String.format("Hotbar %d - Slot %d", j, i),
+			    HB_GRP,
 			    prefix[j-1]+(i == 10 ? "0" : Integer.toString(i)));
 		}
 	        for(var i = 1; i < pages[j-1].length; i++) {
-	            pages[j-1][i-1] = addKB(String.format("Hotbar %d - Page %d", j, i),
-			    String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_page"), i), HB_GRP, "");
+	            pages[j-1][i-1] = addKB(String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_page"), i),
+			    String.format("Hotbar %d - Page %d", j, i), HB_GRP, "");
 		}
 	    }
 	}
