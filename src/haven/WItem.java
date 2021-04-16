@@ -287,7 +287,7 @@ public class WItem extends Widget implements DTarget {
 	    }
 
 	    if (locked) {
-		g.image(lockt, Coord.z);
+	        g.aimage(lockt, sz.div(2), 0.5, 0.5);
 	    }
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);
