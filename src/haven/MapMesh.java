@@ -39,6 +39,7 @@ import haven.Surface.MeshVertex;
 import haven.render.Rendered.Order;
 
 public class MapMesh implements RenderTree.Node, Disposable {
+    public final Coord gul, gsz;
     public final Coord ul, sz;
     public final MCache map;
     public FastMesh flat;
@@ -186,8 +187,10 @@ public class MapMesh implements RenderTree.Node, Disposable {
     public static Order premap = new Order.Default(990);
     public static Order postmap = new Order.Default(1010);
 
-    private MapMesh(MCache map, Coord ul, Coord sz, Random rnd) {
+    private MapMesh(MCache map, Coord gul, Coord gsz, Coord ul, Coord sz, Random rnd) {
 	this.map = map;
+	this.gul = gul;
+	this.gsz = gsz;
 	this.ul = ul;
 	this.sz = sz;
 	this.rnd = rnd.nextLong();
@@ -298,8 +301,8 @@ public class MapMesh implements RenderTree.Node, Disposable {
 	}
     }
 
-    public static MapMesh build(MCache mc, Random rnd, Coord ul, Coord sz) {
-	MapMesh m = new MapMesh(mc, ul, sz, rnd);
+    public static MapMesh build(MCache mc, Random rnd, Coord gul, Coord gsz, Coord ul, Coord sz) {
+	MapMesh m = new MapMesh(mc, gul, gsz, ul, sz, rnd);
 	Coord c = new Coord();
 	rnd = m.rnd();
 	
@@ -735,6 +738,96 @@ public class MapMesh implements RenderTree.Node, Disposable {
 		    grid = consgrid();
 	    }
 	return(grid);
+    }
+
+
+    private static final VertexArray.Layout borderfmt =
+	    new VertexArray.Layout(new VertexArray.Layout.Input(Homo3D.vertex, new VectorFormat(3, NumberFormat.FLOAT32), 0, 0, 12));
+    /*
+     * Border Mesh is just a raised line that goes around the sides of a Grid
+     */
+    private RenderTree.Node consborder() {
+	class Buf implements Tiler.MCons {
+	    final VertexBuilder buf = new VertexBuilder(borderfmt);
+	    short[] ind = new short[(sz.x + sz.y) * 2];
+	    int in = 0;
+
+	    int getvert(Tiler.MPart d, int i, int[] imap) {
+		if(imap[i] >= 0)
+		    return(imap[i]);
+		buf.set(0, d.v[i]);
+		return imap[i] = buf.emit();
+	    }
+
+	    public void faces(MapMesh m, Tiler.MPart d) {
+		byte[] ef = new byte[d.v.length];
+		int[] imap = new int[d.v.length];
+		for(int i = 0; i < imap.length; imap[i++] = -1);
+		for(int i = 0, ivn = 0; i < d.v.length; i++) {
+		    if(d.tcy[i] == 0.0f) ef[i] |= 1;
+		    if(d.tcx[i] == 1.0f) ef[i] |= 2;
+		    if(d.tcy[i] == 1.0f) ef[i] |= 4;
+		    if(d.tcx[i] == 0.0f) ef[i] |= 8;
+		}
+		for(int i = 0; i < imap.length; imap[i++] = -1);
+		for(int i = 0; i < d.f.length; i += 3) {
+		    for(int a = 0; a < 3; a++) {
+			int b = (a + 1) % 3;
+			if((ef[d.f[i + a]] & ef[d.f[i + b]]) != 0) {
+			    if(in + 2 > ind.length)
+				ind = Utils.extend(ind, ind.length * 2);
+			    ind[in++] = (short)getvert(d, d.f[i + a], imap);
+			    ind[in++] = (short)getvert(d, d.f[i + b], imap);
+			}
+		    }
+		}
+	    }
+	}
+	Buf buf = new Buf();
+	Coord c = new Coord();
+	if(gul.x == ul.x) {
+	    c.x = 0;
+	    for (c.y = 0; c.y < sz.y; c.y++) {
+		Coord gc = c.add(ul);
+		map.tiler(map.gettile(gc)).lay(this, c, gc, buf, false);
+	    }
+	}
+	if(gul.y + gsz.y == ul.y + sz.y) {
+	    c.y = sz.y - 1;
+	    for (c.x = 0; c.x < sz.x; c.x++) {
+		Coord gc = c.add(ul);
+		map.tiler(map.gettile(gc)).lay(this, c, gc, buf, false);
+	    }
+	}
+	if(gul.x + gsz.x == ul.x + sz.x) {
+	    c.x = sz.x - 1;
+	    for (c.y = sz.y - 1; c.y >= 0; c.y--) {
+		Coord gc = c.add(ul);
+		map.tiler(map.gettile(gc)).lay(this, c, gc, buf, false);
+	    }
+	}
+	if(gul.y == ul.y) {
+	    c.y = 0;
+	    for (c.x = sz.x - 1; c.x >= 0; c.x--) {
+		Coord gc = c.add(ul);
+		map.tiler(map.gettile(gc)).lay(this, c, gc, buf, false);
+	    }
+	}
+	short[] ind = buf.ind;
+	if(ind.length != buf.in) ind = Utils.extend(ind, buf.in);
+	return(new haven.render.Model(haven.render.Model.Mode.LINES, buf.buf.finv(),
+		new haven.render.Model.Indices(ind.length, NumberFormat.UINT16, DataBuffer.Usage.STATIC, DataBuffer.Filler.of(ind))));
+    }
+
+    private RenderTree.Node border = null;
+    public RenderTree.Node border() {
+        if(border == null) {
+            synchronized (this) {
+                if(border == null)
+                    border = consborder();
+	    }
+	}
+        return border;
     }
 
     public void dispose() {

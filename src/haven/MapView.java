@@ -1433,6 +1433,48 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+    private static final Material bordermat = new Material(
+    	new BaseColor(255, 0, 0, 192),
+	new States.LineWidth(2f),
+	States.maskdepth,
+	new MapMesh.OLOrder(null),
+	Location.xlate(new Coord3f(0, 0, 1f)));
+    private class BorderLines extends MapRaster {
+	final Grid border = new Grid<>() {
+	    RenderTree.Node getcut(Coord cc) {
+		return(map.getcut(cc).border());
+	    }
+	};
+
+	private BorderLines() {}
+
+	void tick() {
+	    super.tick();
+	    if(area != null)
+		border.tick();
+	}
+
+	public void added(RenderTree.Slot slot) {
+	    slot.ostate(bordermat);
+	    slot.add(border);
+	    super.added(slot);
+	}
+
+	public void remove() {
+	    slot.remove();
+	}
+    }
+
+    BorderLines borderlines = null;
+    public void showborder(final boolean show) {
+        if((borderlines == null) && show) {
+            basic.add(borderlines = new BorderLines());
+	} else if((borderlines != null) && !show) {
+	    borderlines.remove();
+	    borderlines = null;
+	}
+    }
+
     static class MapClick extends Clickable {
 	final MapMesh cut;
 
@@ -2456,6 +2498,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    oltick();
 	    if(gridlines != null)
 		gridlines.tick();
+	    if(borderlines  != null)
+	        borderlines.tick();
 	    clickmap.tick();
 	}
 	Loader.Future<Plob> placing = this.placing;
@@ -3064,6 +3108,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
     private void setupKeyBinds() {
         binds.put(KB_TOGGLE_GRID, () -> { showgrid(gridlines == null); return true; });
+        binds.put(KB_TOGGLE_BORDER, () -> { showborder(borderlines == null); return true; });
         binds.put(KB_TOGGLE_TIPS, () -> {
 	    GlobalSettings.SHOWHOVERTOOLTIPS.set(!GlobalSettings.SHOWHOVERTOOLTIPS.get());
             return true;

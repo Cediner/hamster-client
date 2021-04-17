@@ -476,7 +476,7 @@ public class MCache implements MapSource {
 			Random rnd = new Random(id);
 			rnd.setSeed(rnd.nextInt() ^ cc.x);
 			rnd.setSeed(rnd.nextInt() ^ cc.y);
-			return(MapMesh.build(MCache.this, rnd, ul.add(cc.mul(cutsz)), cutsz));
+			return(MapMesh.build(MCache.this, rnd, ul, cmaps, ul.add(cc.mul(cutsz)), cutsz));
 		    }
 
 		    public String toString() {
