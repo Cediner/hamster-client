@@ -19,7 +19,7 @@ public class UIPanel extends Scrollport {
 
         final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
         final Grouping lang = new LinearGrouping(TranslationLookup.get("opt_ui_lang"), spacer, false);
-        final Grouping visibility = new GridGrouping(TranslationLookup.get("opt_ui_vis"), spacer, spacer.x, UI.scale(200), false);
+        final Grouping visibility = new GridGrouping(TranslationLookup.get("opt_ui_vis"), spacer, spacer.x, UI.scale(250), false);
         final Grouping minimap = new GridGrouping(TranslationLookup.get("opt_ui_mm"), spacer, spacer.x, UI.scale(200), false);
         final Grouping menu = new LinearGrouping(TranslationLookup.get("opt_ui_mg"), spacer, false);
         final Grouping meter = new LinearGrouping(TranslationLookup.get("opt_ui_meter"), spacer, false);
@@ -71,6 +71,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_exp"), GlobalSettings.SHOWEXPWND));
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_inv_login"), GlobalSettings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_belt_login"), GlobalSettings.SHOWBELTONLOGIN));
+            visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_equip_stats"), GlobalSettings.SHOWEQUIPSTATS));
             visibility.pack();
             overall.add(visibility);
         }

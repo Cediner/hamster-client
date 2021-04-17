@@ -225,6 +225,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWEXPWND = new IndirSetting<>(global, "ui.show-experience-window", true);
     public static final IndirSetting<Boolean> SHOWMETERPER = new IndirSetting<>(global, "ui.show-per-for-meter", true);
     public static final IndirSetting<Boolean> SHOWTIMELEFTCURIO = new IndirSetting<>(global, "ui.show-time-left-for-curio", true);
+    public static final IndirSetting<Boolean> SHOWEQUIPSTATS = new IndirSetting<>(global, "ui.show-equip-stats", true);
 
     //Hotkey related
     public static final IndirSetting<String> KB_F_STYLE = new IndirSetting<>(global, "keybind.hotkey-f-style", "GRID");
