@@ -67,6 +67,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public MapView map;
     public GobIcon.Settings iconconf;
     public Fightview fv;
+    public Fightsess fs;
     private Text lastmsg;
     private double msgtime;
     public Window equwnd, srchwnd, iconwnd;
@@ -644,7 +645,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		makewnd = add(new MakeWnd());
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
-	    case "fsess", "abt" -> add(child, Coord.z);
+	    case "fsess" -> fs = add((Fightsess)child, Coord.z);
+	    case "abt" -> add(child, Coord.z);
 	    case "inv" -> {
 		invwnd = new Hidewnd(Coord.z, "Inventory") {
 		    public void cresize(Widget ch) {
