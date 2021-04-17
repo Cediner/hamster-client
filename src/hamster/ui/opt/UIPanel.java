@@ -115,6 +115,7 @@ public class UIPanel extends Scrollport {
         }
         { //Flowermenu
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_quick"), GlobalSettings.QUICKFLMENU));
+            fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_auto_one"), GlobalSettings.AUTOONEOPTFMENU));
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_keep_open"), GlobalSettings.KEEPFLOPEN));
             fmenu.pack();
             overall.add(fmenu);

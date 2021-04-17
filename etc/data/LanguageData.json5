@@ -104,6 +104,7 @@
       opt_ui_mg_cols: "MenuGrid Columns: ",
       opt_ui_mg_rows: "MenuGrid Rows: ",
       opt_ui_fmenu_quick: "Quick Flowermenu",
+      opt_ui_fmenu_auto_one: "Auto select when only one option",
       opt_ui_fmenu_keep_open: "Don't close Flowermenu on clicks",
       opt_ui_meter_alt_display: "Alternate Meter Display",
       // Gameplay Options
@@ -403,6 +404,7 @@
       opt_ui_mg_cols: "Colonnes MenuGrid: ",
       opt_ui_mg_rows: "Lignes MenuGrid: ",
       opt_ui_fmenu_quick: "Menu contextuel rapide",
+      opt_ui_fmenu_auto_one: "Sélection automatique lorsqu'une seule option",
       opt_ui_fmenu_keep_open: "Ne fermez pas le menu contextuel lors des clics",
       opt_ui_meter_alt_display: "affichage alternatif du compteur à barres",
       // Gameplay Options
