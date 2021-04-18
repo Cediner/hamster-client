@@ -28,6 +28,8 @@ package haven;
 
 import java.util.*;
 import java.nio.*;
+
+import hamster.GlobalSettings;
 import haven.render.*;
 import haven.render.VertexArray.Layout;
 import haven.render.Model.Indices;
@@ -262,9 +264,26 @@ public class FastMesh implements Rendered.Instancable, RenderTree.Node, Disposab
 		ind[i] = (short)buf.uint16();
 	    this.tmp = ind;
 	}
-	
+
+	public void shorten(final VertexBuf.AttribData[] bufs, final float scaler) {
+	    for(final var buf : bufs) {
+		if(buf instanceof VertexBuf.VertexData) {
+		    final var buffer = ((VertexBuf.VertexData) buf).data;
+		    for(var i = 2; i < buffer.capacity(); i+=3) {
+			buffer.put(i, buffer.get(i) * scaler);
+		    }
+		}
+	    }
+	}
+
 	public void init() {
 	    VertexBuf v = getres().layer(VertexBuf.VertexRes.class, vbufid).b;
+	    final var name = getres().name;
+	    if(GlobalSettings.SHORTWALLS.get() && (name.startsWith("gfx/terobjs/arch/palisade") || name.startsWith("gfx/terobjs/arch/brick"))  && !name.contains("gate")) {
+	        shorten(v.bufs, 0.7f);
+	    } else if(GlobalSettings.SHORTCUPBOARDS.get() && name.equals("gfx/terobjs/cupboard")) {
+	        shorten(v.bufs, 0.6f);
+	    }
 	    this.m = new ResourceMesh(v, this.tmp, this);
 	    this.tmp = null;
 	    if(matid >= 0) {

@@ -125,6 +125,8 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_urself"), GlobalSettings.SHOWPLAYERHALO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_players"), GlobalSettings.SHOWGOBHALO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_hearth"), GlobalSettings.SHOWGOBHALOONHEARTH));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_wall"), SHORTWALLS));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_cupboards"), SHORTCUPBOARDS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_aggro"), GlobalSettings.COLORIZEAGGRO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_drying"), GlobalSettings.COLORFULFARMES));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_tanning"), GlobalSettings.COLORFULTUBS));

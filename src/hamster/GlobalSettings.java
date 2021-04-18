@@ -153,6 +153,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWANIMALSPEED = new IndirSetting<>(global, "gob.show-speed-on-animals", false);
     public static final IndirSetting<Boolean> SHOWPLAYERDMG = new IndirSetting<>(global, "gob.show-player-dmg", true);
     public static final IndirSetting<Boolean> SHOWANIMALDMG = new IndirSetting<>(global, "gob.show-animal-dmg", true);
+    public static final IndirSetting<Boolean> SHORTWALLS = new IndirSetting<>(global, "gob.short-walls", false);
+    public static final IndirSetting<Boolean> SHORTCUPBOARDS = new IndirSetting<>(global, "gob.short-cupboards", false);
+
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);
