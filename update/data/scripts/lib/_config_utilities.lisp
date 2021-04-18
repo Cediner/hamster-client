@@ -16,6 +16,7 @@
           (mv-walk-path (mv-reverse-path path original-c)))))))
       
 
+;; Refills Inventory based water objs from nearby water sources
 (defun refill-water-from-inventory ()
   (let ((original-c (gob-rc (my-gob))))
     (loop
@@ -40,7 +41,40 @@
                   (return-from refill-water-from-inventory)))))
     (mv-smart-move original-c)))
 
-              ;; We can either drink from skins/flasks in inventory/belt or via item on mouse
+;; Refills water based items in hands from nearby sources
+(defun refill-water-from-hand (slot)
+  (let ((gob (gob-get-closest-by-filter
+              (lambda (gob) (gob-overlay-has gob "gfx/terobjs/barrel-water"))))
+        (itm (item-witem (equip-item slot)))
+        (original-c (gob-rc (my-gob))))
+    (mv-smart-move-to-gob gob)
+    (item-take itm)
+    (wait-until (lambda () (held-item)))
+    (mv-interact-held-item-with-gob gob +mf-none+)
+    (wait-until (lambda () (item-get-contents (held-item))))
+    (equip (equip-type slot))
+    (mv-smart-move original-c)))
+
+(defun is-slot-water (slot)
+  (and slot
+       (or (is-item-contents (equip-item slot) "Water")
+           (string= "Bucket" (item-name (equip-item slot))))))
+
+(defun drink-water-from-item (itm)
+  (item-interact itm +mf-none+)
+  (wait-until (lambda () (flowermenu)))
+  (flowermenu-select-by-name "Drink")
+  (wait-for-progress))
+
+(defun drink-water-from-hand (slot &optional (refill t))
+  (let ((itm (equip-item slot)))
+    ;; Drink from the slot
+    (drink-water-from-item itm)
+    ;; If we couldn't hit max stam check -> refil hand item
+    (when (and refill (< (stamina) 100))
+      (refill-water-from-hand slot))))
+
+;; We can either drink from skins/flasks in inventory/belt or via item on mouse
 ;; item on mouse needs to be done via hotkey since loftar killed off flowermenus
 ;; while holding objects. This will always use +hotkey-1+ for that
 ;; ideally if the item on mouse runs out of water it should check for a water barrel
@@ -63,26 +97,40 @@
           (refill-water-from-hand)))
       ;;Not holding anything of value on cursor
       (progn
-        (when (held-item)
-          (mv-drop (gob-rc (my-gob)) +mf-none+))
-        (wait-until (lambda () (null (held-item))))
-        
-        (loop
-           for itm in (inventories-get-items-by-filter
-                       (lambda (itm)
-                         (let ((contents (item-get-contents itm)))
-                           (and contents
-                                (jeq (liquid-type) (contents-type contents))))))
-           do (progn
-                (item-interact itm +mf-none+)
-                (wait-until (lambda () (flowermenu)))
-                (flowermenu-select-by-name "Drink")
-                (wait-for-progress)
-                (when (= (stamina) 100)
-                  (return-from drink-water))))
-        (when (and refill
-                   (< (stamina) 100))
-          (refill-water-from-inventory)))))
+        (let ((lhand (get-equip-slot (left-hand)))
+              (rhand (get-equip-slot (right-hand))))
+          (if (or (is-slot-water lhand) (is-slot-water rhand))
+            ;; Drink from hand slots
+            (progn
+              (when (is-slot-water lhand)
+                (drink-water-from-hand lhand refill))
+              (when (= (stamina) 100)
+                (return-from drink-water))
+              (when (is-slot-water rhand)
+                (drink-water-from-hand rhand refill)))
+            ;; Drink from inventory if any
+            (progn
+              (when (held-item)
+                (mv-drop (gob-rc (my-gob)) +mf-none+))
+              (wait-until (lambda () (null (held-item))))
+
+              ;; Check Inventories for any water
+              (loop
+                for itm in (inventories-get-items-by-filter
+                            (lambda (itm)
+                              (let ((contents (item-get-contents itm)))
+                                (and contents
+                                      (jeq (liquid-type) (contents-type contents))))))
+                do (progn
+                      (item-interact itm +mf-none+)
+                      (wait-until (lambda () (flowermenu)))
+                      (flowermenu-select-by-name "Drink")
+                      (wait-for-progress)
+                      (when (= (stamina) 100)
+                        (return-from drink-water))))
+              (when (and refill
+                        (< (stamina) 100))
+                (refill-water-from-inventory))))))))
        
 (defun check-stam-and-drink (&key (drink-at 40) (refill t))
   (if (< (stamina) drink-at)

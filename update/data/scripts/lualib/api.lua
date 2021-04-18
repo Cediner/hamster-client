@@ -507,7 +507,7 @@ api.widget = {
 
   ui_force_wdgmsg = function(id, msg, args)
     args = args or {}
-    session:getUI():wdgmsg(id, msg, {args})
+    session:getUI():wdgmsg(id, msg, args)
   end
 }
 
