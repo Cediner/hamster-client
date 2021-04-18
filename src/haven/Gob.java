@@ -1315,7 +1315,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
 
 	if (!Deleted.isDeleted(name)) {
-
 	    final List<OCache.Delta> deltas = new ArrayList<>();
 	    tags = ObjData.getTags(name);
 	    hitbox = Hitbox.hbfor(this);

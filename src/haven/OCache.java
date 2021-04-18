@@ -1041,7 +1041,11 @@ public class OCache implements Iterable<Gob> {
 		removed = netremove(id, frame - 1);
 		hasrem = true;
 	    } else {
-		attrs.add(parse(type, msg));
+	        final Delta delta = parse(type, msg);
+	        if(type != OD_BUDDY && type != OD_HEALTH)
+	            attrs.add(delta);
+	        else
+	            attrs.add(0, delta);
 	    }
 	}
 	if(hasrem)
