@@ -153,6 +153,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWANIMALSPEED = new IndirSetting<>(global, "gob.show-speed-on-animals", false);
     public static final IndirSetting<Boolean> SHOWPLAYERDMG = new IndirSetting<>(global, "gob.show-player-dmg", true);
     public static final IndirSetting<Boolean> SHOWANIMALDMG = new IndirSetting<>(global, "gob.show-animal-dmg", true);
+    public static final IndirSetting<Boolean> SHORTWALLS = new IndirSetting<>(global, "gob.short-walls", false);
+    public static final IndirSetting<Boolean> SHORTCUPBOARDS = new IndirSetting<>(global, "gob.short-cupboards", false);
+
 
     // Animal
     public static final IndirSetting<Boolean> FORAGEANIMALS = new IndirSetting<>(global, "gameplay.small-animaling-foraging", false);
@@ -221,10 +224,12 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> AUTOEQUIP = new IndirSetting<>(global, "ui.inv.auto-equip", true);
     public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "ui.dont-drop-item-over-water", false);
     public static final IndirSetting<Boolean> QUICKFLMENU = new IndirSetting<>(global, "ui.flowermenu.quick-menu", false);
+    public static final IndirSetting<Boolean> AUTOONEOPTFMENU = new IndirSetting<>(global, "ui.flowermenu.auto-select-one-opt-menus", false);
     public static final IndirSetting<Boolean> KEEPFLOPEN = new IndirSetting<>(global, "ui.flowermenu.never-close-on-click", false);
     public static final IndirSetting<Boolean> SHOWEXPWND = new IndirSetting<>(global, "ui.show-experience-window", true);
     public static final IndirSetting<Boolean> SHOWMETERPER = new IndirSetting<>(global, "ui.show-per-for-meter", true);
     public static final IndirSetting<Boolean> SHOWTIMELEFTCURIO = new IndirSetting<>(global, "ui.show-time-left-for-curio", true);
+    public static final IndirSetting<Boolean> SHOWEQUIPSTATS = new IndirSetting<>(global, "ui.show-equip-stats", true);
 
     //Hotkey related
     public static final IndirSetting<String> KB_F_STYLE = new IndirSetting<>(global, "keybind.hotkey-f-style", "GRID");

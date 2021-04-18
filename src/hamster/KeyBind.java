@@ -22,7 +22,7 @@ public class KeyBind {
     	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
     public static final KeyBind // Gameplay
 	KB_TOGGLE_GRID, KB_TOGGLE_TIPS, KB_TOGGLE_HITBOXES, KB_TOGGLE_HIDDEN, KB_TOGGLE_PAUSE,
-	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH;
+	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH, KB_TOGGLE_BORDER;
     public static final KeyBind // Movement
     	KB_CYCLE_SPEED, KB_CRAWL, KB_WALK, KB_RUN, KB_SPRINT,
 	KB_MOVE_NORTH, KB_MOVE_SOUTH, KB_MOVE_EAST, KB_MOVE_WEST;
@@ -98,6 +98,7 @@ public class KeyBind {
 	{ // Gameplay Keybinds
 	    final String GP_GRP = TranslationLookup.get("kb_gameplay");
 	    KB_TOGGLE_GRID = addKB("kb_gameplay_grid", GP_GRP, "C-G");
+	    KB_TOGGLE_BORDER = addKB("kb_gameplay_border", GP_GRP, "S-B");
 	    KB_TOGGLE_TIPS = addKB("kb_gameplay_tips", GP_GRP, "C-Q");
 	    KB_TOGGLE_HITBOXES = addKB("kb_gameplay_hitboxes", GP_GRP, "C-H");
 	    KB_TOGGLE_HIDDEN = addKB("kb_gameplay_hidden", GP_GRP, "S-G");

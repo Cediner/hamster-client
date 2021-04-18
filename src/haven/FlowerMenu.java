@@ -300,7 +300,10 @@ public class FlowerMenu extends Widget {
 	ui.sess.details.attachFlowermenu(this);
 	int jack = ui.modflags();
 
-	if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 2) {
+	if(GlobalSettings.AUTOONEOPTFMENU.get() && opts.length == 1) {
+	    wdgmsg("cl", 0, 0);
+	    hide();
+	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 2) {
 	    if (opts[0].name.equals("Empty")) {
 		if (opts.length == 1) return; //don't jackui a single empty
 		//switch options for containers
