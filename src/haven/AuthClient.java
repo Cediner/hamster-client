@@ -132,7 +132,9 @@ public class AuthClient implements Closeable {
 	    if((ret.desc = Utils.getpref("token-desc", null)) == null) {
 		try {
 		    ret.desc = InetAddress.getLocalHost().getHostName();
-		} catch(UnknownHostException ignored) { }
+		} catch(UnknownHostException e) {
+		    ret.desc = "";
+		}
 	    }
 	    return(ret);
 	}
