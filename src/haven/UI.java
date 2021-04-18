@@ -38,6 +38,7 @@ import java.awt.event.InputEvent;
 import com.google.common.flogger.FluentLogger;
 import com.google.common.flogger.LazyArgs;
 import hamster.GlobalSettings;
+import hamster.util.JobSystem;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.Office;
 import haven.render.Environment;
@@ -634,6 +635,32 @@ public class UI {
     }
     public void sfx(Resource clip) {
 	sfx(Audio.fromres(clip));
+    }
+
+    public void sfx(final Indir<Resource> clip) {
+        JobSystem.submit(() -> {
+            try {
+                final Resource res = clip.get();
+                sfx(res);
+	    } catch (Loading l) {
+                throw new JobSystem.DependencyNotMet();
+	    }
+	});
+    }
+
+    public void sfx(final Resource clip, final float vol) {
+        sfx(new Audio.VolAdjust(Audio.fromres(clip), vol));
+    }
+
+    public void sfx(final Indir<Resource> clip, final float vol) {
+	JobSystem.submit(() -> {
+	    try {
+	        final Resource res = clip.get();
+	        sfx(res, vol);
+	    } catch (Loading l) {
+	        throw new JobSystem.DependencyNotMet();
+	    }
+	});
     }
 
     public static double scale(double v) {

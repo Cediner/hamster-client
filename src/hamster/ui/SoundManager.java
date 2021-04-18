@@ -97,7 +97,7 @@ public class SoundManager extends Window implements ObservableMapListener<String
 
     private void preview() {
         if (sounds.sel != null) {
-            Audio.play(sounds.sel);
+            ui.sfx(sounds.sel);
         }
     }
 

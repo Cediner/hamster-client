@@ -39,7 +39,7 @@ public class TimerWdg extends Widget implements ObservableListener<TimerData.Tim
             lastTime = gtime;
             if (timeLeft <= 0) {
                 ui.gui.add(new TimerDoneWindow(time.name), new Coord(50, 50));
-                Audio.play(timersfx, (GlobalSettings.TIMERVOL.get() / 1000f));
+                ui.sfx(timersfx, (GlobalSettings.TIMERVOL.get() / 1000f));
                 time.finish(inst);
             }
             super.tick(dt);

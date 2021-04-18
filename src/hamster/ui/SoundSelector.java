@@ -61,7 +61,7 @@ public class SoundSelector extends Window {
 
     private void preview() {
         if (sounds.sel != null) {
-            Audio.play(Resource.remote().load(sounds.sel.name));
+            ui.sfx(Resource.remote().load(sounds.sel.name));
         }
     }
 }

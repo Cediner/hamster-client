@@ -1385,7 +1385,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
 	double now = Utils.rtime();
 	if(SOUNDONERRORMSG.get() && now - lasterrsfx > 0.1) {
-	    Audio.play(errsfx, ERRORMSGVOL.get() / 1000f);
+	    ui.sfx(errsfx, ERRORMSGVOL.get() / 1000f);
 	    lasterrsfx = now;
 	}
     }
@@ -1396,7 +1396,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();
 	if(SOUNDONPOPUPMSG.get() && now - lastmsgsfx > 0.1) {
-	    Audio.play(msgsfx, POPUPMSGVOL.get() / 1000f);
+	    ui.sfx(msgsfx, POPUPMSGVOL.get() / 1000f);
 	    lastmsgsfx = now;
 	}
     }
