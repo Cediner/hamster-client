@@ -1373,12 +1373,18 @@ public class Widget {
 
     public class KeyboundTip implements Indir<Tex> {
 	public final String base;
+	public final boolean rich;
 	private Tex rend = null;
 	private boolean hrend = false;
 	private String rkey = null;
 
-	public KeyboundTip(String base) {
+	public KeyboundTip(String base, boolean rich) {
 	    this.base = base;
+	    this.rich = rich;
+	}
+
+	public KeyboundTip(String base) {
+	    this(base, false);
 	}
 
 	public KeyboundTip() {
@@ -1389,6 +1395,7 @@ public class Widget {
 	    final var key = (kb == null) ? null : kb.bind.get();
 	    if(!hrend || rkey == null || (!rkey.equals(key))) {
 		String tip;
+		int w = 0;
 		if(base != null) {
 		    tip = RichText.Parser.quote(base);
 		    if((key != null) && (!key.equals("")))
@@ -1399,7 +1406,7 @@ public class Widget {
 		    else
 			tip = String.format("Keyboard shortcut: $col[255,255,0]{%s}", RichText.Parser.quote(key));
 		}
-		rend = (tip == null) ? null : RichText.render(tip, 0).tex();
+		rend = (tip == null) ? null : RichText.render(tip, w).tex();
 		hrend = true;
 		rkey = key;
 	    }
@@ -1435,9 +1442,13 @@ public class Widget {
 	return(tooltip(c, prev == this));
     }
 
-    public Widget settip(String text) {
-	tooltip = new KeyboundTip(text);
+    public Widget settip(String text, boolean rich) {
+	tooltip = new KeyboundTip(text, rich);
 	return(this);
+    }
+
+    public Widget settip(String text) {
+	return(settip(text, false));
     }
     
     public <T extends Widget> T getparent(Class<T> cl) {

@@ -313,6 +313,8 @@ public class Audio {
 	    }
 	    return(ns);
 	}
+
+	public Resampler sp(double sp) {this.sp = sp; return(this);}
     }
 
     public static class Monitor implements CS {
@@ -605,7 +607,7 @@ public class Audio {
 	    }
 	});
     }
-    
+
     public static void main(String[] args) throws Exception {
 	Collection<Monitor> clips = new LinkedList<Monitor>();
 	for(int i = 0; i < args.length; i++) {
@@ -625,7 +627,7 @@ public class Audio {
     static {
 	Console.setscmd("sfx", new Console.Command() {
 		public void run(Console cons, String[] args) {
-		    play(Resource.remote().load(args[1]));
+		    play(Loading.waitfor(Resource.remote().load(args[1])));
 		}
 	    });
 	Console.setscmd("sfxvol", new Console.Command() {
