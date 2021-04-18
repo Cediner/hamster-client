@@ -52,6 +52,7 @@ public class GlobalSettings {
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
+    public static final IndirSetting<Boolean> SHOWFPS = new IndirSetting<>(global, "system.show-fps", false);
     public static final IndirSetting<Boolean> SHOWSTATS = new IndirSetting<>(global, "system.show-stats", false);
 
     //Audio options
@@ -191,6 +192,7 @@ public class GlobalSettings {
             Color.WHITE);
 
     //UI
+    public static final IndirSetting<String> LANG = new IndirSetting<>(global, "ui.language", "english");
     public static final IndirSetting<Boolean> SHOWPLAVA = new IndirSetting<>(global, "ui.show-player-avatar", true);
     public static final IndirSetting<Boolean> SHOWSPEED = new IndirSetting<>(global, "ui.show-player-speed", true);
     public static final IndirSetting<Boolean> SHOWHEALTH = new IndirSetting<>(global, "ui.show-player-health", true);

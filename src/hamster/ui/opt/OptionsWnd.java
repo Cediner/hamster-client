@@ -27,6 +27,7 @@
 package hamster.ui.opt;
 
 import hamster.IndirSetting;
+import hamster.data.TranslationLookup;
 import hamster.ui.core.indir.IndirBaseColorPreview;
 import hamster.ui.core.indir.IndirColorPreview;
 import haven.UI;
@@ -44,6 +45,7 @@ import java.util.function.Consumer;
 
 
 public class OptionsWnd extends Window {
+    public static final Coord PANEL_SIZE = UI.scale(600, 395);
     public final Panel main, audio;
     public Panel current;
 
@@ -87,7 +89,7 @@ public class OptionsWnd extends Window {
     }
 
     public OptionsWnd(boolean gopts, UI ui) {
-        super(Coord.z, "Options", "options", true);
+        super(Coord.z, TranslationLookup.get("opt_options"), "options", true);
         main = add(new Panel());
         audio = add(new Panel());
         final Panel uip = add(new Panel());
@@ -101,27 +103,27 @@ public class OptionsWnd extends Window {
 
         { //Main Menu
             int y = 0;
-            y += main.add(new PButton(UI.scale(200), "Video settings", 'v', video), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(UI.scale(200), "Audio settings", 'a', audio), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(UI.scale(200), "Theme settings", 't', theme), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(UI.scale(200), "Mousebind settings", 'm', mbinds), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(UI.scale(200), "Keybind settings", 'b', kbinds), new Coord(0, y)).sz.y + spacer;
-            y += main.add(new PButton(UI.scale(200), "Mapping", 'j', mapping), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_video_settings"), 'v', video), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_audio_settings"), 'a', audio), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_theme_settings"), 't', theme), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_mb_settings"), 'm', mbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_kb_settings"), 'b', kbinds), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_ui_settings"), 'u', uip), new Coord(0, y)).sz.y + spacer;
+            y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_gameplay_settings"), 'g', gp), new Coord(0, y)).sz.y + spacer;
+	    y += main.add(new PButton(UI.scale(200), TranslationLookup.get("opt_mapping_settings"), 'm', mapping), new Coord(0, y)).sz.y + spacer;
             if (gopts) {
-                y += main.add(new PButton(UI.scale(200), "UI settings", 'u', uip), new Coord(0, y)).sz.y + spacer;
-                y += main.add(new PButton(UI.scale(200), "Gameplay settings", 'g', gp), new Coord(0, y)).sz.y + spacer;
-                y += main.add(new Button(UI.scale(200), "Switch character") {
+                y += main.add(new Button(UI.scale(200), TranslationLookup.get("opt_switch_char")) {
                     public void click() {
                         getparent(GameUI.class).act("lo", "cs");
                     }
                 }, new Coord(0, y)).sz.y + spacer;
-                y += main.add(new Button(UI.scale(200), "Log out") {
+                y += main.add(new Button(UI.scale(200), TranslationLookup.get("opt_logout")) {
                     public void click() {
                         getparent(GameUI.class).act("lo");
                     }
                 }, new Coord(0, y)).sz.y + spacer;
             }
-            main.add(new Button(UI.scale(200), "Close") {
+            main.add(new Button(UI.scale(200), TranslationLookup.get("close")) {
                 public void click() {
                     OptionsWnd.this.hide();
                 }
@@ -133,7 +135,7 @@ public class OptionsWnd extends Window {
             int y = 0;
             y += audio.add(new AudioPanel(ui)).sz.y + 5;
             audio.pack();
-            final var t = audio.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(audio.sz.x / 2, y), 0.5, 0);
+            audio.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(audio.sz.x / 2, y), 0.5, 0);
             audio.pack();
         }
 
@@ -142,52 +144,43 @@ public class OptionsWnd extends Window {
             int y = 0;
             y += theme.add(new ThemePanel(ui)).sz.y + 5;
             theme.pack();
-            theme.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(theme.sz.x / 2, y), 0.5, 0);
+            theme.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(theme.sz.x / 2, y), 0.5, 0);
             theme.pack();
         }
         { //Video Panel
             int y = 0;
             y += video.add(new VideoPanel(ui, ui.gprefs)).sz.y + 5;
             video.pack();
-            video.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(video.sz.x / 2, y), 0.5, 0);
+            video.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(video.sz.x / 2, y), 0.5, 0);
             video.pack();
         }
         { //Mousebind panel
             int y = 0;
             y += mbinds.add(new MouseBindsPanel(ui)).sz.y + 5;
             mbinds.pack();
-            mbinds.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(mbinds.sz.x / 2, y), 0.5, 0);
+            mbinds.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(mbinds.sz.x / 2, y), 0.5, 0);
             mbinds.pack();
         }
         { //Keybind panel
             int y = 0;
             y += kbinds.add(new KeyBindPanel(ui)).sz.y + 5;
             kbinds.pack();
-            kbinds.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
+            kbinds.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
             kbinds.pack();
         }
-        { //Mapping panel
+        { //UI Panel
             int y = 0;
-            y += mapping.add(new MappingPanel(ui)).sz.y + 5;
-            mapping.pack();
-            mapping.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
-            mapping.pack();
+            y += uip.add(new UIPanel(ui)).sz.y + 5;
+            uip.pack();
+            uip.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(uip.sz.x / 2, y), 0.5, 0);
+            uip.pack();
         }
-        if (gopts) {
-            { //UI Panel
-                int y = 0;
-                y += uip.add(new UIPanel(ui)).sz.y + 5;
-                uip.pack();
-                uip.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(uip.sz.x / 2, y), 0.5, 0);
-                uip.pack();
-            }
-            { //Gameplay Panel
-                int y = 0;
-                y += gp.add(new GameplayPanel(ui)).sz.y + 5;
-                gp.pack();
-                gp.adda(new PButton(UI.scale(200), "Back", 27, main), new Coord(gp.sz.x / 2, y), 0.5, 0);
-                gp.pack();
-            }
+        { //Gameplay Panel
+            int y = 0;
+            y += gp.add(new GameplayPanel(ui)).sz.y + 5;
+            gp.pack();
+            gp.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(gp.sz.x / 2, y), 0.5, 0);
+            gp.pack();
         }
 
 
@@ -234,7 +227,7 @@ public class OptionsWnd extends Window {
     public void wdgmsg(Widget sender, String msg, Object... args) {
         if ((sender == this) && (msg.equals("close"))) {
             hide();
-        } else {
+        } else if(!msg.equals("select-tab")) {
             super.wdgmsg(sender, msg, args);
         }
     }

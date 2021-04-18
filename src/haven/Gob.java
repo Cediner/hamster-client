@@ -29,11 +29,11 @@ package haven;
 import java.util.*;
 import java.util.function.*;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.data.map.MarkerData;
 import hamster.data.gob.ObjData;
 import hamster.gob.*;
-import hamster.gob.attrs.draw2d.Speed;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.attrs.mods.CheeseRackStatus;
 import hamster.gob.attrs.mods.CupboardStatus;
@@ -50,6 +50,7 @@ import integrations.mapv4.MappingClient;
 import haven.resutil.WaterTile;
 
 public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Skeleton.HasPose {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public Coord2d rc;
     public double a;
     public boolean virtual = false;
@@ -301,7 +302,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
     }
 
+    //XXX: Can only addol when inside Hafen UI Thread or you risk concurrent mod exceptions unless synchronized(gob)
     public void addol(Overlay ol, boolean async) {
+	if(!Thread.holdsLock(this) && !(this instanceof MapView.Plob)) {
+	    logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
+	    Thread.dumpStack();
+	}
 	if(!async)
 	    ol.init();
 	ol.add0();
@@ -411,7 +417,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	return(c.cast(attr));
     }
 
+    //XXX: Can only addol when inside Hafen UI Thread or you risk concurrent mod exceptions unless synchronized(gob)
     private void setattr(Class<? extends GAttrib> ac, GAttrib a) {
+	if(!Thread.holdsLock(this) && !(this instanceof MapView.Plob)) {
+	    logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
+	    Thread.dumpStack();
+	}
 	final Hidden hidden = getattr(Hidden.class);
 	GAttrib prev = attr.remove(ac);
 	if(prev != null) {

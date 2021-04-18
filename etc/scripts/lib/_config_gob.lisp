@@ -143,7 +143,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +gob-overlay+ "haven.Gob$Overlay")
 (java-func +gob-overlay+ gob-overlay-name "name")
-(java-func +gob-overlay+ gob-overlay-id "id")
+(java-field gob-overlay-id "id")
 
 (defun gob-overlay-has (gob overlay-name)
   (doarr (ol (gob-overlays gob))

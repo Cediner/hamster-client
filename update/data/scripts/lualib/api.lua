@@ -955,6 +955,19 @@ api.mv = {
 }
 
 --------------------------------------------------
+-- MenuGrid functionality
+--------------------------------------------------
+api.menugrid = {
+  menu = function()
+    return api.core.gui().menu;
+  end,
+
+  use = function(paginae)
+    api.menugrid.menu():use(paginae)
+  end
+}
+
+--------------------------------------------------
 -- Flowermenu functionality
 --------------------------------------------------
 api.flowermenu = {
@@ -1202,6 +1215,54 @@ api.inventory = {
   invs_drop_all_items_alike = function(itm)
     api.inventory.invs.drop_all_items_by_name(itm:rnm())
   end,
+}
+
+--------------------------------------------------
+-- Helpers
+--------------------------------------------------
+api.helper = {
+  sleep = function(time)
+    local thr = luajava.bindClass("java.land.Thread")
+    thr:sleep(time)
+  end,
+
+  loop_through_messages = function(filterfun)
+    local ret = nil
+    while ret == null and api.session.hasMessage() do
+      if api.session.hasMessage() then
+        local msg = api.session.pollMessage()
+        if filterfun(msg) then
+          ret = msg
+        end
+      end
+    end
+    return ret
+  end,
+
+  wait_for_filtered_message = function(subj, filterfun)
+    api.session.startListening(subj)
+    local ret = nil
+    while ret == nil do
+      ret = api.helper.loop_through_messages(filterfun)
+      api.helper.sleep(1000)
+    end
+    api.session.clearMessages()
+    api.session.stopListening()
+  end,
+
+  wait_for_message = function(subj)
+    return api.helper.wait_for_filtered_message(subj, function (msg) return true end)
+  end,
+
+  prompt_for_input = function(msg)
+    api.chat.chat_send_message(api.chat.bot_chat, msg)
+    return api.helper.wait_for_message("(^msg$)").args
+  end,
+
+  prompt_for_coord = function(msg)
+    api.chat.chat_send_message(api.chat.bot_chat, msg)
+    return api.helper.wait_for_message("(^click-tile$)").args
+  end
 }
 
 --------------------------------------------------

@@ -43,7 +43,7 @@ public class FlowerMenu extends Widget {
     public static final int ph = UI.scale(30);
     public Petal[] opts;
     private UI.Grab mg, kg;
-    public static final Coord customBoxPadding = UI.scale(new Coord(4, 4));
+    public static final Coord customBoxPadding = UI.scale(4, 4);
     private final Consumer<String> callback;
 
     @RName("sm")
@@ -67,7 +67,7 @@ public class FlowerMenu extends Widget {
 	    super(Coord.z);
 	    this.name = name;
 	    text = ptf.render(name, ptc);
-	    resize(text.sz().x + UI.scale(25), ph);
+	    resize(text.sz().x + UI.scale(25), text.sz().y + UI.scale(5));
 	}
 
 	public void move(Coord c) {
@@ -80,7 +80,7 @@ public class FlowerMenu extends Widget {
 
 	public void draw(GOut g) {
 	    g.chcolor(new Color(255, 255, 255, (int)(255 * a)));
-	    g.image(pbg, new Coord(3, 3), new Coord(3, 3), sz.add(new Coord(-6, -6)), UI.scale(pbg.sz()));
+	    g.image(pbg, UI.scale(3, 3), UI.scale(3, 3), sz.add(UI.scale(-6, -6)), UI.scale(pbg.sz()));
 	    pbox.draw(g, Coord.z, sz);
 	    g.image(text.tex(), sz.div(2).sub(text.sz().div(2)));
 	}
@@ -104,7 +104,7 @@ public class FlowerMenu extends Widget {
 
 	private CustomPetal(String name) {
 	    super(name);
-	    sz = new Coord(text.sz().x + 35, 30);
+	    sz = new Coord(text.sz().x + UI.scale(35), UI.scale(30));
 	}
 
 	@Override
@@ -122,8 +122,8 @@ public class FlowerMenu extends Widget {
 		g.frect(Coord.z, sz);
 		g.chcolor(new Color(255, 255, 255, (int) (255 * a)));
 	    }
-	    FastText.print(g, new Coord(10, 7), Integer.toString((num + 1) % 10));
-	    g.image(text.tex(), sz.sub(8, 0).sub(text.sz()).div(2).add(8, 0));
+	    FastText.aprint(g, new Coord(0, sz.y/2), -1, 0.5, Integer.toString((num + 1) % 10));
+	    g.image(text.tex(), sz.sub(UI.scale(8, 0)).sub(text.sz()).div(2).add(UI.scale(8, 0)));
 	    g.chcolor();
 	}
 
@@ -133,7 +133,7 @@ public class FlowerMenu extends Widget {
 
 	@Override
 	public void mousemove(Coord c) {
-	    h = c.isect(Coord.z, sz.sub(1, 1));
+	    h = c.isect(Coord.z, sz.sub(UI.scale(1,1)));
 	}
     }
 
@@ -195,14 +195,14 @@ public class FlowerMenu extends Widget {
     }
 
     private void organize(Petal[] opts) {
-	int width = 80;
+	int width = UI.scale(80);
 	for (Petal petal : opts)
 	    width = Math.max(width, petal.sz.x);
 	Coord c = new Coord(customBoxPadding);
 	for (Petal petal : opts) {
 	    petal.c = new Coord(c);
 	    petal.resize(width, petal.sz.y);
-	    c.y += petal.sz.y - 1;
+	    c.y += petal.sz.y - UI.scale(1);
 	}
 	pack();
 	// clip to parent
@@ -257,6 +257,7 @@ public class FlowerMenu extends Widget {
 
     public void draw(GOut g) {
 	super.draw(g, false);
+	Window.wbox.draw(g, Coord.z, sz);
     }
 
     public boolean keydown(java.awt.event.KeyEvent ev) {

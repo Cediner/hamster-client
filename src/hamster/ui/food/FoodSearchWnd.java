@@ -167,7 +167,7 @@ public class FoodSearchWnd extends Window {
             }
             g.chcolor(Color.WHITE);
             //Draw ingredients
-            g.image(item.ingredientsText.tex(), ingc.add(offset));
+            item.ingredientsText().ifPresent(tex -> g.image(tex, ingc.add(offset)));
             g.line(ingc, ingc.add(0, ingsz.y), 1);
             //Draw Fep/Hunger
             FastText.aprintf(g, fepperhunc.add(offset).add(fepperhunsz.div(2)), 0.5, 0.5, "%.2f", item.fepPerHunger());

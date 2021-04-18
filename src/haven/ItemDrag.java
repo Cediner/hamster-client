@@ -90,7 +90,11 @@ public class ItemDrag extends WItem {
 	    setLock(!locked());
 	    return true;
 	})) || (MouseBind.HITM_DROP.check(bind, () -> {
-	    if(!locked() && !GlobalSettings.WATERDROPITEMCTRL.get()) {
+	    final Gob me = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob);
+	    if(!locked()
+		&& (!GlobalSettings.WATERDROPITEMCTRL.get()
+		    || me == null
+		    || !(ui.sess.glob.map.tiler(ui.sess.glob.map.gettile_safe(me.rc.floor(MCache.tilesz))) instanceof WaterTile))) {
 		dropon(parent, c.add(this.c));
 		return true;
 	    } else {
@@ -139,5 +143,10 @@ public class ItemDrag extends WItem {
 
     public void mousemove(Coord c) {
 	this.c = this.c.add(c.add(doff.inv()));
+    }
+
+    @Override
+    public Object tooltip(Coord c, Widget prev) {
+	return !locked() ? super.tooltip(c, prev) : null;
     }
 }

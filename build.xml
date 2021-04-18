@@ -169,7 +169,7 @@
     <java jar="update/hamster-client-updater-1.0-shaded.jar" fork="true" dir="update/">
       <arg value="hash"/>
       <arg value="${gitrev}"/>
-      <arg value="[ver, hamster-client-updater-1.0-shaded.jar, run-and-update.bat, run.bat, update.bat, config.json]"/>
+      <arg value="[ver, hamster-client-updater-1.0-shaded.jar, run-and-update.bat, update.bat, config.json]"/>
     </java>
   </target>
 </project>
