@@ -1,6 +1,7 @@
 package hamster.ui;
 
 import hamster.data.HighlightData;
+import hamster.data.ShortenData;
 import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
@@ -9,6 +10,7 @@ import hamster.gob.sprites.DamageText;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
 import hamster.ui.map.ObjPreview;
+import hamster.util.JobSystem;
 import haven.*;
 
 import java.util.*;
@@ -200,6 +202,7 @@ public class MapViewExt {
             opts.add(!HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight");
             opts.add(Hidden.isHidden(name) ? "Unhide" : "Hide");
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
+            opts.add(ShortenData.getShortenScaler(name).isEmpty() ? "Shorten" : "Remove Shorten");
             opts.add("Delete");
             opts.add("Delete this");
             opts.add("Clone in previewer");
@@ -289,9 +292,15 @@ public class MapViewExt {
                     case "Add Sound":
                         mv.ui.gui.add(new SoundSelector(name), mv.ui.mc);
                         break;
+                    case "Shorten":
+                        ShortenData.add(name, 0.75f);
+                        break;
+                    case "Remove Shorten":
+                        ShortenData.rem(name);
+                        break;
                     case "Delete":
                         Deleted.add(name);
-                       OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
+                        OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
                         break;
                     case "Delete this":
                         g.dispose();

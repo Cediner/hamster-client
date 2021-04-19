@@ -141,7 +141,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final ForageHelperWnd foragehelper;
 
     //Windows for various Gob mods
-    public final Window hidden, deleted, alerted, highlighted;
+    public final Window hidden, deleted, alerted, highlighted, shorten;
 
     //Hotbars
     public final BeltWnd hotbar1, hotbar2, hotbar3;
@@ -321,6 +321,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	highlighted = new HighlightManager();
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
+	shorten = new ShortenWnd();
 	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
 	lrhandview.setVisible(GlobalSettings.SHOWLRSLOTS.get());
 	timers = new TimersWnd();
@@ -383,6 +384,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(deleted, stdloc);
 	add(alerted, stdloc);
 	add(highlighted, stdloc);
+	add(shorten, stdloc);
 	add(lrhandview, stdloc);
 	add(timers, stdloc);
 	add(foragehelper, stdloc);
