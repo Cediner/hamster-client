@@ -202,8 +202,7 @@ public class MapViewExt {
             opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
             opts.add("Delete");
             opts.add("Delete this");
-            if(!g.resname().orElse("").contains("/trees/"))
-                opts.add("Clone in previewer");
+            opts.add("Clone in previewer");
             if(g.findol(DamageText.id) != null) {
                 opts.add("Delete Damage Text");
             }
