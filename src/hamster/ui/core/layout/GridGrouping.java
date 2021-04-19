@@ -27,6 +27,10 @@ public class GridGrouping extends Grouping {
         this(cap, spacer, indent, maxy, box, Direction.VERTICAL);
     }
 
+    public GridGrouping(final String cap, final int spacer, final int maxy, final boolean box) {
+        this(cap, new Coord(spacer, spacer), 0, maxy, box, Direction.VERTICAL);
+    }
+
     public GridGrouping(final String cap, final int spacer, final int maxy) {
         this(cap, new Coord(spacer, spacer), 0, maxy, false, Direction.VERTICAL);
     }

@@ -28,6 +28,7 @@ package haven;
 
 import hamster.GlobalSettings;
 import hamster.KeyBind;
+import hamster.data.MenuExclusionData;
 
 import java.awt.Color;
 import java.util.function.Consumer;
@@ -300,20 +301,24 @@ public class FlowerMenu extends Widget {
 	ui.sess.details.attachFlowermenu(this);
 	int jack = ui.modflags();
 
-	if(GlobalSettings.AUTOONEOPTFMENU.get() && opts.length == 1) {
+	if(GlobalSettings.AUTOONEOPTFMENU.get() && opts.length == 1 && !MenuExclusionData.isExcluded(opts[0].name)) {
 	    wdgmsg("cl", 0, 0);
 	    hide();
-	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 2) {
+	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 3) {
 	    if (opts[0].name.equals("Empty")) {
 		if (opts.length == 1) return; //don't jackui a single empty
 		//switch options for containers
 		jack = jack == 1 ? 0 : 1;
 	    }
-	    wdgmsg("cl", jack, 0);
-	    hide();
+	    if(!MenuExclusionData.isExcluded(opts[jack].name)) {
+		wdgmsg("cl", jack, 0);
+		hide();
+	    }
 	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
-	    wdgmsg("cl", jack, 0);
-	    hide();
+	    if(!MenuExclusionData.isExcluded(opts[jack].name)) {
+		wdgmsg("cl", jack, 0);
+		hide();
+	    }
 	}
     }
 
@@ -335,6 +340,7 @@ public class FlowerMenu extends Widget {
 	    } else {
 		wdgmsg("cl", option.num, flags);
 	    }
+
 	} else {
 	    if (option != null)
 		callback.accept(option.name);

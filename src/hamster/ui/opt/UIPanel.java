@@ -1,6 +1,7 @@
 package hamster.ui.opt;
 
 import hamster.GlobalSettings;
+import hamster.data.MenuExclusionData;
 import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
@@ -117,6 +118,37 @@ public class UIPanel extends Scrollport {
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_quick"), GlobalSettings.QUICKFLMENU));
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_auto_one"), GlobalSettings.AUTOONEOPTFMENU));
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_keep_open"), GlobalSettings.KEEPFLOPEN));
+            {
+              final GridGrouping grp = new GridGrouping("Menu Exclusion Options", UI.scale(2), UI.scale(200), true);
+              final var lst = grp.add(new Listbox<String>(UI.scale(200), 10, UI.scale(20)) {
+                  @Override
+                  protected String listitem(int i) {
+                      return MenuExclusionData.get(i);
+                  }
+
+                  @Override
+                  protected int listitems() {
+                      return MenuExclusionData.size();
+                  }
+
+                  @Override
+                  protected void drawitem(GOut g, String item, int i) {
+                      FastText.aprint(g, g.sz().div(2), 0.5, 0.5, MenuExclusionData.get(i));
+                  }
+              });
+              final var txt = grp.add(new TextEntry(UI.scale(200), ""));
+              grp.add(new Button( UI.scale(200),"Add", () -> {
+                  MenuExclusionData.add(txt.text);
+                  txt.settext("");
+              }));
+              grp.add(new Button(UI.scale(200),"Remove", () -> {
+                  if(lst.sel != null) {
+                      MenuExclusionData.rem(lst.sel);
+                  }
+              }));
+              grp.pack();
+              fmenu.add(grp);
+            }
             fmenu.pack();
             overall.add(fmenu);
         }
