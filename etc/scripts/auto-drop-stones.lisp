@@ -14,7 +14,7 @@
                  "Gneiss" "Microlite" "Diabase" "Porphyry" "Sodalite"
                  "Marble" "Granite"  "Dolomite" "Flint" "Soapstone"
                  "Rhyolite" "Quarryartz" "Greenschist" "Diorite" "Dross"
-                 "Jasper" "Schrifterz" "Slate")))
+                 "Jasper" "Schrifterz" "Slate" "Pegmatite")))
    (forever
     (dolist (stone stones)
       (inventories-drop-all-items-by-name stone))
