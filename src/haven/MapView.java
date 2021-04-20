@@ -1680,7 +1680,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static final Uniform maploc = new Uniform(Type.VEC3, p -> {
 	    Coord3f orig = Homo3D.locxf(p).mul4(Coord3f.o);
 	    try {
-		orig.z = p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y);
+		orig.z = !GlobalSettings.FLATWORLD.get() ? p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y) : 0;
 	    } catch(Loading l) {
 		/* XXX: WaterTile's obfog effect is the only thing
 		 * that uses maploc, in order to get the precise water
@@ -1735,10 +1735,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
     
     public Coord3f getcc() {
 	Gob pl = player();
+	final Coord3f ret;
 	if(pl != null)
-	    return(pl.getc());
+	    ret = pl.getc();
 	else
-	    return(glob.map.getzp(cc));
+	    ret = glob.map.getzp(cc);
+	if(GlobalSettings.FLATWORLD.get())
+	    ret.z = 0;
+	return ret;
     }
 
     public static class Clicklist implements RenderList<Rendered>, RenderList.Adapter {

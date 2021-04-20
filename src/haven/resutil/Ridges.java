@@ -27,6 +27,8 @@
 package haven.resutil;
 
 import java.util.*;
+
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.*;
 import haven.MapMesh.Scan;
@@ -191,6 +193,10 @@ public class Ridges extends MapMesh.Hooks {
 	    Coord gc = tc.add(m.ul);
 	    float z1 = (float)m.map.getfz(gc.add(tccs[e])), z2 = (float)m.map.getfz(gc.add(tccs[(e + 1) % 4]));
 	    lo = Math.min(z1, z2); hi = Math.max(z1, z2);
+	    if (GlobalSettings.FLATWORLD.get()) {
+		lo = 0;
+		hi = 15;
+	    }
 	}
 	int nseg = Math.max((int)Math.round((hi - lo) / segh), 2) - 1;
 	Vertex[] ret = new Vertex[nseg + 1];
@@ -464,11 +470,17 @@ public class Ridges extends MapMesh.Hooks {
 		md = zd;
 	    }
 	}
+	if(GlobalSettings.FLATWORLD.get())
+	    ret.z = 15;
 	return(ret);
     }
 
     private Vertex[] colzmatch(Coord3f[] cl, float lo, float hi) {
 	int i, l, h;
+	if (GlobalSettings.FLATWORLD.get()) {
+	    lo = 0;
+	    hi = 15;
+	}
 	float md;
 	for(i = 1, l = 0, md = Math.abs(cl[0].z - lo); i < cl.length; i++) {
 	    float zd = Math.abs(cl[i].z - lo);

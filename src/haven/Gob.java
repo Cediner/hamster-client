@@ -751,6 +751,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 			Coord3f oc = Gob.this.getc();
 			Coord3f rc = new Coord3f(oc);
 			rc.y = -rc.y;
+			if (GlobalSettings.FLATWORLD.get()) {
+			    rc.z = 0;
+			}
 			if(hasTag(Tag.ANIMAL)) {
 			    final var tl = glob.map.tiler(glob.map.gettile_safe(Gob.this.rc.floor(MCache.tilesz)));
 			    if(tl instanceof WaterTile)
@@ -801,7 +804,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		    return(false);
 		if(!Utils.eq(this.mods, that.mods))
 		    return(false);
-		return(true);
+		return Utils.eq(this.rc, that.rc);
 	    }
 
 	    public boolean equals(Object o) {

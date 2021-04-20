@@ -85,7 +85,7 @@ public class SnowFall extends Sprite {
 	    if (de > 1.0F) {
 		de -= 1.0F;
 		final Coord3f pos = offset.add(rnd.nextFloat() * sz.x, rnd.nextFloat() * sz.y, (float) MCache.tilesz.x * 50);
-		pos.z += g.glob.map.getcz(g.rc.add(pos.x, pos.y));
+		pos.z += !GlobalSettings.FLATWORLD.get() ? g.glob.map.getcz(g.rc.add(pos.x, pos.y)) : 0;
 		flakes.add(new Flake(pos));
 	    }
 	}

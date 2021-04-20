@@ -79,7 +79,10 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_skip"), SKIPLOADING));
             map.add(new IndirLabel(() -> String.format("%s%d", TranslationLookup.get("opt_gameplay_map_draw_dist"), DRAWGRIDRADIUS.get())));
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
-            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_flat"), FLATWORLD));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_flat"), FLATWORLD, (val) -> {
+                MCache.MessageBus.send(new MCache.InvalidateAllGrids());
+                OCache.MessageBus.send(new OCache.RefreshAllGobs());
+            }));
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_weather"), SHOWWEATHER));
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_allow_shaking"), ALLOWSHAKING));
             //Grid related
