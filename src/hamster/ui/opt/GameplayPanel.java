@@ -80,6 +80,8 @@ public class GameplayPanel extends Scrollport {
             map.add(new IndirLabel(() -> String.format("%s%d", TranslationLookup.get("opt_gameplay_map_draw_dist"), DRAWGRIDRADIUS.get())));
             map.add(new IndirHSlider(200, 1, 30, DRAWGRIDRADIUS));
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_flat"), FLATWORLD));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_weather"), SHOWWEATHER));
+            map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_allow_shaking"), ALLOWSHAKING));
             //Grid related
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_flav"), SHOWFLAVOBJS, (val) -> MapView.MessageBus.send(new MapView.ToggleFlavObjs(val))));
             map.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_map_show_tran"), SHOWTRANTILES, (val) -> MCache.MessageBus.send(new MCache.InvalidateAllGrids())));

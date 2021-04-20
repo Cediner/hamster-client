@@ -105,6 +105,8 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> SNOWDENSITY =  new IndirSetting<>(global, "map.snow-density", 1);
     public static final IndirSetting<Integer> SNOWFALLSPEED =  new IndirSetting<>(global, "map.snow-speed", 1);
     public static final IndirSetting<Integer> SNOWGUSTSPEED =  new IndirSetting<>(global, "map.snow-gust-speed", 100);
+    public static final IndirSetting<Boolean> SHOWWEATHER = new IndirSetting<>(global, "map.show-weather", true);
+    public static final IndirSetting<Boolean> ALLOWSHAKING = new IndirSetting<>(global, "map.allow-shaking", true);
 
     //Minimap
     public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "minimap.show-gobs", true);

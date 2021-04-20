@@ -1702,21 +1702,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void updweather() {
 	Glob.Weather[] wls = glob.weather().toArray(new Glob.Weather[0]);
 	Pipe.Op[] wst = new Pipe.Op[wls.length];
-	for(int i = 0; i < wls.length; i++)
+	for (int i = 0; i < wls.length; i++)
 	    wst[i] = wls[i].state();
 	try {
 	    basic(Glob.Weather.class, Pipe.Op.compose(wst));
-	} catch(Loading l) {
-	}
+	} catch (Loading ignored) { }
 	Collection<RenderTree.Node> old =new ArrayList<>(rweather.keySet());
-	for(Glob.Weather w : wls) {
-	    if(w instanceof RenderTree.Node) {
-		RenderTree.Node n = (RenderTree.Node)w;
-		old.remove(n);
-		if(rweather.get(n) == null) {
-		    try {
-			rweather.put(n, basic.add(n));
-		    } catch(Loading l) {
+        if(GlobalSettings.SHOWWEATHER.get()) {
+	    for (Glob.Weather w : wls) {
+		if (w instanceof RenderTree.Node) {
+		    RenderTree.Node n = (RenderTree.Node) w;
+		    old.remove(n);
+		    if (rweather.get(n) == null) {
+			try {
+			    rweather.put(n, basic.add(n));
+			} catch (Loading ignored) { }
 		    }
 		}
 	    }
@@ -2479,15 +2479,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	super.tick(dt);
 	glob.map.sendreqs();
 	camload = null;
-	try {
-	    if((shake = shake * Math.pow(100, -dt)) < 0.01)
-		shake = 0;
-	    camoff.x = (float)((Math.random() - 0.5) * shake);
-	    camoff.y = (float)((Math.random() - 0.5) * shake);
-	    camoff.z = (float)((Math.random() - 0.5) * shake);
-	    camera.tick(dt);
-	} catch(Loading e) {
-	    camload = e;
+	if(GlobalSettings.ALLOWSHAKING.get()) {
+	    try {
+		if ((shake = shake * Math.pow(100, -dt)) < 0.01)
+		    shake = 0;
+		camoff.x = (float) ((Math.random() - 0.5) * shake);
+		camoff.y = (float) ((Math.random() - 0.5) * shake);
+		camoff.z = (float) ((Math.random() - 0.5) * shake);
+		camera.tick(dt);
+	    } catch (Loading e) {
+		camload = e;
+	    }
 	}
 	basic(Camera.class, camera);
 	amblight();
