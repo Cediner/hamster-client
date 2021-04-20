@@ -134,6 +134,28 @@ public class OCache implements Iterable<Gob> {
 	}
     }
 
+    public static class RefreshGobByName extends OCMail {
+	public final String name;
+
+	public RefreshGobByName(final String res) {
+	    this.name = res;
+	}
+
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(gob ->
+		    gob.res().ifPresent(res -> {
+			if (res.name.equals(name)) {
+			    synchronized (gob) {
+				for (final ChangeCallback cb : oc.cbs) {
+				    cb.removed(gob);
+				    cb.added(gob);
+				}
+			    }
+			}
+		    }));
+	}
+    }
+
     public static class RefreshGobByObject extends OCMail {
 	//Session Specific
 	public final Gob self;

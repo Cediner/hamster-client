@@ -31,12 +31,13 @@ import java.io.*;
 import javax.sound.sampled.*;
 import dolda.xiphutil.*;
 import hamster.GlobalSettings;
+import hamster.util.JobSystem;
 
 public class Audio {
     public static boolean enabled = true;
     private static Player player;
     public static final AudioFormat fmt = new AudioFormat(44100, 16, 2, true, false);
-    private static int bufsize = 4096;
+    private static int bufsize = (int) Math.pow(2, 14);
     public static double volume;
     
     static {
@@ -407,8 +408,6 @@ public class Audio {
     private static class Player extends HackThread {
 	private final CS stream;
 	private final int nch;
-	private final Object queuemon = new Object();
-	private Collection<Runnable> queue = new LinkedList<Runnable>();
 	private volatile boolean reopen = false;
 	
 	Player(CS stream) {
@@ -467,14 +466,6 @@ public class Audio {
 		    while(true) {
 			if(Thread.interrupted())
 			    throw(new InterruptedException());
-			synchronized(queuemon) {
-			    Collection<Runnable> queue = this.queue;
-			    if(queue.size() > 0) {
-				this.queue = new LinkedList<Runnable>();
-				for(Runnable r : queue)
-				    r.run();
-			    }
-			}
 			int ret = fillbuf(buf, 0, buf.length);
 			if(ret < 0)
 			    return;
@@ -539,13 +530,6 @@ public class Audio {
 	if(pl != null)
 	    ((Mixer)pl.stream).stop(clip);
     }
-    
-    public static void queue(Runnable d) {
-	Player pl = ckpl(true);
-	synchronized(pl.queuemon) {
-	    pl.queue.add(d);
-	}
-    }
 
     private static Map<Resource, Resource.Audio> reslastc = new HashMap<Resource, Resource.Audio>();
     public static CS fromres(Resource res) {
@@ -570,42 +554,6 @@ public class Audio {
 
     public static void play(Resource res) {
 	play(fromres(res));
-    }
-
-    public static void play(final Indir<Resource> clip) {
-	queue(new Runnable() {
-		public void run() {
-		    try {
-			play(clip.get());
-		    } catch(Loading e) {
-			queue(this);
-		    }
-		}
-	    });
-    }
-
-    public static void play(final Resource clip, final float vol) {
-	queue(new Runnable() {
-	    public void run() {
-		try {
-		    play(new Audio.VolAdjust(fromres(clip), vol));
-		} catch (Loading e) {
-		    queue(this);
-		}
-	    }
-	});
-    }
-
-    public static void play(final Indir<Resource> clip, final float vol) {
-	queue(new Runnable() {
-	    public void run() {
-		try {
-		    play(new Audio.VolAdjust(fromres(clip.get()), vol));
-		} catch (Loading e) {
-		    queue(this);
-		}
-	    }
-	});
     }
 
     public static void main(String[] args) throws Exception {

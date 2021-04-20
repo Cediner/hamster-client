@@ -37,6 +37,8 @@ public class GlobalSettings {
         Deleted.init();
         Hidden.init();
         HighlightData.init();
+        MenuExclusionData.init();
+        ShortenData.init();
         FoodData.init();
     }
 

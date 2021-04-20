@@ -64,13 +64,6 @@ public class MapFile {
     public static abstract class MapFileMail extends hamster.util.msg.Message {
 	public abstract void apply(final MapFile file);
     }
-    public static class RefreshMarkers extends MapFileMail {
-        public RefreshMarkers() { }
-
-	@Override
-	public void apply(MapFile file) { file.refreshIndex(); }
-    }
-
 
     public MapFile(UI ui, ResCache store, String filename) {
 	this.store = store;
@@ -114,44 +107,6 @@ public class MapFile {
     }
     public static void warn(String fmt, Object... args) {
 	warn(null, fmt, args);
-    }
-
-    private void refreshIndex() {
-	InputStream fp;
-	try {
-	    fp = sfetch("index");
-	} catch(IOException e) {
-	    logger.atSevere().log("Failed to refresh the index");
-	    return;
-	}
-
-	try(final var data = new StreamMessage(fp)) {
-	    int ver = data.uint8();
-	    if(ver == 1 || ver == 2) {
-		markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
-		for(int i = 0, no = data.int32(); i < no; i++)
-		    knownsegs.add(data.int64());
-
-		//Reset our markers and reload
-		markers.clear();
-		smarkers.clear();
-		lmarkers.clear();
-		for(int i = 0, no = data.int32(); i < no; i++) {
-		    Marker mark = loadmarker(this, data);
-		    markers.add(mark);
-		    if(mark instanceof SMarker)
-			smarkers.put(((SMarker)mark).oid, (SMarker)mark);
-		    else if (mark instanceof LinkedMarker)
-			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		}
-	    } else {
-		Debug.log.printf("mapfile warning: unknown mapfile index version: %d\n", ver);
-	    }
-	} catch (Message.BinError e) {
-	    Debug.log.printf("mapfile warning: error when loading index: %s\n", e);
-	}
-
-	markerseq++;
     }
 
     public static MapFile load(UI ui, ResCache store, String filename) {
@@ -310,7 +265,6 @@ public class MapFile {
 			} else if(gdirty) {
 			    task = locked(MapFile.this::save, lock.readLock());
 			    gdirty = false;
-			    MessageBus.send(new RefreshMarkers());
 			} else {
 			    if(now - last > 10000) {
 				processor = null;

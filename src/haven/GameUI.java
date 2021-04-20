@@ -141,7 +141,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     public final ForageHelperWnd foragehelper;
 
     //Windows for various Gob mods
-    public final Window hidden, deleted, alerted, highlighted;
+    public final Window hidden, deleted, alerted, highlighted, shorten;
 
     //Hotbars
     public final BeltWnd hotbar1, hotbar2, hotbar3;
@@ -321,6 +321,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	highlighted = new HighlightManager();
 	deleted = new DeletedManager();
 	alerted = new SoundManager();
+	shorten = new ShortenWnd();
 	lrhandview = new IndirSlotView(new Coord(2, 1), "L-R hand view", new int[][]{{6, 7}});
 	lrhandview.setVisible(GlobalSettings.SHOWLRSLOTS.get());
 	timers = new TimersWnd();
@@ -383,6 +384,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	add(deleted, stdloc);
 	add(alerted, stdloc);
 	add(highlighted, stdloc);
+	add(shorten, stdloc);
 	add(lrhandview, stdloc);
 	add(timers, stdloc);
 	add(foragehelper, stdloc);
@@ -1385,7 +1387,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	msg(msg, new Color(192, 0, 0), new Color(255, 0, 0));
 	double now = Utils.rtime();
 	if(SOUNDONERRORMSG.get() && now - lasterrsfx > 0.1) {
-	    Audio.play(errsfx, ERRORMSGVOL.get() / 1000f);
+	    ui.sfx(errsfx, ERRORMSGVOL.get() / 1000f);
 	    lasterrsfx = now;
 	}
     }
@@ -1396,7 +1398,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	msg(msg, Color.WHITE, Color.WHITE);
 	double now = Utils.rtime();
 	if(SOUNDONPOPUPMSG.get() && now - lastmsgsfx > 0.1) {
-	    Audio.play(msgsfx, POPUPMSGVOL.get() / 1000f);
+	    ui.sfx(msgsfx, POPUPMSGVOL.get() / 1000f);
 	    lastmsgsfx = now;
 	}
     }
