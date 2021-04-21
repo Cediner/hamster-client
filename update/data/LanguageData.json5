@@ -12,6 +12,7 @@
       opt_kb_settings: "Keybind Settings",
       opt_ui_settings: "UI Settings",
       opt_gameplay_settings: "Gameplay Settings",
+      opt_mapping_settings: "Mapping",
       opt_switch_char: "Switch Character",
       opt_logout: "Log out",
       //Audio Options

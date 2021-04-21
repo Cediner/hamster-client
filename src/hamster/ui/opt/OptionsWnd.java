@@ -168,6 +168,13 @@ public class OptionsWnd extends Window {
             kbinds.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
             kbinds.pack();
         }
+        { //Mapping panel
+            int y = 0;
+            y += mapping.add(new MappingPanel(ui)).sz.y + 5;
+            mapping.pack();
+            mapping.adda(new PButton(UI.scale(200), TranslationLookup.get("back"), 27, main), new Coord(kbinds.sz.x / 2, y), 0.5, 0);
+            mapping.pack();
+        }
         { //UI Panel
             int y = 0;
             y += uip.add(new UIPanel(ui)).sz.y + 5;
