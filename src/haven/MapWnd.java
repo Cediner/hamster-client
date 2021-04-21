@@ -63,6 +63,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     public final MapFile file;
     public final MiniMap view;
     public final MapView mv;
+    public final Collection<String> overlays = new java.util.concurrent.CopyOnWriteArraySet<>();
     public boolean hmarkers = false;
     private final Locator player;
     private final Widget toolbar;
@@ -107,6 +108,9 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			ui.gui.iconwnd = null;
 		    }
 		}).settip("Icon settings");
+	toolbar.add(new ICheckBox("gfx/hud/mmap/prov", "", "-d", "-h", "-dh"))
+		.changed(a -> toggleol("realm", a))
+		.settip("Display provinces");
 	chk.move(new Coord(UI.scale(49), -UI.scale(18)));
 	toolbar.pack();
 
@@ -120,6 +124,13 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	binds.put(KB_MAP_COMPACT, () -> {toggleHide(); return true;});
 
 	resize(sz);
+    }
+
+    public void toggleol(String tag, boolean a) {
+	if(a)
+	    overlays.add(tag);
+	else
+	    overlays.remove(tag);
     }
 
     @Override
@@ -322,6 +333,21 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private class View extends MiniMap {
 	View(MapFile file) {
 	    super(file);
+	}
+
+	public void drawgrid(GOut g, Coord ul, DisplayGrid disp) {
+	    super.drawgrid(g, ul, disp);
+	    for(String tag : overlays) {
+		try {
+		    Tex img = disp.olimg(tag);
+		    if(img != null) {
+			g.chcolor(255, 255, 255, 64);
+			g.image(img, ul, UI.scale(img.sz()));
+		    }
+		} catch(Loading l) {
+		}
+	    }
+	    g.chcolor();
 	}
 
 	public void drawmarkers(GOut g) {

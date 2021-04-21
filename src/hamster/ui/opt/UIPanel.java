@@ -1,6 +1,7 @@
 package hamster.ui.opt;
 
 import hamster.GlobalSettings;
+import hamster.data.MenuExclusionData;
 import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.IndirCheckBox;
@@ -19,7 +20,7 @@ public class UIPanel extends Scrollport {
 
         final Grouping overall = new LinearGrouping(spacer, false, LinearGrouping.Direction.VERTICAL);
         final Grouping lang = new LinearGrouping(TranslationLookup.get("opt_ui_lang"), spacer, false);
-        final Grouping visibility = new GridGrouping(TranslationLookup.get("opt_ui_vis"), spacer, spacer.x, UI.scale(200), false);
+        final Grouping visibility = new GridGrouping(TranslationLookup.get("opt_ui_vis"), spacer, spacer.x, UI.scale(250), false);
         final Grouping minimap = new GridGrouping(TranslationLookup.get("opt_ui_mm"), spacer, spacer.x, UI.scale(200), false);
         final Grouping menu = new LinearGrouping(TranslationLookup.get("opt_ui_mg"), spacer, false);
         final Grouping meter = new LinearGrouping(TranslationLookup.get("opt_ui_meter"), spacer, false);
@@ -71,6 +72,7 @@ public class UIPanel extends Scrollport {
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_exp"), GlobalSettings.SHOWEXPWND));
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_inv_login"), GlobalSettings.SHOWINVONLOGIN));
             visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_belt_login"), GlobalSettings.SHOWBELTONLOGIN));
+            visibility.add(new IndirCheckBox(TranslationLookup.get("opt_ui_vis_equip_stats"), GlobalSettings.SHOWEQUIPSTATS));
             visibility.pack();
             overall.add(visibility);
         }
@@ -114,7 +116,39 @@ public class UIPanel extends Scrollport {
         }
         { //Flowermenu
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_quick"), GlobalSettings.QUICKFLMENU));
+            fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_auto_one"), GlobalSettings.AUTOONEOPTFMENU));
             fmenu.add(new IndirCheckBox(TranslationLookup.get("opt_ui_fmenu_keep_open"), GlobalSettings.KEEPFLOPEN));
+            {
+              final GridGrouping grp = new GridGrouping("Menu Exclusion Options", UI.scale(2), UI.scale(200), true);
+              final var lst = grp.add(new Listbox<String>(UI.scale(200), 10, UI.scale(20)) {
+                  @Override
+                  protected String listitem(int i) {
+                      return MenuExclusionData.get(i);
+                  }
+
+                  @Override
+                  protected int listitems() {
+                      return MenuExclusionData.size();
+                  }
+
+                  @Override
+                  protected void drawitem(GOut g, String item, int i) {
+                      FastText.aprint(g, g.sz().div(2), 0.5, 0.5, MenuExclusionData.get(i));
+                  }
+              });
+              final var txt = grp.add(new TextEntry(UI.scale(200), ""));
+              grp.add(new Button( UI.scale(200),"Add", () -> {
+                  MenuExclusionData.add(txt.text);
+                  txt.settext("");
+              }));
+              grp.add(new Button(UI.scale(200),"Remove", () -> {
+                  if(lst.sel != null) {
+                      MenuExclusionData.rem(lst.sel);
+                  }
+              }));
+              grp.pack();
+              fmenu.add(grp);
+            }
             fmenu.pack();
             overall.add(fmenu);
         }

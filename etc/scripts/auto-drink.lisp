@@ -5,9 +5,7 @@
         :hafen-config))
 (in-package :hafen-config)
 
-
-
 (script
  (forever
-  (check-stam-and-drink :key drink-at 75)
+  (check-stam-and-drink :drink-at 75 :refill nil)
   (sleep 1)))

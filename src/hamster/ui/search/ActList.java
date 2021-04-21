@@ -139,7 +139,9 @@ public class ActList extends Listbox<ActList.ActItem> {
     @Override
     public void tick(double dt) {
         super.tick(dt);
-        mail.processMail(mail -> mail.apply(this));
+        synchronized (this) {
+            mail.processMail(mail -> mail.apply(this));
+        }
     }
 
     private static final OwnerContext.ClassResolver<ActItem> ctxr = new OwnerContext.ClassResolver<ActItem>()

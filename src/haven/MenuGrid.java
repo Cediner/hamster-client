@@ -409,6 +409,9 @@ public class MenuGrid extends MovableWidget {
 	addCustom(new CustomPagina(this, "management::foodsearch",
 		Resource.local().load("custom/paginae/default/wnd/food"),
 		(pag) -> ui.gui.foodwnd.toggleVisibility()));
+	addCustom(new CustomPagina(this, "management::shorten",
+		Resource.local().load("custom/paginae/default/wnd/shorten"),
+		(pag) -> ui.gui.shorten.toggleVisibility()));
 	//Hafen Window toggles
 	addCustom(new CustomPagina(this, "management::inv",
 		Resource.local().load("custom/paginae/default/wnd/inv"),

@@ -400,7 +400,9 @@ public class MCache implements MapSource {
 			if((fp % set.flavprob) == 0) {
 			    Indir<Resource> r = set.flavobjs.pick(rp % set.flavobjs.tw);
 			    Gob g = new Flavobj(o.add(gul).mul(tilesz).add(tilesz.div(2)), a * 2 * Math.PI);
-			    g.setattr(new ResDrawable(g, r, Message.nil));
+			    synchronized (g) {
+				g.setattr(new ResDrawable(g, r, Message.nil));
+			    }
 			    mbuf.add(g);
 			}
 		    }
@@ -476,7 +478,7 @@ public class MCache implements MapSource {
 			Random rnd = new Random(id);
 			rnd.setSeed(rnd.nextInt() ^ cc.x);
 			rnd.setSeed(rnd.nextInt() ^ cc.y);
-			return(MapMesh.build(MCache.this, rnd, ul.add(cc.mul(cutsz)), cutsz));
+			return(MapMesh.build(MCache.this, rnd, ul, cmaps, ul.add(cc.mul(cutsz)), cutsz));
 		    }
 
 		    public String toString() {

@@ -44,7 +44,7 @@ public class GOut {
 									   new VertexArray.Layout.Input(ColorTex.texc, new VectorFormat(2, NumberFormat.FLOAT32), 0, 8, 16));
     public final Render out;
     public Coord ul, br, tx;
-    private final GOut root;
+    private final GOut root, parent;
     private final Pipe def2d, cur2d;
 
     protected GOut(GOut o) {
@@ -53,6 +53,7 @@ public class GOut {
 	this.br = o.br;
 	this.tx = o.tx;
 	this.root = o.root;
+	this.parent = o;
 	this.def2d = o.def2d;
 	this.cur2d = def2d.copy();
     }
@@ -62,6 +63,7 @@ public class GOut {
 	this.ul = this.tx = Coord.z;
 	this.br = sz;
 	this.root = this;
+	this.parent = this;
 	this.def2d = def2d;
 	this.cur2d = def2d.copy();
     }
@@ -69,6 +71,8 @@ public class GOut {
     public GOut root() {
 	return(root);
     }
+
+    public GOut parent() { return parent; }
 
     public Coord sz() {
 	return(br.sub(ul));

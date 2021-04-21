@@ -98,6 +98,11 @@ public class WItem extends Widget implements DTarget {
 	Resource.Pagina pg = item.res.get().layer(Resource.pagina);
 	if(pg != null)
 	    img = ItemInfo.catimgs(0, img, RichText.render("\n" + pg.text, UI.scale(200)).img);
+	if(GlobalSettings.DEBUG.get()) {
+	    try {
+		img = ItemInfo.catimgs(0, img, RichText.render("\n" + item.resource().name, UI.scale(200)).img);
+	    } catch (Loading ignored) { }
+	}
 	return(img);
     }
 
@@ -287,7 +292,7 @@ public class WItem extends Widget implements DTarget {
 	    }
 
 	    if (locked) {
-		g.image(lockt, Coord.z);
+	        g.aimage(lockt, sz.div(2), 0.5, 0.5);
 	    }
 	} else {
 	    g.image(missing.layer(Resource.imgc).tex(), Coord.z, sz);

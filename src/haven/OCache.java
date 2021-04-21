@@ -90,7 +90,6 @@ public class OCache implements Iterable<Gob> {
 	public void apply(final OCache oc, final List<Gob> gobs) {
 	    final Gob g = oc.getgob(id);
 	    if (g != null) {
-		g.dispose();
 		oc.remove(g);
 	    }
 	}
@@ -123,13 +122,37 @@ public class OCache implements Iterable<Gob> {
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-		if (g.hasTag(tag)) {
-		    for (final ChangeCallback cb : oc.cbs) {
-			cb.removed(g);
-			cb.added(g);
+	        synchronized (g) {
+		    if (g.hasTag(tag)) {
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(g);
+			    cb.added(g);
+			}
 		    }
 		}
 	    });
+	}
+    }
+
+    public static class RefreshGobByName extends OCMail {
+	public final String name;
+
+	public RefreshGobByName(final String res) {
+	    this.name = res;
+	}
+
+	public void apply(final OCache oc, final List<Gob> gobs) {
+	    gobs.parallelStream().forEach(gob ->
+		    gob.res().ifPresent(res -> {
+			if (res.name.equals(name)) {
+			    synchronized (gob) {
+				for (final ChangeCallback cb : oc.cbs) {
+				    cb.removed(gob);
+				    cb.added(gob);
+				}
+			    }
+			}
+		    }));
 	}
     }
 
@@ -142,9 +165,11 @@ public class OCache implements Iterable<Gob> {
 	}
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
-	    for (final ChangeCallback cb : oc.cbs) {
-		cb.removed(self);
-		cb.added(self);
+	    synchronized (self) {
+		for (final ChangeCallback cb : oc.cbs) {
+		    cb.removed(self);
+		    cb.added(self);
+		}
 	    }
 	}
     }
@@ -156,9 +181,11 @@ public class OCache implements Iterable<Gob> {
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-		for (final ChangeCallback cb : oc.cbs) {
-		    cb.removed(g);
-		    cb.added(g);
+	        synchronized (g) {
+		    for (final ChangeCallback cb : oc.cbs) {
+			cb.removed(g);
+			cb.added(g);
+		    }
 		}
 	    });
 	}
@@ -174,10 +201,12 @@ public class OCache implements Iterable<Gob> {
 	@Override
 	public void apply(OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-		if (g.getattr(attr) != null) {
-		    for (final ChangeCallback cb : oc.cbs) {
-			cb.removed(g);
-			cb.added(g);
+	        synchronized (g) {
+		    if (g.getattr(attr) != null) {
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(g);
+			    cb.added(g);
+			}
 		    }
 		}
 	    });
@@ -195,10 +224,12 @@ public class OCache implements Iterable<Gob> {
 	public void apply(OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(gob -> gob.res().ifPresent(res -> {
 		if (res.name.equals(name)) {
-		    gob.setattr(new Hidden(gob));
-		    for (final ChangeCallback cb : oc.cbs) {
-			cb.removed(gob);
-			cb.added(gob);
+		    synchronized (gob) {
+			gob.setattr(new Hidden(gob));
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(gob);
+			    cb.added(gob);
+			}
 		    }
 		}
 	    }));
@@ -216,11 +247,13 @@ public class OCache implements Iterable<Gob> {
 	public void apply(OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(gob -> gob.res().ifPresent(res -> {
 		if (res.name.equals(name)) {
-		    if (gob.getattr(Hidden.class) != null) {
-			gob.delattr(Hidden.class);
-			for (final ChangeCallback cb : oc.cbs) {
-			    cb.removed(gob);
-			    cb.added(gob);
+		    synchronized (gob) {
+			if (gob.getattr(Hidden.class) != null) {
+			    gob.delattr(Hidden.class);
+			    for (final ChangeCallback cb : oc.cbs) {
+				cb.removed(gob);
+				cb.added(gob);
+			    }
 			}
 		    }
 		}
@@ -1035,7 +1068,11 @@ public class OCache implements Iterable<Gob> {
 		removed = netremove(id, frame - 1);
 		hasrem = true;
 	    } else {
-		attrs.add(parse(type, msg));
+	        final Delta delta = parse(type, msg);
+	        if(type != OD_BUDDY && type != OD_HEALTH)
+	            attrs.add(delta);
+	        else
+	            attrs.add(0, delta);
 	    }
 	}
 	if(hasrem)

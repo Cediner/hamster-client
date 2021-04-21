@@ -15,11 +15,22 @@
 (defmacro equipment-get-all-items ()
   `(equipment-get-all-items-1 (equ)))
 
+;; Equips held item into given slot, See EquipmentType for allowed slots
+(defmacro equip (slot)
+  `(wdgmsg (equ) "drop" (equip-type-slot ,slot)))
+
+(defun get-equip-slot (slot)
+  (doarr (itm (equipment-get-all-items))
+    (when (jeq slot (equip-type itm))
+      (return-from get-equip-slot itm)))
+  nil)
+
 (defconstant +equ-itm+ "hamster.ui.equip.EquipmentItem")
 (defconstant +equ-type+ "hamster.data.character.EquipmentType")
 (java-func +equ-itm+ equip-type "getType")
 (java-func +equ-itm+ equip-item "getItem")
 (java-func +equ-type+ equip-type-name "name")
+(java-field equip-type-slot "slot")
 
 (java-sfield head-gear +equ-type+ "HeadGear")
 (java-sfield accessory +equ-type+ "Accessory")
@@ -42,7 +53,7 @@
 (java-sfield mouth +equ-type+ "Mouth")
 
 
-(export '(equipment-get-all-items
+(export '(equipment-get-all-items equip get-equip-slot
           equip-type equip-item
           equip-type-name
           head-gear accessory shirt torso-armor gloves belt left-hand right-hand
