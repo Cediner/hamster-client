@@ -439,7 +439,6 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 
 	if(a instanceof Hidden && !(this instanceof MapView.Plob)) {
-	    //TODO: This can result in very buggy behavior and needs reexamined
 	    glob.oc.mailbox.mail(new OCache.RefreshGobByObject(this));
 	}
 
