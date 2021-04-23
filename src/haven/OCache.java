@@ -122,11 +122,14 @@ public class OCache implements Iterable<Gob> {
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-	        synchronized (g) {
-		    if (g.hasTag(tag)) {
-			for (final ChangeCallback cb : oc.cbs) {
-			    cb.removed(g);
-			    cb.added(g);
+		final var inf = oc.netinfo.get(g.id);
+		if(inf != null && inf.added) {
+		    synchronized (g) {
+			if (g.hasTag(tag)) {
+			    for (final ChangeCallback cb : oc.cbs) {
+				cb.removed(g);
+				cb.added(g);
+			    }
 			}
 		    }
 		}
@@ -145,10 +148,13 @@ public class OCache implements Iterable<Gob> {
 	    gobs.parallelStream().forEach(gob ->
 		    gob.res().ifPresent(res -> {
 			if (res.name.equals(name)) {
-			    synchronized (gob) {
-				for (final ChangeCallback cb : oc.cbs) {
-				    cb.removed(gob);
-				    cb.added(gob);
+			    final var inf = oc.netinfo.get(gob.id);
+			    if(inf != null && inf.added) {
+				synchronized (gob) {
+				    for (final ChangeCallback cb : oc.cbs) {
+					cb.removed(gob);
+					cb.added(gob);
+				    }
 				}
 			    }
 			}
@@ -165,10 +171,13 @@ public class OCache implements Iterable<Gob> {
 	}
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
-	    synchronized (self) {
-		for (final ChangeCallback cb : oc.cbs) {
-		    cb.removed(self);
-		    cb.added(self);
+	    final var inf = oc.netinfo.get(self.id);
+	    if(inf != null && inf.added) {
+		synchronized (self) {
+		    for (final ChangeCallback cb : oc.cbs) {
+			cb.removed(self);
+			cb.added(self);
+		    }
 		}
 	    }
 	}
@@ -181,10 +190,13 @@ public class OCache implements Iterable<Gob> {
 
 	public void apply(final OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-	        synchronized (g) {
-		    for (final ChangeCallback cb : oc.cbs) {
-			cb.removed(g);
-			cb.added(g);
+		final var inf = oc.netinfo.get(g.id);
+		if(inf != null && inf.added) {
+		    synchronized (g) {
+			for (final ChangeCallback cb : oc.cbs) {
+			    cb.removed(g);
+			    cb.added(g);
+			}
 		    }
 		}
 	    });
@@ -201,11 +213,14 @@ public class OCache implements Iterable<Gob> {
 	@Override
 	public void apply(OCache oc, final List<Gob> gobs) {
 	    gobs.parallelStream().forEach(g -> {
-	        synchronized (g) {
-		    if (g.getattr(attr) != null) {
-			for (final ChangeCallback cb : oc.cbs) {
-			    cb.removed(g);
-			    cb.added(g);
+		final var inf = oc.netinfo.get(g.id);
+		if(inf != null && inf.added) {
+		    synchronized (g) {
+			if (g.getattr(attr) != null) {
+			    for (final ChangeCallback cb : oc.cbs) {
+				cb.removed(g);
+				cb.added(g);
+			    }
 			}
 		    }
 		}

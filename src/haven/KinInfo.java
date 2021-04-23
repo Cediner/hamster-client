@@ -29,6 +29,10 @@ package haven;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
+
+import hamster.GlobalSettings;
+import hamster.gob.Tag;
+import hamster.gob.sprites.FriendlyMark;
 import haven.render.*;
 
 public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D {
@@ -45,12 +49,34 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
 	this.group = group;
 	this.type = type;
     }
-    
+
+    private void updateMark() {
+	if(gob.hasTag(Tag.HUMAN) && GlobalSettings.CIRCLEFRIENDS.get()) {
+	    final var mark = gob.findol(FriendlyMark.id);
+	    if(group == GlobalSettings.BADKIN.get()) {
+		if(mark != null)
+		    ((FriendlyMark)mark.spr).rem();
+	    } else {
+		if(mark != null)
+		    ((FriendlyMark)mark.spr).update(BuddyWnd.gc[group]);
+		else
+		    gob.daddol(FriendlyMark.id, new FriendlyMark(gob, BuddyWnd.gc[group]));
+	    }
+	}
+    }
+
+    @Override
+    public void ctick(double dt) {
+	super.ctick(dt);
+	updateMark();
+    }
+
     public void update(String name, int group, int type) {
 	this.name = name;
 	this.group = group;
 	this.type = type;
 	rnm = null;
+	updateMark();
     }
 
     public boolean isVillager() {

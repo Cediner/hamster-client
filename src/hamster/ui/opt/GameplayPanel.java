@@ -132,6 +132,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_wall"), SHORTWALLS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_cupboards"), SHORTCUPBOARDS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_circle_aggro"), GlobalSettings.CIRCLEAGGRO));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_circle_friend"), CIRCLEFRIENDS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_drying"), GlobalSettings.COLORFULFARMES));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_tanning"), GlobalSettings.COLORFULTUBS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_cupboards"), GlobalSettings.COLORFULCUPBOARDS));
