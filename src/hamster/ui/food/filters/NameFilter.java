@@ -1,6 +1,6 @@
 package hamster.ui.food.filters;
 
-import hamster.data.food.FoodData;
+import hamster.data.food.Food;
 import haven.FastText;
 import haven.GOut;
 
@@ -18,7 +18,7 @@ public class NameFilter implements Filter {
     }
 
     @Override
-    public boolean included(FoodData item) {
+    public boolean included(Food item) {
         if(op == Op.Include) {
             return item.itemName.toLowerCase().contains(name);
         } else { //Exclude
