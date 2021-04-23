@@ -132,7 +132,7 @@ public class GlobalSettings {
     public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
 
     //Gob
-    public static final IndirSetting<Boolean> COLORIZEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
+    public static final IndirSetting<Boolean> CIRCLEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
     public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
     public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
     public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);

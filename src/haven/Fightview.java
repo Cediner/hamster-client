@@ -141,10 +141,10 @@ public class Fightview extends Widget {
 
 	public void tick() {
 	    updateDefWeights();
-	    if (GlobalSettings.COLORIZEAGGRO.get()) {
+	    if (GlobalSettings.CIRCLEAGGRO.get()) {
 		final Gob g = ui.sess.glob.oc.getgob(gobid);
 		if (g != null && g.findol(AggroMark.id) == null) {
-		    g.daddol(AggroMark.id, new AggroMark());
+		    g.daddol(AggroMark.id, new AggroMark(g));
 		}
 	    } else {
 		final Gob g = ui.sess.glob.oc.getgob(gobid);

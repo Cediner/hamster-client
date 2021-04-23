@@ -2,7 +2,6 @@ package hamster.ui.opt;
 
 import hamster.GlobalSettings;
 import hamster.data.TranslationLookup;
-import hamster.gob.Tag;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
@@ -132,7 +131,7 @@ public class GameplayPanel extends Scrollport {
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_hearth"), GlobalSettings.SHOWGOBHALOONHEARTH));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_wall"), SHORTWALLS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_short_cupboards"), SHORTCUPBOARDS));
-            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_aggro"), GlobalSettings.COLORIZEAGGRO));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_circle_aggro"), GlobalSettings.CIRCLEAGGRO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_drying"), GlobalSettings.COLORFULFARMES));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_tanning"), GlobalSettings.COLORFULTUBS));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_colorized_cupboards"), GlobalSettings.COLORFULCUPBOARDS));

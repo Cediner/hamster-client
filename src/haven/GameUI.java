@@ -891,7 +891,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	} else if(afk && (idle <= 300)) {
 	    afk = false;
 	}
-	mapfiletick();
+	if(mapfile != null)
+	    mapfiletick();
 	synchronized (delayedAdd) {
 	    for(final var chd : delayedAdd) {
 	        add(chd);
