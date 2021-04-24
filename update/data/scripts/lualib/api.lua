@@ -83,7 +83,7 @@ api.core = {
   end,
 
   mc = function()
-    return session:getUI().sess.glob.mc
+    return session:getUI().sess.glob.map
   end,
 
   glob = function()
@@ -110,20 +110,20 @@ api.session =  {
   startListening = function(filter, allow_external)
     filter = filter or ".+"
     allow_external = allow_external or false
-    session:listen(filter, allow_external)
+    script:listen(filter, allow_external)
   end,
 
   stopListening = function()
-    session:stopListening()
-    session:clearmsgs()
+    script:stopListening()
+    script:clearmsgs()
   end,
 
   clearMessages = function()
-    session:clearmsgs()
+    script:clearmsgs()
   end,
 
   hasMessage = function()
-    return session:hasMessage()
+    return script:hasmsg()
   end,
 
 
@@ -166,7 +166,7 @@ api.session =  {
   ---- `msg`   : click-tile
   ---- `args`  : (tile_coord)
   pollMessage = function()
-    return session:pollmsg()
+    return script:pollmsg()
   end
 }
 
@@ -212,7 +212,7 @@ api.mc = {
 
   tilify = function(c)
     local mc = api.core.mc()
-    return c.div(mc.tilesz).mul(mc.tilesz).add(mc.tilesz.div(2.0))
+    return c:div(mc.tilesz2):mul(mc.tilesz2):add(mc.tilesz2:div(2.0))
   end
 }
 
@@ -330,7 +330,7 @@ api.bbox = {
 
     for x = 0, math.abs(bb.sz.x) do
       for y = 0, math.abs(bb.sz.y) do
-        tiles.insert(api.mc.tilify(ul:add(off:mul(x, y))))
+        table.insert(tiles, api.mc.tilify(ul:add(off:mul(x, y))))
       end
     end
 
@@ -913,7 +913,7 @@ api.mv = {
     overlayid = overlayid or 0
     fastmeshid = fastmeshid or -1
 
-    api.core.mv():wdgmsg("click", api.coord.coord2i(1, 1), api.oc.posres(gob.rc), btn, mflags,
+    api.widget.wdgmsg(api.core.mv(), "click", api.coord.coord2i(1, 1), api.oc.posres(gob.rc), btn, mflags,
                          overlayid, gob.id, api.oc.posres(gob.rc), overlayid, fastmeshid)
   end,
 
@@ -926,7 +926,7 @@ api.mv = {
   end,
 
   interact_held_item_with_tile = function(tile, mflags)
-    api.core.mv():wdgmsg("itemact", api.coord.coord2i(1, 1), api.oc.posres(tile), mflags)
+    api.widget.wdgmsg(api.core.mv(), "itemact", api.coord.coord2i(1, 1), api.oc.posres(tile), mflags)
   end,
 
   select_area = function(sc, ec)
@@ -1222,7 +1222,7 @@ api.inventory = {
 --------------------------------------------------
 api.helper = {
   sleep = function(time)
-    local thr = luajava.bindClass("java.land.Thread")
+    local thr = luajava.bindClass("java.lang.Thread")
     thr:sleep(time)
   end,
 
@@ -1262,6 +1262,15 @@ api.helper = {
   prompt_for_coord = function(msg)
     api.chat.chat_send_message(api.chat.bot_chat, msg)
     return api.helper.wait_for_message("(^click-tile$)").args
+  end,
+
+  wait_progress = function()
+    while api.core.gui().prog == -1 do
+      api.helper.sleep(100)
+    end
+    while api.core.gui().prog ~= -1 do
+      api.helper.sleep(100)
+    end
   end
 }
 
