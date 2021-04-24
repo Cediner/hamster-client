@@ -1,19 +1,21 @@
 package hamster.ui.food.sort;
 
-import hamster.data.food.FoodData;
+import hamster.data.food.Fep;
+import hamster.data.food.FepType;
+import hamster.data.food.Food;
 
 import java.util.Comparator;
 
-public class AttrSort extends Sort implements Comparator<FoodData> {
+public class AttrSort extends Sort implements Comparator<Food> {
     private final Direction dir;
-    private final FoodData.FepType attr;
-    public AttrSort(final SortMethod method, final Direction dir, final FoodData.FepType attr) {
+    private final FepType attr;
+    public AttrSort(final SortMethod method, final Direction dir, final FepType attr) {
 	super(method);
         this.dir = dir;
 	this.attr = attr;
     }
 
-    public FoodData.FepType attr() { return attr; }
+    public FepType attr() { return attr; }
 
     @Override
     public Sort reverse() {
@@ -21,9 +23,9 @@ public class AttrSort extends Sort implements Comparator<FoodData> {
     }
 
     @Override
-    public int compare(FoodData o1, FoodData o2) {
-        final FoodData.Fep o1fep = o1.getFep(attr);
-        final FoodData.Fep o2fep = o2.getFep(attr);
+    public int compare(Food o1, Food o2) {
+        final Fep o1fep = o1.getFep(attr);
+        final Fep o2fep = o2.getFep(attr);
         if(o1fep == null && o2fep == null)
             return 0;
         if(o1fep == null)

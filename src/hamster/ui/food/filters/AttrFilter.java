@@ -1,6 +1,7 @@
 package hamster.ui.food.filters;
 
-import hamster.data.food.FoodData;
+import hamster.data.food.FepType;
+import hamster.data.food.Food;
 import haven.FastText;
 import haven.GOut;
 
@@ -17,18 +18,18 @@ public class AttrFilter implements Filter {
 	}
     }
 
-    private final FoodData.FepType feptype;
+    private final FepType feptype;
     private final Op op;
     private final float value;
 
-    public AttrFilter(final FoodData.FepType fep, final Op op, final float value) {
+    public AttrFilter(final FepType fep, final Op op, final float value) {
         this.feptype = fep;
         this.op = op;
         this.value = value;
     }
 
     @Override
-    public boolean included(FoodData item) {
+    public boolean included(Food item) {
         for(final var fep : item.feps) {
             if(fep.type == feptype) {
                 switch (op) {

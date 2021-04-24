@@ -1680,7 +1680,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public static final Uniform maploc = new Uniform(Type.VEC3, p -> {
 	    Coord3f orig = Homo3D.locxf(p).mul4(Coord3f.o);
 	    try {
-		orig.z = p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y);
+		orig.z = !GlobalSettings.FLATWORLD.get() ? p.get(RenderContext.slot).context(Glob.class).map.getcz(orig.x, -orig.y) : 0;
 	    } catch(Loading l) {
 		/* XXX: WaterTile's obfog effect is the only thing
 		 * that uses maploc, in order to get the precise water
@@ -1702,21 +1702,21 @@ public class MapView extends PView implements DTarget, Console.Directory {
     private void updweather() {
 	Glob.Weather[] wls = glob.weather().toArray(new Glob.Weather[0]);
 	Pipe.Op[] wst = new Pipe.Op[wls.length];
-	for(int i = 0; i < wls.length; i++)
+	for (int i = 0; i < wls.length; i++)
 	    wst[i] = wls[i].state();
 	try {
 	    basic(Glob.Weather.class, Pipe.Op.compose(wst));
-	} catch(Loading l) {
-	}
+	} catch (Loading ignored) { }
 	Collection<RenderTree.Node> old =new ArrayList<>(rweather.keySet());
-	for(Glob.Weather w : wls) {
-	    if(w instanceof RenderTree.Node) {
-		RenderTree.Node n = (RenderTree.Node)w;
-		old.remove(n);
-		if(rweather.get(n) == null) {
-		    try {
-			rweather.put(n, basic.add(n));
-		    } catch(Loading l) {
+        if(GlobalSettings.SHOWWEATHER.get()) {
+	    for (Glob.Weather w : wls) {
+		if (w instanceof RenderTree.Node) {
+		    RenderTree.Node n = (RenderTree.Node) w;
+		    old.remove(n);
+		    if (rweather.get(n) == null) {
+			try {
+			    rweather.put(n, basic.add(n));
+			} catch (Loading ignored) { }
 		    }
 		}
 	    }
@@ -1735,10 +1735,14 @@ public class MapView extends PView implements DTarget, Console.Directory {
     
     public Coord3f getcc() {
 	Gob pl = player();
+	final Coord3f ret;
 	if(pl != null)
-	    return(pl.getc());
+	    ret = pl.getc();
 	else
-	    return(glob.map.getzp(cc));
+	    ret = glob.map.getzp(cc);
+	if(GlobalSettings.FLATWORLD.get())
+	    ret.z = 0;
+	return ret;
     }
 
     public static class Clicklist implements RenderList<Rendered>, RenderList.Adapter {
@@ -2386,10 +2390,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
 	g.updatePathfindingBlackout(false);
 	pl.updatePathfindingBlackout(false);
-
-	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
-	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
-	}
 	return moves != null ? moves.toArray(new Move[0]) : null;
     }
 
@@ -2479,15 +2479,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	super.tick(dt);
 	glob.map.sendreqs();
 	camload = null;
-	try {
-	    if((shake = shake * Math.pow(100, -dt)) < 0.01)
-		shake = 0;
-	    camoff.x = (float)((Math.random() - 0.5) * shake);
-	    camoff.y = (float)((Math.random() - 0.5) * shake);
-	    camoff.z = (float)((Math.random() - 0.5) * shake);
-	    camera.tick(dt);
-	} catch(Loading e) {
-	    camload = e;
+	if(GlobalSettings.ALLOWSHAKING.get()) {
+	    try {
+		if ((shake = shake * Math.pow(100, -dt)) < 0.01)
+		    shake = 0;
+		camoff.x = (float) ((Math.random() - 0.5) * shake);
+		camoff.y = (float) ((Math.random() - 0.5) * shake);
+		camoff.z = (float) ((Math.random() - 0.5) * shake);
+		camera.tick(dt);
+	    } catch (Loading e) {
+		camload = e;
+	    }
 	}
 	basic(Camera.class, camera);
 	amblight();
@@ -2571,6 +2573,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Coord lastmc = null;
 	RenderTree.Slot slot;
 	private final List<OCache.Delta> deltas = new ArrayList<>();
+	private boolean isplaced = false;
 
 	private Plob(Indir<Resource> res, Message sdt) {
 	    super(MapView.this.glob, MapView.this.cc);
@@ -2612,14 +2615,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	@Override
 	public void ctick(double dt) {
 	    //Apply any deltas during a tick
-	    synchronized (deltas) {
-		if (deltas.size() > 0) {
-		    for (final var delta : this.deltas) {
-			delta.apply(this);
+	    if(isplaced) {
+		synchronized (deltas) {
+		    if (deltas.size() > 0) {
+			for (final var delta : this.deltas) {
+			    delta.apply(this);
+			}
+			this.deltas.clear();
+			// We now need to signal to MapView to re-add this plob to the render graph
+			refresh();
 		    }
-		    this.deltas.clear();
-		    // We now need to signal to MapView to re-add this plob to the render graph
-		    refresh();
 		}
 	    }
 	    super.ctick(dt);
@@ -2687,7 +2692,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		if(!placing.cancel()) {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
-			ob.slot.remove();
+		        if(ob.slot != null)
+		            ob.slot.remove();
 			ob.dispose();
 		    }
 		}
@@ -2718,7 +2724,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    ret.addol(ores, odt);
 			    a = a2;
 			}
-			ret.place();
+			synchronized (ui) {
+			    ret.place();
+			    ret.isplaced = true;
+			}
 			return(ret);
 		    }
 		});
@@ -2728,7 +2737,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		if(!placing.cancel()) {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
-			ob.slot.remove();
+			if(ob.slot != null)
+			    ob.slot.remove();
 			ob.dispose();
 		    }
 		}

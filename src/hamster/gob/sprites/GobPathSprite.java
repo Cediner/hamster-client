@@ -59,7 +59,7 @@ public class GobPathSprite extends Sprite {
         try {
             final float dx = (float)(dist * Math.cos(a));
             final float dy = -(float)(dist * Math.sin(a));
-            final float bz = (float)(glob.map.getcz(cc.x + dx, cc.y - dy) - glob.map.getcz(cc.x, cc.y));
+            final float bz = !GlobalSettings.FLATWORLD.get() ? (float)(glob.map.getcz(cc.x + dx, cc.y - dy) - glob.map.getcz(cc.x, cc.y)) : 0f;
             posb.put(2, 11f);
             posb.put(3, dx).put(4, dy).put(5, bz + 11f);
         } catch(Loading e) {

@@ -8,14 +8,14 @@ import static hamster.ui.fight.WeightType.UA;
 
 public class Attack extends Card implements Attacks {
     private final boolean attackHasMu;
-    private final double attackweight;
+    public final double attackweight;
     private final Map<DefenseType, Double> openingweights = new HashMap<>();
-    private final WeightType type;
-    private final int cost;
+    public final WeightType type;
+    public final int cost;
     private final Set<DefenseType> damagetypes = new HashSet<>();
-    private final double damageweight;
-    private final int damage;
-    private final double grievousDamageWeight;
+    public final double damageweight;
+    public final int damage;
+    public final double grievousDamageWeight;
 
     public Attack(final String name, final boolean cooldownHasMu, final int cooldown, final WeightType type, final int cost,
                   final int damage, final double grievousDamageWeight, final double dmgweight,
@@ -44,6 +44,16 @@ public class Attack extends Card implements Attacks {
                   final DefenseType... attacktypes) {
         this(name, cooldownHasMu, cooldown, type, cost, 0, grievousDamageWeight, dmgweight,
                 attackHasMu, attackweight, red, green, yellow, blue, attacktypes);
+    }
+
+    @SuppressWarnings("unused") // For scripting API
+    public double getWeight(final DefenseType type) {
+        return openingweights.getOrDefault(type, 0.0);
+    }
+
+    @SuppressWarnings("unused") // For scripting API
+    public DefenseType[] getDamageTypes() {
+        return damagetypes.toArray(new DefenseType[0]);
     }
 
     /**
