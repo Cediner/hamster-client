@@ -2573,6 +2573,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Coord lastmc = null;
 	RenderTree.Slot slot;
 	private final List<OCache.Delta> deltas = new ArrayList<>();
+	private boolean isplaced = false;
 
 	private Plob(Indir<Resource> res, Message sdt) {
 	    super(MapView.this.glob, MapView.this.cc);
@@ -2614,14 +2615,16 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	@Override
 	public void ctick(double dt) {
 	    //Apply any deltas during a tick
-	    synchronized (deltas) {
-		if (deltas.size() > 0) {
-		    for (final var delta : this.deltas) {
-			delta.apply(this);
+	    if(isplaced) {
+		synchronized (deltas) {
+		    if (deltas.size() > 0) {
+			for (final var delta : this.deltas) {
+			    delta.apply(this);
+			}
+			this.deltas.clear();
+			// We now need to signal to MapView to re-add this plob to the render graph
+			refresh();
 		    }
-		    this.deltas.clear();
-		    // We now need to signal to MapView to re-add this plob to the render graph
-		    refresh();
 		}
 	    }
 	    super.ctick(dt);
@@ -2721,10 +2724,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    ret.addol(ores, odt);
 			    a = a2;
 			}
-			//Queue place with empty delta job
-			final var lst = new ArrayList<OCache.Delta>();
-			lst.add((gob) -> {});
-			ret.queueDeltas(lst);
+			synchronized (ui) {
+			    ret.place();
+			    ret.isplaced = true;
+			}
 			return(ret);
 		    }
 		});
