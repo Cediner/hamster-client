@@ -114,6 +114,11 @@ public class Fightview extends Widget {
 	    lastuse = Utils.rtime();
 	}
 
+	@SuppressWarnings("unused") // For scripting API
+	public double getWeight(final DefenseType type) {
+            return defweights.getOrDefault(type, 0.0);
+	}
+
 	private void updateDefWeights() {
 	    final Set<DefenseType> notfound = new HashSet<>(Arrays.asList(DefenseType.values()));
 	    for (Widget wdg = buffs.child; wdg != null; wdg = wdg.next) {
@@ -237,6 +242,11 @@ public class Fightview extends Widget {
     public void use(Indir<Resource> act) {
 	lastact = act;
 	lastuse = Utils.rtime();
+    }
+
+    @SuppressWarnings("unused") // For scripting API
+    public double getWeight(final DefenseType type) {
+	return defweights.getOrDefault(type, 0.0);
     }
     
     @RName("frv")

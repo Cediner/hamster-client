@@ -13,8 +13,8 @@ public class Restoration extends Card implements Attacks {
 
     private final Map<DefenseType, Double> reductions = new HashMap<>();
     private final Map<DefenseType, Double> openingweights = new HashMap<>(); //only for Flex and Yield, but fuck Yield.
-    private final WeightType attacktype;
-    private final double attackweight;
+    public final WeightType attacktype;
+    public final double attackweight;
     public final int cost;
     private final ValidationFunc validation;
 
@@ -51,6 +51,16 @@ public class Restoration extends Card implements Attacks {
         this(name, cooldownHasMu, cooldown, cost, red, green, yellow, blue,
                 0, 0, 0, 0, UA, 0,
                 validation);
+    }
+
+    @SuppressWarnings("unused") // For scripting API
+    public double getOpening(final DefenseType type) {
+        return openingweights.getOrDefault(type, 0.0);
+    }
+
+    @SuppressWarnings("unused") // For scripting API
+    public double getReduction(final DefenseType type) {
+        return reductions.getOrDefault(type, 0.0);
     }
 
     /**
