@@ -39,13 +39,13 @@
   (let ((targets (gob-get-all-by-filter
                   (lambda (gob)
                     (or (member (gob-name gob) +targets+ :test 'equal)
-                        (and (jeq (gob-type gob) +human+)
+                        (and (gob-has-tag gob +human+)
                              (not (is-gob-friendly gob))
                              (not (= (gob-id gob) (mv-plgob (mv))))))))))
     (loop
        for target in targets
-       do (let ((name (if (jeq (gob-type target) +human+) (gob-kinname target) (gob-name target)))
-                (gear (if (jeq (gob-type target) +human+) (gob-equipment target) nil)))
+       do (let ((name (if (gob-has-tag target +human+) (gob-kinname target) (gob-name target)))
+                (gear (if (gob-has-tag target +human+) (gob-equipment target) nil)))
             (cond
               ((and (gethash (gob-id target) spotted-gobs)
                     (> (- (get-time) (spotted-gob-last-alert (gethash (gob-id target) spotted-gobs)))
@@ -108,14 +108,14 @@
   (let ((targets (gob-get-all-by-filter
                   (lambda (gob)
                     (or (member (gob-name gob) +targets+ :test 'equal)
-                        (and (jeq (gob-type gob) +human+)
+                        (and (gob-has-tag gob +human+)
                              (not (is-gob-friendly gob))
                              (gob-equipment gob)
                              (not (jeq gob (my-gob)))))))))
     (loop
        for target in targets
-       do (let ((name (if (jeq (gob-type target) +human+) (gob-kinname target) (gob-name target)))
-                (extra (if (jeq (gob-type target) +human+)
+       do (let ((name (if (gob-has-tag target +human+) (gob-kinname target) (gob-name target)))
+                (extra (if (gob-has-tag target +human+)
                            (let ((equs (gob-equipment target)))
                              (apply #'concatenate 'string
                                     (loop
