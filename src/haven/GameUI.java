@@ -156,6 +156,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     //Timers
     public final TimersWnd timers;
 
+    //FlowerMenu stuff
+    public String fmAutoSelectOpt = null;
+    public boolean fmOverrideSettings = false;
+
     //Equipment
     public Equipory equ;
     public MiniEquipView mmequ;
@@ -1127,9 +1131,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		       final Optional<String> name = target.resname();
 		       map.wdgmsg("click", Coord.o, tc, 3, 0, 0, (int) target.id, tc, 0, -1);
 		       name.ifPresent((nm) -> {
-		           //Knars, Snekkja have a flowermenu and the second option is to join the crew
+		           //Knarrs, Snekkja have a flowermenu and the second option is to join the crew without a captain
+			   // but first when with a captain
 		           if(nm.endsWith("knarr") || nm.endsWith("snekkja")) {
-		               ui.wdgmsg(ui.next_predicted_id, "cl", 1);
+			       fmAutoSelectOpt = "Join the crew";
 			   } else if(nm.endsWith("wagon")) {
 		               //Wagons havea  flowermenu and the first option is to ride
 			       ui.wdgmsg(ui.next_predicted_id, "cl", 0);
