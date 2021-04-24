@@ -2689,7 +2689,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		if(!placing.cancel()) {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
-			ob.slot.remove();
+		        if(ob.slot != null)
+		            ob.slot.remove();
 			ob.dispose();
 		    }
 		}
@@ -2720,7 +2721,10 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    ret.addol(ores, odt);
 			    a = a2;
 			}
-			ret.place();
+			//Queue place with empty delta job
+			final var lst = new ArrayList<OCache.Delta>();
+			lst.add((gob) -> {});
+			ret.queueDeltas(lst);
 			return(ret);
 		    }
 		});
@@ -2730,7 +2734,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		if(!placing.cancel()) {
 		    Plob ob = placing.get();
 		    synchronized(ob) {
-			ob.slot.remove();
+			if(ob.slot != null)
+			    ob.slot.remove();
 			ob.dispose();
 		    }
 		}
