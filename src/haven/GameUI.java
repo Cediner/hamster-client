@@ -906,7 +906,15 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if(mailbox != null)
 	    mailbox.processMail(mail -> mail.apply(this));
     }
-    
+
+    public void setFmAutoSelectOpt(final String opt) {
+        fmAutoSelectOpt = opt;
+    }
+
+    public void setFmOverrideSettings(final boolean val) {
+        fmOverrideSettings = val;
+    }
+
     public void uimsg(String msg, Object... args) {
 	switch (msg) {
 	    case "err":
