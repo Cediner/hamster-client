@@ -49,7 +49,6 @@
 ;;;; Relation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (java-func +relation+ peace-toggle "peace")
-(java-func +fightview+ get-rel2 "getrel2" +long+)
 (java-func +fightview+ get-relations1 "getrelations")
 
 (java-field rel-gob-id "gobid")
@@ -58,8 +57,12 @@
 	`(get-relations1 (fv))
 )
 
-(defmacro get-relation (id)
-	`(get-rel2 (fv) ,id)
-)
+(defun get-relation (id)
+    (let ((rels (get-relations)))
+        (doarr (rel rels)
+            (when (= (rel-gob-id rel) id)
+                (return-from get-relation rel))))
+    nil)
+
 
 (export '(get-relation get-relations rel-gob-id peace-toggle))
