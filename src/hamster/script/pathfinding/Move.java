@@ -21,6 +21,8 @@ public class Move {
     public static class ClickInfo {
         final int olclicked;
         final Gob gob;
+        final Coord2d tc;
+        final long gobid;
         final int olid;
         final int meshid;
 
@@ -34,8 +36,30 @@ public class Move {
         public ClickInfo(final Object[] inf) {
             olclicked = (Integer) inf[0];
             gob = (Gob) inf[1];
+            gobid = gob.id;
             olid = (Integer) inf[2];
             meshid = (Integer) inf[3];
+            tc = null;
+        }
+
+        public ClickInfo(final int olclicked, final long gobid, final Coord2d tc, final int olid, final int meshid) {
+            this.olclicked = olclicked;
+            this.gob = null;
+            this.gobid = gobid;
+            this.tc = tc;
+            this.olid = olid;
+            this.meshid = meshid;
+        }
+
+        public int id() {
+            return (int) gobid;
+        }
+
+        public Coord2d rc() {
+            if(gob != null)
+                return gob.rc;
+            else
+                return tc;
         }
     }
 
@@ -44,7 +68,7 @@ public class Move {
         final int cb, flags;
 
         public Interact(final ClickInfo inf, int clickb, int flags) {
-            super(inf.gob.rc);
+            super(inf.rc());
             this.inf = inf;
             this.flags = flags;
             cb = clickb;
@@ -52,9 +76,9 @@ public class Move {
 
         public void apply(MapView mv) {
             if (inf.olclicked == 0) {
-                mv.wdgmsg("click", fake, inf.gob.rc.floor(OCache.posres), cb, flags, 0, (int) inf.gob.id, inf.gob.rc.floor(OCache.posres), 0, inf.meshid);
+                mv.wdgmsg("click", fake, inf.rc().floor(OCache.posres), cb, flags, 0, inf.id(), inf.rc().floor(OCache.posres), 0, inf.meshid);
             } else {
-                mv.wdgmsg("click", fake, inf.gob.rc.floor(OCache.posres), cb, flags, 1, (int) inf.gob.id, inf.gob.rc.floor(OCache.posres), inf.olid, inf.meshid);
+                mv.wdgmsg("click", fake, inf.rc().floor(OCache.posres), cb, flags, 1, inf.id(), inf.rc().floor(OCache.posres), inf.olid, inf.meshid);
             }
 
         }

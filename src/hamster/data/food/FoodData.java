@@ -1,7 +1,7 @@
 package hamster.data.food;
 
 import com.google.common.flogger.FluentLogger;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import hamster.util.TimedCache;
 import haven.*;
 
@@ -10,53 +10,14 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class FoodData implements Disposable {
+public class FoodData {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     //XXX: may be better to just do a size limited cache, but this works for now.
-    private static final TimedCache<FoodData> textcache = new TimedCache<>(TimeUnit.SECONDS.toMillis(5));
-    public static final List<FoodData> foods = new ArrayList<>();
+    public static final TimedCache<Food> textcache = new TimedCache<>(TimeUnit.SECONDS.toMillis(5));
+    public static final List<Food> foods = new ArrayList<>();
     public static final Map<String, FepType> feptypemap = new HashMap<>();
     public static final Map<String, FepType> fepmap = new HashMap<>();
     public static int longestname;
-
-    public static class Ingredient {
-        public String name;
-        public int percentage;
-    }
-
-    public enum FepType {
-        STR, AGI, INT, CON, PER, CHA, DEX, WIL, PSY,
-	STR2, AGI2, INT2, CON2, PER2, CHA2, DEX2, WIL2, PSY2;
-
-        public FepType complement() {
-            return switch (this) {
-                case STR  -> STR2;
-		case AGI -> AGI2;
-		case INT -> INT2;
-		case CON -> CON2;
-		case PER -> PER2;
-		case CHA -> CHA2;
-		case DEX -> DEX2;
-		case WIL -> WIL2;
-		case PSY -> PSY2;
-		case STR2 -> STR;
-		case AGI2 -> AGI;
-		case INT2 -> INT;
-		case CON2 -> CON;
-		case PER2 -> PER;
-		case CHA2 -> CHA;
-		case DEX2 -> DEX;
-		case WIL2 -> WIL;
-		case PSY2 -> PSY;
-	    };
-	}
-    }
-
-    public static class Fep {
-        public FepType type;
-        public String name;
-        public float value;
-    }
 
     public static void init() {
 	logger.atInfo().log("Loading Food Data");
@@ -79,9 +40,11 @@ public class FoodData implements Disposable {
 	fepmap.put("Will +2", FepType.WIL2); feptypemap.put("wil2", FepType.WIL2);
 	fepmap.put("Psyche +2", FepType.PSY2); feptypemap.put("psy2", FepType.PSY2);
 
-	final var gson = new Gson();
+	final var builder = new GsonBuilder();
+	builder.registerTypeAdapter(String.class, (JsonDeserializer<String>) (jsonElement, type, jsonDeserializationContext) -> jsonElement.getAsString().intern());
+	final var gson = builder.create();
 	try {
-	    final var itms = gson.fromJson(new FileReader("data/FoodData.json5"), FoodData[].class);
+	    final var itms = gson.fromJson(new FileReader("data/FoodData.json5"), Food[].class);
 	    foods.addAll(Arrays.asList(itms));
 	    int max = 0;
 	    final var itr = foods.iterator();
@@ -117,71 +80,5 @@ public class FoodData implements Disposable {
 
     public static void tick() {
         textcache.tick();
-    }
-
-    public String itemName;
-    public String resourceName;
-    public int energy;
-    public float hunger;
-    public float totalFep;
-    public List<Ingredient> ingredients;
-    public List<Fep> feps;
-
-    private Text ingredientsText = null;
-    private Defer.Future<Text> dIngText = null;
-
-    public float fepPerHunger() {
-        return totalFep / hunger;
-    }
-
-    public Fep getFep(final FepType type) {
-        for(final var fep : feps) {
-            if(fep.type == type)
-                return fep;
-	}
-        return null;
-    }
-
-    public Optional<Tex> ingredientsText() {
-        textcache.access(this);
-        if(ingredientsText != null)
-            return Optional.of(ingredientsText.tex());
-        if(dIngText != null) {
-            if(dIngText.done()) {
-                ingredientsText = dIngText.get();
-                dIngText = null;
-		return Optional.of(ingredientsText.tex());
-	    }
-	} else {
-	    dIngText = Defer.later(() -> {
-		final StringBuilder sb = new StringBuilder();
-		for (final var ing : ingredients) {
-		    if (sb.length() > 0)
-			sb.append(", ");
-		    sb.append(ing.name);
-		    sb.append(": ");
-		    sb.append(ing.percentage);
-		    sb.append('%');
-		}
-		return RichText.render(sb.toString(), UI.scale(300));
-	    });
-	}
-	return Optional.empty();
-    }
-
-    @Override
-    public void dispose() {
-        if(ingredientsText != null) {
-            ingredientsText.tex().dispose();
-	}
-        if(dIngText != null) {
-	    if (dIngText.done())
-		dIngText.get().tex().dispose();
-	    else {
-		dIngText.cancel();
-	    }
-	}
-	ingredientsText = null;
-	dIngText = null;
     }
 }

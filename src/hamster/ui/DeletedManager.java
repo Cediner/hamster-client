@@ -38,7 +38,7 @@ public class DeletedManager extends Window implements ObservableListener<String>
         c.y += add(new Button(200, "Add Deleted", () -> {
             if (!manualin.text.equals("")) {
                 Deleted.add(manualin.text);
-                //TODO: Delete gobs as needed
+                OCache.MessageBus.send(new OCache.RemoveGobByRes(manualin.text));
             }
         }), c.copy()).sz.y;
         add(new Button(200, "Stop Deleting", () -> {

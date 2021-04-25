@@ -1,5 +1,7 @@
 package hamster.ui.food;
 
+import hamster.data.food.FepType;
+import hamster.data.food.Food;
 import hamster.data.food.FoodData;
 import hamster.ui.core.layout.LinearGrouping;
 import hamster.ui.food.filters.*;
@@ -14,7 +16,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static hamster.data.food.FoodData.FepType.*;
+import static hamster.data.food.FepType.*;
 
 public class FoodSearchWnd extends Window {
     private static final Coord iconc, iconsz;
@@ -29,7 +31,7 @@ public class FoodSearchWnd extends Window {
     private static final Coord hunc, hunsz;
     private static final Coord energyc, energysz;
     private static final Coord offset = UI.scale(1, 1);
-    private static final Map<FoodData.FepType, Coord> fepcmap = new HashMap<>();
+    private static final Map<FepType, Coord> fepcmap = new HashMap<>();
     static {
         final var spacer = UI.scale(2, 0);
         iconc = new Coord(0, 0);
@@ -69,27 +71,27 @@ public class FoodSearchWnd extends Window {
         psycol = new Color(196, 141, 253);
 
         fepcmap.put(STR, strc);
-        fepcmap.put(FoodData.FepType.STR2, strc);
-        fepcmap.put(FoodData.FepType.AGI, agic);
-        fepcmap.put(FoodData.FepType.AGI2, agic);
+        fepcmap.put(FepType.STR2, strc);
+        fepcmap.put(FepType.AGI, agic);
+        fepcmap.put(FepType.AGI2, agic);
         fepcmap.put(INT, intc);
-        fepcmap.put(FoodData.FepType.INT2, intc);
-        fepcmap.put(FoodData.FepType.CON, conc);
-        fepcmap.put(FoodData.FepType.CON2, conc);
-        fepcmap.put(FoodData.FepType.PER, perc);
-        fepcmap.put(FoodData.FepType.PER2, perc);
-        fepcmap.put(FoodData.FepType.CHA, chac);
-        fepcmap.put(FoodData.FepType.CHA2, chac);
-        fepcmap.put(FoodData.FepType.DEX, dexc);
-        fepcmap.put(FoodData.FepType.DEX2, dexc);
-        fepcmap.put(FoodData.FepType.WIL, wilc);
-        fepcmap.put(FoodData.FepType.WIL2, wilc);
-        fepcmap.put(FoodData.FepType.PSY, psyc);
-        fepcmap.put(FoodData.FepType.PSY2, psyc);
+        fepcmap.put(FepType.INT2, intc);
+        fepcmap.put(FepType.CON, conc);
+        fepcmap.put(FepType.CON2, conc);
+        fepcmap.put(FepType.PER, perc);
+        fepcmap.put(FepType.PER2, perc);
+        fepcmap.put(FepType.CHA, chac);
+        fepcmap.put(FepType.CHA2, chac);
+        fepcmap.put(FepType.DEX, dexc);
+        fepcmap.put(FepType.DEX2, dexc);
+        fepcmap.put(FepType.WIL, wilc);
+        fepcmap.put(FepType.WIL2, wilc);
+        fepcmap.put(FepType.PSY, psyc);
+        fepcmap.put(FepType.PSY2, psyc);
     }
 
-    private static class FoodList extends Listbox<FoodData> {
-        private List<FoodData> filter;
+    private static class FoodList extends Listbox<Food> {
+        private List<Food> filter;
 
         public FoodList() {
             super(energyc.add(energysz.x + Scrollbar.sflarp.sz().x, 0).x, 20,  Inventory.sqsz.add(1,1).y);
@@ -105,7 +107,7 @@ public class FoodSearchWnd extends Window {
         }
 
         @Override
-        protected FoodData listitem(int i) {
+        protected Food listitem(int i) {
             return filter.get(i);
         }
 
@@ -115,7 +117,7 @@ public class FoodSearchWnd extends Window {
         }
 
         @Override
-        protected void drawitem(GOut g, FoodData item, int i) {
+        protected void drawitem(GOut g, Food item, int i) {
             // Draw the icon
             final Indir<Resource> res = Resource.remote().load(item.resourceName);
             try {
@@ -239,7 +241,7 @@ public class FoodSearchWnd extends Window {
             g.rect(Coord.z, g.sz());
         }
 
-        private void sortByAttr(final FoodData.FepType type) {
+        private void sortByAttr(final FepType type) {
             if(sortmethod instanceof AttrSort) {
                 final AttrSort sort = (AttrSort) sortmethod;
                 if(sort.attr() == type)

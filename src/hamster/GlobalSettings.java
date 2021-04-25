@@ -105,6 +105,8 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> SNOWDENSITY =  new IndirSetting<>(global, "map.snow-density", 1);
     public static final IndirSetting<Integer> SNOWFALLSPEED =  new IndirSetting<>(global, "map.snow-speed", 1);
     public static final IndirSetting<Integer> SNOWGUSTSPEED =  new IndirSetting<>(global, "map.snow-gust-speed", 100);
+    public static final IndirSetting<Boolean> SHOWWEATHER = new IndirSetting<>(global, "map.show-weather", true);
+    public static final IndirSetting<Boolean> ALLOWSHAKING = new IndirSetting<>(global, "map.allow-shaking", true);
 
     //Minimap
     public static final IndirSetting<Boolean> SHOWMMGOBS = new IndirSetting<>(global, "minimap.show-gobs", true);
@@ -130,7 +132,8 @@ public class GlobalSettings {
     public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
 
     //Gob
-    public static final IndirSetting<Boolean> COLORIZEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
+    public static final IndirSetting<Boolean> CIRCLEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
+    public static final IndirSetting<Boolean> CIRCLEFRIENDS = new IndirSetting<>(global, "gob.circle-friends", true);
     public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
     public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
     public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);

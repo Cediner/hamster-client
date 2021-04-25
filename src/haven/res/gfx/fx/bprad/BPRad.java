@@ -1,6 +1,7 @@
 /* Preprocessed source code */
 package haven.res.gfx.fx.bprad;
 
+import hamster.GlobalSettings;
 import haven.*;
 import haven.render.*;
 import haven.render.Model.Indices;
@@ -72,7 +73,7 @@ public class BPRad extends Sprite {
 	try {
 	    float bz = (float)glob.map.getcz(c.x, c.y);
 	    for(int i = 0; i < n; i++) {
-		float z = (float)glob.map.getcz(c.x + posb.get(i * 3), c.y - posb.get(i * 3 + 1)) - bz;
+		float z = !GlobalSettings.FLATWORLD.get() ? (float)glob.map.getcz(c.x + posb.get(i * 3), c.y - posb.get(i * 3 + 1)) - bz : 0;
 		posb.put(i * 3 + 2, z + 10);
 		posb.put((n + i) * 3 + 2, z - 10);
 	    }

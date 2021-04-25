@@ -1,10 +1,10 @@
 package hamster.ui.food.sort;
 
-import hamster.data.food.FoodData;
+import hamster.data.food.Food;
 
 import java.util.Comparator;
 
-public class FieldSort extends Sort implements Comparator<FoodData> {
+public class FieldSort extends Sort implements Comparator<Food> {
     private final Supplier compare;
     private final Direction dir;
     public FieldSort(final SortMethod method, final Direction dir, final Supplier comparer) {
@@ -19,7 +19,7 @@ public class FieldSort extends Sort implements Comparator<FoodData> {
     }
 
     @Override
-    public int compare(FoodData o1, FoodData o2) {
+    public int compare(Food o1, Food o2) {
 	return compare.apply(o1, o2) * (dir == Direction.ASC ? 1 : -1);
     }
 }

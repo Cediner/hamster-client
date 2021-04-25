@@ -1,6 +1,6 @@
 package hamster.ui.food.filters;
 
-import hamster.data.food.FoodData;
+import hamster.data.food.Food;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class AndFilter implements Filter {
     }
 
     @Override
-    public boolean included(FoodData item) {
+    public boolean included(Food item) {
 	boolean ret = true;
 	for(final var filter : filters) {
 	    ret = ret && filter.included(item);

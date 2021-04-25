@@ -301,24 +301,39 @@ public class FlowerMenu extends Widget {
 	ui.sess.details.attachFlowermenu(this);
 	int jack = ui.modflags();
 
-	if(GlobalSettings.AUTOONEOPTFMENU.get() && opts.length == 1 && !MenuExclusionData.isExcluded(opts[0].name)) {
-	    wdgmsg("cl", 0, 0);
-	    hide();
-	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 3) {
-	    if (opts[0].name.equals("Empty")) {
-		if (opts.length == 1) return; //don't jackui a single empty
-		//switch options for containers
-		jack = jack == 1 ? 0 : 1;
+	if(ui.gui.fmAutoSelectOpt != null) {
+	    for(final var opt : opts) {
+	        if(opt.name.equals(ui.gui.fmAutoSelectOpt)) {
+	            wdgmsg("cl", opt.num, 0);
+	            hide();
+	            return;
+		}
 	    }
-	    if(!MenuExclusionData.isExcluded(opts[jack].name)) {
-		wdgmsg("cl", jack, 0);
+	    ui.gui.fmAutoSelectOpt = null;
+	}
+
+	if(!ui.gui.fmOverrideSettings) {
+	    if (GlobalSettings.AUTOONEOPTFMENU.get() && opts.length == 1 && !MenuExclusionData.isExcluded(opts[0].name)) {
+		wdgmsg("cl", 0, 0);
 		hide();
+	    } else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts.length <= 3) {
+		if (opts[0].name.equals("Empty")) {
+		    if (opts.length == 1) return; //don't jackui a single empty
+		    //switch options for containers
+		    jack = jack == 1 ? 0 : 1;
+		}
+		if (!MenuExclusionData.isExcluded(opts[jack].name)) {
+		    wdgmsg("cl", jack, 0);
+		    hide();
+		}
+	    } else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
+		if (!MenuExclusionData.isExcluded(opts[jack].name)) {
+		    wdgmsg("cl", jack, 0);
+		    hide();
+		}
 	    }
-	} else if (GlobalSettings.QUICKFLMENU.get() && jack < opts.length && opts[1].name.equals("Sip")) {
-	    if(!MenuExclusionData.isExcluded(opts[jack].name)) {
-		wdgmsg("cl", jack, 0);
-		hide();
-	    }
+	} else {
+	    ui.gui.fmOverrideSettings = false;
 	}
     }
 

@@ -189,7 +189,7 @@ public class Pointer extends Widget {
     public boolean mousedown(Coord c, int button) {
 	if (this.lc != null && this.lc.dist(c) < 20.0) {
 	    if (gobid > 0) {
-		ui.gui.map.wdgmsg("click", rootpos().add(c), this.tc.floor(posres), button, ui.modflags(), 0, (int) gobid, this.tc.floor(posres), 0, -1);
+		ui.gui.map.queuemove(new Move.Interact(new Move.ClickInfo(0, gobid, this.tc, 0, -1), button, ui.modflags()));
 	    } else {
 		ui.gui.map.queuemove(new Move(this.tc));
 	    }
