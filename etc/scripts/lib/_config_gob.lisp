@@ -278,7 +278,7 @@
   `(gob-get-closest-by-filter (lambda (gob) (string= ,name (gob-name gob)))))
 
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +water-vehicle+ +vehicle+ +tree+ +bush+ +log+ +rock+ +stump+ +stockpile+
-          gob-c gob-name gob-type gob-overlays gob-poses gob-sdt is-gob-dead
+          gob-c gob-name gob-has-tag gob-overlays gob-poses gob-sdt is-gob-dead
           gob-is-holding gob-is-held-by-something gob-is-held-by gob-held-by gob-how-many-gobs-held gob-held-gobs
           gob-kinname gob-equipment
           gob-id gob-rc gob-v
