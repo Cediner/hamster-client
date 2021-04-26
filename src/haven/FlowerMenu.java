@@ -293,6 +293,22 @@ public class FlowerMenu extends Widget {
 	}
     }
 
+    @Override
+    public void tick(double dt) {
+	super.tick(dt);
+	if(ui.gui.fmAutoSelectOpt != null) {
+	    for(final var opt : opts) {
+		if(opt.name.equals(ui.gui.fmAutoSelectOpt)) {
+		    wdgmsg("cl", opt.num, 0);
+		    hide();
+		    ui.gui.fmAutoSelectOpt = null;
+		    return;
+		}
+	    }
+	    ui.gui.fmAutoSelectOpt = null;
+	}
+    }
+
     /*****************************************************************************************
      *  FlowerMenu Scripting API
      *****************************************************************************************/
@@ -306,6 +322,7 @@ public class FlowerMenu extends Widget {
 	        if(opt.name.equals(ui.gui.fmAutoSelectOpt)) {
 	            wdgmsg("cl", opt.num, 0);
 	            hide();
+		    ui.gui.fmAutoSelectOpt = null;
 	            return;
 		}
 	    }
