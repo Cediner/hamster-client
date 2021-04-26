@@ -13,6 +13,7 @@ import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
 import hamster.util.JobSystem;
 import haven.Coord;
+import haven.Indir;
 import haven.JOGLPanel;
 import haven.render.BaseColor;
 
@@ -51,6 +52,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWPCLAIM = new IndirSetting<>(tmp, "session.show-pclaim", false);
     public static final IndirSetting<Boolean> SHOWVCLAIM = new IndirSetting<>(tmp, "session.show-vclaim", false);
     public static final IndirSetting<Boolean> SHOWKCLAIM = new IndirSetting<>(tmp, "session.show-kclaim", false);
+
+    //Internal settings
+    public static final IndirSetting<Coord> WINDOWPOS = new IndirSetting<>(global, "intenral.window-pos", Coord.z);
 
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);

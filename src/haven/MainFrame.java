@@ -182,6 +182,24 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	} else {
 	    sz = isz;
 	}
+	Coord loc = GlobalSettings.WINDOWPOS.get();
+	this.setLocation(loc.x, loc.y);
+	this.addComponentListener(new ComponentListener() {
+	    @Override
+	    public void componentResized(ComponentEvent e) { }
+
+	    @Override
+	    public void componentMoved(ComponentEvent e) {
+	        final var comp = e.getComponent();
+	        GlobalSettings.WINDOWPOS.set(new Coord(comp.getLocationOnScreen().x, comp.getLocationOnScreen().y));
+	    }
+
+	    @Override
+	    public void componentShown(ComponentEvent e) { }
+	    @Override
+	    public void componentHidden(ComponentEvent e) { }
+	});
+
 	this.g = new ThreadGroup(HackThread.tg(), "Haven client");
 	JOGLPanel p = new JOGLPanel(sz);
 	this.p = p;
