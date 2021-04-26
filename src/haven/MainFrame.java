@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.lang.reflect.*;
 import java.util.List;
@@ -501,14 +502,11 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	main.start();
     }
 	
-    private static void dumplist(Collection<Resource> list, String fn) {
+    private static void dumplist(Collection<Resource> list, Path fn) {
 	try {
 	    if(fn != null) {
-		Writer w = new OutputStreamWriter(new FileOutputStream(fn), "UTF-8");
-		try {
+		try(Writer w = Files.newBufferedWriter(fn, Utils.utf8)) {
 		    Resource.dumplist(list, w);
-		} finally {
-		    w.close();
 		}
 	    }
 	} catch(IOException e) {

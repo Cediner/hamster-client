@@ -60,7 +60,8 @@ public class GlobalSettings {
     //Audio options
     public static final IndirSetting<Integer> MASTERVOL = new IndirSetting<>(global, "audio.master-volume", 1000);
     public static final IndirSetting<Integer> EVENTVOL = new IndirSetting<>(global, "audio.event-volume", 1000);
-    public static final IndirSetting<Integer> AMBIENTVOL = new IndirSetting<>(global, "audio.ambient-volume", 1000);    ////Audio
+    public static final IndirSetting<Integer> AMBIENTVOL = new IndirSetting<>(global, "audio.ambient-volume", 1000);
+    public static final IndirSetting<Integer> UIVOL = new IndirSetting<>(global, "audio.overall-ui-volume", 1000);
     public static final IndirSetting<Integer> TIMERVOL = new IndirSetting<>(global,"audio.timer-volume", 1000);
     public static final IndirSetting<Integer> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume", 1000);
     public static final IndirSetting<Integer> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-message-volume", 1000);
