@@ -14,7 +14,7 @@ import haven.*;
 import java.util.List;
 import java.util.Map;
 
-public class MouseBindsPanel extends Scrollport {
+public class MouseBindsPanel extends Widget {
     public static Widget MouseBindEditWithLabel(final String text, final String group, final IndirSetting<String> bind) {
         final Widget container = new Widget();
         final Label lbl = new Label(text);
