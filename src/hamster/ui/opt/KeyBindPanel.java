@@ -5,7 +5,6 @@ import hamster.KeyBind;
 import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.TabManager;
-import hamster.ui.core.layout.GridGrouping;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
