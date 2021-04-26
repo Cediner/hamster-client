@@ -27,6 +27,8 @@ public class AudioPanel extends Scrollport {
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, EVENTVOL, (val) -> ui.audio.pos.setvolume(val / 1000.0)));
 	grp.add(new Label(TranslationLookup.get("opt_audio_ambient_vol")));
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, AMBIENTVOL, (val) -> ui.audio.amb.setvolume(val / 1000.0)));
+	grp.add(new Label(TranslationLookup.get("opt_audio_ui_vol")));
+	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, UIVOL, (val) -> ui.audio.aui.setvolume(val / 1000.0)));
 	grp.add(new Label(TranslationLookup.get("opt_audio_timer_vol")));
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, TIMERVOL));
 	grp.add(new Label(TranslationLookup.get("opt_audio_alert_vol")));
