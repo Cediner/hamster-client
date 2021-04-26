@@ -66,6 +66,9 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume", 1000);
     public static final IndirSetting<Integer> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-message-volume", 1000);
     public static final IndirSetting<Integer> ERRORMSGVOL = new IndirSetting<>(global, "audio.error-message-volume", 1000);
+    public static final IndirSetting<Integer> COMBATSTARTVOL = new IndirSetting<>(global, "audio.combat-start-volume", 1000);
+    public static final IndirSetting<Boolean> COMBATSTARTAUDIO = new IndirSetting<>(global, "audio.combat-start", true);
+    public static final IndirSetting<String> COMBATSTARTAUDIORES = new IndirSetting<>(global, "audio.combat-start-res", "custom/sfx/howl");
 
     public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);

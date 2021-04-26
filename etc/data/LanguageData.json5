@@ -25,6 +25,10 @@
       opt_audio_popup_vol: "Popup Message volume",
       opt_audio_allow_popup: "Allow Sound on Popup Message",
       opt_audio_allow_gob: "Allow Sound from Gobs",
+      opt_audio_combat_vol: "Combat Start volume",
+      opt_audio_allow_combat: "Allow sound on combat start",
+      opt_audio_combat_res: "Combat start sound",
+      opt_audio_change_combat_res: "Change combat start sound",
       //Theme Options
       opt_theme_hud_theme: "Main Hud Theme (requires restart)",
       opt_theme_for: "Settings for ",
@@ -331,6 +335,10 @@
       opt_audio_popup_vol: "Volume des messages contextuels",
       opt_audio_allow_popup: "Autoriser le son sur le message contextuel",
       opt_audio_allow_gob: "Autoriser le son des Gobs",
+      opt_audio_combat_vol: "Volume de début de combat",
+      opt_audio_allow_combat: "Autoriser le son au début du combat",
+      opt_audio_combat_res: "Son de début de combat",
+      opt_audio_change_combat_res: "Changer le son de début de combat",
       //Theme Options
       opt_theme_hud_theme: "Thème principal Hud (nécessite un redémarrage)",
       opt_theme_for: "Paramètres pour ",

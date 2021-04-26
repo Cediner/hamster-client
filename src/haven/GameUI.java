@@ -651,7 +651,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		makewnd = add(new MakeWnd());
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
-	    case "fsess" -> fs = add((Fightsess)child, Coord.z);
+	    case "fsess" -> {
+	        fs = add((Fightsess)child, Coord.z);
+	    	if(COMBATSTARTAUDIO.get()) {
+	    	    ui.sfx(Resource.local().load(COMBATSTARTAUDIORES.get()), COMBATSTARTVOL.get() / 1000f);
+		    ui.sess.glob.lastAlert = System.currentTimeMillis();
+		}
+	    }
 	    case "abt" -> add(child, Coord.z);
 	    case "inv" -> {
 		invwnd = new Hidewnd(Coord.z, "Inventory") {
