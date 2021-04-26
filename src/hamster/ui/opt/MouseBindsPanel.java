@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 public class MouseBindsPanel extends Widget {
-    public static Widget MouseBindEditWithLabel(final String text, final String group, final IndirSetting<String> bind) {
+    public static Widget MouseBindEditWithLabel(final int width, final String text,
+                                                final String group, final IndirSetting<String> bind) {
         final Widget container = new Widget();
         final Label lbl = new Label(text);
         final MouseBindEdit kbe = new MouseBindEdit(group, bind);
         final int height = Math.max(lbl.sz.y, kbe.sz.y) / 2;
         container.add(lbl, new Coord(0, height - lbl.sz.y / 2));
-        container.add(kbe, new Coord(lbl.sz.x + 5, height - kbe.sz.y / 2));
+        container.adda(Frame.with(kbe, false), new Coord(width, height), 1, 0.5);
         container.pack();
         return container;
     }
@@ -36,9 +37,9 @@ public class MouseBindsPanel extends Widget {
             final Map<String, List<MouseBind>> groupings = MouseBind.bindgrps;
             for (final String group : groupings.keySet()) {
                 final Scrollport view = new Scrollport(new Coord(UI.scale(480), UI.scale(400)));
-                final Grouping binds = new GridGrouping(String.format("%s %s", group, TranslationLookup.get("mb_mousebind")), spacer, spacer.x, UI.scale(600), false);
+                final Grouping binds = new LinearGrouping(String.format("%s %s", group, TranslationLookup.get("mb_mousebind")), spacer, false);
                 for (final MouseBind mb : groupings.get(group)) {
-                    binds.add(MouseBindEditWithLabel(mb.name, mb.grouping, mb.bind));
+                    binds.add(MouseBindEditWithLabel(view.msz().x, mb.name, mb.grouping, mb.bind));
                 }
                 binds.pack();
                 view.add(binds);
