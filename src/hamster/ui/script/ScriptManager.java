@@ -208,11 +208,4 @@ public class ScriptManager extends Window implements ObservableMapListener<Long,
         managertab.pack();
         pack();
     }
-
-    @Override
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-        if (!msg.equals("select-tab")) {
-            super.wdgmsg(sender, msg, args);
-        }
-    }
 }
