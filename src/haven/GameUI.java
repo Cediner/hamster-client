@@ -782,9 +782,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if ((curprog == null) || (curprogf != fr) || (curprogb != bf)) {
 	    if (curprog != null)
 		curprog.dispose();
-	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].sz);
-	    PUtils.blit(buf, progt.f[fr][0].img.getRaster(), Coord.z);
-	    PUtils.blendblit(buf, progt.f[fr + 1][0].img.getRaster(), Coord.z, bf);
+	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].ssz);
+	    PUtils.blit(buf, progt.f[fr][0].scaled().getRaster(), Coord.z);
+	    PUtils.blendblit(buf, progt.f[fr + 1][0].scaled().getRaster(), Coord.z, bf);
 	    curprog = new TexI(PUtils.rasterimg(buf));
 	    curprogf = fr;
 	    curprogb = bf;

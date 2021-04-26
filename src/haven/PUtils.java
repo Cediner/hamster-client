@@ -26,6 +26,10 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+import hamster.ui.core.indir.IndirThemeRes;
+import hamster.ui.core.indir.IndirThemeTex;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.*;
@@ -579,7 +583,7 @@ public class PUtils {
         throw(new IllegalArgumentException("Can only scale images up or down in both dimensions"));
     }
 
-    private static final Convolution uifilter = new Hanning(5);
+    private static final Convolution uifilter = box;//new Hanning(5);
     public static BufferedImage uiscale(BufferedImage img, Coord tsz) {
 	Coord sz = imgsz(img);
 	if(tsz.equals(sz))
@@ -589,21 +593,24 @@ public class PUtils {
 
     public static void main(String[] args) throws Exception {
 	Convolution[] filters = {
-	    box,
 	    new Hanning(1),
-	    new Hanning(2),
+	    new Hanning(4),
+	    new Hanning(5),
 	    new Hamming(1),
+	    new Hamming(4),
 	    new Lanczos(2),
-	    new Lanczos(3),
+	    new Lanczos(4),
+	    box,
 	};
 	//BufferedImage in = Resource.loadimg("gfx/invobjs/herbs/crowberry");
-	BufferedImage in = javax.imageio.ImageIO.read(new java.io.File("/tmp/e.png"));
-	Coord tsz = new Coord(40, 40);
+	IndirThemeRes res = Theme.themeres("textedit");
+	final Resource.Image img = res.layer(Resource.imgc);
+	Coord tsz = img.ssz;
 	for(int i = 0; i < filters.length; i++) {
 	    double start = Utils.rtime();
-	    BufferedImage out = convolve(in, tsz, filters[i]);
+	    BufferedImage out = convolve(img.img, tsz, filters[i]);
 	    System.err.println(Utils.rtime() - start);
-	    javax.imageio.ImageIO.write(out, "PNG", new java.io.File("/tmp/barda" + i + ".png"));
+	    javax.imageio.ImageIO.write(out, "PNG", new java.io.File(String.format("data/dump/%s.png", i)));
 	}
     }
 }

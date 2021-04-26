@@ -1,0 +1,35 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\lock\\image-0.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\lock\\image-1.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 2,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\lock\\image-2.png",
+      "scale": 4.0
+    }
+  ]
+}
