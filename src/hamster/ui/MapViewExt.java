@@ -6,9 +6,7 @@ import hamster.gob.Alerted;
 import hamster.gob.Deleted;
 import hamster.gob.Hidden;
 import hamster.gob.Tag;
-import hamster.gob.sprites.DamageText;
-import hamster.gob.sprites.Mark;
-import hamster.gob.sprites.TargetSprite;
+import hamster.gob.sprites.*;
 import hamster.ui.map.ObjPreview;
 import hamster.util.JobSystem;
 import haven.*;
@@ -191,145 +189,157 @@ public class MapViewExt {
     }
 
     public void showSpecialMenu(final Gob g) {
-        g.resname().ifPresent((name) -> {
+        if (!g.virtual) {
+            g.resname().ifPresent((name) -> {
+                final ArrayList<String> opts = new ArrayList<>();
+                opts.add("Mark for party");
+                opts.add("Mark for script");
+                if (mv.ui.gui.curtar != g.id)
+                    opts.add("Target for party");
+                else
+                    opts.add("Cancel Target for party");
+                opts.add(!HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight");
+                opts.add(Hidden.isHidden(name) ? "Unhide" : "Hide");
+                opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
+                opts.add(ShortenData.getShortenScaler(name).isEmpty() ? "Shorten" : "Remove Shorten");
+                opts.add("Delete");
+                opts.add("Delete this");
+                opts.add("Clone in previewer");
+                if (g.findol(DamageText.id) != null) {
+                    opts.add("Delete Damage Text");
+                }
+                if (g.hasTag(Tag.HUMAN) && g.id != mv.plgob) {
+                    if (!masters.contains(g.id))
+                        opts.add("Add as master");
+                    else
+                        opts.add("Remove master");
+                    if (!slaves.contains(g.id))
+                        opts.add("Add as slave");
+                    else
+                        opts.add("Remove slave");
+                }
+                if (slaves.size() > 0)
+                    opts.add("Slaves");
+
+
+                final FlowerMenu modmenu = new FlowerMenu((selection) -> {
+                    switch (selection) {
+                        case "Mark for party": //Mark for party
+                            g.mark(2000);
+                            for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                                if (wdg instanceof ChatUI.PartyChat) {
+                                    final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                                    chat.send(String.format(Mark.CHAT_FMT, g.id, 2000));
+                                }
+                            }
+                            break;
+                        case "Mark for script": //Mark for script
+                            mv.ui.sess.details.context.dispatchmsg(mv, "click-gob", g);
+                            break;
+                        case "Cancel Target for party": {
+                            final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+                            if (old != null) {
+                                final Gob.Overlay ol = old.findol(TargetSprite.id);
+                                if (ol != null) {
+                                    ((TargetSprite) ol.spr).rem();
+                                }
+                            }
+                            mv.ui.gui.curtar = 0;
+                            for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
+                                if (wdg instanceof ChatUI.PartyChat) {
+                                    final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
+                                    chat.send(String.format(TargetSprite.target_pat, 0));
+                                }
+                            }
+                        }
+                        break;
+                        case "Target for party": {
+                            final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
+                            if (old != null) {
+                                final Gob.Overlay ol = old.findol(TargetSprite.id);
+                                if (ol != null) {
+                                    ((TargetSprite) ol.spr).rem();
+                                }
+                            }
+                            mv.ui.gui.curtar = g.id;
+                            g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
+                            if (mv.ui.gui.chat.party != null)
+                                mv.ui.gui.chat.party.send(String.format(TargetSprite.target_pat, g.id));
+                        }
+                        break;
+                        case "Delete Damage Text":
+                            if (g.findol(DamageText.id) != null)
+                                ((DamageText) g.findol(DamageText.id).spr).rem();
+                            break;
+                        case "Highlight": //Highlight for yourself
+                            HighlightData.add(name);
+                            break;
+                        case "Remove Highlight":
+                            HighlightData.remove(name);
+                            break;
+                        case "Unhide":
+                            Hidden.remove(name);
+                            OCache.MessageBus.send(new OCache.UnhideGobsByName(name));
+                            break;
+                        case "Hide":
+                            Hidden.add(name);
+                            OCache.MessageBus.send(new OCache.HideGobsByName(name));
+                            break;
+                        case "Remove Sound":
+                            Alerted.remove(name);
+                            break;
+                        case "Add Sound":
+                            mv.ui.gui.add(new SoundSelector(name), mv.ui.mc);
+                            break;
+                        case "Shorten":
+                            ShortenData.add(name, 0.75f);
+                            break;
+                        case "Remove Shorten":
+                            ShortenData.rem(name);
+                            break;
+                        case "Delete":
+                            Deleted.add(name);
+                            OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
+                            break;
+                        case "Delete this":
+                            g.dispose();
+                            mv.ui.sess.glob.oc.remove(g);
+                            break;
+                        case "Clone in previewer":
+                            mv.ui.gui.add(new ObjPreview(g));
+                            break;
+                        case "Add as master":
+                            addMaster(g.id);
+                            break;
+                        case "Remove master":
+                            remMaster(g.id);
+                            break;
+                        case "Add as slave":
+                            addSlave(g.id);
+                            id2name.put(g.id, g.gobname());
+                            break;
+                        case "Remove slave":
+                            remSlave(g.id);
+                            id2name.remove(g.id);
+                            break;
+                        case "Slaves":
+                            selectSlavesAndDo((slaves) -> gobSlaveActMenu(slaves, g));
+                            break;
+                    }
+                }, opts.toArray(new String[0]));
+                mv.ui.gui.add(modmenu, mv.ui.mc);
+            });
+        } else {
             final ArrayList<String> opts = new ArrayList<>();
-            opts.add("Mark for party");
-            opts.add("Mark for script");
-            if (mv.ui.gui.curtar != g.id)
-                opts.add("Target for party");
-            else
-                opts.add("Cancel Target for party");
-            opts.add(!HighlightData.isHighlighted(name) ? "Highlight" : "Remove Highlight");
-            opts.add(Hidden.isHidden(name) ? "Unhide" : "Hide");
-            opts.add(Alerted.shouldAlert(name) ? "Remove Sound" : "Add Sound");
-            opts.add(ShortenData.getShortenScaler(name).isEmpty() ? "Shorten" : "Remove Shorten");
-            opts.add("Delete");
-            opts.add("Delete this");
-            opts.add("Clone in previewer");
-            if(g.findol(DamageText.id) != null) {
-                opts.add("Delete Damage Text");
-            }
-            if (g.hasTag(Tag.HUMAN) && g.id != mv.plgob) {
-                if (!masters.contains(g.id))
-                    opts.add("Add as master");
-                else
-                    opts.add("Remove master");
-                if (!slaves.contains(g.id))
-                    opts.add("Add as slave");
-                else
-                    opts.add("Remove slave");
-            }
-            if (slaves.size() > 0)
-                opts.add("Slaves");
-
-
+            opts.add("Delete This");
             final FlowerMenu modmenu = new FlowerMenu((selection) -> {
-                switch (selection) {
-                    case "Mark for party": //Mark for party
-                        g.mark(2000);
-                        for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
-                            if (wdg instanceof ChatUI.PartyChat) {
-                                final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
-                                chat.send(String.format(Mark.CHAT_FMT, g.id, 2000));
-                            }
-                        }
-                        break;
-                    case "Mark for script": //Mark for script
-                        mv.ui.sess.details.context.dispatchmsg(mv, "click-gob", g);
-                        break;
-                    case "Cancel Target for party": {
-                        final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
-                        if (old != null) {
-                            final Gob.Overlay ol = old.findol(TargetSprite.id);
-                            if (ol != null) {
-                                ((TargetSprite) ol.spr).rem();
-                            }
-                        }
-                        mv.ui.gui.curtar = 0;
-                        for (Widget wdg = mv.ui.gui.chat.lchild; wdg != null; wdg = wdg.prev) {
-                            if (wdg instanceof ChatUI.PartyChat) {
-                                final ChatUI.PartyChat chat = (ChatUI.PartyChat) wdg;
-                                chat.send(String.format(TargetSprite.target_pat, 0));
-                            }
-                        }
-                    }
-                    break;
-                    case "Target for party": {
-                        final Gob old = mv.ui.sess.glob.oc.getgob(mv.ui.gui.curtar);
-                        if (old != null) {
-                            final Gob.Overlay ol = old.findol(TargetSprite.id);
-                            if (ol != null) {
-                                ((TargetSprite) ol.spr).rem();
-                            }
-                        }
-                        mv.ui.gui.curtar = g.id;
-                        g.queueDeltas(Collections.singletonList((gob) -> gob.addol(new Gob.Overlay(gob, TargetSprite.id, new TargetSprite(gob)))));
-                        if(mv.ui.gui.chat.party != null)
-                           mv.ui.gui.chat.party.send(String.format(TargetSprite.target_pat, g.id));
-                    }
-                    break;
-                    case "Delete Damage Text":
-                        if(g.findol(DamageText.id) != null)
-                            ((DamageText)g.findol(DamageText.id).spr).rem();
-                        break;
-                    case "Highlight": //Highlight for yourself
-                        HighlightData.add(name);
-                        break;
-                    case "Remove Highlight":
-                        HighlightData.remove(name);
-                        break;
-                    case "Unhide":
-                        Hidden.remove(name);
-                        OCache.MessageBus.send(new OCache.UnhideGobsByName(name));
-                        break;
-                    case "Hide":
-                        Hidden.add(name);
-                        OCache.MessageBus.send(new OCache.HideGobsByName(name));
-                        break;
-                    case "Remove Sound":
-                        Alerted.remove(name);
-                        break;
-                    case "Add Sound":
-                        mv.ui.gui.add(new SoundSelector(name), mv.ui.mc);
-                        break;
-                    case "Shorten":
-                        ShortenData.add(name, 0.75f);
-                        break;
-                    case "Remove Shorten":
-                        ShortenData.rem(name);
-                        break;
-                    case "Delete":
-                        Deleted.add(name);
-                        OCache.MessageBus.send(new OCache.RemoveGobByRes(name));
-                        break;
-                    case "Delete this":
-                        g.dispose();
-                        mv.ui.sess.glob.oc.remove(g);
-                        break;
-                    case "Clone in previewer":
-                        mv.ui.gui.add(new ObjPreview(g));
-                        break;
-                    case "Add as master":
-                        addMaster(g.id);
-                        break;
-                    case "Remove master":
-                        remMaster(g.id);
-                        break;
-                    case "Add as slave":
-                        addSlave(g.id);
-                        id2name.put(g.id, g.gobname());
-                        break;
-                    case "Remove slave":
-                        remSlave(g.id);
-                        id2name.remove(g.id);
-                        break;
-                    case "Slaves":
-                        selectSlavesAndDo((slaves) -> gobSlaveActMenu(slaves, g));
-                        break;
+                if(selection.equals("Delete This")) {
+                    g.dispose();
+                    mv.ui.sess.glob.oc.remove(g);
                 }
             }, opts.toArray(new String[0]));
             mv.ui.gui.add(modmenu, mv.ui.mc);
-        });
+        }
     }
 
 
@@ -337,6 +347,7 @@ public class MapViewExt {
         final ArrayList<String> opts = new ArrayList<>();
         opts.add("Mark for party");
         opts.add("Mark for script");
+        opts.add("Mark tile with number");
 
         if (slaves.size() > 0)
             opts.add("Slaves");
@@ -364,6 +375,21 @@ public class MapViewExt {
                     });
                 }
                 case "Mark for script" -> mv.ui.sess.details.context.dispatchmsg(mv, "click-tile", mc);
+                case "Mark tile with number" -> {
+                    final var sopts = new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+                    final var submenu = new FlowerMenu((sel) -> {
+                        mv.ui.sess.glob.loader.defer(() -> {
+                            final Gob g = mv.ui.sess.glob.oc.new Virtual(mc, Math.toRadians(270));
+                            g.canclick = true;
+                            synchronized (g) {
+                                g.addol(new SimpleTextSprite(g, sel));
+                                g.addol(new AggroMark(g));
+                            }
+                            mv.ui.sess.glob.oc.add(g);
+                        }, null);
+                    }, sopts);
+                    mv.ui.gui.add(submenu, mv.ui.mc);
+                }
                 case "Slaves" -> selectSlavesAndDo((slaves) -> tileSlaveActMenu(mc, slaves));
             }
         }, opts.toArray(new String[0]));

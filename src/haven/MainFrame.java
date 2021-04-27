@@ -191,7 +191,10 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	    @Override
 	    public void componentMoved(ComponentEvent e) {
 	        final var comp = e.getComponent();
-	        GlobalSettings.WINDOWPOS.set(new Coord(comp.getLocationOnScreen().x, comp.getLocationOnScreen().y));
+	        try {
+		    final var loc = comp.getLocationOnScreen();
+		    GlobalSettings.WINDOWPOS.set(new Coord(loc.x, loc.y));
+		} catch (Exception ignored) {}
 	    }
 
 	    @Override

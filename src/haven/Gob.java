@@ -52,6 +52,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     public Coord2d rc;
     public double a;
     public boolean virtual = false;
+    public boolean canclick = false;
     int clprio = 0;
     public long id;
     public final Glob glob;
@@ -587,7 +588,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	}
 
 	public void apply(Pipe buf) {
-	    if(!virtual)
+	    if(!virtual || canclick)
 		buf.prep(new GobClick(Gob.this));
 	    buf.prep(new TickList.Monitor(Gob.this));
 	    if(mods != null)
@@ -637,7 +638,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     /* this is basically the new `setup`, but only happens once */
     public void added(RenderTree.Slot slot) {
-	if (!virtual)
+	if (!virtual || canclick)
 	    slot.ostate(curstate());
 	final Hidden hidden = getattr(Hidden.class);
 	if (GlobalSettings.SHOWHIDDEN.get() || hidden == null) {
