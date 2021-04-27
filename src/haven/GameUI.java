@@ -651,7 +651,13 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		makewnd = add(new MakeWnd());
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
-	    case "fsess" -> fs = add((Fightsess)child, Coord.z);
+	    case "fsess" -> {
+	        fs = add((Fightsess)child, Coord.z);
+	    	if(COMBATSTARTAUDIO.get()) {
+	    	    ui.sfx(Resource.local().load(COMBATSTARTAUDIORES.get()), COMBATSTARTVOL.get() / 1000f);
+		    ui.sess.glob.lastAlert = System.currentTimeMillis();
+		}
+	    }
 	    case "abt" -> add(child, Coord.z);
 	    case "inv" -> {
 		invwnd = new Hidewnd(Coord.z, "Inventory") {
@@ -786,9 +792,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	if ((curprog == null) || (curprogf != fr) || (curprogb != bf)) {
 	    if (curprog != null)
 		curprog.dispose();
-	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].sz);
-	    PUtils.blit(buf, progt.f[fr][0].img.getRaster(), Coord.z);
-	    PUtils.blendblit(buf, progt.f[fr + 1][0].img.getRaster(), Coord.z, bf);
+	    WritableRaster buf = PUtils.imgraster(progt.f[fr][0].ssz);
+	    PUtils.blit(buf, progt.f[fr][0].scaled().getRaster(), Coord.z);
+	    PUtils.blendblit(buf, progt.f[fr + 1][0].scaled().getRaster(), Coord.z, bf);
 	    curprog = new TexI(PUtils.rasterimg(buf));
 	    curprogf = fr;
 	    curprogb = bf;

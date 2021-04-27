@@ -13,6 +13,7 @@ import hamster.ui.chr.CredoTree;
 import hamster.ui.chr.SkillTree;
 import hamster.util.JobSystem;
 import haven.Coord;
+import haven.Indir;
 import haven.JOGLPanel;
 import haven.render.BaseColor;
 
@@ -28,6 +29,7 @@ public class GlobalSettings {
     public static void init() {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
+        ScriptIconData.init();
         ObjData.init();
         ItemData.init();
         MarkerData.init();
@@ -52,6 +54,9 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWVCLAIM = new IndirSetting<>(tmp, "session.show-vclaim", false);
     public static final IndirSetting<Boolean> SHOWKCLAIM = new IndirSetting<>(tmp, "session.show-kclaim", false);
 
+    //Internal settings
+    public static final IndirSetting<Coord> WINDOWPOS = new IndirSetting<>(global, "intenral.window-pos", Coord.z);
+
     //General options
     public static final IndirSetting<Boolean> DEBUG = new IndirSetting<>(global, "system.debug", false);
     public static final IndirSetting<Boolean> SHOWFPS = new IndirSetting<>(global, "system.show-fps", false);
@@ -60,11 +65,15 @@ public class GlobalSettings {
     //Audio options
     public static final IndirSetting<Integer> MASTERVOL = new IndirSetting<>(global, "audio.master-volume", 1000);
     public static final IndirSetting<Integer> EVENTVOL = new IndirSetting<>(global, "audio.event-volume", 1000);
-    public static final IndirSetting<Integer> AMBIENTVOL = new IndirSetting<>(global, "audio.ambient-volume", 1000);    ////Audio
+    public static final IndirSetting<Integer> AMBIENTVOL = new IndirSetting<>(global, "audio.ambient-volume", 1000);
+    public static final IndirSetting<Integer> UIVOL = new IndirSetting<>(global, "audio.overall-ui-volume", 1000);
     public static final IndirSetting<Integer> TIMERVOL = new IndirSetting<>(global,"audio.timer-volume", 1000);
     public static final IndirSetting<Integer> ALERTVOL = new IndirSetting<>(global, "audio.alert-volume", 1000);
     public static final IndirSetting<Integer> POPUPMSGVOL = new IndirSetting<>(global, "audio.popup-message-volume", 1000);
     public static final IndirSetting<Integer> ERRORMSGVOL = new IndirSetting<>(global, "audio.error-message-volume", 1000);
+    public static final IndirSetting<Integer> COMBATSTARTVOL = new IndirSetting<>(global, "audio.combat-start-volume", 1000);
+    public static final IndirSetting<Boolean> COMBATSTARTAUDIO = new IndirSetting<>(global, "audio.combat-start", true);
+    public static final IndirSetting<String> COMBATSTARTAUDIORES = new IndirSetting<>(global, "audio.combat-start-res", "custom/sfx/howl");
 
     public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);

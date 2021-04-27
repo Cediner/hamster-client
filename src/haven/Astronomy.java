@@ -27,13 +27,42 @@
 package haven;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 public class Astronomy {
+    enum Season {
+	Spring(30), Summer(105), Autumn(30), Winter(15);
+
+	public final int length;
+
+	Season(int length) {
+	    this.length = length;
+	}
+
+	public static int yearLength() { return Arrays.stream(values()).mapToInt(season -> season.length).sum(); }
+    }
+
+    private static final int MINUTE = 60;
+    private static final int HOUR = 60 * MINUTE;
+    private static final int DAY = 24 * HOUR;
+    private static final int YEAR_DAYS = Season.yearLength();
     public final double dt, mp, yt, sp, sd;
     public final double years, ym, md;
     public final boolean night;
     public final Color mc;
     public final int is;
+
+    public final int hh, mm, day, srday, srhh, srmm, scday;
+    public static final String[] phase = {
+	    "New Moon",
+	    "Waxing Crescent",
+	    "First Quarter",
+	    "Waxing Gibbous",
+	    "Full Moon",
+	    "Waning Gibbous",
+	    "Last Quarter",
+	    "Waning Crescent"
+    };
 	
     public Astronomy(double dt, double mp, double yt, boolean night, Color mc, int is, double sp, double sd, double years, double ym, double md) {
 	this.dt = dt;
@@ -47,5 +76,20 @@ public class Astronomy {
 	this.years = years;
 	this.ym = ym;
 	this.md = md;
+	this.hh = (int) (24 * dt);
+	this.mm = (int) (60 * (24 * dt - hh));
+	this.day = (int) (YEAR_DAYS * yt);
+
+	scday = (int) (season().length * sp);
+
+	int seasonTs = (int) (season().length * DAY * (1 - sp)); //seconds remaining in season
+	srday = seasonTs / DAY;
+	srhh = (seasonTs - srday * DAY) / HOUR;
+	srmm = (seasonTs - srday * DAY - srhh * HOUR) / MINUTE;
+    }
+
+
+    public Season season() {
+        return Season.values()[is];
     }
 }

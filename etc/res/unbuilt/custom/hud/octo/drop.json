@@ -1,0 +1,14 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 0,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\drop\\image-0.png"
+    }
+  ]
+}

@@ -44,8 +44,7 @@ public class TextEntry extends SIWidget {
     public static final IndirThemeTex rcap = res.img(2);
     public static final IndirThemeTex mext = res.img(1);
     public static final Tex caret = Resource.loadtex("gfx/hud/text/caret");
-    public static final Coord toff = new Coord(lcap.imgs().getWidth() - 1, 1);
-    public static final Coord coff = UI.scale(new Coord(-3, 0));
+    public static final Coord toff = new Coord(lcap.imgs().getWidth(), lcap.imgs().getHeight()/2);
     public static final int wmarg = lcap.imgs().getWidth() + rcap.imgs().getWidth() + 1;
     public boolean dshow = false;
     public LineEdit buf;
@@ -151,7 +150,7 @@ public class TextEntry extends SIWidget {
 		sz.x - lcap.imgs().getWidth() - rcap.imgs().getWidth(), mext.imgs().getHeight(), null);
 	g.drawImage(rcap.imgs(), sz.x - rcap.imgs().getWidth(), 0,  null);
 
-	g.drawImage(tcache.img, toff.x - sx, toff.y, null);
+	g.drawImage(tcache.img, toff.x - sx, toff.y - tcache.img.getHeight()/2, null);
 
 	g.dispose();
     }
@@ -172,7 +171,7 @@ public class TextEntry extends SIWidget {
 		redraw();
 	    }
 	    if (((Utils.rtime() - focusstart) % 1.0) < 0.5)
-		g.image(caret, toff.add(coff).add(lx, 0));
+		g.aimage(caret, new Coord(lx, sz.y/2), -1, 0.5);
 	}
     }
 

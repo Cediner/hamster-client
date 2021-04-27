@@ -1933,7 +1933,7 @@ public class MapFile {
 		    continue;
 		}
 		MessageBuf buf = new MessageBuf();
-		buf.adduint8(2);
+		buf.adduint8(3);
 		buf.addint64(gd.b);
 		buf.addint64(seg.id);
 		buf.addint64(grid.mtime);
@@ -1947,6 +1947,7 @@ public class MapFile {
 		buf.addint32(cmaps.x * cmaps.y);
 		buf.addbytes(grid.tiles);
 		DataGrid.savez(buf, grid.zmap);
+		DataGrid.saveols(buf, grid.ols);
 		byte[] od = buf.fin();
 		zout.addstring("grid");
 		zout.addint32(od.length);
@@ -1984,10 +1985,11 @@ public class MapFile {
 	public TileInfo[] tilesets;
 	public byte[] tiles;
 	public float[] zmap;
+	public Collection<Overlay> ols = new ArrayList<>();
 
 	ImportedGrid(Message data) {
 	    int ver = data.uint8();
-	    if((ver < 1) || (ver > 2))
+	    if((ver < 1) || (ver > 3))
 		throw(new Message.FormatError("Unknown grid data version: " + ver));
 	    gid = data.int64();
 	    segid = data.int64();
@@ -2008,6 +2010,8 @@ public class MapFile {
 		    throw(new Message.FormatError("Bad grid data dimensions: " + tiles.length));
 		zmap = new float[cmaps.x * cmaps.y];
 	    }
+	    if(ver >= 3)
+		DataGrid.loadols(ols, data, String.format("%x", gid));
 	    for(byte td : tiles) {
 		if((td & 0xff) >= tiles.length)
 		    throw(new Message.FormatError(String.format("Bad grid data contents: Tileset ID %d does not exist among 0-%d", (td & 0xff), tiles.length - 1)));
@@ -2015,7 +2019,9 @@ public class MapFile {
 	}
 
 	Grid togrid() {
-	    return(new Grid(gid, tilesets, tiles, zmap, mtime));
+	    Grid ret = new Grid(gid, tilesets, tiles, zmap, mtime);
+	    ret.ols.addAll(ols);
+	    return(ret);
 	}
     }
 

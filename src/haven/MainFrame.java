@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.lang.reflect.*;
 import java.util.List;
@@ -181,6 +182,27 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	} else {
 	    sz = isz;
 	}
+	Coord loc = GlobalSettings.WINDOWPOS.get();
+	this.setLocation(loc.x, loc.y);
+	this.addComponentListener(new ComponentListener() {
+	    @Override
+	    public void componentResized(ComponentEvent e) { }
+
+	    @Override
+	    public void componentMoved(ComponentEvent e) {
+	        final var comp = e.getComponent();
+	        try {
+		    final var loc = comp.getLocationOnScreen();
+		    GlobalSettings.WINDOWPOS.set(new Coord(loc.x, loc.y));
+		} catch (Exception ignored) {}
+	    }
+
+	    @Override
+	    public void componentShown(ComponentEvent e) { }
+	    @Override
+	    public void componentHidden(ComponentEvent e) { }
+	});
+
 	this.g = new ThreadGroup(HackThread.tg(), "Haven client");
 	JOGLPanel p = new JOGLPanel(sz);
 	this.p = p;
@@ -501,14 +523,11 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	main.start();
     }
 	
-    private static void dumplist(Collection<Resource> list, String fn) {
+    private static void dumplist(Collection<Resource> list, Path fn) {
 	try {
 	    if(fn != null) {
-		Writer w = new OutputStreamWriter(new FileOutputStream(fn), "UTF-8");
-		try {
+		try(Writer w = Files.newBufferedWriter(fn, Utils.utf8)) {
 		    Resource.dumplist(list, w);
-		} finally {
-		    w.close();
 		}
 	    }
 	} catch(IOException e) {

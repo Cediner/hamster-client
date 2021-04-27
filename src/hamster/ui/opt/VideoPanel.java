@@ -43,7 +43,7 @@ public class VideoPanel extends Scrollport {
             {
                 Label dpy = disp.add(new Label(""));
                 final int steps = 4;
-                disp.add(new HSlider(UI.scale(160), -2 * steps, 2 * steps, (int) Math.round(steps * Math.log(gprefs.rscale.val) / Math.log(2.0f))) {
+                disp.add(new HSlider(UI.scale(210), -2 * steps, 2 * steps, (int) Math.round(steps * Math.log(gprefs.rscale.val) / Math.log(2.0f))) {
                     protected void added() {
                         dpy();
                     }
@@ -73,7 +73,7 @@ public class VideoPanel extends Scrollport {
                 Label dpy = disp.add(new Label(""));
                 final double smin = 1, smax = Math.floor(UI.maxscale() / 0.25) * 0.25;
                 final int steps = (int)Math.round((smax - smin) / 0.25);
-                disp.add(new HSlider(UI.scale(160), 0, steps, (int)Math.round(steps*(UISCALE.get() - smin) / (smax - smin))) {
+                disp.add(new HSlider(UI.scale(210), 0, steps, (int)Math.round(steps*(UISCALE.get() - smin) / (smax - smin))) {
                     protected void added() {
                         dpy();
                     }

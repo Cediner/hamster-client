@@ -24,11 +24,4 @@ public class SkillnCredoWnd extends Window {
     public void close() {
         hide();
     }
-
-    @Override
-    public void wdgmsg(Widget sender, String msg, Object... args) {
-        if (!msg.equals("select-tab")) {
-            super.wdgmsg(sender, msg, args);
-        }
-    }
 }

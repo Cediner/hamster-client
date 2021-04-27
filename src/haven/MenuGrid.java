@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.KeyBind;
+import hamster.data.ScriptIconData;
 import hamster.ui.core.MovableWidget;
 import hamster.ui.script.ScriptManager;
 import hamster.util.ObservableCollection;
@@ -440,14 +441,15 @@ public class MenuGrid extends MovableWidget {
 	    final File[] files = dir.listFiles((fdir, name) -> (name.endsWith(".lisp") || name.endsWith(".lua"))
 		    && !name.startsWith("_config"));
 	    if (files != null) {
-	        final var res = Resource.local().load("custom/paginae/default/script");
 		for (final File f : files) {
 		    if (f.getName().endsWith(".lisp")) {
 		        final var name = f.getName().substring(0, f.getName().lastIndexOf(".lisp"));
+			final var res = ScriptIconData.getIcon(name);
 		        addCustom(new ScriptPagina(this, name, res,
 				(pag) -> ui.sess.details.context.launchLispScript(name, ui.sess.details)));
 		    } else if (f.getName().endsWith(".lua")) {
 			final var name = f.getName().substring(0, f.getName().lastIndexOf(".lua"));
+			final var res = ScriptIconData.getIcon(name);
 			addCustom(new ScriptPagina(this, name, res,
 				(pag) -> ui.sess.details.context.launchLuaScript(name, ui.sess.details)));
 		    }

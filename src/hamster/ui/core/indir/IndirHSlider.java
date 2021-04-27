@@ -11,7 +11,7 @@ import haven.Widget;
 import java.util.function.Consumer;
 
 public class IndirHSlider extends Widget {
-    private static final IndirThemeRes res = Theme.themeres("scroll/horizontal");
+    private static final IndirThemeRes res = Theme.themeres("slider/horizontal");
     private static final IndirThemeTex left = res.tex(0);
     private static final IndirThemeTex middle = res.tex(1);
     private static final IndirThemeTex right = res.tex(2);
