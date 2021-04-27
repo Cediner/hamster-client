@@ -19,7 +19,7 @@ public class SoundSelector extends Window {
     private final Listbox<Resource.Named> sounds;
 
     public SoundSelector(final String gobname) {
-        super(Coord.z, "Sound Selector");
+        super(Coord.z, "Sound Selector", "Sound Selector");
         this.gobname = gobname;
 
         Coord c = new Coord(0, 0);

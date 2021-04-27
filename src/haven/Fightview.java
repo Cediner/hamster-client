@@ -413,7 +413,7 @@ public class Fightview extends Widget {
 		FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(32)), "Speed: %.2f", gob.getv());
 		if (pl != null) {
 		    FastText.printf(g, new Coord(UI.scale(50), y + UI.scale(44)), "Distance: %.2f",
-			    gob.getc().dist(ui.sess.glob.oc.getgob(ui.gui.map.plgob).getc()) / 11.0);
+			    gob.getc().dist(pl.getc()) / 11.0);
 		}
 	    }
 	    // Bottom Row

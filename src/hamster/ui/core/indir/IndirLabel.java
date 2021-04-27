@@ -35,6 +35,8 @@ public class IndirLabel extends Widget {
         if (!ntext.equals(text.text)) {
             text = fnd.render(ntext);
             resize(text.sz());
+            if(parent.sz.x < sz.x)
+                parent.pack();
         }
     }
 }

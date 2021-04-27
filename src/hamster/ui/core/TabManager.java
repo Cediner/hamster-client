@@ -24,7 +24,7 @@ public class TabManager extends Widget {
 
         public TabButton(String text) {
             super(text);
-            sz = new Coord(cont.getWidth() + tabLeft.tex().sz().x + tabMid.tex().sz().x, tabRight.tex().sz().y);
+            sz = new Coord(cont.getWidth() + tabLeft.tex().sz().x + tabRight.tex().sz().x, tabRight.tex().sz().y);
             setup();
         }
 
@@ -79,7 +79,6 @@ public class TabManager extends Widget {
 
             public void show() {
                 super.show();
-                TabManager.this.wdgmsg("select-tab", ch);
             }
         }, tabs.c);
         gridtabs.add(btn);
@@ -89,11 +88,7 @@ public class TabManager extends Widget {
         namemap.put(name, btn);
         tabmap.put(btn, tab);
 
-        if (tabmap.size() == 0) {
-            last = btn;
-            btn.on = true;
-            tabs.showtab(tab);
-        } else if (show) {
+        if (tabmap.size() == 1 || show) {
             changetab(tab, btn);
         }
     }

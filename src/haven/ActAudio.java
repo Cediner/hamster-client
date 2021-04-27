@@ -157,6 +157,7 @@ public class ActAudio extends State {
     }
 
     public static class Root {
+	public final RootChannel aui = new RootChannel("aui", GlobalSettings.UIVOL);
 	public final RootChannel pos = new RootChannel("pos", GlobalSettings.EVENTVOL);
 	public final RootChannel amb = new RootChannel("amb", GlobalSettings.AMBIENTVOL);
 

@@ -16,6 +16,7 @@ public class Scrollport extends Widget {
     private final Coord ul;
     private Coord vsz;
     private Coord rsz;
+    private Coord msz;
     private Coord2d step;
 
     private UI.Grab grabv, grabh;
@@ -23,6 +24,7 @@ public class Scrollport extends Widget {
     public Scrollport(Coord vsz) {
         super(vsz);
         this.vsz = vsz;
+        this.msz = vsz.sub(vflarp.sz().x, hflarp.sz().y);
         ul = new Coord(0, 0);
         resize(vsz);
     }
@@ -32,10 +34,13 @@ public class Scrollport extends Widget {
         pack();
     }
 
+    public Coord msz() { return msz; }
+
     @Override
     public void resize(Coord sz) {
         rsz = sz;
         vsz = new Coord(this.sz);
+        msz = this.sz.sub(vflarp.sz().x, hflarp.sz().y);
         if (vsz.x < rsz.x)
             vsz.y -= hflarp.sz().y;
         if (vsz.y < rsz.y)

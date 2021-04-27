@@ -2,10 +2,7 @@ package hamster.ui.opt;
 
 import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
-import hamster.ui.core.indir.IndirCheckBox;
-import hamster.ui.core.indir.IndirHSlider;
-import hamster.ui.core.indir.IndirLabel;
-import hamster.ui.core.indir.IndirRadioGroup;
+import hamster.ui.core.indir.*;
 import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
@@ -27,6 +24,10 @@ public class AudioPanel extends Scrollport {
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, EVENTVOL, (val) -> ui.audio.pos.setvolume(val / 1000.0)));
 	grp.add(new Label(TranslationLookup.get("opt_audio_ambient_vol")));
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, AMBIENTVOL, (val) -> ui.audio.amb.setvolume(val / 1000.0)));
+	grp.add(new Label(TranslationLookup.get("opt_audio_ui_vol")));
+	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, UIVOL, (val) -> ui.audio.aui.setvolume(val / 1000.0)));
+	grp.add(new Label(TranslationLookup.get("opt_audio_combat_vol")));
+	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, COMBATSTARTVOL));
 	grp.add(new Label(TranslationLookup.get("opt_audio_timer_vol")));
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, TIMERVOL));
 	grp.add(new Label(TranslationLookup.get("opt_audio_alert_vol")));
@@ -37,6 +38,10 @@ public class AudioPanel extends Scrollport {
 	grp.add(new IndirHSlider(UI.scale(200), 0, 1000, POPUPMSGVOL));
 	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_popup"), SOUNDONPOPUPMSG));
 	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_gob"), SOUNDONGOBAUDIO));
+	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_combat"), COMBATSTARTAUDIO));
+	grp.add(new IndirLabel(() -> String.format("%s: %s", TranslationLookup.get("opt_audio_combat_res"), COMBATSTARTAUDIORES.get())));
+	grp.add(new Button(TranslationLookup.get("opt_audio_change_combat_res"),
+		() -> ui.root.add(new IndirSoundSelector("Combat Start", COMBATSTARTAUDIORES))));
 	grp.pack();
 
 	int y = 0;

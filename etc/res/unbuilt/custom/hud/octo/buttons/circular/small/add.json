@@ -1,0 +1,32 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 0,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\circular\\small\\add\\image-0.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 0,
+      "id": 1,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\circular\\small\\add\\image-1.png"
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 0,
+      "id": 2,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\octo\\buttons\\circular\\small\\add\\image-2.png"
+    }
+  ]
+}

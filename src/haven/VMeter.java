@@ -26,11 +26,13 @@
 
 package haven;
 
+import hamster.ui.core.Theme;
+
 import java.awt.Color;
 
 public class VMeter extends Widget {
-    static Tex bg = Resource.loadtex("gfx/hud/vm-frame");
-    static Tex fg = Resource.loadtex("gfx/hud/vm-tex");
+    static Tex bg = Theme.tex("vm", 0);
+    static Tex fg = Theme.tex("vm", 1);
     Color cl;
     int amount;
 	
