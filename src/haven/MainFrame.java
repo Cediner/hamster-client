@@ -223,7 +223,10 @@ public class MainFrame extends java.awt.Frame implements Console.Directory {
 	p.requestFocus();
 	seticon();
 	setVisible(true);
+	setAlwaysOnTop(true);
 	requestFocus();
+	toFront();
+	setAlwaysOnTop(false);
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    if (p.sessionCount() > 1) {
