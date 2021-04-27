@@ -7,6 +7,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-0.png"
@@ -17,6 +18,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-1.png"
@@ -27,6 +29,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-2.png"
@@ -37,6 +40,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 3,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-3.png"
@@ -47,6 +51,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 4,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-4.png"
@@ -57,6 +62,7 @@
       "subz": 0,
       "fl": 4,
       "scale": 4.0,
+      "scale-method": "Box",
       "id": 5,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\tabs\\image-5.png"
