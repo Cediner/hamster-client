@@ -296,7 +296,7 @@ public class FlowerMenu extends Widget {
     @Override
     public void tick(double dt) {
 	super.tick(dt);
-	if(ui.gui.fmAutoSelectOpt != null) {
+	if(ui.gui != null && ui.gui.fmAutoSelectOpt != null) {
 	    for(final var opt : opts) {
 		if(opt.name.equals(ui.gui.fmAutoSelectOpt)) {
 		    wdgmsg("cl", opt.num, 0);
