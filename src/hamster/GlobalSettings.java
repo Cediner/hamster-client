@@ -29,6 +29,7 @@ public class GlobalSettings {
     public static void init() {
         //preload lisp scripting config
         JobSystem.submit(LispScript::reloadConfig);
+        ScriptIconData.init();
         ObjData.init();
         ItemData.init();
         MarkerData.init();
