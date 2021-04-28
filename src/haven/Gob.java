@@ -357,7 +357,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    m.move(c);
 	this.rc = c;
 	this.a = a;
-	if(hitbox != null) {
+	if(hitbox != null && !isHeldBySomething()) {
 	    glob.gobhitmap.update(this);
 	}
     }
@@ -980,10 +980,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     public void isNoLongerHeld() {
 	heldby = -1;
+	updatePathfindingBlackout(false);
     }
 
     public void heldby(final long id) {
 	heldby = id;
+	updatePathfindingBlackout(true);
     }
 
     public int howManyGobsHeld() {
@@ -1003,10 +1005,12 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
      * Pathfinding Related
      */
     public void updatePathfindingBlackout(final boolean val) {
-	if(val) {
-	    glob.gobhitmap.remove(this);
-	} else {
-	    glob.gobhitmap.add(this);
+	if(hitbox != null) {
+	    if (val) {
+		glob.gobhitmap.remove(this);
+	    } else if(!isHeldBySomething()){
+		glob.gobhitmap.add(this);
+	    }
 	}
     }
 
@@ -1018,7 +1022,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 
     public void updateHitbox(final Coord2d off, final Coord2d sz) {
         if(hitbox != null)
-	    glob.gobhitmap.add(this);
+	    glob.gobhitmap.remove(this);
         hitbox = new Hitbox.Rectangular(off, sz, true);
 	glob.gobhitmap.add(this);
     }
@@ -1330,7 +1334,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    final List<OCache.Delta> deltas = new ArrayList<>();
 	    tags = ObjData.getTags(name);
 	    hitbox = Hitbox.hbfor(this);
-	    glob.gobhitmap.add(this);
+	    if(!isHeldBySomething())
+	    	glob.gobhitmap.add(this);
 
 	    if ((tags.contains(Tag.HUMAN) || tags.contains(Tag.ANIMAL) || name.startsWith("gfx/kritter"))
 		    && !tags.contains(Tag.TAMED_ANIMAL)) {

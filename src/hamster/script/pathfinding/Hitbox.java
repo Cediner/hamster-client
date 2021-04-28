@@ -16,9 +16,10 @@ import java.util.Optional;
  */
 public class Hitbox {
     private static final ResHashMap<Hitbox> hitboxes = new ResHashMap<>();
-    private static final Hitbox NOHIT = new Hitbox();
+    private static final Hitbox NOHIT;
 
     static {
+        NOHIT = new Rectangular(MCache.tilesz.div(2).mul(-1), MCache.tilesz, false);
         hitboxes.put("gfx/terobjs/herbs", NOHIT);
         hitboxes.put("gfx/terobjs/items", NOHIT);
         hitboxes.put("gfx/terobjs/plants", NOHIT);
@@ -118,10 +119,6 @@ public class Hitbox {
         hitbox = new Area();
     }
 
-    public Hitbox() {
-        this(false);
-    }
-
     boolean canHit() {
         return hitable;
     }
@@ -170,16 +167,16 @@ public class Hitbox {
                     hitboxes.put(res.name, hb);
                     return hb;
                 } else {
-                    return null;
+                    return NOHIT;
                 }
             }
         } else {
-            return null;
+            return NOHIT;
         }
     }
 
     public static Hitbox hbfor(final String res) {
-        return hitboxes.get(res).orElse(null);
+        return hitboxes.get(res).orElse(NOHIT);
     }
 
     public static Hitbox hbfor(final Gob g) {
@@ -223,7 +220,7 @@ public class Hitbox {
                 return hitboxes.get(res.get().name).orElse(loadHitboxFromRes(res.get()));
             }
         } else {
-            return null;
+            return NOHIT;
         }
     }
 }

@@ -2352,27 +2352,33 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public boolean los(final Coord2d c) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
-	pl.updatePathfindingBlackout(true);
-	final boolean los = finder.walk(new Coord(pl.getc()), c.floor());
-	pl.updatePathfindingBlackout(false);
+	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
+	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
+	base.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(base.getc()), c.floor());
+	base.updatePathfindingBlackout(false);
 	return los;
     }
 
     public boolean los(final Gob g) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
-	pl.updatePathfindingBlackout(true);
-	final boolean los = finder.walk(new Coord(pl.getc()), g.rc.floor());
-	pl.updatePathfindingBlackout(false);
+	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
+	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
+	base.updatePathfindingBlackout(true);
+	final boolean los = finder.walk(new Coord(base.getc()), g.rc.floor());
+	base.updatePathfindingBlackout(false);
 	return los;
     }
 
     public Move[] findpath(final Coord2d c) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
-	pl.updatePathfindingBlackout(true);
-	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
-	pl.updatePathfindingBlackout(false);
+	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
+	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
+	base.updatePathfindingBlackout(true);
+	final List<Move> moves = finder.path(new Coord(base.getc()), c.floor());
+	base.updatePathfindingBlackout(false);
 
 	if (moves != null && GlobalSettings.RESEARCHUNTILGOAL.get() && moves.get(moves.size() - 1).dest().dist(c) > 1.0) {
 	    moves.add(new Move.Repath(moves.get(moves.size() - 1).dest(), c, null));
@@ -2384,19 +2390,20 @@ public class MapView extends PView implements DTarget, Console.Directory {
     public Move[] findpath(final Gob g) {
 	final Coord2d c = new Coord2d(g.getc());
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
-	pl.updatePathfindingBlackout(true);
+	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
+	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
+	base.updatePathfindingBlackout(true);
 	g.updatePathfindingBlackout(true);
 	final NBAPathfinder finder = new NBAPathfinder(ui);
-	final List<Move> moves = finder.path(new Coord(ui.sess.glob.oc.getgob(plgob).getc()), c.floor());
+	final List<Move> moves = finder.path(new Coord(base.getc()), c.floor());
 	g.updatePathfindingBlackout(false);
-	pl.updatePathfindingBlackout(false);
+	base.updatePathfindingBlackout(false);
 	return moves != null ? moves.toArray(new Move[0]) : null;
     }
 
     public void pathto(final Coord2d c) {
         final Gob me = player();
         if(me != null) {
-            me.updatePathfindingBlackout(true);
 	    final Move[] moves = findpath(c);
 	    if (moves != null) {
 		clearmovequeue();
@@ -2404,14 +2411,12 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    queuemove(m);
 		}
 	    }
-	    me.updatePathfindingBlackout(false);
 	}
     }
 
     public void pathto(final Gob g) {
 	final Gob me = player();
 	if(me != null) {
-	    me.updatePathfindingBlackout(true);
 	    final Move[] moves = findpath(g);
 	    if (moves != null) {
 		clearmovequeue();
@@ -2419,7 +2424,6 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    queuemove(m);
 		}
 	    }
-	    me.updatePathfindingBlackout(false);
 	}
     }
 
