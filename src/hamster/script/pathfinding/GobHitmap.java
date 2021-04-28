@@ -45,10 +45,16 @@ public class GobHitmap {
     public void update(final Gob g) {
         final Hitbox hb = g.hitbox();
         if (hb != null && hb.canHit()) {
-            final Area ar = hb.hitbox.createTransformedArea(AffineTransform.getRotateInstance(g.a));
-            ar.transform(AffineTransform.getTranslateInstance(g.rc.x, g.rc.y));
+            final boolean isMapped;
             synchronized (lock) {
-                hbmap.put(g.id, ar);
+                isMapped = hbmap.containsKey(g.id);
+            }
+            if(isMapped) {
+                final Area ar = hb.hitbox.createTransformedArea(AffineTransform.getRotateInstance(g.a));
+                ar.transform(AffineTransform.getTranslateInstance(g.rc.x, g.rc.y));
+                synchronized (lock) {
+                    hbmap.put(g.id, ar);
+                }
             }
         }
     }
