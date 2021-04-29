@@ -37,18 +37,20 @@ public class Hitbox {
 
         //trellis, definitely a decimal so this is an overestimate
         //hitboxes.put("gfx/terobjs/plants/trellis", new Rectangular(new Coord2d(-1, -5), new Coord2d(3, 11)));
-
-        //animals
-        hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
-        hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
-        hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
-        hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
-        hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
-        hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
     }
 
     // These are your simple Neg based Hitboxes.
     public static class Rectangular extends Hitbox {
+        static {
+            //animals
+            hitboxes.put("gfx/kritter/horse", new Rectangular(new Coord2d(-8, -4), new Coord2d(16, 8)));
+            hitboxes.put("gfx/kritter/cattle/calf", new Rectangular(new Coord2d(-9, -3), new Coord2d(18, 6)));
+            hitboxes.put("gfx/kritter/cattle/cattle", new Rectangular(new Coord2d(-12, -4), new Coord2d(24, 8)));
+            hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
+            hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+            hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+        }
+
         private final Coord2d off;
         private final Coord2d sz;
 
