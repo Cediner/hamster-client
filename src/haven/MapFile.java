@@ -36,6 +36,8 @@ import java.awt.image.WritableRaster;
 
 import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
+import hamster.script.pathfinding.waypoint.Waypoint;
+import hamster.script.pathfinding.waypoint.WaypointMap;
 import hamster.util.IDPool;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
@@ -54,8 +56,9 @@ public class MapFile {
     public final Collection<Marker> markers = new ArrayList<>();
     public final Map<Long, SMarker> smarkers = new HashMap<>();
     public final Map<Long, LinkedMarker> lmarkers = new HashMap<>();
+    public final Map<Long, WaypointMarker> wmarkers = new HashMap<>();
     public int markerseq = 0;
-    public IDPool markerids;
+    public IDPool markerids, waypointids;
     public final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     // MessageBus / MailBox System Message
@@ -164,14 +167,16 @@ public class MapFile {
 	    fp = file.sfetch("index");
 	} catch(FileNotFoundException e) {
 	    file.markerids = new IDPool(0, Long.MAX_VALUE);
+	    file.waypointids = new IDPool(0, Long.MAX_VALUE);
 	    return(file);
 	} catch(IOException e) {
 	    return(null);
 	}
 	try(StreamMessage data = new StreamMessage(fp)) {
 	    int ver = data.uint8();
-	    if(ver == 1 || ver == 2) {
+	    if(ver == 1 || ver == 2 || ver == 3) {
 		file.markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
+		file.waypointids = ver < 3 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
 		for(int i = 0, no = data.int32(); i < no; i++)
 		    file.knownsegs.add(data.int64());
 		for(int i = 0, no = data.int32(); i < no; i++) {
@@ -181,6 +186,8 @@ public class MapFile {
 			file.smarkers.put(((SMarker)mark).oid, (SMarker)mark);
 		    else if (mark instanceof LinkedMarker)
 			file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+		        file.wmarkers.put(((WaypointMarker) mark).id, (WaypointMarker) mark);
 		}
 	    } else {
 		warn("unknown mapfile index version: %d", ver);
@@ -202,8 +209,9 @@ public class MapFile {
 	    throw(new StreamMessage.IOError(e));
 	}
 	try(StreamMessage out = new StreamMessage(fp)) {
-	    out.adduint8(2);
+	    out.adduint8(3);
 	    markerids.save(out);
+	    waypointids.save(out);
 	    out.addint32(knownsegs.size());
 	    for(Long seg : knownsegs)
 		out.addint64(seg);
@@ -447,6 +455,14 @@ public class MapFile {
             this.res = res;
 	}
 
+	public char identifier() {
+            return 'r';
+        }
+
+        public int version() {
+            return 1;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 	    if (this == o) return true;
@@ -566,6 +582,16 @@ public class MapFile {
 	}
 
 	@Override
+	public char identifier() {
+	    return 'l';
+	}
+
+	@Override
+	public int version() {
+	    return 2;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 	    if (this == o) return true;
 	    if (o == null || getClass() != o.getClass()) return false;
@@ -578,6 +604,70 @@ public class MapFile {
 	public int hashCode() {
 	    return Objects.hash(super.hashCode(), type, id, lid);
 	}
+    }
+
+    public static class WaypointMarker extends CustomMarker {
+        public final long id;
+        public final List<Long> links;
+        public WaypointMarker(final long seg, final Coord tc, final String nm,
+			      final Color color, final Resource.Spec res,
+			      final long id) {
+            super(seg, tc, nm, color, res);
+            this.id = id;
+            this.links = new ArrayList<>();
+	}
+
+
+	public WaypointMarker(final long seg, final Coord tc, final String nm,
+			      final Color color, final Resource.Spec res,
+			      final long id, final List<Long> links) {
+	    super(seg, tc, nm, color, res);
+	    this.id = id;
+	    this.links = links;
+	}
+
+	@Override
+	public char identifier() {
+	    return 'w';
+	}
+
+	@Override
+	public int version() {
+	    return 0;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    WaypointMarker that = (WaypointMarker) o;
+	    return id == that.id && links.equals(that.links);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), id, links);
+	}
+    }
+
+    /**
+     * Generate a waypoint map within the given segment
+     */
+    public WaypointMap generateWaypointMap(final Segment seg, final Coord starttc, final Coord2d startmc) {
+	final var map = new HashMap<Long, Waypoint>();
+	lock.readLock().lock();
+	try {
+	    for(final var wp : wmarkers.values()) {
+		if (wp.seg == seg.id) {
+		    final var offset = new Coord2d(wp.tc.sub(starttc));
+		    map.put(wp.id, new Waypoint(wp.id, startmc.add(offset), wp.links));
+		}
+	    }
+	} finally {
+	    lock.readLock().unlock();
+	}
+	return new WaypointMap(map);
     }
 
     private static Marker loadmarker(final MapFile file, Message fp) {
@@ -641,6 +731,22 @@ public class MapFile {
 			throw (new Message.FormatError("Unknown village marker version: " + version));
 		    }
 		}
+		case 'w' -> {
+		    final int version = fp.uint8();
+		    if(version == 0) {
+			final Color color = fp.color();
+			final Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			final long id = fp.int64();
+			final int linkslen = fp.int32();
+			final List<Long> links = new ArrayList<>(linkslen);
+			for(var i = 0; i < linkslen; ++i) {
+			    links.add(fp.int64());
+			}
+			return new WaypointMarker(seg, tc, nm, color, res, id, links);
+		    } else {
+		        throw (new Message.FormatError("Unknown waypoint marker version: " + version));
+		    }
+		}
 		default -> throw (new Message.FormatError("Unknown marker type: " + (int) type));
 	    }
 	} else {
@@ -664,9 +770,9 @@ public class MapFile {
 	    fp.adduint16(sm.res.ver);
 	} else if (mark instanceof CustomMarker) {
 	    CustomMarker rm = (CustomMarker) mark;
-	    //Linked => l, Realm => k, Sloth => r
-	    fp.adduint8(mark instanceof LinkedMarker ? 'l' : 'r');
-	    fp.adduint8(mark instanceof LinkedMarker ? 2 : 1); //version
+	    //Linked => l, Sloth => r, Waypoint => w
+	    fp.adduint8(rm.identifier());
+	    fp.adduint8(rm.version());
 	    fp.addcolor(rm.color);
 	    fp.addstring(rm.res.name);
 	    fp.adduint16(rm.res.ver);
@@ -674,6 +780,12 @@ public class MapFile {
 		fp.addint64(((LinkedMarker) rm).id);
 		fp.adduint8(((LinkedMarker) rm).type);
 		fp.addint64(((LinkedMarker) rm).lid);
+	    } else if(mark instanceof WaypointMarker) {
+		final var wm = (WaypointMarker) mark;
+		fp.addint64(wm.id);
+		fp.addint32(wm.links.size());
+		for(final var link : wm.links)
+		    fp.addint64(link);
 	    }
 	} else if (mark instanceof RealmMarker) {
 	    RealmMarker rm = (RealmMarker) mark;
@@ -703,6 +815,8 @@ public class MapFile {
 			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
 		    else if (mark instanceof LinkedMarker)
 			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+		        wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
 		    markerseq++;
 		}
 	    }
@@ -721,6 +835,8 @@ public class MapFile {
 			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
 		    else if (mark instanceof LinkedMarker)
 			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+			wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
 		    defersave();
 		    markerseq++;
 		}
@@ -739,6 +855,9 @@ public class MapFile {
 		if (mark instanceof LinkedMarker) {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
 		}
 		markerseq++;
 	    }
@@ -757,6 +876,9 @@ public class MapFile {
 		if (mark instanceof LinkedMarker) {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
 		}
 		defersave();
 		markerseq++;
@@ -776,12 +898,17 @@ public class MapFile {
 		if (mark instanceof LinkedMarker) {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
 		}
 	        markers.add(mark);
 		if (mark instanceof SMarker)
 		    smarkers.put(((SMarker) mark).oid, (SMarker) mark);
 		else if (mark instanceof LinkedMarker)
 		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		else if(mark instanceof WaypointMarker)
+		    wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
 		markerseq++;
 	    }
 	} finally {
