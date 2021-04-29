@@ -728,7 +728,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		} catch(IOException e) {
 		    e.printStackTrace(Debug.log);
 		    gui.error("Unexpected error occurred when exporting map.");
-		} catch(InterruptedException e) {
+		} catch(InterruptedException ignored) {
 		}
 	}, "Mapfile exporter");
 	prog.run(th);
@@ -756,7 +756,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			fp.position(0);
 			file.reimport(new Updater(new BufferedInputStream(Channels.newInputStream(fp))), MapFile.ImportFilter.all);
 		    }
-		} catch(InterruptedException e) {
+		} catch(InterruptedException ignored) {
 		} catch(Exception e) {
 		    e.printStackTrace(Debug.log);
 		    gui.error("Could not import map: " + e.getMessage());

@@ -65,6 +65,54 @@ public class MapFile {
 	public abstract void apply(final MapFile file);
     }
 
+    public static class AddMarkerMail extends MapFileMail {
+        private final Marker mark;
+        private final MapFile src;
+        public AddMarkerMail(final MapFile src, final Marker mark) {
+            this.src = src;
+            this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+	        file.addNoSave(mark);
+	    }
+	}
+    }
+
+    public static class RemoveMarkerMail extends MapFileMail {
+	private final Marker mark;
+	private final MapFile src;
+	public RemoveMarkerMail(final MapFile src, final Marker mark) {
+	    this.src = src;
+	    this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+		file.removeNoSave(mark);
+	    }
+	}
+    }
+
+    public static class UpdateMarkerMail extends MapFileMail {
+	private final Marker mark;
+	private final MapFile src;
+	public UpdateMarkerMail(final MapFile src, final Marker mark) {
+	    this.src = src;
+	    this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+		file.updateNoSave(mark);
+	    }
+	}
+    }
+
     public MapFile(UI ui, ResCache store, String filename) {
 	this.store = store;
 	this.filename = filename;
@@ -324,6 +372,19 @@ public class MapFile {
 	public String tip(final UI ui) {
 	    return nm;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    Marker marker = (Marker) o;
+	    return seg == marker.seg && tc.equals(marker.tc) && nm.equals(marker.nm);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(seg, tc, nm);
+	}
     }
 
     public static class PMarker extends Marker {
@@ -332,6 +393,20 @@ public class MapFile {
 	public PMarker(long seg, Coord tc, String nm, Color color) {
 	    super(seg, tc, nm);
 	    this.color = color;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    PMarker pMarker = (PMarker) o;
+	    return color.equals(pMarker.color);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), color);
 	}
     }
 
@@ -343,6 +418,20 @@ public class MapFile {
 	    super(seg, tc, nm);
 	    this.oid = oid;
 	    this.res = res;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    SMarker sMarker = (SMarker) o;
+	    return oid == sMarker.oid && res.equals(sMarker.res);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), oid, res);
 	}
     }
 
@@ -356,6 +445,20 @@ public class MapFile {
             super(seq, tc, nm);
             this.color = color;
             this.res = res;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    CustomMarker that = (CustomMarker) o;
+	    return color.equals(that.color) && res.equals(that.res);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), color, res);
 	}
     }
 
@@ -375,6 +478,20 @@ public class MapFile {
 	@Override
 	public String tip(final UI ui) {
 	    return String.format("[%s] %s", realm, nm);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    RealmMarker that = (RealmMarker) o;
+	    return res.equals(that.res) && realm.equals(that.realm);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), res, realm);
 	}
     }
 
@@ -397,6 +514,20 @@ public class MapFile {
 	    } else {
 		return String.format("[%s] %s", village, nm);
 	    }
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    VillageMarker that = (VillageMarker) o;
+	    return res.equals(that.res) && village.equals(that.village);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), res, village);
 	}
     }
 
@@ -433,6 +564,20 @@ public class MapFile {
 	    this.type = type;
 	    this.lid = lid;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    if (!super.equals(o)) return false;
+	    LinkedMarker that = (LinkedMarker) o;
+	    return type == that.type && id == that.id && lid == that.lid;
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(super.hashCode(), type, id, lid);
+	}
     }
 
     private static Marker loadmarker(final MapFile file, Message fp) {
@@ -442,62 +587,61 @@ public class MapFile {
 	    Coord tc = fp.coord();
 	    String nm = fp.string();
 	    char type = (char)fp.uint8();
-	    switch(type) {
-	    case 'p': {
-		Color color = fp.color();
-		return (new PMarker(seg, tc, nm, color));
-	    }
-	    case 's': {
-		long oid = fp.int64();
-		Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		return (new SMarker(seg, tc, nm, oid, res));
-	    }
-	    case 'r': {
-		final int version = fp.uint8();
-		if (version == 0 || version == 1) {
+	    switch (type) {
+		case 'p' -> {
 		    Color color = fp.color();
+		    return (new PMarker(seg, tc, nm, color));
+		}
+		case 's' -> {
+		    long oid = fp.int64();
 		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), CAVE) : new CustomMarker(seg, tc, nm, color, res);
-		} else {
-		    throw (new Message.FormatError("Unknown sloth marker version: " + version));
+		    return (new SMarker(seg, tc, nm, oid, res));
 		}
-	    }
-	    case 'l': {
-		final int version = fp.uint8();
-		if (version == 1 || version == 2) {
-		    Color color = fp.color();
-		    final String resnm = fp.string();
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
-		    final long id = fp.int64();
-		    final byte ltype = version == 2 ? (byte) fp.uint8() : CAVE;
-		    final long lid = fp.int64();
-		    return new LinkedMarker(seg, tc, nm, color, res, id, ltype, lid);
-		} else {
-		    throw (new Message.FormatError("Unknown linked marker version: " + version));
+		case 'r' -> {
+		    final int version = fp.uint8();
+		    if (version == 0 || version == 1) {
+			Color color = fp.color();
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), CAVE) : new CustomMarker(seg, tc, nm, color, res);
+		    } else {
+			throw (new Message.FormatError("Unknown sloth marker version: " + version));
+		    }
 		}
-	    }
-	    case 'k': {
-		final int version = fp.uint8();
-		if (version == 0) {
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    String realm = fp.string();
-		    return new RealmMarker(seg, tc, nm, res, realm);
-		} else {
-		    throw (new Message.FormatError("Unknown realm marker version: " + version));
+		case 'l' -> {
+		    final int version = fp.uint8();
+		    if (version == 1 || version == 2) {
+			Color color = fp.color();
+			final String resnm = fp.string();
+			Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
+			final long id = fp.int64();
+			final byte ltype = version == 2 ? (byte) fp.uint8() : CAVE;
+			final long lid = fp.int64();
+			return new LinkedMarker(seg, tc, nm, color, res, id, ltype, lid);
+		    } else {
+			throw (new Message.FormatError("Unknown linked marker version: " + version));
+		    }
 		}
-	    }
-	    case 'v': {
-		final int version = fp.uint8();
-		if (version == 0) {
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    String realm = fp.string();
-		    return new VillageMarker(seg, tc, nm, res, realm);
-		} else {
-		    throw (new Message.FormatError("Unknown village marker version: " + version));
+		case 'k' -> {
+		    final int version = fp.uint8();
+		    if (version == 0) {
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			String realm = fp.string();
+			return new RealmMarker(seg, tc, nm, res, realm);
+		    } else {
+			throw (new Message.FormatError("Unknown realm marker version: " + version));
+		    }
 		}
-	    }
-	    default:
-		throw(new Message.FormatError("Unknown marker type: " + (int)type));
+		case 'v' -> {
+		    final int version = fp.uint8();
+		    if (version == 0) {
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			String realm = fp.string();
+			return new VillageMarker(seg, tc, nm, res, realm);
+		    } else {
+			throw (new Message.FormatError("Unknown village marker version: " + version));
+		    }
+		}
+		default -> throw (new Message.FormatError("Unknown marker type: " + (int) type));
 	    }
 	} else {
 	    throw(new Message.FormatError("Unknown marker version: " + ver));
@@ -550,15 +694,52 @@ public class MapFile {
 	}
     }
 
+    public void addNoSave(final Marker mark) {
+	lock.writeLock().lock();
+	try {
+	    if(!markers.contains(mark)) {
+		if (markers.add(mark)) {
+		    if (mark instanceof SMarker)
+			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		    else if (mark instanceof LinkedMarker)
+			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    markerseq++;
+		}
+	    }
+	} finally {
+	    lock.writeLock().unlock();
+	}
+    }
+
     public void add(Marker mark) {
 	lock.writeLock().lock();
 	try {
-	    if(markers.add(mark)) {
+	    if(!markers.contains(mark)) {
+		if (markers.add(mark)) {
+		    MessageBus.send(new AddMarkerMail(this, mark));
+		    if (mark instanceof SMarker)
+			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		    else if (mark instanceof LinkedMarker)
+			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    defersave();
+		    markerseq++;
+		}
+	    }
+	} finally {
+	    lock.writeLock().unlock();
+	}
+    }
+
+    public void removeNoSave(Marker mark) {
+	lock.writeLock().lock();
+	try {
+	    if(markers.remove(mark)) {
 		if(mark instanceof SMarker)
-		    smarkers.put(((SMarker)mark).oid, (SMarker)mark);
-		else if (mark instanceof LinkedMarker)
-		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		defersave();
+		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
+		if (mark instanceof LinkedMarker) {
+		    markerids.release(((LinkedMarker) mark).id);
+		    lmarkers.remove(((LinkedMarker) mark).id);
+		}
 		markerseq++;
 	    }
 	} finally {
@@ -570,6 +751,7 @@ public class MapFile {
 	lock.writeLock().lock();
 	try {
 	    if(markers.remove(mark)) {
+		MessageBus.send(new RemoveMarkerMail(this, mark));
 		if(mark instanceof SMarker)
 		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
 		if (mark instanceof LinkedMarker) {
@@ -584,10 +766,34 @@ public class MapFile {
 	}
     }
 
+    public void updateNoSave(Marker mark) {
+	lock.readLock().lock();
+	try {
+	    if(markers.contains(mark)) {
+	        markers.remove(mark);
+		if(mark instanceof SMarker)
+		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
+		if (mark instanceof LinkedMarker) {
+		    markerids.release(((LinkedMarker) mark).id);
+		    lmarkers.remove(((LinkedMarker) mark).id);
+		}
+	        markers.add(mark);
+		if (mark instanceof SMarker)
+		    smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		else if (mark instanceof LinkedMarker)
+		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		markerseq++;
+	    }
+	} finally {
+	    lock.readLock().unlock();
+	}
+    }
+
     public void update(Marker mark) {
 	lock.readLock().lock();
 	try {
 	    if(markers.contains(mark)) {
+		MessageBus.send(new UpdateMarkerMail(this, mark));
 		defersave();
 		markerseq++;
 	    }
