@@ -81,7 +81,6 @@ public class UIPanel extends Scrollport {
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_names"), GlobalSettings.SHOWMMMARKERNAMES));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_gob_names"), GlobalSettings.SHOWMMGOBNAMES));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_markers"), GlobalSettings.SHOWMMMARKERS));
-            minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_small_markers"), GlobalSettings.SMALLMMMARKERS));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_placed"), GlobalSettings.SHOWPMARKERS));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_natural"), GlobalSettings.SHOWNMARKERS));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_custom"), GlobalSettings.SHOWCMARKERS));

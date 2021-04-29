@@ -351,7 +351,7 @@ public class MiniMap extends Widget {
 		if (!(m instanceof MapFile.CustomMarker || m instanceof MapFile.RealmMarker)) {
 		    return hit;
 		} else if (img != null) {
-		    final Coord sz = GlobalSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
+		    final Coord sz = img.tex().sz();
 		    return Area.sized(sz.div(2).inv(), sz);
 		} else {
 		    return null;
@@ -409,12 +409,12 @@ public class MiniMap extends Widget {
 		    final MapFile.CustomMarker mark = (MapFile.CustomMarker) m;
 		    g.chcolor(mark.color);
 		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = Utils.imgsz(img.scaled());
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
+			g.image(img.tex(), ul);
 			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    final Coord tipc = new Coord(ul.x + img.tex().sz().x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
 		    } else {
@@ -429,17 +429,17 @@ public class MiniMap extends Widget {
 		} else if (m instanceof MapFile.RealmMarker) {
 		    final MapFile.RealmMarker mark = (MapFile.RealmMarker) m;
 		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = img.tex().sz();
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
+			g.image(img.tex(), ul);
 			if (GlobalSettings.SHOWKMARKERRAD.get()) {
 			    g.chcolor(MarkerData.getRealmColor(mark.realm));
 			    g.frect(c.sub(new Coord(250, 250).div(scale)), new Coord(500, 500).div(scale));
 			    g.chcolor();
 			}
 			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    final Coord tipc = new Coord(ul.x + img.tex().sz().x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.image(tip.tex(), tipc);
 			}
 		    } else {
@@ -453,10 +453,10 @@ public class MiniMap extends Widget {
 		} else if (m instanceof MapFile.VillageMarker) {
 		    final MapFile.VillageMarker mark = (MapFile.VillageMarker) m;
 		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
+			final Coord sz = img.tex().sz();
 			cc = sz.div(2);
 			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
+			g.image(img.tex(), ul);
 			if (GlobalSettings.SHOWVMARKERRAD.get()) {
 			    final int offset, isz;
 			    if (mark.nm.equals("Idol")) {
@@ -473,7 +473,7 @@ public class MiniMap extends Widget {
 			    g.chcolor();
 			}
 			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
+			    final Coord tipc = new Coord(ul.x + img.tex().sz().x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 			    g.chcolor(MarkerData.getVillageBoldColor(mark.village));
 			    g.image(tip.tex(), tipc);
 			    g.chcolor();

@@ -122,7 +122,6 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWMMMARKERNAMES = new IndirSetting<>(global, "minimap.show-marker-names", true);
     public static final IndirSetting<Boolean> SHOWMMGOBNAMES = new IndirSetting<>(global, "minimap.show-gob-names", true);
     public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "minimap.show-markers", true);
-    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "minimap.show-small-markers", true);
     public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "minimap.show-placed-markers", true);
     public static final IndirSetting<Boolean> SHOWNMARKERS = new IndirSetting<>(global, "minimap.show-natural-markers", true);
     public static final IndirSetting<Boolean> SHOWCMARKERS = new IndirSetting<>(global, "minimap.show-custom-markers", true);

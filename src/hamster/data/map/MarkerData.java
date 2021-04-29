@@ -3,7 +3,6 @@ package hamster.data.map;
 import com.google.common.flogger.FluentLogger;
 import com.google.gson.Gson;
 import hamster.io.Storage;
-import haven.MapFile;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
@@ -38,17 +37,18 @@ public class MarkerData {
 
     /* Used only to import config data */
     private static class MarkerDataImport {
-        public Marker script;
+        public Marker script, waypoint;
         public Map<String, Marker> basic;
         public Map<String, LinkedMarker> linked;
     }
 
     public enum Type {
-        LINKED, CUSTOM, REALM, VILLAGE, SCRIPT
+        LINKED, CUSTOM, REALM, VILLAGE, SCRIPT, WAYPOINT
     }
 
     private static final Map<String, Marker> markable = new HashMap<>();
     public static Marker scriptmarker;
+    public static Marker waypointmarker;
 
     public static void init() {
         logger.atInfo().log("Loading Custom Marker Data");
@@ -56,6 +56,7 @@ public class MarkerData {
         try {
             final var markers = gson.fromJson(new FileReader("data/MarkerData.json5"), MarkerDataImport.class);
             scriptmarker = markers.script;
+            waypointmarker = markers.waypoint;
             for(final var marker : markers.basic.keySet()) {
                 markable.put(marker, markers.basic.get(marker));
             }
