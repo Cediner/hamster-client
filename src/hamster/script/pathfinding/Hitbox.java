@@ -19,7 +19,7 @@ public class Hitbox {
     private static final Hitbox NOHIT;
 
     static {
-        NOHIT = new Rectangular(MCache.tilesz.div(2).mul(-1), MCache.tilesz, false);
+        NOHIT = new Hitbox(false);
         hitboxes.put("gfx/terobjs/herbs", NOHIT);
         hitboxes.put("gfx/terobjs/items", NOHIT);
         hitboxes.put("gfx/terobjs/plants", NOHIT);
