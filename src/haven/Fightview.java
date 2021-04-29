@@ -27,10 +27,13 @@
 package haven;
 
 import hamster.GlobalSettings;
+import hamster.data.itm.ItemData;
 import hamster.gob.sprites.AggroMark;
 import hamster.gob.sprites.GobCombatSprite;
 import hamster.ui.core.Theme;
 import hamster.ui.fight.*;
+import haven.res.ui.tt.q.qbuff.Quality;
+import haven.res.ui.tt.wpn.Armpen;
 
 import java.awt.*;
 import java.util.*;
@@ -240,6 +243,28 @@ public class Fightview extends Widget {
 
 	@SuppressWarnings("unused")
 	public boolean isPeaced() { return give.state == 1; }
+
+	@SuppressWarnings("unused")
+	public boolean isRelPeaced() { return give.state == 2; }
+
+	@SuppressWarnings("unused")
+	public double calcActionDmg(final Attack atk) {
+	    final GItem weapon = ui.gui.fs.weap();
+	    final int weapq;
+	    final int weapdmg;
+	    final double weappen;
+	    if (weapon != null) {
+		weapq = weapon.getinfo(Quality.class).map(quality -> (int) quality.q).orElse(10);
+		weapdmg = ItemData.getWeaponDmg(weapon.name().orElse(""));
+		weappen = weapon.getinfo(Armpen.class).orElse(Armpen.NOPEN).deg;
+	    } else {
+		weapq = weapdmg = 0;
+		weappen = 0.0;
+	    }
+	    final Pair<Double, Double> dmg = atk.calculateDamage(weapdmg, weapq, weappen,
+		    ui.gui.fs.str(), defweights);
+	    return dmg.a;
+	}
     }
 
     public void use(Indir<Resource> act) {
@@ -556,4 +581,8 @@ public class Fightview extends Widget {
 	return lsrel.toArray(new Relation[0]);
     }
 
+    @SuppressWarnings("unused")
+    public double getcooldown() {
+        return Math.max((Utils.rtime() - atkct), 0.0d);
+    }
 }
