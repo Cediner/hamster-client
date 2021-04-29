@@ -29,6 +29,7 @@
       opt_audio_allow_combat: "Allow sound on combat start",
       opt_audio_combat_res: "Combat start sound",
       opt_audio_change_combat_res: "Change combat start sound",
+      opt_audio_allow_chat: "Allow sound on chat",
       //Theme Options
       opt_theme_hud_theme: "Main Hud Theme (requires restart)",
       opt_theme_for: "Settings for ",
@@ -339,6 +340,7 @@
       opt_audio_allow_combat: "Autoriser le son au début du combat",
       opt_audio_combat_res: "Son de début de combat",
       opt_audio_change_combat_res: "Changer le son de début de combat",
+      opt_audio_allow_chat: "Autoriser le son sur le chat",
       //Theme Options
       opt_theme_hud_theme: "Thème principal Hud (nécessite un redémarrage)",
       opt_theme_for: "Paramètres pour ",

@@ -74,7 +74,7 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> COMBATSTARTVOL = new IndirSetting<>(global, "audio.combat-start-volume", 1000);
     public static final IndirSetting<Boolean> COMBATSTARTAUDIO = new IndirSetting<>(global, "audio.combat-start", true);
     public static final IndirSetting<String> COMBATSTARTAUDIORES = new IndirSetting<>(global, "audio.combat-start-res", "custom/sfx/howl");
-
+    public static final IndirSetting<Boolean> ALLOWCHATSOUND = new IndirSetting<>(global, "audio.allow-sound-on-chat", true);
     public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);
     public static final IndirSetting<Boolean> SOUNDONGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio", true);

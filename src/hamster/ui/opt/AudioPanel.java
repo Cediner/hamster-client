@@ -3,11 +3,8 @@ package hamster.ui.opt;
 import hamster.data.TranslationLookup;
 import hamster.ui.core.Scrollport;
 import hamster.ui.core.indir.*;
-import hamster.ui.core.layout.Grouping;
 import hamster.ui.core.layout.LinearGrouping;
 import haven.*;
-
-import java.util.function.Consumer;
 
 import static hamster.GlobalSettings.*;
 
@@ -42,6 +39,7 @@ public class AudioPanel extends Scrollport {
 	grp.add(new IndirLabel(() -> String.format("%s: %s", TranslationLookup.get("opt_audio_combat_res"), COMBATSTARTAUDIORES.get())));
 	grp.add(new Button(TranslationLookup.get("opt_audio_change_combat_res"),
 		() -> ui.root.add(new IndirSoundSelector("Combat Start", COMBATSTARTAUDIORES))));
+	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_chat"), ALLOWCHATSOUND));
 	grp.pack();
 
 	int y = 0;
