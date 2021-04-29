@@ -146,7 +146,7 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
     public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
     public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);
-    public static final IndirSetting<Boolean> COLORFULCUPBOARDS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
+    public static final IndirSetting<Boolean> COLORFULCONTAINERS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
     public static final IndirSetting<Boolean> COLORFULCHEESERACKS = new IndirSetting<>(global, "gob.colorful-cheese-racks", true);
     public static final IndirSetting<Boolean> SHOWCROPSTAGE = new IndirSetting<>(global, "gob.show-crop-stage", false);
     public static final IndirSetting<Boolean> SIMPLECROPS = new IndirSetting<>(global, "gob.simple-crops", false);
