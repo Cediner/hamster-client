@@ -62,6 +62,7 @@ public class MenuGrid extends MovableWidget {
     private boolean recons = true;
     public final Map<String, CustomPagina> custompag = new HashMap<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
+    private final List<String> duse = new ArrayList<>();
 
     /*
      * MessageBus / MailBox System Message
@@ -667,6 +668,10 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
+    public void duse(final String resn) {
+        this.duse.add(resn);
+    }
+
     public void use(final String resn) {
         try {
 	    final Resource res = Resource.remote().loadwait(resn);
@@ -694,6 +699,11 @@ public class MenuGrid extends MovableWidget {
     }
 
     public void tick(double dt) {
+        if(duse.size() > 0) {
+            for(final var sk : duse)
+                use(sk);
+            duse.clear();
+	}
 	if(recons)
 	    updlayout();
 	if(mailbox != null)

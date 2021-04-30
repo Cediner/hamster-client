@@ -191,13 +191,19 @@ public class Resource implements Serializable {
 	final String nm;
 	if (res instanceof Session.CachedRes.Ref) {
 	    nm = ((Session.CachedRes.Ref) res).name();
-	} else if (res instanceof Resource.Named) {
+	} else if (res instanceof Resource.Spec) {
 	    nm = ((Resource.Spec) res).name;
+	} else if(res instanceof Resource.Named) {
+	    nm = ((Named) res).name;;
 	} else {
-	    if (res != null && res.get() != null) {
-		nm = res.get().name;
-	    } else {
-		nm = "";
+	    try {
+		if (res != null && res.get() != null) {
+		    nm = res.get().name;
+		} else {
+		    nm = "";
+		}
+	    } catch (Loading l) {
+	        return "";
 	    }
 	}
 	return nm != null ? nm : "";
