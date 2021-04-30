@@ -229,6 +229,11 @@
       mb_hitm_trans_obj_shift: "Transfer Held Item with Object",
       mb_hitm_trans_all_obj: "Transfer Held Item and alike items with Object",
       mb_hitm_iact: "Interact with Held Item (only when locked)",
+      mb_mm: "Minimap Markers",
+      mb_mm_examine_marker: "Examine Marker",
+      mb_mm_goto_marker: "Move to marker",
+      mb_mm_follow_link: "Follow Link to other marker",
+      mb_mm_special_menu: "Marker Special Menu",
       // Keybind Options
       opt_kb_description: "Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.",
       kb_keybind: "Keybinds",
@@ -540,6 +545,11 @@
       mb_hitm_trans_obj_shift: "Transférer l'item vers un objet",
       mb_hitm_trans_all_obj: "Transférer l'item et les item similaires vers l'objet",
       mb_hitm_iact: "Interagir avec l'item (Uniquement lorsqu'il est verrouillé)",
+      mb_mm: "Marqueurs de mini-carte",
+      mb_mm_examine_marker: "Examiner le marqueur",
+      mb_mm_goto_marker: "Déplacer vers le marqueur",
+      mb_mm_follow_link: "Suivre le lien vers un autre marqueur",
+      mb_mm_special_menu: "Menu spécial des marqueurs",
       // Keybind Options
       opt_kb_description: "Cliquez sur la boîte noire pour commencer l'édition. Cliquez avec le bouton droit pour annuler ou sur Entrée pour confirmer. Si votre choix apparaît Rouge / Violet, il entre en conflit avec une autre association de clé.",
       kb_keybind: "Keybinds",

@@ -23,6 +23,9 @@ public class MouseBind {
     public static final MouseBind
         HITM_TOGGLE_LOCK, HITM_DROP, HITM_IACT_OBJ, HITM_TRANS_OBJ_SHIFT, HITM_TRANS_ALL_OBJ, HITM_IACT,
         HITM_DROP_WATER;
+    //Minimap related
+    public static final MouseBind
+        MM_GOTO_MARKER, MM_EXAMINE_MARKER, MM_SPECIAL_MENU, MM_FOLLOW_LINK;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
         final String display = TranslationLookup.get(name);
@@ -66,6 +69,12 @@ public class MouseBind {
         HITM_TRANS_ALL_OBJ = addMB(("mb_hitm_trans_all_obj"), HITM_GRP, "S-C-B3");
         //XXX: This one may no longer be possible due to server-side updates
         HITM_IACT = addMB(("mb_hitm_iact"), HITM_GRP, "M-B3");
+        //Minimap Related
+        final String MM_GRP = TranslationLookup.get("mb_mm");
+        MM_EXAMINE_MARKER = addMB("mb_mm_examine_marker", MM_GRP, "B1");
+        MM_GOTO_MARKER = addMB("mb_mm_goto_marker", MM_GRP, "S-B1");
+        MM_FOLLOW_LINK = addMB("mb_mm_follow_link", MM_GRP, "B3");
+        MM_SPECIAL_MENU = addMB("mb_mm_special_menu", MM_GRP, "M-B3");
     }
 
     @FunctionalInterface

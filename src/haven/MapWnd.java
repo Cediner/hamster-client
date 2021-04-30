@@ -32,10 +32,12 @@ import java.nio.file.*;
 import java.nio.channels.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.function.Consumer;
 
 import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
+import hamster.MouseBind;
 import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
 import hamster.ui.DowseWnd;
@@ -263,8 +265,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			g.chcolor(255, 255, 255, 64);
 			g.image(img, ul, UI.scale(img.sz()));
 		    }
-		} catch(Loading l) {
-		}
+		} catch(Loading ignored) {}
 	    }
 	    g.chcolor();
 	}
@@ -274,21 +275,37 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		super.drawmarkers(g);
 	}
 
-	public boolean clickmarker(DisplayMarker mark, Location loc, int button, boolean press) {
-	    if(button == 1) {
+	public boolean clickmarker(final DisplayMarker mark, Location loc, int button, boolean press) {
+	    final var bind = MouseBind.generateSequence(ui, button);
+	    if(MouseBind.MM_EXAMINE_MARKER.match(bind)) {
 		if(!press && !domark) {
 		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
 		}
-	    } else if(button ==3 && mark.m instanceof LinkedMarker && ((LinkedMarker) mark.m).lid != LinkedMarker.NOLINK) {
-		final Marker target = view.file.lmarkers.get(((LinkedMarker) mark.m).lid);
-		if (target != null) {
-		    view.center(new MiniMap.SpecLocator(target.seg, target.tc));
+	    } else if(MouseBind.MM_GOTO_MARKER.match(bind)) {
+	        if(press) {
+		    if (mark.m instanceof SMarker) {
+			Gob gob = MarkerID.find(ui.sess.glob.oc, ((SMarker) mark.m).oid);
+			if (gob != null) {
+			    mvclick(mv, null, loc, gob, button);
+			    return (true);
+			}
+		    }
 		}
-	    } else if(mark.m instanceof SMarker) {
-		Gob gob = MarkerID.find(ui.sess.glob.oc, ((SMarker)mark.m).oid);
-		if(gob != null)
-		    mvclick(mv, null, loc, gob, button);
+	    } else if(MouseBind.MM_FOLLOW_LINK.match(bind) && mark.m instanceof LinkedMarker && ((LinkedMarker) mark.m).lid != LinkedMarker.NOLINK) {
+		if (press) {
+		    final Marker target = view.file.lmarkers.get(((LinkedMarker) mark.m).lid);
+		    if (target != null) {
+			view.center(new MiniMap.SpecLocator(target.seg, target.tc));
+		    }
+		    return (true);
+		}
+	    } else if(MouseBind.MM_SPECIAL_MENU.match(bind)) {
+		if (press) {
+		    final var opts = new HashMap<String, Consumer<String>>();
+		    opts.put("Remove", (opt) -> file.remove(mark.m));
+		    ui.gui.add(new FlowerMenu(opts), ui.mc);
+		}
 	    }
 	    return(false);
 	}
