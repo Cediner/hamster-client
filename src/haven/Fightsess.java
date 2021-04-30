@@ -133,8 +133,8 @@ public class  Fightsess extends Widget {
 	resize(parent.sz);
 	pcc = sz.div(2);
 	final Coord center = sz.div(2);
-	actionAnchor = center.add(0, center.y / 2);
-	cooldownAnchor = center.sub(0, (int) (center.y / 1.5f));
+	actionAnchor = new Coord(center.x, sz.y).sub(0, actc(9).y+UI.scale(100));
+	cooldownAnchor = new Coord(center.x, 0).add(0,  (center.y / 2));
 	enemyBuffAnchor = cooldownAnchor.add(UI.scale(50, 0));
 	enemyIPAnchor = cooldownAnchor.add(UI.scale(75, 15));
 	enemyLastMoveAnchor = cooldownAnchor.add(UI.scale(50, 50));
