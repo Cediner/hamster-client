@@ -35,9 +35,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import com.google.common.flogger.FluentLogger;
-import hamster.GlobalSettings;
 import hamster.script.pathfinding.waypoint.Waypoint;
 import hamster.script.pathfinding.waypoint.WaypointMap;
+import hamster.ui.minimap.*;
 import hamster.util.IDPool;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
@@ -362,295 +362,6 @@ public class MapFile {
 	}
     }
 
-    public abstract static class Marker {
-	public long seg;
-	public Coord tc;
-	public String nm;
-
-	public Marker(long seg, Coord tc, String nm) {
-	    this.seg = seg;
-	    this.tc = tc;
-	    this.nm = nm;
-	}
-
-	public String name() {
-	    return nm;
-	}
-
-	public String tip(final UI ui) {
-	    return nm;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    Marker marker = (Marker) o;
-	    return seg == marker.seg && tc.equals(marker.tc) && nm.equals(marker.nm);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(seg, tc, nm);
-	}
-    }
-
-    public static class PMarker extends Marker {
-	public Color color;
-
-	public PMarker(long seg, Coord tc, String nm, Color color) {
-	    super(seg, tc, nm);
-	    this.color = color;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    PMarker pMarker = (PMarker) o;
-	    return color.equals(pMarker.color);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), color);
-	}
-    }
-
-    public static class SMarker extends Marker {
-	public long oid;
-	public Resource.Spec res;
-
-	public SMarker(long seg, Coord tc, String nm, long oid, Resource.Spec res) {
-	    super(seg, tc, nm);
-	    this.oid = oid;
-	    this.res = res;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    SMarker sMarker = (SMarker) o;
-	    return oid == sMarker.oid && res.equals(sMarker.res);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), oid, res);
-	}
-    }
-
-    // Simple custom icons that ae a combo of PMarker (color) and SMarker (Custom res)
-    public static class CustomMarker extends Marker {
-        public Color color;
-        public final Resource.Spec res;
-
-        public CustomMarker(final long seq, final Coord tc, final String nm,
-			    final Color color, final Resource.Spec res) {
-            super(seq, tc, nm);
-            this.color = color;
-            this.res = res;
-	}
-
-	public char identifier() {
-            return 'r';
-        }
-
-        public int version() {
-            return 1;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    CustomMarker that = (CustomMarker) o;
-	    return color.equals(that.color) && res.equals(that.res);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), color, res);
-	}
-    }
-
-    // Special marker for Realm objects. These will have a name associated with them that can be user defined
-    // or auto-defined based off what realm you're in at the time if possible. Realm Markers also have an
-    // associated radius that can be displayed on the minimap
-    public static class RealmMarker extends Marker {
-	public final Resource.Spec res;
-	public String realm;
-
-	public RealmMarker(long seg, Coord tc, String nm, Resource.Spec res, String realm) {
-	    super(seg, tc, nm);
-	    this.res = res;
-	    this.realm = realm;
-	}
-
-	@Override
-	public String tip(final UI ui) {
-	    return String.format("[%s] %s", realm, nm);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    RealmMarker that = (RealmMarker) o;
-	    return res.equals(that.res) && realm.equals(that.realm);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), res, realm);
-	}
-    }
-
-    // Same concept of the Realm Marker but for Village Objects
-    public static class VillageMarker extends Marker {
-	//either vidol or banner
-	public final Resource.Spec res;
-	public String village;
-
-	public VillageMarker(long seg, Coord tc, String nm, Resource.Spec res, String village) {
-	    super(seg, tc, nm);
-	    this.res = res;
-	    this.village = village;
-	}
-
-	@Override
-	public String tip(final UI ui) {
-	    if (nm.equals("Banner") && !GlobalSettings.SHOWVMARKERTIPS.get()) {
-		return "";
-	    } else {
-		return String.format("[%s] %s", village, nm);
-	    }
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    VillageMarker that = (VillageMarker) o;
-	    return res.equals(that.res) && village.equals(that.village);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), res, village);
-	}
-    }
-
-    // Linked Marker data for Mineholes, ladders, caves to link between maps.
-    public static final long NOLINK = -1;
-    public static final byte MINEHOLE = (byte) 0;
-    public static final byte LADDER = (byte) 1;
-    public static final byte CAVE = (byte) 2;
-    public static final byte CAVEIN = (byte) 3;
-
-    public static boolean canLink(final byte l1, final byte l2) {
-	return (l1 == CAVE && l2 == CAVEIN) ||
-		(l1 == CAVEIN && l2 == CAVE) ||
-		(l1 == MINEHOLE && l2 == LADDER) ||
-		(l1 == LADDER && l2 == MINEHOLE);
-    }
-
-    public static class LinkedMarker extends CustomMarker {
-	public final byte type;
-	public final long id;
-	public long lid; //id of the marker we link to
-
-	public LinkedMarker(long seg, Coord tc, String nm, Color color, Resource.Spec res, long id, byte type) {
-	    super(seg, tc, nm, color, res);
-	    this.id = id;
-	    this.type = type;
-	    lid = NOLINK;
-	}
-
-	private LinkedMarker(long seg, Coord tc, String nm, Color color, Resource.Spec res,
-			     long id, byte type, long lid) {
-	    super(seg, tc, nm, color, res);
-	    this.id = id;
-	    this.type = type;
-	    this.lid = lid;
-	}
-
-	@Override
-	public char identifier() {
-	    return 'l';
-	}
-
-	@Override
-	public int version() {
-	    return 2;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    LinkedMarker that = (LinkedMarker) o;
-	    return type == that.type && id == that.id && lid == that.lid;
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), type, id, lid);
-	}
-    }
-
-    public static class WaypointMarker extends CustomMarker {
-        public final long id;
-        public final List<Long> links;
-        public WaypointMarker(final long seg, final Coord tc, final String nm,
-			      final Color color, final Resource.Spec res,
-			      final long id) {
-            super(seg, tc, nm, color, res);
-            this.id = id;
-            this.links = new ArrayList<>();
-	}
-
-
-	public WaypointMarker(final long seg, final Coord tc, final String nm,
-			      final Color color, final Resource.Spec res,
-			      final long id, final List<Long> links) {
-	    super(seg, tc, nm, color, res);
-	    this.id = id;
-	    this.links = links;
-	}
-
-	@Override
-	public char identifier() {
-	    return 'w';
-	}
-
-	@Override
-	public int version() {
-	    return 0;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-	    if (this == o) return true;
-	    if (o == null || getClass() != o.getClass()) return false;
-	    if (!super.equals(o)) return false;
-	    WaypointMarker that = (WaypointMarker) o;
-	    return id == that.id && links.equals(that.links);
-	}
-
-	@Override
-	public int hashCode() {
-	    return Objects.hash(super.hashCode(), id, links);
-	}
-    }
-
     /**
      * Generate a waypoint map within the given segment
      */
@@ -692,7 +403,7 @@ public class MapFile {
 		    if (version == 0 || version == 1) {
 			Color color = fp.color();
 			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-			return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), CAVE) : new CustomMarker(seg, tc, nm, color, res);
+			return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), LinkedMarker.CAVE) : new CustomMarker(seg, tc, nm, color, res);
 		    } else {
 			throw (new Message.FormatError("Unknown sloth marker version: " + version));
 		    }
@@ -704,7 +415,7 @@ public class MapFile {
 			final String resnm = fp.string();
 			Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
 			final long id = fp.int64();
-			final byte ltype = version == 2 ? (byte) fp.uint8() : CAVE;
+			final byte ltype = version == 2 ? (byte) fp.uint8() : LinkedMarker.CAVE;
 			final long lid = fp.int64();
 			return new LinkedMarker(seg, tc, nm, color, res, id, ltype, lid);
 		    } else {

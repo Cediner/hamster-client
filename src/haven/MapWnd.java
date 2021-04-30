@@ -42,15 +42,12 @@ import hamster.ui.DowseWnd;
 import hamster.ui.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
-import haven.MapFile.Marker;
-import haven.MapFile.PMarker;
-import haven.MapFile.SMarker;
+import hamster.ui.minimap.*;
 import haven.MiniMap.*;
 
 import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
-import static haven.MapFile.NOLINK;
 import static haven.Utils.eq;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
@@ -283,8 +280,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
 		}
-	    } else if(button ==3 && mark.m instanceof MapFile.LinkedMarker && ((MapFile.LinkedMarker) mark.m).lid != NOLINK) {
-		final Marker target = view.file.lmarkers.get(((MapFile.LinkedMarker) mark.m).lid);
+	    } else if(button ==3 && mark.m instanceof LinkedMarker && ((LinkedMarker) mark.m).lid != LinkedMarker.NOLINK) {
+		final Marker target = view.file.lmarkers.get(((LinkedMarker) mark.m).lid);
 		if (target != null) {
 		    view.center(new MiniMap.SpecLocator(target.seg, target.tc));
 		}
@@ -469,7 +466,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if (!view.file.lock.writeLock().tryLock())
 			throw (new Loading());
 		    try {
-			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+			final Marker mark = new CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
 				new Resource.Spec(Resource.remote(), marker.res));
 			view.file.add(mark);
 		    } finally {
@@ -490,7 +487,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if (!view.file.lock.writeLock().tryLock())
 			throw (new Loading());
 		    try {
-			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+			final Marker mark = new CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
 				new Resource.Spec(Resource.remote(), icon));
 			view.file.add(mark);
 		    } finally {
@@ -510,7 +507,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if (!view.file.lock.writeLock().tryLock())
 			throw (new Loading());
 		    try {
-		        final Marker mark = new MapFile.WaypointMarker(loc.seg.id, loc.tc.add(offset),
+		        final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
 				"Waypoint", Color.WHITE, new Resource.Spec(Resource.remote(), MarkerData.waypointmarker.res),
 				view.file.waypointids.next());
 			view.file.add(mark);
@@ -539,29 +536,29 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 			//Check for duplicate
 			for (final Marker mark : view.file.markers) {
-			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof MapFile.CustomMarker &&
+			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof CustomMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
-			    else if (marker.type == MarkerData.Type.REALM && mark instanceof MapFile.RealmMarker &&
+			    else if (marker.type == MarkerData.Type.REALM && mark instanceof RealmMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
-			    else if (marker.type == MarkerData.Type.VILLAGE && mark instanceof MapFile.VillageMarker &&
+			    else if (marker.type == MarkerData.Type.VILLAGE && mark instanceof VillageMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
 			}
 
 			final Marker mark;
 			if (marker.type == MarkerData.Type.CUSTOM) {
-			    mark = new MapFile.CustomMarker(info.seg, sc, marker.defname,
+			    mark = new CustomMarker(info.seg, sc, marker.defname,
 				    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
 			} else if (marker.type == MarkerData.Type.REALM) {
-			    mark = new MapFile.RealmMarker(info.seg, sc, marker.defname,
+			    mark = new RealmMarker(info.seg, sc, marker.defname,
 				    new Resource.Spec(Resource.remote(), marker.res),
 				    "???");
 			    //TODO: Auto name realm based off buff
 			} else {
 			    //Village
-			    mark = new MapFile.VillageMarker(info.seg, sc, marker.defname,
+			    mark = new VillageMarker(info.seg, sc, marker.defname,
 				    new Resource.Spec(Resource.remote(), marker.res), ui.gui.curvil);
 			}
 			view.file.add(mark);
@@ -587,11 +584,11 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 		    //Check for duplicate
 		    for (final Marker mark : view.file.markers) {
-			if (mark instanceof MapFile.LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
+			if (mark instanceof LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
 			    return; //Duplicate
 		    }
 
-		    final Marker mark = new MapFile.LinkedMarker(info.seg, sc, marker.defname,
+		    final Marker mark = new LinkedMarker(info.seg, sc, marker.defname,
 			    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res), view.file.markerids.next(), marker.ltype);
 		    view.file.add(mark);
 		} finally {
