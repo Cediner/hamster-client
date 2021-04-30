@@ -1297,7 +1297,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	sb.append("Position: ");
 	sb.append(getc());
 	sb.append("\n");
-	return sb.toString();
+	return sb.toString().replaceAll("\\{", "(").replaceAll("}", ")");
     }
 
     /*

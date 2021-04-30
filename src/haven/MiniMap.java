@@ -287,6 +287,11 @@ public class MiniMap extends Widget {
 	    }
 	    return(null);
 	}
+
+	@Override
+	public String toString() {
+	    return "MarkerID(" + "id=" + id + ')';
+	}
     }
 
     private enum Type {
