@@ -229,6 +229,12 @@
 (java-func +relation+ peace-toggle "peace")
 (defmacro rel-peace (relation)
   `(peace-toggle ,relation))
+;; Func: rel-is-peaced
+;; Desc: Check if this given relation is peaced
+;; Inputs:
+;;   1) Relation - The relation
+;; Return: Boolean
+(java-func +relation+ rel-is-peaced "isPeaced")
 (java-func +fightview+ get-relations1 "getrelations")
 ;; Func: rel-get-weight
 ;; Desc: Gets a specified Defensive Weight for the given relation
@@ -278,4 +284,4 @@
                 (return-from get-relation rel))))
     nil)
 
-(export '(get-relation get-relations rel-gob-id rel-peace peace-toggle rel-get-weight rel-your-ip rel-their-ip))
+(export '(get-relation get-relations rel-gob-id rel-is-peaced rel-peace peace-toggle rel-get-weight rel-your-ip rel-their-ip))

@@ -936,6 +936,7 @@ public class Resource implements Serializable {
 	    o = cdec(buf);
 	    so = UI.scale(o);
 	    Map<String, byte[]> kvdata = new HashMap<>();
+	    PUtils.ConvolutionMethod scalingMethod = PUtils.ConvolutionMethod.Hanning5;
 	    if((fl & 4) != 0) {
 		while(true) {
 		    String key = buf.string();
@@ -946,12 +947,11 @@ public class Resource implements Serializable {
 			len = buf.int32();
 		    byte[] data = buf.bytes(len);
 		    Message val = new MessageBuf(data);
-		    if(key.equals("tsz")) {
-			tsz = val.coord();
-		    } else if(key.equals("scale")) {
-			scale = val.float32();
-		    } else {
-			kvdata.put(key, data);
+		    switch (key) {
+			case "tsz" -> tsz = val.coord();
+			case "scale" -> scale = val.float32();
+			case "scale-method" -> scalingMethod = PUtils.ConvolutionMethod.valueOf(val.string());
+			default -> kvdata.put(key, data);
 		    }
 		}
 	    }
@@ -972,7 +972,7 @@ public class Resource implements Serializable {
 		 * area. */
 		so = new Coord(Math.min(so.x, tsz.x - ssz.x), Math.min(so.y, sz.y - ssz.y));
 	    }
-	    scaled = PUtils.uiscale(img, ssz);
+	    scaled = PUtils.uiscale(img, ssz, scalingMethod);
 	}
 
 	public BufferedImage scaled() {

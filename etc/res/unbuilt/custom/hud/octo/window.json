@@ -18,7 +18,8 @@
       "id": 1,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-1.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -28,7 +29,8 @@
       "id": 2,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-2.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -38,7 +40,8 @@
       "id": 3,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-3.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -48,7 +51,8 @@
       "id": 4,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-4.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -58,7 +62,8 @@
       "id": 5,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-5.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -68,7 +73,8 @@
       "id": 6,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-6.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -78,7 +84,8 @@
       "id": 7,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-7.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -88,7 +95,8 @@
       "id": 8,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-8.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -98,7 +106,8 @@
       "id": 9,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-9.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",
@@ -108,7 +117,8 @@
       "id": 10,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\octo\\window\\image-10.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "windowconfig",

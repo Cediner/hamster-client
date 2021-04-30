@@ -237,6 +237,9 @@ public class Fightview extends Widget {
 		give.wdgmsg("click", 1);
 	    }
 	}
+
+	@SuppressWarnings("unused")
+	public boolean isPeaced() { return give.state == 1; }
     }
 
     public void use(Indir<Resource> act) {

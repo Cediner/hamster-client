@@ -583,12 +583,23 @@ public class PUtils {
         throw(new IllegalArgumentException("Can only scale images up or down in both dimensions"));
     }
 
-    private static final Convolution uifilter = box;//new Hanning(5);
-    public static BufferedImage uiscale(BufferedImage img, Coord tsz) {
+    private static final Convolution uifilter = new Hanning(5);
+    public enum ConvolutionMethod {
+        Box(box), Hanning5(new Hanning(5));
+
+	public Convolution method;
+	ConvolutionMethod(final Convolution method) { this.method = method; }
+    }
+
+    public static BufferedImage uiscale(BufferedImage img, Coord tsz, ConvolutionMethod method) {
 	Coord sz = imgsz(img);
 	if(tsz.equals(sz))
 	    return(img);
-	return(convolve(img, tsz, uifilter));
+	return(convolve(img, tsz, method.method));
+    }
+
+    public static BufferedImage uiscale(BufferedImage img, Coord tsz) {
+        return uiscale(img, tsz, ConvolutionMethod.Hanning5);
     }
 
     public static void main(String[] args) throws Exception {
