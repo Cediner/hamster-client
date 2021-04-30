@@ -40,6 +40,14 @@ public class AudioPanel extends Scrollport {
 	grp.add(new Button(TranslationLookup.get("opt_audio_change_combat_res"),
 		() -> ui.root.add(new IndirSoundSelector("Combat Start", COMBATSTARTAUDIORES))));
 	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_chat"), ALLOWCHATSOUND));
+	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_failed_move"), SOUNDONFAILEDMOVE));
+	grp.add(new IndirLabel(() -> String.format("%s: %s", TranslationLookup.get("opt_audio_failed_move_res"), QUEUEDMOVESTOP.get())));
+	grp.add(new Button(TranslationLookup.get("opt_audio_change_failed_move_res"),
+		() -> ui.root.add(new IndirSoundSelector("Failed queued move", QUEUEDMOVESTOP))));
+	grp.add(new IndirCheckBox(TranslationLookup.get("opt_audio_allow_path_finish"), SOUNDONPATHFINISH));
+	grp.add(new IndirLabel(() -> String.format("%s: %s", TranslationLookup.get("opt_audio_path_finish_res"), QUEUEDMOVESFINISH.get())));
+	grp.add(new Button(TranslationLookup.get("opt_audio_change_path_finish_res"),
+		() -> ui.root.add(new IndirSoundSelector("Path finish", QUEUEDMOVESFINISH))));
 	grp.pack();
 
 	int y = 0;

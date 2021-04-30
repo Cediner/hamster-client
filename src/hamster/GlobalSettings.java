@@ -78,6 +78,10 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);
     public static final IndirSetting<Boolean> SOUNDONGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio", true);
+    public static final IndirSetting<Boolean> SOUNDONFAILEDMOVE = new IndirSetting<>(global, "audio.sound-on-failed-move", false);
+    public static final IndirSetting<Boolean> SOUNDONPATHFINISH = new IndirSetting<>(global, "audio.sound-on-path-finish", false);
+    public static final IndirSetting<String> QUEUEDMOVESTOP = new IndirSetting<>(global, "audio.queued-move-stopped", "custom/sfx/omni/BounceOdd");
+    public static final IndirSetting<String> QUEUEDMOVESFINISH = new IndirSetting<>(global, "audio.queued-moves-finish", "custom/sfx/omni/Z_WW_Get_Rupee_Blue");
 
     //Display options
     public static final IndirSetting<Boolean> VSYNC = new IndirSetting<>(global, "display.vsync", true);
