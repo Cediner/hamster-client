@@ -138,6 +138,8 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> MMSHOWGRID = new IndirSetting<>(global, "minimap.show-grid", false);
     public static final IndirSetting<Boolean> MMSHOWVIEW = new IndirSetting<>(global, "minimap.show-view", true);
     public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
+    public static final IndirSetting<Boolean> SHOWWMARKERS = new IndirSetting<>(global, "minimap.show-waypoint-markers", true);
+    public static final IndirSetting<Boolean> SHOWWMARKERNAMES = new IndirSetting<>(global, "minimap.show-waypoint-marker-names", false);
 
     //Gob
     public static final IndirSetting<Boolean> CIRCLEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);

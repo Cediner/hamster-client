@@ -44,7 +44,7 @@ public class CustomMarker extends Marker {
 	    final var cc = img.ssz.div(2);
 	    final Coord ul = c.sub(cc);
 	    g.image(img.tex(), ul);
-	    if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
+	    if (GlobalSettings.SHOWMMMARKERNAMES.get() && (!(this instanceof WaypointMarker) || GlobalSettings.SHOWWMARKERNAMES.get())) {
 		final Coord tipc = new Coord(ul.x + img.tex().sz().x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 		g.image(tip.tex(), tipc);
 	    }

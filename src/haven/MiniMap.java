@@ -295,7 +295,7 @@ public class MiniMap extends Widget {
     }
 
     private enum Type {
-	NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE
+	NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE, WAYPOINT
     }
 
     public static class DisplayMarker {
@@ -318,6 +318,8 @@ public class MiniMap extends Widget {
 		type = Type.VILLAGE;
 	    else if (marker instanceof RealmMarker)
 		type = Type.KINGDOM;
+	    else if(marker instanceof WaypointMarker)
+		type = Type.WAYPOINT;
 	    else if (marker instanceof LinkedMarker)
 		type = Type.LINKED;
 	    else if (marker instanceof CustomMarker)
@@ -335,7 +337,8 @@ public class MiniMap extends Widget {
 			    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
 			    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
 			    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
-			    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()));
+			    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()) ||
+			    (type == Type.WAYPOINT && GlobalSettings.SHOWWMARKERS.get()));
 	}
 
 	private Area hit(final UI ui) {

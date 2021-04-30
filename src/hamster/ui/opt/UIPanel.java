@@ -90,6 +90,8 @@ public class UIPanel extends Scrollport {
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_village"), GlobalSettings.SHOWVMARKERS));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_village_radius"), GlobalSettings.SHOWVMARKERRAD));
             minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_village_name"), GlobalSettings.SHOWVMARKERTIPS));
+            minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_waypoint"), GlobalSettings.SHOWWMARKERS));
+            minimap.add(new IndirCheckBox(TranslationLookup.get("opt_ui_mm_waypoint_name"), GlobalSettings.SHOWWMARKERNAMES));
             minimap.add(OptionsWnd.ColorPreWithLabel(TranslationLookup.get("opt_ui_mm_queued_path_col"), GlobalSettings.MMPATHCOL));
             minimap.pack();
             overall.add(minimap);
