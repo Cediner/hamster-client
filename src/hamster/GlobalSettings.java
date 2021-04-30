@@ -174,6 +174,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWANIMALDMG = new IndirSetting<>(global, "gob.show-animal-dmg", true);
     public static final IndirSetting<Boolean> SHORTWALLS = new IndirSetting<>(global, "gob.short-walls", false);
     public static final IndirSetting<Boolean> SHORTCUPBOARDS = new IndirSetting<>(global, "gob.short-cupboards", false);
+    public static final IndirSetting<Boolean> RUNONLOGIN = new IndirSetting<>(global, "gob.run-on-login", false);
 
 
     // Animal

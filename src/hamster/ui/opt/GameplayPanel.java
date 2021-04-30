@@ -126,6 +126,7 @@ public class GameplayPanel extends Scrollport {
         { //Gob
             gob.add(new Label(TranslationLookup.get("opt_gameplay_gob_badkin")));
             gob.add(new IndirGroupSelector(GlobalSettings.BADKIN, BuddyWnd.gc));
+            gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_run_on_login"), RUNONLOGIN));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_urself"), GlobalSettings.SHOWPLAYERHALO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_players"), GlobalSettings.SHOWGOBHALO));
             gob.add(new IndirCheckBox(TranslationLookup.get("opt_gameplay_gob_halo_hearth"), GlobalSettings.SHOWGOBHALOONHEARTH));
