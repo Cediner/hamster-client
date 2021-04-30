@@ -40,8 +40,7 @@ import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
 import haven.MapFile.GridInfo;
 
-import static hamster.MouseBind.MV_PATHFIND_MOVE;
-import static hamster.MouseBind.MV_QUEUE_MOVE;
+import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
@@ -882,10 +881,14 @@ public class MiniMap extends Widget {
 	    if(MV_QUEUE_MOVE.match(bind)) {
 		ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
 	    } else if(MV_PATHFIND_MOVE.match(bind)) {
-	        if(gob == null)
-	            ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
-	        else
-	            ui.gui.map.pathto(gob);
+		if (gob == null)
+		    ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
+		else
+		    ui.gui.map.pathto(gob);
+	    } else if(MM_SPECIAL_MENU.match(bind) && gob == null) {
+		final var opts = new HashMap<String, Consumer<String>>();
+		opts.put("Add waypoint", (opt) -> mv.ui.gui.mapfile.markWaypoint(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+		ui.gui.add(new FlowerMenu(opts), ui.mc);
 	    } else if(gob == null) {
 		mv.wdgmsg("click", mc,
 			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),

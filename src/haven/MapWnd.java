@@ -316,7 +316,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    }
 		}
 	    } else if(MouseBind.MM_FOLLOW_LINK.match(bind) && mark.m instanceof LinkedMarker && ((LinkedMarker) mark.m).lid != LinkedMarker.NOLINK) {
-		if (press) {
+		if (!press) {
 		    final Marker target = view.file.lmarkers.get(((LinkedMarker) mark.m).lid);
 		    if (target != null) {
 			view.center(new MiniMap.SpecLocator(target.seg, target.tc));
@@ -324,7 +324,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    return (true);
 		}
 	    } else if(MouseBind.MM_SPECIAL_MENU.match(bind)) {
-		if (press) {
+		if (!press) {
 		    final var opts = new HashMap<String, Consumer<String>>();
 		    opts.put("Remove", (opt) -> file.remove(mark.m));
 		    if(mark.m instanceof WaypointMarker) {
