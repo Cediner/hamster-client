@@ -39,7 +39,17 @@ public class Homing extends Moving {
 	this.tc = tc;
 	this.v = v;
     }
-    
+
+    @Override
+    public String toString() {
+	return "Homing(" +
+		"tgt=" + tgt +
+		", tc=" + tc +
+		", v=" + v +
+		", dist=" + dist +
+		')';
+    }
+
     public Coord3f getc() {
 	Coord2d rc = gob.rc;
 	Coord2d tc = this.tc;

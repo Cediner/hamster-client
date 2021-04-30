@@ -56,4 +56,9 @@ public class Avatar extends GAttrib {
 	    return(images);
 	}
     }
+
+    @Override
+    public String toString() {
+	return "Avatar";
+    }
 }

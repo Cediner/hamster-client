@@ -42,6 +42,18 @@ public class LinMove extends Moving {
 	this.e = Double.NaN;
     }
 
+    @Override
+    public String toString() {
+	return "LinMove(" +
+		"s=" + s +
+		", v=" + v +
+		", t=" + t +
+		", lt=" + lt +
+		", e=" + e +
+		", ts=" + ts +
+		')';
+    }
+
     public Coord3f getc() {
 	return(gob.glob.map.getzp(s.add(v.mul(t))));
     }

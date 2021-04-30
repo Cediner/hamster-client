@@ -33,4 +33,11 @@ public class DrawOffset extends GAttrib {
 	super(gob);
 	this.off = off;
     }
+
+    @Override
+    public String toString() {
+	return "DrawOffset(" +
+		"off=" + off +
+		')';
+    }
 }

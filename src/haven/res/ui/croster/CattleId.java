@@ -13,6 +13,13 @@ public class CattleId extends GAttrib implements RenderTree.Node, PView.Render2D
 	this.id = id;
     }
 
+    @Override
+    public String toString() {
+	return "CattleId(" +
+		"id=" + id +
+		')';
+    }
+
     public static void parse(Gob gob, Message dat) {
 	long id = dat.int64();
 	gob.setattr(new CattleId(gob, id));

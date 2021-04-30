@@ -36,4 +36,13 @@ public class Lumin extends GAttrib {
 	this.sz = sz;
 	this.str = str;
     }
+
+    @Override
+    public String toString() {
+	return "Lumin(" +
+		"off=" + off +
+		", sz=" + sz +
+		", str=" + str +
+		')';
+    }
 }

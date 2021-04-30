@@ -133,4 +133,9 @@ public class Hidden extends GAttrib implements RenderTree.Node {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Hidden";
+    }
 }

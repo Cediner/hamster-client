@@ -64,4 +64,10 @@ public class Speaking extends GAttrib implements RenderTree.Node, PView.Render2D
 	Coord sc = Homo3D.obj2view(new Coord3f(0, 0, zo), state, Area.sized(g.sz())).round2();
 	draw(g, sc.add(sx, 0));
     }
+
+    @Override
+    public String toString() {
+	return "Speaking(" +
+		"zo=" + zo + ')';
+    }
 }

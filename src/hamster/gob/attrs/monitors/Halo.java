@@ -69,4 +69,11 @@ public class Halo extends GAttrib {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "Halo(" +
+                "show=" + show +
+                ')';
+    }
 }

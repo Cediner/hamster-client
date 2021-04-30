@@ -61,4 +61,11 @@ public class ContainerStatus extends GAttrib implements Gob.SetupMod {
 	else
 	    state = State.INBETWEEN;
     }
+
+    @Override
+    public String toString() {
+	return "ContainerStatus(" +
+		"state=" + state +
+		')';
+    }
 }

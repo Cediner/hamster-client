@@ -65,4 +65,11 @@ public class TanTubStatus extends GAttrib implements Gob.SetupMod {
             default -> state = State.WORKING;
         }
     }
+
+    @Override
+    public String toString() {
+        return "TanTubStatus(" +
+                "state=" + state +
+                ')';
+    }
 }

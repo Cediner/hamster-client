@@ -32,4 +32,11 @@ public class HighlightMonitor extends GAttrib {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "HighlightMonitor(" +
+                "show=" + show +
+                ')';
+    }
 }

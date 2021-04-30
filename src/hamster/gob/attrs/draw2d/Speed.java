@@ -51,4 +51,11 @@ public class Speed extends GAttrib implements RenderTree.Node, PView.Render2D {
         if(speed  != null)
             speed.dispose();
     }
+
+    @Override
+    public String toString() {
+        return "Speed(" +
+                "speed=" + lspeed +
+                ")";
+    }
 }

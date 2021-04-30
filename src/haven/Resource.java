@@ -186,6 +186,22 @@ public class Resource implements Serializable {
 	this.name = name;
 	this.ver = ver;
     }
+
+    public static String indirname(final Indir<Resource> res) {
+	final String nm;
+	if (res instanceof Session.CachedRes.Ref) {
+	    nm = ((Session.CachedRes.Ref) res).name();
+	} else if (res instanceof Resource.Named) {
+	    nm = ((Resource.Spec) res).name;
+	} else {
+	    if (res != null && res.get() != null) {
+		nm = res.get().name;
+	    } else {
+		nm = "";
+	    }
+	}
+	return nm != null ? nm : "";
+    }
 	
     public static void setcache(ResCache cache) {
 	prscache = cache;

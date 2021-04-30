@@ -66,6 +66,16 @@ public class KinInfo extends GAttrib implements RenderTree.Node, PView.Render2D 
     }
 
     @Override
+    public String toString() {
+	return "KinInfo(" +
+		"name='" + name + '\'' +
+		", group=" + group +
+		", type=" + type +
+		", seen=" + seen +
+		')';
+    }
+
+    @Override
     public void ctick(double dt) {
 	super.ctick(dt);
 	updateMark();
