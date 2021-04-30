@@ -34,14 +34,16 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
 import hamster.MouseBind;
 import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
+import hamster.script.pathfinding.waypoint.WaypointPathfinder;
 import hamster.ui.DowseWnd;
-import hamster.ui.MapMarkerWnd;
+import hamster.ui.minimap.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
 import hamster.ui.minimap.*;
@@ -56,7 +58,10 @@ import javax.swing.filechooser.*;
 
 //TODO: Readd export / import via window buttons
 public class MapWnd extends ResizableWnd implements Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
+    public static final Resource wpconcurs = Resource.local().loadwait("custom/curs/wpconnect");
+    public static final Resource wpdisconcurs = Resource.local().loadwait("custom/curs/wpdisconnect");
     private static final Tex viewbox = Theme.tex("buttons/wnd/view", 3);
     public final MapFile file;
     public final MiniMap view;
@@ -68,6 +73,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private final Frame viewf;
     private MapMarkerWnd markers = null;
     private boolean domark = false;
+    private boolean dowpconnect = false;
+    private boolean dowpdisconnect = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 
@@ -252,6 +259,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     }
 
     private class View extends MiniMap {
+        private WaypointMarker src = null;
+
 	View(MapFile file) {
 	    super(file);
 	}
@@ -278,9 +287,23 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	public boolean clickmarker(final DisplayMarker mark, Location loc, int button, boolean press) {
 	    final var bind = MouseBind.generateSequence(ui, button);
 	    if(MouseBind.MM_EXAMINE_MARKER.match(bind)) {
-		if(!press && !domark) {
+		if(!press && !domark && !dowpconnect && !dowpdisconnect) {
 		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
+		} else if(!press && dowpconnect && mark.m instanceof WaypointMarker && src.seg == mark.m.seg) {
+		    final var dest = (WaypointMarker) mark.m;
+		    src.links.add(dest.id);
+		    dest.links.add(src.id);
+		    file.update(src);
+		    file.update(dest);
+		    return true;
+		} else if(!press && dowpdisconnect && mark.m instanceof WaypointMarker && src.seg == mark.m.seg) {
+		    final var dest = (WaypointMarker) mark.m;
+		    src.links.remove(dest.id);
+		    dest.links.remove(src.id);
+		    file.update(src);
+		    file.update(dest);
+		    return true;
 		}
 	    } else if(MouseBind.MM_GOTO_MARKER.match(bind)) {
 	        if(press) {
@@ -304,14 +327,49 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		if (press) {
 		    final var opts = new HashMap<String, Consumer<String>>();
 		    opts.put("Remove", (opt) -> file.remove(mark.m));
+		    if(mark.m instanceof WaypointMarker) {
+		        opts.put("Create connections", (opt) -> {
+		            dowpconnect = true;
+		            src = (WaypointMarker) mark.m;
+			});
+		        opts.put("Remove connections", (opt) -> {
+			    dowpdisconnect = true;
+			    src = (WaypointMarker) mark.m;
+			});
+		        opts.put("Path to waypoint", (opt) -> {
+		            try {
+				final var pc = ui.gui.map.player().rc;
+				resolveo(player).ifPresent(ploc -> {
+				    if(ploc.seg.id == mark.m.seg) {
+					final var map = file.generateWaypointMap(ploc.seg, (WaypointMarker) mark.m,
+						ploc.tc, pc);
+					final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
+					final var moves = pathfinder.path();
+					if(moves != null) {
+					    for(final var mv : moves) {
+					        ui.gui.map.queuemove(mv);
+					    }
+					} else {
+					    ui.gui.error("Couldn't find path to waypoint");
+					}
+				    } else {
+				        ui.gui.error("Can't path to waypoints on different map segments than player");
+				    }
+				});
+			    } catch (Exception e) {
+				logger.atWarning().withCause(e).log("Failed to path to waypoint");
+			    }
+			});
+		    }
 		    ui.gui.add(new FlowerMenu(opts), ui.mc);
+		    return true;
 		}
 	    }
 	    return(false);
 	}
 
 	public boolean clickicon(DisplayIcon icon, Location loc, int button, boolean press) {
-	    if(!press && !domark) {
+	    if(!press && !domark && !dowpconnect && !dowpdisconnect) {
 		mvclick(mv, null, loc, icon.gob, button);
 		return(true);
 	    }
@@ -337,6 +395,12 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    if(domark && (button == 3)) {
 		domark = false;
 		return(true);
+	    } else if(dowpconnect && button == 3) {
+	        dowpconnect = false;
+	        return true;
+	    } else if(dowpdisconnect && button == 3) {
+	        dowpdisconnect = false;
+	        return true;
 	    }
 	    super.mousedown(c, button);
 	    return(true);
@@ -437,6 +501,10 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	public Resource getcurs(Coord c) {
 	    if(domark)
 		return(markcurs);
+	    else if(dowpconnect)
+	        return wpconcurs;
+	    else if(dowpdisconnect)
+	        return wpdisconcurs;
 	    return(super.getcurs(c));
 	}
     }

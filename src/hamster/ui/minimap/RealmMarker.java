@@ -34,7 +34,7 @@ public class RealmMarker extends Marker {
     }
 
     @Override
-    public void draw(GOut g, Coord c, Text tip, final float scale) {
+    public void draw(GOut g, Coord c, Text tip, final float scale, final MapFile file) {
         try {
             final var res = MapFile.loadsaved(Resource.remote(), this.res);
             final var img = res.layer(Resource.imgc);

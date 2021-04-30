@@ -25,7 +25,7 @@ public class SMarker extends Marker {
     }
 
     @Override
-    public void draw(GOut g, Coord c, Text tip, final float scale) {
+    public void draw(GOut g, Coord c, Text tip, final float scale, final MapFile file) {
         try {
             final var res = this.res.loadsaved(Resource.remote());
             final var img = res.layer(Resource.imgc);

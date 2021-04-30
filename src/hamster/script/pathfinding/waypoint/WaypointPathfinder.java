@@ -1,5 +1,7 @@
 package hamster.script.pathfinding.waypoint;
 
+import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.script.pathfinding.Move;
 
 import java.util.*;
@@ -10,6 +12,7 @@ import java.util.*;
  * as we don't have all the same constraints normal pathfinding does
  */
 public class WaypointPathfinder {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     @FunctionalInterface
     interface HeuristicFun {
 	double distance(final Waypoint c, final Waypoint goal);
@@ -78,6 +81,9 @@ public class WaypointPathfinder {
         double fs;
         double ft;
 
+        if(start.equals(goal))
+            return Collections.singletonList(start);
+
         {//Init
             /*
              * 8: g(s) = 0;        //First g(s) is 0
@@ -132,7 +138,7 @@ public class WaypointPathfinder {
                 //16:     S = S + {u0}; // u0 is stabilized, create children
                 //17:     for all edges (u0, v) ∈ E with v ∈ M do
                 // for each child
-                for (final var wpid : source.links) {
+                for (final var wpid : node.wp.links) {
                     final Waypoint nc = map.getWaypoint(wpid);
                     //with v ∈ M do
                     if (!rejected.contains(nc)) {

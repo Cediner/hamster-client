@@ -36,7 +36,7 @@ public class CustomMarker extends Marker {
     }
 
     @Override
-    public void draw(GOut g, Coord c, Text tip, final float scale) {
+    public void draw(GOut g, Coord c, Text tip, final float scale, final MapFile file) {
 	g.chcolor(color);
 	try {
 	    final var res = MapFile.loadsaved(Resource.remote(), this.res);

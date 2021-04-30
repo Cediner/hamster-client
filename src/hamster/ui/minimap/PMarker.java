@@ -33,7 +33,7 @@ public class PMarker extends Marker {
     }
 
     @Override
-    public void draw(final GOut g, final Coord c, final Text tip, final float scale) {
+    public void draw(final GOut g, final Coord c, final Text tip, final float scale, final MapFile file) {
 	final Coord ul = c.sub(flagcc);
 	g.chcolor(color);
 	g.image(flagfg, ul);

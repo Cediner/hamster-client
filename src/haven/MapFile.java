@@ -365,20 +365,29 @@ public class MapFile {
     /**
      * Generate a waypoint map within the given segment
      */
-    public WaypointMap generateWaypointMap(final Segment seg, final Coord starttc, final Coord2d startmc) {
+    public WaypointMap generateWaypointMap(final Segment seg, final WaypointMarker goalm, final Coord starttc, final Coord2d startmc) {
 	final var map = new HashMap<Long, Waypoint>();
+	Waypoint start = null, goal = null;
+	double dist = Double.MAX_VALUE;
 	lock.readLock().lock();
 	try {
 	    for(final var wp : wmarkers.values()) {
 		if (wp.seg == seg.id) {
-		    final var offset = new Coord2d(wp.tc.sub(starttc));
-		    map.put(wp.id, new Waypoint(wp.id, startmc.add(offset), wp.links));
+		    final var offset = new Coord2d(wp.tc.sub(starttc)).mul(MCache.tilesz);
+		    final var waypoint = new Waypoint(wp.id, startmc.add(offset), wp.links);
+		    if(goalm == wp)
+		        goal = waypoint;
+		    map.put(wp.id, waypoint);
+		    if(startmc.dist(waypoint.c) < dist) {
+		        start = waypoint;
+		        dist = startmc.dist(waypoint.c);
+		    }
 		}
 	    }
 	} finally {
 	    lock.readLock().unlock();
 	}
-	return new WaypointMap(map);
+	return new WaypointMap(map, start, goal);
     }
 
     private static Marker loadmarker(final MapFile file, Message fp) {
@@ -449,7 +458,7 @@ public class MapFile {
 			final Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
 			final long id = fp.int64();
 			final int linkslen = fp.int32();
-			final List<Long> links = new ArrayList<>(linkslen);
+			final Set<Long> links = new HashSet<>(linkslen);
 			for(var i = 0; i < linkslen; ++i) {
 			    links.add(fp.int64());
 			}
@@ -567,6 +576,10 @@ public class MapFile {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
 		} else if(mark instanceof WaypointMarker) {
+		    for(final var link : ((WaypointMarker) mark).links) {
+			if(wmarkers.get(link) != null)
+			    wmarkers.get(link).links.remove(((WaypointMarker)mark).id);
+		    }
 		    waypointids.release(((WaypointMarker) mark).id);
 		    wmarkers.remove(((WaypointMarker) mark).id);
 		}
@@ -588,6 +601,10 @@ public class MapFile {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
 		} else if(mark instanceof WaypointMarker) {
+		    for(final var link : ((WaypointMarker) mark).links) {
+		        if(wmarkers.get(link) != null)
+		            wmarkers.get(link).links.remove(((WaypointMarker)mark).id);
+		    }
 		    waypointids.release(((WaypointMarker) mark).id);
 		    wmarkers.remove(((WaypointMarker) mark).id);
 		}

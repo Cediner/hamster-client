@@ -1,7 +1,6 @@
-package hamster.ui;
+package hamster.ui.minimap;
 
 import hamster.data.map.MarkerData;
-import hamster.ui.minimap.*;
 import haven.Button;
 import haven.Window;
 import haven.*;
@@ -18,7 +17,7 @@ public class MapMarkerWnd extends Window {
     private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom", "Linked", "Realm", "Village");
     private final static Predicate<Marker> pmarkers = (m -> m instanceof PMarker);
     private final static Predicate<Marker> smarkers = (m -> m instanceof SMarker);
-    private final static Predicate<Marker> slmarkers = (m -> m instanceof CustomMarker && !(m instanceof LinkedMarker));
+    private final static Predicate<Marker> slmarkers = (m -> m instanceof CustomMarker && !(m instanceof LinkedMarker) && !(m instanceof WaypointMarker));
     private final static Predicate<Marker> lmarkers = (m -> m instanceof LinkedMarker);
     private final static Predicate<Marker> kmarkers = (m -> m instanceof RealmMarker);
     private final static Predicate<Marker> vmarkers = (m -> m instanceof VillageMarker);

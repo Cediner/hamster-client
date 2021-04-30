@@ -113,7 +113,7 @@ public class FlowerMenu extends Widget {
 
 	private CustomPetal(String name, final Consumer<String> callback) {
 	    super(name, callback);
-	    sz = new Coord(text.sz().x + UI.scale(35), UI.scale(30));
+	    resize(new Coord(text.sz().x + UI.scale(35), UI.scale(30)));
 	}
 
 	private CustomPetal(String name) {
@@ -232,7 +232,8 @@ public class FlowerMenu extends Widget {
         for(final var opt : optmap.keySet()) {
             opts[i] = add(new CustomPetal(opt, optmap.get(opt)));
             opts[i].num = i;
-	}
+            i++;
+        }
 	srvbased = false;
     }
 

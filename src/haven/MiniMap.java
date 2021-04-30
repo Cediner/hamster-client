@@ -348,10 +348,10 @@ public class MiniMap extends Widget {
 	    }
 	}
 
-	public void draw(GOut g, Coord c, final float scale, final UI ui) {
+	public void draw(GOut g, Coord c, final float scale, final UI ui, final MapFile file) {
 	    if (visible()) {
 		checkTip(m.tip(ui));
-		m.draw(g, c, tip, scale);
+		m.draw(g, c, tip, scale, file);
 	    }
 	}
     }
@@ -562,7 +562,7 @@ public class MiniMap extends Widget {
 	    for(DisplayMarker mark : dgrid.markers(true, ui)) {
 		if(filter(mark))
 		    continue;
-		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz), scalef(),ui);
+		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz), scalef(), ui, file);
 	    }
 	}
     }

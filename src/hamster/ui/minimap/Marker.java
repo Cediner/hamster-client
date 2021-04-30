@@ -23,7 +23,7 @@ public abstract class Marker {
 	return nm;
     }
 
-    public abstract void draw(final GOut g, final Coord c, final Text tip, final float scale);
+    public abstract void draw(final GOut g, final Coord c, final Text tip, final float scale, final MapFile file);
 
     public abstract Area area();
 

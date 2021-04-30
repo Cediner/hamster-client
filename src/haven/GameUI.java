@@ -42,6 +42,7 @@ import hamster.ui.chr.StudyWnd;
 import hamster.ui.core.Theme;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.food.FoodSearchWnd;
+import hamster.ui.minimap.MapMarkerWnd;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 import hamster.ui.search.ActWnd;
