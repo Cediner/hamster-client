@@ -583,6 +583,6 @@ public class Fightview extends Widget {
 
     @SuppressWarnings("unused")
     public double getcooldown() {
-        return Math.max((Utils.rtime() - atkct), 0.0d);
+        return Math.max((atkct - Utils.rtime()), 0.0d);
     }
 }
