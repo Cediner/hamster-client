@@ -36,7 +36,7 @@
               collect (format nil "~A~%" equ)))
       ""))
 
-(defun scan-for-targets-custom-message (role spotted-gobs tick message)
+(defun scan-for-targets (role spotted-gobs tick)
   (let ((targets (gob-get-all-by-filter
                   (lambda (gob)
                     (or (member (gob-name gob) +targets+ :test 'equal)
@@ -49,22 +49,24 @@
                 (gear (if (gob-has-tag target +human+) (gob-equipment target) nil)))
             (cond
               ((and (gethash (gob-id target) spotted-gobs)
-                    (> (- (get-time) (spotted-gob-last-alert (gethash (gob-id target) spotted-gobs)))
+                    (> (- (get-time)
+                          (spotted-gob-last-alert (gethash (gob-id target) spotted-gobs)))
                        +alert-refresh+))
                (let ((gob (gethash (gob-id target) spotted-gobs)))
                  (setf (spotted-gob-last-spotted gob) (gob-rc target))
                  (setf (spotted-gob-last-rc-at gob) (gob-rc target))
                  (setf (spotted-gob-last-angle gob) (gob-angle target))
-                 (setf (spotted-gob-avg-speed gob) (/ (+ (spotted-gob-avg-speed gob) (gob-v target)) 2))
-                 (setf (spotted-gob-max-speed gob) (max (spotted-gob-avg-speed gob) (gob-v target)))
+                 (setf (spotted-gob-avg-speed gob)
+                       (/ (+ (spotted-gob-avg-speed gob) (gob-v target)) 2))
+                 (setf (spotted-gob-max-speed gob)
+                       (max (spotted-gob-avg-speed gob) (gob-v target)))
                  (setf (spotted-gob-tick gob) tick)
                  (setf (spotted-gob-last-alert gob) (get-time))
                  (send-discord-message-with-map-and-mark
                   "player-alerts" 
-                  (format nil "<@&~A> Still spotted a ~A [~A] [Avg Speed ~A] [Max Speed ~A] @ ~A"
+                  (format nil "<@&~A> Still spotted a ~A [~A] [Avg Speed ~A] [Max Speed ~A]"
                           role name (gob-id target)
-                          (spotted-gob-avg-speed gob) (spotted-gob-max-speed gob)
-                          message)
+                          (spotted-gob-avg-speed gob) (spotted-gob-max-speed gob))
                   (gob-rc target)
                   (gob-angle target))))
               ((gethash (gob-id target) spotted-gobs)
@@ -74,14 +76,17 @@
                  (setf (spotted-gob-last-angle gob) (gob-angle target))
                  (unless (equalp (spotted-gob-gear gob) gear)
                    (setf (spotted-gob-gear gob) gear)
-                   (send-discord-message "player-alerts"
-                                         (format nil "<@&~A> Gob ~A [~A] is now wearing ~A~%"
-                                                 role
-                                                 (spotted-gob-name gob)
-                                                 (spotted-gob-id gob)
-                                                 (describe-gear (spotted-gob-gear gob)))))
-                 (setf (spotted-gob-avg-speed gob) (/ (+ (spotted-gob-avg-speed gob) (gob-v target)) 2))
-                 (setf (spotted-gob-max-speed gob) (max (spotted-gob-avg-speed gob) (gob-v target)))
+                   (send-discord-message
+                    "player-alerts"
+                    (format nil "<@&~A> Gob ~A [~A] is now wearing ~A~%"
+                            role
+                            (spotted-gob-name gob)
+                            (spotted-gob-id gob)
+                            (describe-gear (spotted-gob-gear gob)))))
+                 (setf (spotted-gob-avg-speed gob)
+                       (/ (+ (spotted-gob-avg-speed gob) (gob-v target)) 2))
+                 (setf (spotted-gob-max-speed gob)
+                       (max (spotted-gob-avg-speed gob) (gob-v target)))
                  (setf (spotted-gob-tick gob) tick)))
               (t ;;new target
                (let ((gob (make-spotted-gob :id (gob-id target)
@@ -100,13 +105,12 @@
                   "player-alerts"
                   (format nil
                           (if gear
-                              "<@&~A> Spotted a ~A [~A] going ~A tiles/s @ ~A Wearing:~%~A"
-                            "<@&~A> Spotted a ~A [~A] going ~A tiles/s @ ~A~A")
+                              "<@&~A> Spotted a ~A [~A] going ~A tiles/s Wearing:~%~A"
+                            "<@&~A> Spotted a ~A [~A] going ~A tiles/s ~A")
                           role
                           name
                           (gob-id target)
                           (spotted-gob-max-speed gob)
-                          message
                           (describe-gear (spotted-gob-gear gob)))
                   (gob-rc target)
                   (gob-angle target)))))))))
@@ -129,11 +133,13 @@
      do (let ((gob (gethash id spotted-gobs)))
           (remhash id spotted-gobs)
           (let ((msg (describe-missing-gob gob)))
-            (send-discord-message-with-map-and-mark "player-alerts"
-                                                    (format nil "<@&~A> Last spotted a ~A" role msg)
-                                                    (spotted-gob-last-rc-at gob)
-                                                    (spotted-gob-last-angle gob))))))
-(export '(scan-for-targets-custom-message
+            (send-discord-message-with-map-and-mark
+             "player-alerts"
+             (format nil "<@&~A> Last spotted a ~A" role msg)
+             (spotted-gob-last-rc-at gob)
+             (spotted-gob-last-angle gob))))))
+
+(export '(scan-for-targets
           describe-missing-gob
           spotted-gob
           check-if-any-spotted-have-left))
