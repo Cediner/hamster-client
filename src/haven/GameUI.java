@@ -35,6 +35,7 @@ import hamster.gob.Tag;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.sprites.TargetSprite;
 import hamster.io.SQLResCache;
+import hamster.script.map.MapExport;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
 import hamster.ui.chr.SkillnCredoWnd;
@@ -1486,6 +1487,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private final Map<String, Console.Command> cmdmap = new TreeMap<>();
     {
+        cmdmap.put("mapexport-test", (cons, args) -> {
+            final var export = new MapExport(ui.sess.glob.map);
+            Debug.dumpimage(export.renderWithMarkAt(ui.gui.map.player().rc, ui.gui.map.player().a), "export-test.png");
+	});
 	cmdmap.put("afk", (cons, args) -> {
 	    afk = true;
 	    wdgmsg("afk");

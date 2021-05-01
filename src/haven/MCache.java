@@ -1134,6 +1134,17 @@ public class MCache implements MapSource {
 	}
     }
 
+    public Grid[] grids() {
+        synchronized (grids) {
+	    final Grid[] grids = new Grid[this.grids.size()];
+            int i = 0;
+            for(final var grid : this.grids.values()) {
+                grids[i++] = grid;
+	    }
+	    return grids;
+	}
+    }
+
     public void mapdata(Message msg) {
 	long now = System.currentTimeMillis();
 	int pktid = msg.int32();

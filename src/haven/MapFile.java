@@ -786,7 +786,7 @@ public class MapFile {
 			rgb = tex.getRGB(Utils.floormod(c.x + off.x, tex.getWidth()),
 					 Utils.floormod(c.y + off.y, tex.getHeight()));
 		    buf.setSample(c.x, c.y, 0, (rgb & 0x00ff0000) >>> 16);
-		    buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>>  8);
+		    buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>>   8);
 		    buf.setSample(c.x, c.y, 2, (rgb & 0x000000ff) >>>  0);
 		    buf.setSample(c.x, c.y, 3, (rgb & 0xff000000) >>> 24);
 		}
