@@ -74,8 +74,8 @@
   {
     name: "gfx/terobjs/plants/wine",
     type: "TRELLIS",
-    min_stage: 6,
-    final_stage: 6
+    min_stage: 7,
+    final_stage: 7
   },
   {
     name: "gfx/terobjs/plants/redonion",

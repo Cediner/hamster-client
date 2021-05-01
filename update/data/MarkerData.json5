@@ -6,6 +6,11 @@
     res: "custom/mm/pl/friend",
     type: "SCRIPT"
   },
+  waypoint: {
+    defname: "Waypoint",
+    res: "custom/mm/icons/waypoint",
+    type: "WAYPOINT"
+  },
   // Basic Markers
   basic: {
     "gfx/terobjs/wonders/tarpit": {
