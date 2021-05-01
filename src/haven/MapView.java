@@ -2514,8 +2514,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	updateSpeed(dt);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
-	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
-	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
+	final Gob holder = pl != null ? ui.sess.glob.oc.getgob(pl.whoIsHoldingMe()) : null;
+	final Gob base = pl != null && !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
 	synchronized (movequeue) {
 	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
 		movingto = movequeue.poll();
