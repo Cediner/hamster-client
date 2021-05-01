@@ -179,6 +179,9 @@ public class Speedget extends MovableWidget {
     @Override
     protected void binded() {
 	ui.sess.details.attachSpeedget(this);
+	if(GlobalSettings.RUNONLOGIN.get()) {
+	    setSpeed(Speed.RUN);
+	}
     }
 
     @Override

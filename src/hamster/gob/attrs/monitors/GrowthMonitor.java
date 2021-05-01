@@ -51,4 +51,12 @@ public class GrowthMonitor extends GAttrib {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "GrowthMonitor(" +
+                "show=" + show +
+                ", stage=" + stage +
+                ')';
+    }
 }

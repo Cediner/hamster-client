@@ -26,9 +26,10 @@ public class Card {
     }
 
     /**
-     * It's either cooldown or cooldown * Mu
+     * It's either cooldown or cooldown / Mu
+     * Take Aim technically also varies with IP...
      */
     public double cooldown(final int cards) {
-        return cooldownHasMu ? cooldown * Mu(cards) : cooldown;
+        return cooldownHasMu ? cooldown / Mu(cards) : cooldown;
     }
 }

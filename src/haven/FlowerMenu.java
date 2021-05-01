@@ -31,6 +31,7 @@ import hamster.KeyBind;
 import hamster.data.MenuExclusionData;
 
 import java.awt.Color;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.lang.Math.PI;
@@ -46,6 +47,7 @@ public class FlowerMenu extends Widget {
     private UI.Grab mg, kg;
     public static final Coord customBoxPadding = UI.scale(4, 4);
     private final Consumer<String> callback;
+    private final boolean srvbased;
 
     @RName("sm")
     public static class $_ implements Factory {
@@ -59,16 +61,22 @@ public class FlowerMenu extends Widget {
 
     public class Petal extends Widget {
 	public String name;
+	public final Consumer<String> callback;
 	public double ta, tr;
 	public int num;
 	protected Text text;
 	protected double a = 1;
 
-	public Petal(String name) {
+	public Petal(final String name, final Consumer<String> callback) {
 	    super(Coord.z);
 	    this.name = name;
+	    this.callback = callback;
 	    text = ptf.render(name, ptc);
 	    resize(text.sz().x + UI.scale(25), text.sz().y + UI.scale(5));
+	}
+
+	public Petal(String name) {
+	    this(name, null);
 	}
 
 	public void move(Coord c) {
@@ -103,9 +111,13 @@ public class FlowerMenu extends Widget {
     public class CustomPetal extends Petal {
 	boolean h = false;
 
+	private CustomPetal(String name, final Consumer<String> callback) {
+	    super(name, callback);
+	    resize(new Coord(text.sz().x + UI.scale(35), UI.scale(30)));
+	}
+
 	private CustomPetal(String name) {
-	    super(name);
-	    sz = new Coord(text.sz().x + UI.scale(35), UI.scale(30));
+	    this(name, null);
 	}
 
 	@Override
@@ -212,6 +224,19 @@ public class FlowerMenu extends Widget {
 	this.c = new Coord(x, y);
     }
 
+    public FlowerMenu(final Map<String, Consumer<String>> optmap) {
+        super(Coord.z);
+        this.callback = null;
+        opts = new Petal[optmap.size()];
+        int i = 0;
+        for(final var opt : optmap.keySet()) {
+            opts[i] = add(new CustomPetal(opt, optmap.get(opt)));
+            opts[i].num = i;
+            i++;
+        }
+	srvbased = false;
+    }
+
     public FlowerMenu(final Consumer<String> callback, final String... options) {
 	super(Coord.z);
 	this.callback = callback;
@@ -220,6 +245,7 @@ public class FlowerMenu extends Widget {
 	    add(opts[i] = new CustomPetal(options[i]));
 	    opts[i].num = i;
 	}
+	srvbased = callback == null;
     }
 
     public FlowerMenu(String... options) {
@@ -282,7 +308,13 @@ public class FlowerMenu extends Widget {
     public void choose(Petal option) {
 	if (callback == null) {
 	    if (option == null) {
-		wdgmsg("cl", -1);
+	        if(srvbased)
+	            wdgmsg("cl", -1);
+	        else
+	            ui.destroy(this);
+	    } else if(option.callback  != null) {
+	        option.callback.accept(option.name);
+	        ui.destroy(this);
 	    } else {
 		wdgmsg("cl", option.num, ui.modflags());
 	    }

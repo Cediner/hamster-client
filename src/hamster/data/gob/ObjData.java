@@ -67,6 +67,10 @@ public class ObjData {
         return objmap.containsKey(name) ? objmap.get(name).range : 0;
     }
 
+    public static Optional<ContainerData> getContData(final String name) {
+        return objmap.containsKey(name) ? Optional.ofNullable(objmap.get(name).containerdata) : Optional.empty();
+    }
+
     public static Set<Tag> getTags(final String name) {
         final Set<Tag> tags = objmap.containsKey(name) ? objmap.get(name).tags : new HashSet<>();
         if(tags.size() == 0) {
@@ -90,6 +94,7 @@ public class ObjData {
     private int range = -1;
     private CropData cropdata = null;
     private ForageData foragedata = null;
+    private ContainerData containerdata = null;
 
     public String name() { return name; }
     public String res() { return res; }

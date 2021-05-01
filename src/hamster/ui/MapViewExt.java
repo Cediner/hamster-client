@@ -348,6 +348,7 @@ public class MapViewExt {
         opts.add("Mark for party");
         opts.add("Mark for script");
         opts.add("Mark tile with number");
+        opts.add("Add waypoint");
 
         if (slaves.size() > 0)
             opts.add("Slaves");
@@ -389,6 +390,9 @@ public class MapViewExt {
                         }, null);
                     }, sopts);
                     mv.ui.gui.add(submenu, mv.ui.mc);
+                }
+                case "Add waypoint" -> {
+                    mv.ui.gui.mapfile.markWaypoint(mc);
                 }
                 case "Slaves" -> selectSlavesAndDo((slaves) -> tileSlaveActMenu(mc, slaves));
             }

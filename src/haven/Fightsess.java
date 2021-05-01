@@ -133,8 +133,8 @@ public class  Fightsess extends Widget {
 	resize(parent.sz);
 	pcc = sz.div(2);
 	final Coord center = sz.div(2);
-	actionAnchor = center.add(0, center.y / 2);
-	cooldownAnchor = center.sub(0, (int) (center.y / 1.5f));
+	actionAnchor = new Coord(center.x, sz.y).sub(0, actc(9).y+UI.scale(100));
+	cooldownAnchor = new Coord(center.x, 0).add(0,  (center.y / 2));
 	enemyBuffAnchor = cooldownAnchor.add(UI.scale(50, 0));
 	enemyIPAnchor = cooldownAnchor.add(UI.scale(75, 15));
 	enemyLastMoveAnchor = cooldownAnchor.add(UI.scale(50, 50));
@@ -276,6 +276,7 @@ public class  Fightsess extends Widget {
 		g.fellipse(cdc, UI.scale(24, 24), Math.PI / 2 - (Math.PI * 2 * Math.min(1.0 - a, 1.0)),
 			Math.PI / 2);
 		g.chcolor();
+		FastText.aprintf(g, cdc, 0.5, 0.5, "%.1f", fv.atkct - now);
 	    }
 	    g.image(cdframe, cdc.sub(cdframe.sz().div(2)));
 	    if (fv.current != null && fv.current.estimatedBlockWeight != 0) {
@@ -421,11 +422,11 @@ public class  Fightsess extends Widget {
 	}
     }
 
-    private GItem weap() {
+    GItem weap() {
 	return ui.gui.equ != null ? ui.gui.equ.getWeapon() : null;
     }
 
-    private int str() {
+    int str() {
 	final Glob.CAttr strattr = ui.sess.glob.getcattr("str");
 	return strattr.comp;
     }

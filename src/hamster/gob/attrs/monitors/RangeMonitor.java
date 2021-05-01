@@ -30,4 +30,9 @@ public class RangeMonitor extends GAttrib {
 	    }
 	}
     }
+
+    @Override
+    public String toString() {
+	return "RangeMonitor";
+    }
 }

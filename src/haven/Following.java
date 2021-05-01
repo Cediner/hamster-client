@@ -42,6 +42,14 @@ public class Following extends Moving {
 	this.xfname = xfname;
     }
 
+    @Override
+    public String toString() {
+	return "Following(" +
+		"tgt=" + tgt +
+		", xfname='" + xfname + '\'' +
+		')';
+    }
+
     public Coord3f getc() {
 	Gob tgt = gob.glob.oc.getgob(this.tgt);
 	if(tgt == null)

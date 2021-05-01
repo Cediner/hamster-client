@@ -1,0 +1,28 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "action",
+      "parent": "custom/paginae/default/management",
+      "parentver": 1,
+      "name": "Waypoint Manager",
+      "preq": "",
+      "hk": "W",
+      "ad": []
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\paginae\\default\\wnd\\waypoint\\image-0.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "tooltip",
+      "t": "Toggle Waypoint Manager\u0000"
+    }
+  ]
+}

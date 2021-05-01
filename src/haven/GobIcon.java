@@ -45,6 +45,11 @@ public class GobIcon extends GAttrib {
 	this.res = res;
     }
 
+    @Override
+    public String toString() {
+	return String.format("GobIcon(res=%s)", Resource.indirname(res));
+    }
+
     public static class Image {
 	public final Tex tex;
 	public Coord cc;

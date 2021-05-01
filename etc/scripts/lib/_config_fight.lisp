@@ -38,15 +38,30 @@
 ;; Inputs:
 ;;   1) DefenseType - The type to check
 ;; Return: double [0, 1] (ex: 0.7 => 70%)
-(java-func +fightview+ fv-get-weight "getWeight" +weight-type+)
+(java-func +fightview+ fv-get-weight-1 "getWeight" +weight-type+)
+(defmacro fv-get-weight (def)
+  `(fv-get-weight-1 (fv) ,def))
+
 ;; Field: fv-maneuver
 ;; Desc: Gets your Maneuver being used
 ;; Type: Maneuver
-(java-field fv-maneuver "maneuver")
+(java-field fv-maneuver-1 "maneuver")
+(defmacro fv-maneuver ()
+  `(fv-maneuver-1 (fv)))
+
 ;; Field: fv-maneuver-meter 
 ;; Desc: Gets your Maneuver's meter value (for like Bloodlust, etc)
 ;; Type: double [0, 1] (ex: 0.7 => 70%)
-(java-field fv-maneuver-meter "maneuvermeter")
+(java-field fv-maneuver-meter-1 "maneuvermeter")
+(defmacro fv-maneuver-meter ()
+  `(fv-maneuver-meter-1 (fv)))
+
+;; Func: fv-get-current-cooldown
+;; Desc: Get your current cooldown until you can do your next action
+;; Return: double - [0, oo)  0 => no cooldown, can do action
+(java-func +fightview+ fv-get-current-cooldown-1 "getcooldown")
+(defmacro fv-get-current-cooldown ()
+  `(fv-get-current-cooldown-1 (fv)))
 
 ;; Func: actions
 ;; Desc: Gets all of your actions (cards) during a combat session
@@ -80,7 +95,7 @@
 (defmacro fight-use-action (action-id)
   `(wdgmsg (fs) "use" ,action-id 1 +mf-none+))
 
-(export '(fs fv actions action-id action-card action-number-of-cards fight-use-action fv-get-weight fv-maneuver fv-maneuver-meter))
+(export '(fs fv actions action-id action-card action-number-of-cards fight-use-action fv-get-weight fv-maneuver fv-maneuver-meter fv-get-current-cooldown))
 (export '(+def-type-red+ +def-type-green+ +def-type-blue+ +def-type-yellow+))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Card related fields / functions
@@ -235,13 +250,19 @@
 ;;   1) Relation - The relation
 ;; Return: Boolean
 (java-func +relation+ rel-is-peaced "isPeaced")
+;; Func: rel-is-peacing-you
+;; Desc: Chec if the given relation is peacing you
+;; Inputs:
+;;   1) Relation - The relation
+;; Return: Boolean
+(java-func +relation+ rel-is-peacing-you "isRelPeaced")
 (java-func +fightview+ get-relations1 "getrelations")
 ;; Func: rel-get-weight
 ;; Desc: Gets a specified Defensive Weight for the given relation
 ;; Inputs:
 ;;   1) DefenseType - The weight color (+def-type-<color>+)
 ;; Return: double [0, 1] (0.7 => 70%)
-(java-func +relation+ rel-get-weight "getWeight" +weight-type+)
+(java-func +relation+ rel-get-weight "getWeight" +def-type+)
 ;; Field: rel-your-ip 
 ;; Desc: Get your IP on a given relation
 ;; Type: int
@@ -266,6 +287,12 @@
 ;; Desc: Gets the estimated block weight for a given relation
 ;; Type: double
 (java-field rel-estimated-block-weight "estimatedBlockWeight")
+;; Func: rel-calc-dmg-against
+;; Desc: Gets the estimate damage that will be done against this Relation given an Attack card
+;; Inputs:
+;;   1) Attack - The attack card to apply
+;; Return: double
+(java-func +relation+ rel-calc-dmg-against "calcActionDmg" +attack+)
 ;; Func: get-relations
 ;; Desc: Gets all the relations currently registered in the client
 ;; Inputs: N/A
@@ -284,4 +311,4 @@
                 (return-from get-relation rel))))
     nil)
 
-(export '(get-relation get-relations rel-gob-id rel-is-peaced rel-peace peace-toggle rel-get-weight rel-your-ip rel-their-ip))
+(export '(get-relation get-relations rel-gob-id rel-is-peaced rel-is-peacing-you rel-peace peace-toggle rel-get-weight rel-your-ip rel-their-ip rel-calc-dmg-against))

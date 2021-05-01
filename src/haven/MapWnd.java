@@ -32,32 +32,36 @@ import java.nio.file.*;
 import java.nio.channels.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.function.Consumer;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
+import hamster.MouseBind;
 import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
+import hamster.script.pathfinding.waypoint.WaypointPathfinder;
 import hamster.ui.DowseWnd;
-import hamster.ui.MapMarkerWnd;
+import hamster.ui.minimap.MapMarkerWnd;
 import hamster.ui.core.ResizableWnd;
 import hamster.ui.core.Theme;
-import haven.MapFile.Marker;
-import haven.MapFile.PMarker;
-import haven.MapFile.SMarker;
+import hamster.ui.minimap.*;
 import haven.MiniMap.*;
 
 import static hamster.KeyBind.*;
 import static haven.MCache.tilesz;
 import static haven.MCache.cmaps;
-import static haven.MapFile.NOLINK;
 import static haven.Utils.eq;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
 //TODO: Readd export / import via window buttons
 public class MapWnd extends ResizableWnd implements Console.Directory {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Resource markcurs = Resource.local().loadwait("gfx/hud/curs/flag");
+    public static final Resource wpconcurs = Resource.local().loadwait("custom/curs/wpconnect");
+    public static final Resource wpdisconcurs = Resource.local().loadwait("custom/curs/wpdisconnect");
     private static final Tex viewbox = Theme.tex("buttons/wnd/view", 3);
     public final MapFile file;
     public final MiniMap view;
@@ -69,6 +73,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private final Frame viewf;
     private MapMarkerWnd markers = null;
     private boolean domark = false;
+    private boolean dowpconnect = false;
+    private boolean dowpdisconnect = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
 
@@ -253,6 +259,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     }
 
     private class View extends MiniMap {
+        private WaypointMarker src = null;
+
 	View(MapFile file) {
 	    super(file);
 	}
@@ -266,8 +274,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			g.chcolor(255, 255, 255, 64);
 			g.image(img, ul, UI.scale(img.sz()));
 		    }
-		} catch(Loading l) {
-		}
+		} catch(Loading ignored) {}
 	    }
 	    g.chcolor();
 	}
@@ -277,27 +284,92 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		super.drawmarkers(g);
 	}
 
-	public boolean clickmarker(DisplayMarker mark, Location loc, int button, boolean press) {
-	    if(button == 1) {
-		if(!press && !domark) {
+	public boolean clickmarker(final DisplayMarker mark, Location loc, int button, boolean press) {
+	    final var bind = MouseBind.generateSequence(ui, button);
+	    if(MouseBind.MM_EXAMINE_MARKER.match(bind)) {
+		if(!press && !domark && !dowpconnect && !dowpdisconnect) {
 		    ui.gui.mapmarkers.list.change(mark.m);
 		    return(true);
+		} else if(!press && dowpconnect && mark.m instanceof WaypointMarker && src.seg == mark.m.seg) {
+		    final var dest = (WaypointMarker) mark.m;
+		    src.links.add(dest.id);
+		    dest.links.add(src.id);
+		    file.update(src);
+		    file.update(dest);
+		    return true;
+		} else if(!press && dowpdisconnect && mark.m instanceof WaypointMarker && src.seg == mark.m.seg) {
+		    final var dest = (WaypointMarker) mark.m;
+		    src.links.remove(dest.id);
+		    dest.links.remove(src.id);
+		    file.update(src);
+		    file.update(dest);
+		    return true;
 		}
-	    } else if(button ==3 && mark.m instanceof MapFile.LinkedMarker && ((MapFile.LinkedMarker) mark.m).lid != NOLINK) {
-		final Marker target = view.file.lmarkers.get(((MapFile.LinkedMarker) mark.m).lid);
-		if (target != null) {
-		    view.center(new MiniMap.SpecLocator(target.seg, target.tc));
+	    } else if(MouseBind.MM_GOTO_MARKER.match(bind)) {
+	        if(press) {
+		    if (mark.m instanceof SMarker) {
+			Gob gob = MarkerID.find(ui.sess.glob.oc, ((SMarker) mark.m).oid);
+			if (gob != null) {
+			    mvclick(mv, null, loc, gob, button);
+			    return (true);
+			}
+		    }
 		}
-	    } else if(mark.m instanceof SMarker) {
-		Gob gob = MarkerID.find(ui.sess.glob.oc, ((SMarker)mark.m).oid);
-		if(gob != null)
-		    mvclick(mv, null, loc, gob, button);
+	    } else if(MouseBind.MM_FOLLOW_LINK.match(bind) && mark.m instanceof LinkedMarker && ((LinkedMarker) mark.m).lid != LinkedMarker.NOLINK) {
+		if (!press) {
+		    final Marker target = view.file.lmarkers.get(((LinkedMarker) mark.m).lid);
+		    if (target != null) {
+			view.center(new MiniMap.SpecLocator(target.seg, target.tc));
+		    }
+		    return (true);
+		}
+	    } else if(MouseBind.MM_SPECIAL_MENU.match(bind)) {
+		if (!press) {
+		    final var opts = new HashMap<String, Consumer<String>>();
+		    opts.put("Remove", (opt) -> file.remove(mark.m));
+		    if(mark.m instanceof WaypointMarker) {
+		        opts.put("Create connections", (opt) -> {
+		            dowpconnect = true;
+		            src = (WaypointMarker) mark.m;
+			});
+		        opts.put("Remove connections", (opt) -> {
+			    dowpdisconnect = true;
+			    src = (WaypointMarker) mark.m;
+			});
+		        opts.put("Path to waypoint", (opt) -> {
+		            try {
+				final var pc = ui.gui.map.player().rc;
+				resolveo(player).ifPresent(ploc -> {
+				    if(ploc.seg.id == mark.m.seg) {
+					final var map = file.generateWaypointMap(ploc.seg, (WaypointMarker) mark.m,
+						ploc.tc, pc);
+					final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
+					final var moves = pathfinder.path();
+					if(moves != null) {
+					    for(final var mv : moves) {
+					        ui.gui.map.queuemove(mv);
+					    }
+					} else {
+					    ui.gui.error("Couldn't find path to waypoint");
+					}
+				    } else {
+				        ui.gui.error("Can't path to waypoints on different map segments than player");
+				    }
+				});
+			    } catch (Exception e) {
+				logger.atWarning().withCause(e).log("Failed to path to waypoint");
+			    }
+			});
+		    }
+		    ui.gui.add(new FlowerMenu(opts), ui.mc);
+		    return true;
+		}
 	    }
 	    return(false);
 	}
 
 	public boolean clickicon(DisplayIcon icon, Location loc, int button, boolean press) {
-	    if(!press && !domark) {
+	    if(!press && !domark && !dowpconnect && !dowpdisconnect) {
 		mvclick(mv, null, loc, icon.gob, button);
 		return(true);
 	    }
@@ -323,6 +395,12 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	    if(domark && (button == 3)) {
 		domark = false;
 		return(true);
+	    } else if(dowpconnect && button == 3) {
+	        dowpconnect = false;
+	        return true;
+	    } else if(dowpdisconnect && button == 3) {
+	        dowpdisconnect = false;
+	        return true;
 	    }
 	    super.mousedown(c, button);
 	    return(true);
@@ -423,6 +501,10 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	public Resource getcurs(Coord c) {
 	    if(domark)
 		return(markcurs);
+	    else if(dowpconnect)
+	        return wpconcurs;
+	    else if(dowpdisconnect)
+	        return wpdisconcurs;
 	    return(super.getcurs(c));
 	}
     }
@@ -469,7 +551,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if (!view.file.lock.writeLock().tryLock())
 			throw (new Loading());
 		    try {
-			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+			final Marker mark = new CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
 				new Resource.Spec(Resource.remote(), marker.res));
 			view.file.add(mark);
 		    } finally {
@@ -490,8 +572,29 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if (!view.file.lock.writeLock().tryLock())
 			throw (new Loading());
 		    try {
-			final Marker mark = new MapFile.CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
+			final Marker mark = new CustomMarker(loc.seg.id, loc.tc.add(offset), nm, col,
 				new Resource.Spec(Resource.remote(), icon));
+			view.file.add(mark);
+		    } finally {
+			view.file.lock.writeLock().unlock();
+		    }
+		});
+	    });
+	}
+    }
+
+    public void markWaypoint(final Coord2d mc) {
+        synchronized (deferred) {
+            deferred.add(() -> {
+		final Coord2d prc = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob).rc;
+		final Coord offset = mc.sub(prc).floor(tilesz);
+		view.resolveo(player).ifPresent(loc -> {
+		    if (!view.file.lock.writeLock().tryLock())
+			throw (new Loading());
+		    try {
+		        final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
+				"Waypoint", Color.WHITE, new Resource.Spec(Resource.remote(), MarkerData.waypointmarker.res),
+				view.file.waypointids.next());
 			view.file.add(mark);
 		    } finally {
 			view.file.lock.writeLock().unlock();
@@ -518,29 +621,29 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 			//Check for duplicate
 			for (final Marker mark : view.file.markers) {
-			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof MapFile.CustomMarker &&
+			    if (marker.type == MarkerData.Type.CUSTOM && mark instanceof CustomMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
-			    else if (marker.type == MarkerData.Type.REALM && mark instanceof MapFile.RealmMarker &&
+			    else if (marker.type == MarkerData.Type.REALM && mark instanceof RealmMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
-			    else if (marker.type == MarkerData.Type.VILLAGE && mark instanceof MapFile.VillageMarker &&
+			    else if (marker.type == MarkerData.Type.VILLAGE && mark instanceof VillageMarker &&
 				    mark.seg == info.seg && sc.equals(mark.tc))
 				return; //Duplicate
 			}
 
 			final Marker mark;
 			if (marker.type == MarkerData.Type.CUSTOM) {
-			    mark = new MapFile.CustomMarker(info.seg, sc, marker.defname,
+			    mark = new CustomMarker(info.seg, sc, marker.defname,
 				    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res));
 			} else if (marker.type == MarkerData.Type.REALM) {
-			    mark = new MapFile.RealmMarker(info.seg, sc, marker.defname,
+			    mark = new RealmMarker(info.seg, sc, marker.defname,
 				    new Resource.Spec(Resource.remote(), marker.res),
 				    "???");
 			    //TODO: Auto name realm based off buff
 			} else {
 			    //Village
-			    mark = new MapFile.VillageMarker(info.seg, sc, marker.defname,
+			    mark = new VillageMarker(info.seg, sc, marker.defname,
 				    new Resource.Spec(Resource.remote(), marker.res), ui.gui.curvil);
 			}
 			view.file.add(mark);
@@ -566,11 +669,11 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    Coord sc = tc.add(info.sc.sub(obg.gc).mul(cmaps));
 		    //Check for duplicate
 		    for (final Marker mark : view.file.markers) {
-			if (mark instanceof MapFile.LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
+			if (mark instanceof LinkedMarker && mark.seg == info.seg && sc.equals(mark.tc))
 			    return; //Duplicate
 		    }
 
-		    final Marker mark = new MapFile.LinkedMarker(info.seg, sc, marker.defname,
+		    final Marker mark = new LinkedMarker(info.seg, sc, marker.defname,
 			    Color.WHITE, new Resource.Spec(Resource.remote(), marker.res), view.file.markerids.next(), marker.ltype);
 		    view.file.add(mark);
 		} finally {
@@ -728,7 +831,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		} catch(IOException e) {
 		    e.printStackTrace(Debug.log);
 		    gui.error("Unexpected error occurred when exporting map.");
-		} catch(InterruptedException e) {
+		} catch(InterruptedException ignored) {
 		}
 	}, "Mapfile exporter");
 	prog.run(th);
@@ -756,7 +859,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			fp.position(0);
 			file.reimport(new Updater(new BufferedInputStream(Channels.newInputStream(fp))), MapFile.ImportFilter.all);
 		    }
-		} catch(InterruptedException e) {
+		} catch(InterruptedException ignored) {
 		} catch(Exception e) {
 		    e.printStackTrace(Debug.log);
 		    gui.error("Could not import map: " + e.getMessage());

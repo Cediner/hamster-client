@@ -35,6 +35,7 @@ import hamster.gob.Tag;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.sprites.TargetSprite;
 import hamster.io.SQLResCache;
+import hamster.script.map.MapExport;
 import hamster.ui.*;
 import hamster.ui.Timer.TimersWnd;
 import hamster.ui.chr.SkillnCredoWnd;
@@ -42,6 +43,7 @@ import hamster.ui.chr.StudyWnd;
 import hamster.ui.core.Theme;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.food.FoodSearchWnd;
+import hamster.ui.minimap.MapMarkerWnd;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 import hamster.ui.search.ActWnd;
@@ -54,11 +56,13 @@ import java.util.function.*;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.image.WritableRaster;
+import java.util.regex.Pattern;
 
 import static hamster.GlobalSettings.*;
 import static hamster.KeyBind.*;
 
 public class GameUI extends ConsoleHost implements Console.Directory {
+    private static final Pattern buffmsgpat = Pattern.compile("(?<buff>[a-zA-Z]+).+now turned (?<status>on|off)");
     public static final Text.Foundry msgfoundry = new Text.Foundry(Text.dfont, 14);
     private static final int blpw = UI.scale(142);
     public final String chrid, genus;
@@ -649,6 +653,16 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		paginasearch = add(new ActWnd("Menu Search"));
 		paginasearch.hide();
 		makewnd = add(new MakeWnd());
+
+		//Init our tracked buffs
+		for(final var buff : settings.buffs()) {
+		    if(buff.status.get()) {
+			togglebuff(buff.status.get(), buff.res);
+		    }
+		}
+		if(settings.PARTYPERMS.get()) {
+		    menu.duse("paginae/act/permshare");
+		}
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
 	    case "fsess" -> {
@@ -921,6 +935,22 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         fmOverrideSettings = val;
     }
 
+    private void togglebuff(final boolean status, final String buffres) {
+        Widget buff = null;
+        for(final var wdg : buffs.children()) {
+            if(wdg instanceof Buff && Resource.indirname(((Buff)wdg).res).equals(buffres)) {
+                buff = wdg;
+                break;
+            }
+	}
+
+        if(buff != null && !status) {
+            buff.remove();
+	} else if(buff == null && status) {
+            buffs.addchild(new Buff(Resource.local().load(buffres)));
+	}
+    }
+
     public void uimsg(String msg, Object... args) {
 	switch (msg) {
 	    case "err":
@@ -930,6 +960,17 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	    case "msg":
 		String text = (String) args[0];
 		msg(text);
+
+		final var match = buffmsgpat.matcher(text);
+		if(match.find()) {
+		    final var name = match.group("buff");
+		    final var status = match.group("status").equals("on");
+		    final var buff = settings.buff(name);
+		    if(buff != null) {
+		        buff.status.set(status);
+		        togglebuff(status, buff.res);
+		    }
+		}
 		break;
 	    case "prog":
 		if (args.length > 0)
@@ -1446,6 +1487,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     private final Map<String, Console.Command> cmdmap = new TreeMap<>();
     {
+        cmdmap.put("mapexport-test", (cons, args) -> {
+            final var export = new MapExport(ui.sess.glob.map);
+            Debug.dumpimage(export.renderWithMarkAt(ui.gui.map.player().rc, ui.gui.map.player().a), "export-test.png");
+	});
 	cmdmap.put("afk", (cons, args) -> {
 	    afk = true;
 	    wdgmsg("afk");

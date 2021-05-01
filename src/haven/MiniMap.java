@@ -30,21 +30,17 @@ import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
 
-import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.MouseBind;
 import hamster.data.map.MarkerData;
 import hamster.gob.Tag;
 import hamster.script.pathfinding.Move;
+import hamster.ui.minimap.*;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
 import haven.MapFile.GridInfo;
-import haven.MapFile.Marker;
-import haven.MapFile.PMarker;
-import haven.MapFile.SMarker;
 
-import static hamster.MouseBind.MV_PATHFIND_MOVE;
-import static hamster.MouseBind.MV_QUEUE_MOVE;
+import static hamster.MouseBind.*;
 import static haven.MCache.cmaps;
 import static haven.MCache.tilesz;
 import static haven.OCache.posres;
@@ -290,29 +286,22 @@ public class MiniMap extends Widget {
 	    }
 	    return(null);
 	}
+
+	@Override
+	public String toString() {
+	    return "MarkerID(" + "id=" + id + ')';
+	}
     }
 
     private enum Type {
-	NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE
+	NATURAL, PLACED, CUSTOM, LINKED, KINGDOM, VILLAGE, WAYPOINT
     }
 
     public static class DisplayMarker {
-	public static final Resource.Image flagbg, flagfg;
-	public static final Coord flagcc;
 	public final Marker m;
 	public Text tip;
 	public Area hit;
-	private Resource.Image img;
-	private Coord imgsz;
-	private Coord cc;
 	private final Type type;
-
-	static {
-	    Resource flag = Resource.local().loadwait("gfx/hud/mmap/flag");
-	    flagbg = flag.layer(Resource.imgc, 1);
-	    flagfg = flag.layer(Resource.imgc, 0);
-	    flagcc = UI.scale(flag.layer(Resource.negc).cc);
-	}
 
 	private void checkTip(final String nm) {
 	    if (tip == null || !tip.text.equals(nm)) {
@@ -323,170 +312,48 @@ public class MiniMap extends Widget {
 	public DisplayMarker(Marker marker, final UI ui) {
 	    this.m = marker;
 	    checkTip(marker.tip(ui));
-	    if(marker instanceof PMarker)
-		this.hit = Area.sized(flagcc.inv(), UI.scale(flagbg.sz));
 
-	    if (marker instanceof MapFile.VillageMarker)
+	    if (marker instanceof VillageMarker)
 		type = Type.VILLAGE;
-	    else if (marker instanceof MapFile.RealmMarker)
+	    else if (marker instanceof RealmMarker)
 		type = Type.KINGDOM;
-	    else if (marker instanceof MapFile.LinkedMarker)
+	    else if(marker instanceof WaypointMarker)
+		type = Type.WAYPOINT;
+	    else if (marker instanceof LinkedMarker)
 		type = Type.LINKED;
-	    else if (marker instanceof MapFile.CustomMarker)
+	    else if (marker instanceof CustomMarker)
 		type = Type.CUSTOM;
-	    else if (marker instanceof MapFile.PMarker)
+	    else if (marker instanceof PMarker)
 		type = Type.PLACED;
 	    else
 		type = Type.NATURAL;
 	}
 
-	private Area hit(final UI ui) {
-	    if (GlobalSettings.SHOWMMMARKERS.get() &&
+	private boolean visible() {
+	    return GlobalSettings.SHOWMMMARKERS.get() &&
 		    ((type == Type.PLACED && GlobalSettings.SHOWPMARKERS.get()) ||
-		    (type == Type.KINGDOM && GlobalSettings.SHOWKMARKERS.get()) ||
-		    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
-		    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
-		    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
-		    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()))) {
-		if (!(m instanceof MapFile.CustomMarker || m instanceof MapFile.RealmMarker)) {
-		    return hit;
-		} else if (img != null) {
-		    final Coord sz = GlobalSettings.SMALLMMMARKERS.get() ? img.tex().sz().div(2) : img.tex().sz();
-		    return Area.sized(sz.div(2).inv(), sz);
-		} else {
-		    return null;
-		}
+			    (type == Type.KINGDOM && GlobalSettings.SHOWKMARKERS.get()) ||
+			    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
+			    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
+			    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
+			    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()) ||
+			    (type == Type.WAYPOINT && GlobalSettings.SHOWWMARKERS.get()));
+	}
+
+	private Area hit(final UI ui) {
+	    if (visible()) {
+	        if(hit == null)
+	            hit = m.area();
+	        return hit;
 	    } else {
 		return null;
 	    }
 	}
 
-	public void draw(GOut g, Coord c, final float scale, final UI ui) {
-	    if (GlobalSettings.SHOWMMMARKERS.get() &&
-		    ((type == Type.PLACED && GlobalSettings.SHOWPMARKERS.get()) ||
-		    (type == Type.KINGDOM && GlobalSettings.SHOWKMARKERS.get()) ||
-		    (type == Type.LINKED && GlobalSettings.SHOWLMARKERS.get()) ||
-		    (type == Type.CUSTOM && GlobalSettings.SHOWCMARKERS.get()) ||
-		    (type == Type.NATURAL && GlobalSettings.SHOWNMARKERS.get()) ||
-		    (type == Type.VILLAGE && GlobalSettings.SHOWVMARKERS.get()))) {
+	public void draw(GOut g, Coord c, final float scale, final UI ui, final MapFile file) {
+	    if (visible()) {
 		checkTip(m.tip(ui));
-
-		if (m instanceof PMarker) {
-		    Coord ul = c.sub(flagcc);
-		    g.chcolor(((PMarker) m).color);
-		    g.image(flagfg, ul);
-		    g.chcolor();
-		    g.image(flagbg, ul);
-		    if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			final Coord tipc = new Coord(ul.x + flagbg.img.getWidth() / 2 - tip.sz().x / 2,
-				ul.y - tip.sz().y);
-			g.image(tip.tex(), tipc);
-		    }
-		} else if (m instanceof SMarker) {
-		    SMarker sm = (SMarker) m;
-		    try {
-			if (cc == null) {
-			    Resource res = sm.res.loadsaved(Resource.remote());
-			    img = res.layer(Resource.imgc);
-			    Resource.Neg neg = res.layer(Resource.negc);
-			    cc = (neg != null) ? neg.cc : img.ssz.div(2);
-			    if (hit == null)
-				hit = Area.sized(cc.inv(), img.ssz);
-			}
-		    } catch (Loading ignored) {
-		    } catch (Exception e) {
-			cc = Coord.z;
-		    }
-		    if (img != null) {
-			final Coord ul = c.sub(cc);
-			g.image(img, ul);
-			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.ssz.x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
-			    g.image(tip.tex(), tipc);
-			}
-		    }
-		} else if (m instanceof MapFile.CustomMarker) {
-		    final MapFile.CustomMarker mark = (MapFile.CustomMarker) m;
-		    g.chcolor(mark.color);
-		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
-			cc = sz.div(2);
-			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
-			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
-			    g.image(tip.tex(), tipc);
-			}
-		    } else {
-			try {
-			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.CustomMarker) m).res);
-			    img = res.layer(Resource.imgc);
-			} catch (Loading l) {
-			    //ignore
-			}
-		    }
-		    g.chcolor();
-		} else if (m instanceof MapFile.RealmMarker) {
-		    final MapFile.RealmMarker mark = (MapFile.RealmMarker) m;
-		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
-			cc = sz.div(2);
-			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
-			if (GlobalSettings.SHOWKMARKERRAD.get()) {
-			    g.chcolor(MarkerData.getRealmColor(mark.realm));
-			    g.frect(c.sub(new Coord(250, 250).div(scale)), new Coord(500, 500).div(scale));
-			    g.chcolor();
-			}
-			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
-			    g.image(tip.tex(), tipc);
-			}
-		    } else {
-			try {
-			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.RealmMarker) m).res);
-			    img = res.layer(Resource.imgc);
-			} catch (Loading l) {
-			    //ignore
-			}
-		    }
-		} else if (m instanceof MapFile.VillageMarker) {
-		    final MapFile.VillageMarker mark = (MapFile.VillageMarker) m;
-		    if (img != null) {
-			final Coord sz = !GlobalSettings.SMALLMMMARKERS.get() ? Utils.imgsz(img.img) : Utils.imgsz(img.img).div(2);
-			cc = sz.div(2);
-			final Coord ul = c.sub(cc);
-			g.image(img.tex(), ul, sz);
-			if (GlobalSettings.SHOWVMARKERRAD.get()) {
-			    final int offset, isz;
-			    if (mark.nm.equals("Idol")) {
-				offset = 50;
-				isz = 101;
-			    } else {
-				//Banner
-				offset = 30;
-				isz = 61;
-			    }
-
-			    g.chcolor(MarkerData.getVillageColor(mark.village));
-			    g.frect(c.sub(new Coord(offset, offset).div(scale)), new Coord(isz, isz).div(scale));
-			    g.chcolor();
-			}
-			if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
-			    final Coord tipc = new Coord(ul.x + img.img.getWidth() / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
-			    g.chcolor(MarkerData.getVillageBoldColor(mark.village));
-			    g.image(tip.tex(), tipc);
-			    g.chcolor();
-			}
-		    } else {
-			try {
-			    Resource res = MapFile.loadsaved(Resource.remote(), ((MapFile.VillageMarker) m).res);
-			    img = res.layer(Resource.imgc);
-			} catch (Loading l) {
-			    //ignore
-			}
-		    }
-		}
+		m.draw(g, c, tip, scale, file);
 	    }
 	}
     }
@@ -697,7 +564,7 @@ public class MiniMap extends Widget {
 	    for(DisplayMarker mark : dgrid.markers(true, ui)) {
 		if(filter(mark))
 		    continue;
-		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz), scalef(),ui);
+		mark.draw(g, mark.m.tc.sub(dloc.tc).div(scalef()).add(hsz), scalef(), ui, file);
 	    }
 	}
     }
@@ -1014,10 +881,14 @@ public class MiniMap extends Widget {
 	    if(MV_QUEUE_MOVE.match(bind)) {
 		ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
 	    } else if(MV_PATHFIND_MOVE.match(bind)) {
-	        if(gob == null)
-	            ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
-	        else
-	            ui.gui.map.pathto(gob);
+		if (gob == null)
+		    ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
+		else
+		    ui.gui.map.pathto(gob);
+	    } else if(MM_SPECIAL_MENU.match(bind) && gob == null) {
+		final var opts = new HashMap<String, Consumer<String>>();
+		opts.put("Add waypoint", (opt) -> mv.ui.gui.mapfile.markWaypoint(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+		ui.gui.add(new FlowerMenu(opts), ui.mc);
 	    } else if(gob == null) {
 		mv.wdgmsg("click", mc,
 			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),

@@ -30,4 +30,9 @@ public class SpeedMonitor extends GAttrib {
 	    }
 	}
     }
+
+    @Override
+    public String toString() {
+	return "SpeedMonitor";
+    }
 }
