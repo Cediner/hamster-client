@@ -2513,7 +2513,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	    placing.get().ctick(dt);
 
 	updateSpeed(dt);
-	final var pl = player();
+	final Gob pl = ui.sess.glob.oc.getgob(plgob);
+	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
+	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
 	synchronized (movequeue) {
 	    if (movequeue.size() > 0 && (System.currentTimeMillis() - lastMove > 500) && triggermove()) {
 		movingto = movequeue.poll();
@@ -2522,8 +2524,8 @@ public class MapView extends PView implements DTarget, Console.Directory {
 		    movingto.apply(this);
 		    lastMove = System.currentTimeMillis();
 		}
-	    } else if((System.currentTimeMillis() - lastMove > 1000) && movingto != null && pl != null && !pl.moving()) {
-	        if(pl.rc.dist(movingto.dest()) > 5) {
+	    } else if((System.currentTimeMillis() - lastMove > 1000) && movingto != null && base != null && !base.moving()) {
+	        if(base.rc.dist(movingto.dest()) > 5) {
 	            if(GlobalSettings.SOUNDONFAILEDMOVE.get())
 			//something stopped us while we were moving
 			ui.sfx(Resource.local().load(GlobalSettings.QUEUEDMOVESTOP.get()));
