@@ -130,9 +130,6 @@ public class BeltWnd extends MovableWidget {
         @Override
         public boolean globtype(char key, KeyEvent ev) {
             final String bind = KeyBind.generateSequence(ev, ui);
-            if(!bind.equals("")) {
-                System.out.println(bind);
-            }
             if(this.key.match(bind)) {
                 use();
                 return true;
