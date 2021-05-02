@@ -60,7 +60,7 @@ public class WaypointMarker extends CustomMarker {
 		if(marker != null) {
 		    final var mc = c.add(marker.tc.sub(tc).div(scale));
 		    g.chcolor(Color.red);
-		    g.line(c, mc, 1);
+		    g.dottedline(c, mc, 1);
 		    g.chcolor();
 		}
 	    }

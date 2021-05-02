@@ -457,6 +457,7 @@ public class MapFile {
 			final Color color = fp.color();
 			final Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
 			final long id = fp.int64();
+			file.waypointids.claim(id);
 			final int linkslen = fp.int32();
 			final Set<Long> links = new HashSet<>(linkslen);
 			for(var i = 0; i < linkslen; ++i) {

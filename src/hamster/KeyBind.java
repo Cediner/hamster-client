@@ -37,7 +37,7 @@ public class KeyBind {
     	KB_MAP_HOME, KB_MAP_MARK, KB_MAP_HIDE_MARKERS, KB_MAP_COMPACT;
 
     //Hotkeys
-    public static final KeyBind[] KB_HK_F, KB_HK_N, KB_HK;
+    public static final KeyBind[] KB_HK_F, KB_HK_C_F, KB_HK_N, KB_HK_C_N, KB_HK, KB_HK_C;
     public static final KeyBind[] KB_HK_FP, KB_HK_NP, KB_HK_P;
 
     private static KeyBind addKB(final String display, final String name, final String grp, final String bind) {
@@ -150,20 +150,30 @@ public class KeyBind {
 	    final String HB_GRP = TranslationLookup.get("kb_hotbar");
 	    final int slots = 10;
 	    KB_HK_F = new KeyBind[slots];
+	    KB_HK_C_F = new KeyBind[slots];
 	    KB_HK_FP = new KeyBind[5];
 	    KB_HK_N = new KeyBind[slots];
+	    KB_HK_C_N = new KeyBind[slots];
 	    KB_HK_NP = new KeyBind[4];
 	    KB_HK = new KeyBind[slots];
+	    KB_HK_C = new KeyBind[slots];
 	    KB_HK_P = new KeyBind[5];
 	    final KeyBind[][] hotkeys = { KB_HK_F, KB_HK_N, KB_HK };
+	    final KeyBind[][] hotkeys_ctrl = { KB_HK_C_F, KB_HK_C_N, KB_HK_C };
 	    final KeyBind[][] pages = { KB_HK_FP, KB_HK_NP, KB_HK_P };
 	    final String[] prefix = { "F", "NumPad-", "" };
 	    for(var j = 1; j <= hotkeys.length; j++) {
 	        for(var i = 1; i <= hotkeys[j-1].length; i++) {
-	            hotkeys[j-1][i-1] = addKB(String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i),
+		    String s = i == 10 ? "0" : Integer.toString(i);
+		    hotkeys[j-1][i-1] = addKB(String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i),
 			    String.format("Hotbar %d - Slot %d", j, i),
 			    HB_GRP,
-			    prefix[j-1]+(i == 10 ? "0" : Integer.toString(i)));
+			    prefix[j-1]+ s);
+
+		    hotkeys_ctrl[j-1][i-1] = addKB(String.format("%s %d - %s Ctrl %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_slot"), i),
+			    String.format("Hotbar %d - Slot Ctrl %d", j, i),
+			    HB_GRP,
+			    "C-"+prefix[j-1]+ s);
 		}
 	        for(var i = 1; i < pages[j-1].length; i++) {
 	            pages[j-1][i-1] = addKB(String.format("%s %d - %s %d", TranslationLookup.get("kb_hotbar"), j, TranslationLookup.get("kb_hotbar_page"), i),

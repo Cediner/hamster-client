@@ -1,5 +1,6 @@
 package hamster.util;
 
+import com.google.common.flogger.FluentLogger;
 import haven.Message;
 
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class IDPool {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final long min;
     private final long max;
     private long next;
@@ -54,7 +56,7 @@ public class IDPool {
         } else if (sparse.contains(id)) {
             sparse.remove(id);
         } else {
-            throw new RuntimeException("Attempted to claim an ID already claimed");
+            logger.atFine().log("Attempted to claim an ID already claimed");
         }
     }
 
