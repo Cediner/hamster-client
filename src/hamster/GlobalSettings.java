@@ -74,10 +74,14 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> COMBATSTARTVOL = new IndirSetting<>(global, "audio.combat-start-volume", 1000);
     public static final IndirSetting<Boolean> COMBATSTARTAUDIO = new IndirSetting<>(global, "audio.combat-start", true);
     public static final IndirSetting<String> COMBATSTARTAUDIORES = new IndirSetting<>(global, "audio.combat-start-res", "custom/sfx/howl");
-
+    public static final IndirSetting<Boolean> ALLOWCHATSOUND = new IndirSetting<>(global, "audio.allow-sound-on-chat", true);
     public static final IndirSetting<Boolean> SOUNDONERRORMSG = new IndirSetting<>(global, "audio.sound-on-error", true);
     public static final IndirSetting<Boolean> SOUNDONPOPUPMSG = new IndirSetting<>(global, "audio.sound-on-popup", true);
     public static final IndirSetting<Boolean> SOUNDONGOBAUDIO = new IndirSetting<>(global, "audio.no-gob-audio", true);
+    public static final IndirSetting<Boolean> SOUNDONFAILEDMOVE = new IndirSetting<>(global, "audio.sound-on-failed-move", false);
+    public static final IndirSetting<Boolean> SOUNDONPATHFINISH = new IndirSetting<>(global, "audio.sound-on-path-finish", false);
+    public static final IndirSetting<String> QUEUEDMOVESTOP = new IndirSetting<>(global, "audio.queued-move-stopped", "custom/sfx/omni/BounceOdd");
+    public static final IndirSetting<String> QUEUEDMOVESFINISH = new IndirSetting<>(global, "audio.queued-moves-finish", "custom/sfx/omni/Z_WW_Get_Rupee_Blue");
 
     //Display options
     public static final IndirSetting<Boolean> VSYNC = new IndirSetting<>(global, "display.vsync", true);
@@ -122,7 +126,6 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWMMMARKERNAMES = new IndirSetting<>(global, "minimap.show-marker-names", true);
     public static final IndirSetting<Boolean> SHOWMMGOBNAMES = new IndirSetting<>(global, "minimap.show-gob-names", true);
     public static final IndirSetting<Boolean> SHOWMMMARKERS = new IndirSetting<>(global, "minimap.show-markers", true);
-    public static final IndirSetting<Boolean> SMALLMMMARKERS = new IndirSetting<>(global, "minimap.show-small-markers", true);
     public static final IndirSetting<Boolean> SHOWPMARKERS = new IndirSetting<>(global, "minimap.show-placed-markers", true);
     public static final IndirSetting<Boolean> SHOWNMARKERS = new IndirSetting<>(global, "minimap.show-natural-markers", true);
     public static final IndirSetting<Boolean> SHOWCMARKERS = new IndirSetting<>(global, "minimap.show-custom-markers", true);
@@ -139,6 +142,8 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> MMSHOWGRID = new IndirSetting<>(global, "minimap.show-grid", false);
     public static final IndirSetting<Boolean> MMSHOWVIEW = new IndirSetting<>(global, "minimap.show-view", true);
     public static final IndirSetting<Color> MMPATHCOL = new IndirSetting<>(global, "minimap.path-color", Color.magenta);
+    public static final IndirSetting<Boolean> SHOWWMARKERS = new IndirSetting<>(global, "minimap.show-waypoint-markers", true);
+    public static final IndirSetting<Boolean> SHOWWMARKERNAMES = new IndirSetting<>(global, "minimap.show-waypoint-marker-names", false);
 
     //Gob
     public static final IndirSetting<Boolean> CIRCLEAGGRO = new IndirSetting<>(global, "gob.colorize-aggro", true);
@@ -146,7 +151,7 @@ public class GlobalSettings {
     public static final IndirSetting<Integer> BADKIN = new IndirSetting<>(global, "gob.bad-kin-color", 2);
     public static final IndirSetting<Boolean> COLORFULFARMES = new IndirSetting<>(global, "gob.colorful-frames", true);
     public static final IndirSetting<Boolean> COLORFULTUBS = new IndirSetting<>(global, "gob.colorful-tubs", true);
-    public static final IndirSetting<Boolean> COLORFULCUPBOARDS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
+    public static final IndirSetting<Boolean> COLORFULCONTAINERS = new IndirSetting<>(global, "gob.colorful-cupboards", true);
     public static final IndirSetting<Boolean> COLORFULCHEESERACKS = new IndirSetting<>(global, "gob.colorful-cheese-racks", true);
     public static final IndirSetting<Boolean> SHOWCROPSTAGE = new IndirSetting<>(global, "gob.show-crop-stage", false);
     public static final IndirSetting<Boolean> SIMPLECROPS = new IndirSetting<>(global, "gob.simple-crops", false);
@@ -169,6 +174,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWANIMALDMG = new IndirSetting<>(global, "gob.show-animal-dmg", true);
     public static final IndirSetting<Boolean> SHORTWALLS = new IndirSetting<>(global, "gob.short-walls", false);
     public static final IndirSetting<Boolean> SHORTCUPBOARDS = new IndirSetting<>(global, "gob.short-cupboards", false);
+    public static final IndirSetting<Boolean> RUNONLOGIN = new IndirSetting<>(global, "gob.run-on-login", false);
 
 
     // Animal

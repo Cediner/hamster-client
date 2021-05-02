@@ -35,10 +35,7 @@ import hamster.data.map.MarkerData;
 import hamster.data.gob.ObjData;
 import hamster.gob.*;
 import hamster.gob.attrs.info.ScreenLocation;
-import hamster.gob.attrs.mods.CheeseRackStatus;
-import hamster.gob.attrs.mods.CupboardStatus;
-import hamster.gob.attrs.mods.DryingFrameStatus;
-import hamster.gob.attrs.mods.TanTubStatus;
+import hamster.gob.attrs.mods.*;
 import hamster.gob.attrs.monitors.*;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
@@ -1312,7 +1309,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	sb.append("Position: ");
 	sb.append(getc());
 	sb.append("\n");
-	return sb.toString();
+	return sb.toString().replaceAll("\\{", "(").replaceAll("}", ")");
     }
 
     /*
@@ -1385,11 +1382,13 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new DryingFrameStatus(gob)));
 	    } else if (name.equals("gfx/terobjs/ttub")) {
 		deltas.add((gob) -> gob.setattr(new TanTubStatus(gob)));
-	    } else if (name.equals("gfx/terobjs/cupboard")) {
-		deltas.add((gob) -> gob.setattr(new CupboardStatus(gob)));
 	    } else if (name.equals("gfx/terobjs/cheeserack")) {
 		deltas.add((gob) -> gob.setattr(new CheeseRackStatus(gob)));
 	    }
+
+	    ObjData.getContData(name).ifPresent((cont) -> {
+	        deltas.add((gob) -> gob.setattr(new ContainerStatus(gob, cont.empty, cont.full)));
+	    });
 
 	    if (Hidden.isHidden(name)) {
 		deltas.add((gob) -> gob.setattr(new Hidden(gob)));

@@ -41,4 +41,11 @@ public class MyGobIndicator extends GAttrib implements RenderTree.Node {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "MyGobIndicator(" +
+                "show=" + show +
+                ')';
+    }
 }

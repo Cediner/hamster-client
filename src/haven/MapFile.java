@@ -35,7 +35,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 import com.google.common.flogger.FluentLogger;
-import hamster.GlobalSettings;
+import hamster.script.pathfinding.waypoint.Waypoint;
+import hamster.script.pathfinding.waypoint.WaypointMap;
+import hamster.ui.minimap.*;
 import hamster.util.IDPool;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
@@ -54,8 +56,9 @@ public class MapFile {
     public final Collection<Marker> markers = new ArrayList<>();
     public final Map<Long, SMarker> smarkers = new HashMap<>();
     public final Map<Long, LinkedMarker> lmarkers = new HashMap<>();
+    public final Map<Long, WaypointMarker> wmarkers = new HashMap<>();
     public int markerseq = 0;
-    public IDPool markerids;
+    public IDPool markerids, waypointids;
     public final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     // MessageBus / MailBox System Message
@@ -63,6 +66,54 @@ public class MapFile {
     private final MailBox<MapFileMail> mailbox;
     public static abstract class MapFileMail extends hamster.util.msg.Message {
 	public abstract void apply(final MapFile file);
+    }
+
+    public static class AddMarkerMail extends MapFileMail {
+        private final Marker mark;
+        private final MapFile src;
+        public AddMarkerMail(final MapFile src, final Marker mark) {
+            this.src = src;
+            this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+	        file.addNoSave(mark);
+	    }
+	}
+    }
+
+    public static class RemoveMarkerMail extends MapFileMail {
+	private final Marker mark;
+	private final MapFile src;
+	public RemoveMarkerMail(final MapFile src, final Marker mark) {
+	    this.src = src;
+	    this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+		file.removeNoSave(mark);
+	    }
+	}
+    }
+
+    public static class UpdateMarkerMail extends MapFileMail {
+	private final Marker mark;
+	private final MapFile src;
+	public UpdateMarkerMail(final MapFile src, final Marker mark) {
+	    this.src = src;
+	    this.mark = mark;
+	}
+
+	@Override
+	public void apply(MapFile file) {
+	    if(file != src) {
+		file.updateNoSave(mark);
+	    }
+	}
     }
 
     public MapFile(UI ui, ResCache store, String filename) {
@@ -116,14 +167,16 @@ public class MapFile {
 	    fp = file.sfetch("index");
 	} catch(FileNotFoundException e) {
 	    file.markerids = new IDPool(0, Long.MAX_VALUE);
+	    file.waypointids = new IDPool(0, Long.MAX_VALUE);
 	    return(file);
 	} catch(IOException e) {
 	    return(null);
 	}
 	try(StreamMessage data = new StreamMessage(fp)) {
 	    int ver = data.uint8();
-	    if(ver == 1 || ver == 2) {
+	    if(ver == 1 || ver == 2 || ver == 3) {
 		file.markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
+		file.waypointids = ver < 3 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
 		for(int i = 0, no = data.int32(); i < no; i++)
 		    file.knownsegs.add(data.int64());
 		for(int i = 0, no = data.int32(); i < no; i++) {
@@ -133,6 +186,8 @@ public class MapFile {
 			file.smarkers.put(((SMarker)mark).oid, (SMarker)mark);
 		    else if (mark instanceof LinkedMarker)
 			file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+		        file.wmarkers.put(((WaypointMarker) mark).id, (WaypointMarker) mark);
 		}
 	    } else {
 		warn("unknown mapfile index version: %d", ver);
@@ -154,8 +209,9 @@ public class MapFile {
 	    throw(new StreamMessage.IOError(e));
 	}
 	try(StreamMessage out = new StreamMessage(fp)) {
-	    out.adduint8(2);
+	    out.adduint8(3);
 	    markerids.save(out);
+	    waypointids.save(out);
 	    out.addint32(knownsegs.size());
 	    for(Long seg : knownsegs)
 		out.addint64(seg);
@@ -306,133 +362,32 @@ public class MapFile {
 	}
     }
 
-    public abstract static class Marker {
-	public long seg;
-	public Coord tc;
-	public String nm;
-
-	public Marker(long seg, Coord tc, String nm) {
-	    this.seg = seg;
-	    this.tc = tc;
-	    this.nm = nm;
-	}
-
-	public String name() {
-	    return nm;
-	}
-
-	public String tip(final UI ui) {
-	    return nm;
-	}
-    }
-
-    public static class PMarker extends Marker {
-	public Color color;
-
-	public PMarker(long seg, Coord tc, String nm, Color color) {
-	    super(seg, tc, nm);
-	    this.color = color;
-	}
-    }
-
-    public static class SMarker extends Marker {
-	public long oid;
-	public Resource.Spec res;
-
-	public SMarker(long seg, Coord tc, String nm, long oid, Resource.Spec res) {
-	    super(seg, tc, nm);
-	    this.oid = oid;
-	    this.res = res;
-	}
-    }
-
-    // Simple custom icons that ae a combo of PMarker (color) and SMarker (Custom res)
-    public static class CustomMarker extends Marker {
-        public Color color;
-        public final Resource.Spec res;
-
-        public CustomMarker(final long seq, final Coord tc, final String nm,
-			    final Color color, final Resource.Spec res) {
-            super(seq, tc, nm);
-            this.color = color;
-            this.res = res;
-	}
-    }
-
-    // Special marker for Realm objects. These will have a name associated with them that can be user defined
-    // or auto-defined based off what realm you're in at the time if possible. Realm Markers also have an
-    // associated radius that can be displayed on the minimap
-    public static class RealmMarker extends Marker {
-	public final Resource.Spec res;
-	public String realm;
-
-	public RealmMarker(long seg, Coord tc, String nm, Resource.Spec res, String realm) {
-	    super(seg, tc, nm);
-	    this.res = res;
-	    this.realm = realm;
-	}
-
-	@Override
-	public String tip(final UI ui) {
-	    return String.format("[%s] %s", realm, nm);
-	}
-    }
-
-    // Same concept of the Realm Marker but for Village Objects
-    public static class VillageMarker extends Marker {
-	//either vidol or banner
-	public final Resource.Spec res;
-	public String village;
-
-	public VillageMarker(long seg, Coord tc, String nm, Resource.Spec res, String village) {
-	    super(seg, tc, nm);
-	    this.res = res;
-	    this.village = village;
-	}
-
-	@Override
-	public String tip(final UI ui) {
-	    if (nm.equals("Banner") && !GlobalSettings.SHOWVMARKERTIPS.get()) {
-		return "";
-	    } else {
-		return String.format("[%s] %s", village, nm);
+    /**
+     * Generate a waypoint map within the given segment
+     */
+    public WaypointMap generateWaypointMap(final Segment seg, final WaypointMarker goalm, final Coord starttc, final Coord2d startmc) {
+	final var map = new HashMap<Long, Waypoint>();
+	Waypoint start = null, goal = null;
+	double dist = Double.MAX_VALUE;
+	lock.readLock().lock();
+	try {
+	    for(final var wp : wmarkers.values()) {
+		if (wp.seg == seg.id) {
+		    final var offset = new Coord2d(wp.tc.sub(starttc)).mul(MCache.tilesz);
+		    final var waypoint = new Waypoint(wp.id, startmc.add(offset), wp.links);
+		    if(goalm == wp)
+		        goal = waypoint;
+		    map.put(wp.id, waypoint);
+		    if(startmc.dist(waypoint.c) < dist) {
+		        start = waypoint;
+		        dist = startmc.dist(waypoint.c);
+		    }
+		}
 	    }
+	} finally {
+	    lock.readLock().unlock();
 	}
-    }
-
-    // Linked Marker data for Mineholes, ladders, caves to link between maps.
-    public static final long NOLINK = -1;
-    public static final byte MINEHOLE = (byte) 0;
-    public static final byte LADDER = (byte) 1;
-    public static final byte CAVE = (byte) 2;
-    public static final byte CAVEIN = (byte) 3;
-
-    public static boolean canLink(final byte l1, final byte l2) {
-	return (l1 == CAVE && l2 == CAVEIN) ||
-		(l1 == CAVEIN && l2 == CAVE) ||
-		(l1 == MINEHOLE && l2 == LADDER) ||
-		(l1 == LADDER && l2 == MINEHOLE);
-    }
-
-    public static class LinkedMarker extends CustomMarker {
-	public final byte type;
-	public final long id;
-	public long lid; //id of the marker we link to
-
-	public LinkedMarker(long seg, Coord tc, String nm, Color color, Resource.Spec res, long id, byte type) {
-	    super(seg, tc, nm, color, res);
-	    this.id = id;
-	    this.type = type;
-	    lid = NOLINK;
-	}
-
-	private LinkedMarker(long seg, Coord tc, String nm, Color color, Resource.Spec res,
-			     long id, byte type, long lid) {
-	    super(seg, tc, nm, color, res);
-	    this.id = id;
-	    this.type = type;
-	    this.lid = lid;
-	}
+	return new WaypointMap(map, start, goal);
     }
 
     private static Marker loadmarker(final MapFile file, Message fp) {
@@ -442,62 +397,77 @@ public class MapFile {
 	    Coord tc = fp.coord();
 	    String nm = fp.string();
 	    char type = (char)fp.uint8();
-	    switch(type) {
-	    case 'p': {
-		Color color = fp.color();
-		return (new PMarker(seg, tc, nm, color));
-	    }
-	    case 's': {
-		long oid = fp.int64();
-		Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		return (new SMarker(seg, tc, nm, oid, res));
-	    }
-	    case 'r': {
-		final int version = fp.uint8();
-		if (version == 0 || version == 1) {
+	    switch (type) {
+		case 'p' -> {
 		    Color color = fp.color();
+		    return (new PMarker(seg, tc, nm, color));
+		}
+		case 's' -> {
+		    long oid = fp.int64();
 		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), CAVE) : new CustomMarker(seg, tc, nm, color, res);
-		} else {
-		    throw (new Message.FormatError("Unknown sloth marker version: " + version));
+		    return (new SMarker(seg, tc, nm, oid, res));
 		}
-	    }
-	    case 'l': {
-		final int version = fp.uint8();
-		if (version == 1 || version == 2) {
-		    Color color = fp.color();
-		    final String resnm = fp.string();
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
-		    final long id = fp.int64();
-		    final byte ltype = version == 2 ? (byte) fp.uint8() : CAVE;
-		    final long lid = fp.int64();
-		    return new LinkedMarker(seg, tc, nm, color, res, id, ltype, lid);
-		} else {
-		    throw (new Message.FormatError("Unknown linked marker version: " + version));
+		case 'r' -> {
+		    final int version = fp.uint8();
+		    if (version == 0 || version == 1) {
+			Color color = fp.color();
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			return version == 0 ? new LinkedMarker(seg, tc, nm, color, res, file.markerids.next(), LinkedMarker.CAVE) : new CustomMarker(seg, tc, nm, color, res);
+		    } else {
+			throw (new Message.FormatError("Unknown sloth marker version: " + version));
+		    }
 		}
-	    }
-	    case 'k': {
-		final int version = fp.uint8();
-		if (version == 0) {
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    String realm = fp.string();
-		    return new RealmMarker(seg, tc, nm, res, realm);
-		} else {
-		    throw (new Message.FormatError("Unknown realm marker version: " + version));
+		case 'l' -> {
+		    final int version = fp.uint8();
+		    if (version == 1 || version == 2) {
+			Color color = fp.color();
+			final String resnm = fp.string();
+			Resource.Spec res = new Resource.Spec(Resource.remote(), resnm.equals("gfx/hud/mmap/cave") ? "custom/mm/icons/cave" : resnm, fp.uint16());
+			final long id = fp.int64();
+			final byte ltype = version == 2 ? (byte) fp.uint8() : LinkedMarker.CAVE;
+			final long lid = fp.int64();
+			return new LinkedMarker(seg, tc, nm, color, res, id, ltype, lid);
+		    } else {
+			throw (new Message.FormatError("Unknown linked marker version: " + version));
+		    }
 		}
-	    }
-	    case 'v': {
-		final int version = fp.uint8();
-		if (version == 0) {
-		    Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
-		    String realm = fp.string();
-		    return new VillageMarker(seg, tc, nm, res, realm);
-		} else {
-		    throw (new Message.FormatError("Unknown village marker version: " + version));
+		case 'k' -> {
+		    final int version = fp.uint8();
+		    if (version == 0) {
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			String realm = fp.string();
+			return new RealmMarker(seg, tc, nm, res, realm);
+		    } else {
+			throw (new Message.FormatError("Unknown realm marker version: " + version));
+		    }
 		}
-	    }
-	    default:
-		throw(new Message.FormatError("Unknown marker type: " + (int)type));
+		case 'v' -> {
+		    final int version = fp.uint8();
+		    if (version == 0) {
+			Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			String realm = fp.string();
+			return new VillageMarker(seg, tc, nm, res, realm);
+		    } else {
+			throw (new Message.FormatError("Unknown village marker version: " + version));
+		    }
+		}
+		case 'w' -> {
+		    final int version = fp.uint8();
+		    if(version == 0) {
+			final Color color = fp.color();
+			final Resource.Spec res = new Resource.Spec(Resource.remote(), fp.string(), fp.uint16());
+			final long id = fp.int64();
+			final int linkslen = fp.int32();
+			final Set<Long> links = new HashSet<>(linkslen);
+			for(var i = 0; i < linkslen; ++i) {
+			    links.add(fp.int64());
+			}
+			return new WaypointMarker(seg, tc, nm, color, res, id, links);
+		    } else {
+		        throw (new Message.FormatError("Unknown waypoint marker version: " + version));
+		    }
+		}
+		default -> throw (new Message.FormatError("Unknown marker type: " + (int) type));
 	    }
 	} else {
 	    throw(new Message.FormatError("Unknown marker version: " + ver));
@@ -520,9 +490,9 @@ public class MapFile {
 	    fp.adduint16(sm.res.ver);
 	} else if (mark instanceof CustomMarker) {
 	    CustomMarker rm = (CustomMarker) mark;
-	    //Linked => l, Realm => k, Sloth => r
-	    fp.adduint8(mark instanceof LinkedMarker ? 'l' : 'r');
-	    fp.adduint8(mark instanceof LinkedMarker ? 2 : 1); //version
+	    //Linked => l, Sloth => r, Waypoint => w
+	    fp.adduint8(rm.identifier());
+	    fp.adduint8(rm.version());
 	    fp.addcolor(rm.color);
 	    fp.addstring(rm.res.name);
 	    fp.adduint16(rm.res.ver);
@@ -530,6 +500,12 @@ public class MapFile {
 		fp.addint64(((LinkedMarker) rm).id);
 		fp.adduint8(((LinkedMarker) rm).type);
 		fp.addint64(((LinkedMarker) rm).lid);
+	    } else if(mark instanceof WaypointMarker) {
+		final var wm = (WaypointMarker) mark;
+		fp.addint64(wm.id);
+		fp.addint32(wm.links.size());
+		for(final var link : wm.links)
+		    fp.addint64(link);
 	    }
 	} else if (mark instanceof RealmMarker) {
 	    RealmMarker rm = (RealmMarker) mark;
@@ -550,15 +526,63 @@ public class MapFile {
 	}
     }
 
+    public void addNoSave(final Marker mark) {
+	lock.writeLock().lock();
+	try {
+	    if(!markers.contains(mark)) {
+		if (markers.add(mark)) {
+		    if (mark instanceof SMarker)
+			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		    else if (mark instanceof LinkedMarker)
+			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+		        wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
+		    markerseq++;
+		}
+	    }
+	} finally {
+	    lock.writeLock().unlock();
+	}
+    }
+
     public void add(Marker mark) {
 	lock.writeLock().lock();
 	try {
-	    if(markers.add(mark)) {
+	    if(!markers.contains(mark)) {
+		if (markers.add(mark)) {
+		    MessageBus.send(new AddMarkerMail(this, mark));
+		    if (mark instanceof SMarker)
+			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		    else if (mark instanceof LinkedMarker)
+			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		    else if(mark instanceof WaypointMarker)
+			wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
+		    defersave();
+		    markerseq++;
+		}
+	    }
+	} finally {
+	    lock.writeLock().unlock();
+	}
+    }
+
+    public void removeNoSave(Marker mark) {
+	lock.writeLock().lock();
+	try {
+	    if(markers.remove(mark)) {
 		if(mark instanceof SMarker)
-		    smarkers.put(((SMarker)mark).oid, (SMarker)mark);
-		else if (mark instanceof LinkedMarker)
-		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		defersave();
+		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
+		if (mark instanceof LinkedMarker) {
+		    markerids.release(((LinkedMarker) mark).id);
+		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    for(final var link : ((WaypointMarker) mark).links) {
+			if(wmarkers.get(link) != null)
+			    wmarkers.get(link).links.remove(((WaypointMarker)mark).id);
+		    }
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
+		}
 		markerseq++;
 	    }
 	} finally {
@@ -570,11 +594,19 @@ public class MapFile {
 	lock.writeLock().lock();
 	try {
 	    if(markers.remove(mark)) {
+		MessageBus.send(new RemoveMarkerMail(this, mark));
 		if(mark instanceof SMarker)
 		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
 		if (mark instanceof LinkedMarker) {
 		    markerids.release(((LinkedMarker) mark).id);
 		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    for(final var link : ((WaypointMarker) mark).links) {
+		        if(wmarkers.get(link) != null)
+		            wmarkers.get(link).links.remove(((WaypointMarker)mark).id);
+		    }
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
 		}
 		defersave();
 		markerseq++;
@@ -584,10 +616,39 @@ public class MapFile {
 	}
     }
 
+    public void updateNoSave(Marker mark) {
+	lock.readLock().lock();
+	try {
+	    if(markers.contains(mark)) {
+	        markers.remove(mark);
+		if(mark instanceof SMarker)
+		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
+		if (mark instanceof LinkedMarker) {
+		    markerids.release(((LinkedMarker) mark).id);
+		    lmarkers.remove(((LinkedMarker) mark).id);
+		} else if(mark instanceof WaypointMarker) {
+		    waypointids.release(((WaypointMarker) mark).id);
+		    wmarkers.remove(((WaypointMarker) mark).id);
+		}
+	        markers.add(mark);
+		if (mark instanceof SMarker)
+		    smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+		else if (mark instanceof LinkedMarker)
+		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+		else if(mark instanceof WaypointMarker)
+		    wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
+		markerseq++;
+	    }
+	} finally {
+	    lock.readLock().unlock();
+	}
+    }
+
     public void update(Marker mark) {
 	lock.readLock().lock();
 	try {
 	    if(markers.contains(mark)) {
+		MessageBus.send(new UpdateMarkerMail(this, mark));
 		defersave();
 		markerseq++;
 	    }
@@ -725,7 +786,7 @@ public class MapFile {
 			rgb = tex.getRGB(Utils.floormod(c.x + off.x, tex.getWidth()),
 					 Utils.floormod(c.y + off.y, tex.getHeight()));
 		    buf.setSample(c.x, c.y, 0, (rgb & 0x00ff0000) >>> 16);
-		    buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>>  8);
+		    buf.setSample(c.x, c.y, 1, (rgb & 0x0000ff00) >>>   8);
 		    buf.setSample(c.x, c.y, 2, (rgb & 0x000000ff) >>>  0);
 		    buf.setSample(c.x, c.y, 3, (rgb & 0xff000000) >>> 24);
 		}

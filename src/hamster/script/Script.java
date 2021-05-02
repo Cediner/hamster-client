@@ -2,14 +2,18 @@ package hamster.script;
 
 import com.google.common.flogger.FluentLogger;
 import hamster.data.GridData;
+import hamster.script.map.MapExport;
 import haven.Coord;
+import haven.Coord2d;
 import haven.UI;
 import haven.Widget;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.message.MessageBuilder;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public abstract class Script extends Thread {
@@ -105,6 +109,23 @@ public abstract class Script extends Thread {
 
     public void sendDiscordMessage(final String channel, final String msg) {
         discord.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
+    }
+
+    public void sendDiscordMessageWithMapAndMark(final String channel, final String msg,
+                                                 final Coord2d mark, final double a) {
+        final var export = new MapExport(session.getUI().sess.glob.map);
+        final var img = export.renderWithMarkAt(mark, a);
+        final var dmsg = new MessageBuilder();
+        dmsg.setContent(msg);
+        dmsg.addAttachment(img, "mapexport.png");
+        discord.getTextChannelsByName(channel).forEach(chan -> {
+            try {
+                dmsg.send(chan).get();
+            } catch (InterruptedException | ExecutionException e) {
+                logger.atSevere().withCause(e).log("Script %s failed to send discord msg", sid);
+                sendDiscordMessage(channel, msg); // fallback is just send the msg contents
+            }
+        });
     }
 
     public void endDiscord() {

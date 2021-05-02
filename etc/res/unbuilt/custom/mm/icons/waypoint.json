@@ -1,0 +1,15 @@
+{
+  "ver": 1,
+  "layers": [
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "scale": 4.0,
+      "id": 0,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\mm\\icons\\waypoint\\image-0.png"
+    }
+  ]
+}

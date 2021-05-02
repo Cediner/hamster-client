@@ -35,4 +35,9 @@ public class PathMonitor extends GAttrib {
 	    }
 	}
     }
+
+    @Override
+    public String toString() {
+	return "PathMonitor";
+    }
 }

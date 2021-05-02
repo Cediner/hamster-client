@@ -39,8 +39,6 @@ public class Cards {
     public static final Restoration zigzag = new Restoration("Zig-Zag Ruse", false, 50, 0, 0.5, 0.0, 0.5, 0.0,
             (mip, eip) -> eip >= 2);
 
-    //Moves
-
     //Attacks
     public static final Attack jugular = new Attack("Go for the Jugular", false, 45, UA, 4, 40, 0.3, 1.0, false, 1.0, 0.1, 0.15, 0.0, 0.0, GREEN, RED);
     public static final Attack hmaker = new Attack("Haymaker", false, 50, UA, 0, 20, 0.15, 1.0, false, 1.0, 0.0, 0.0, 0.15, 0.0, YELLOW);
@@ -63,6 +61,53 @@ public class Cards {
     public static final Attack qbarrage = new Attack("Quick Barrage", false, 20, MC, 0, 0, 0.25, false, 1.0, 0.1, 0.0, 0.0, 0.0, RED);
     public static final Attack ravensbite = new Attack("Raven's Bite", false, 40, MC, 4, 0, 1.1, false, 1.0, 0.0, 0.15, 0.15, 0.0, GREEN, YELLOW);
     public static final Attack sideswipe = new Attack("Sideswipe", false, 25, MC, 0, 0, 0.75, false, 1.0, 0.0, 0.0, 0.075, 0.0, YELLOW);
+
+    //Weird custom moves
+    public static final Card takeaim = new Card("Take Aim", true, 30);
+    public static final Attack opknocks = new Attack("Opportunity Knocks", false, 45, UA, 4, false, 1.0, 0.4, 0.4, 0.4, 0.4) {
+        @Override
+        public Map<DefenseType, Double> calculateEnemyDefWeights(Maneuver maneuver, double maneuvermeter,
+                                                                 int ua, int mc, int cards, Map<DefenseType, Double> enemyDefWeight, double enemyBlockWeight) {
+            //Op knocks only applies its weight against the opponent's greatest opening by 40% * Mu
+            final double atkweight = getAttackweight(maneuver, maneuvermeter, ua, mc, cards);
+            final double blockweight = enemyBlockWeight == 0 ? atkweight : enemyBlockWeight;
+            final Map<DefenseType, Double> futureWeights = new HashMap<>();
+            //Get highest Def Type
+            DefenseType maxopening = RED;
+            double max = 0;
+            for (final DefenseType def : DefenseType.values()) {
+                futureWeights.put(def, enemyDefWeight.get(def));
+                if(enemyDefWeight.get(def) > max) {
+                    maxopening = def;
+                    max = enemyDefWeight.get(def);
+                }
+            }
+            //Apply weight to just that def type
+            futureWeights.put(maxopening, enemyDefWeight.get(maxopening) + ((1 - enemyDefWeight.get(maxopening)) * openingweights.get(maxopening)
+                    * Math.cbrt(atkweight / blockweight)));
+            return futureWeights;
+        }
+    };
+    public static final Restoration dash = new Restoration("Dash", true, 80, 0, 1.0, 1.0, 1.0, 1.0) {
+        @Override
+        public Map<DefenseType, Double> getFutureWeights(int cards, Map<DefenseType, Double> CurrentWeights) {
+            //Dash is special in that it will completely remove your slightest opening
+            final Map<DefenseType, Double> NextWeights = new HashMap<>();
+            //Get lowest Def Type that isn't 0
+            DefenseType opening = RED;
+            double min = Double.MAX_VALUE;
+            for (final DefenseType def : DefenseType.values()) {
+                if(CurrentWeights.get(def) < min && CurrentWeights.get(def) != 0.0d) {
+                    opening = def;
+                    min = CurrentWeights.get(def);
+                }
+                NextWeights.put(def, CurrentWeights.get(def));
+            }
+            //Apply reduction to slightest opening
+            NextWeights.put(opening, 0.0d);
+            return NextWeights;
+        }
+    };
 
     public static final Map<String, Card> lookup = new HashMap<>();
 

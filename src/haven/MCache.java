@@ -409,7 +409,9 @@ public class MCache implements MapSource {
 		}
 	    }
 	    final Gob snow = new Flavobj(new Coord2d(cutc.x / 2d, cutc.y / 2d).add(gul.x, gul.y).mul(tilesz).add(tilesz.div(2)), 0);
-	    snow.addol(new SnowFall(snow, this));
+	    synchronized (snow) {
+		snow.addol(new SnowFall(snow, this));
+	    }
 	    return(new Flavobjs(buf, snow));
 	}
 
@@ -1129,6 +1131,17 @@ public class MCache implements MapSource {
 		    gridwait.wnotify();
 		}
 	    }
+	}
+    }
+
+    public Grid[] grids() {
+        synchronized (grids) {
+	    final Grid[] grids = new Grid[this.grids.size()];
+            int i = 0;
+            for(final var grid : this.grids.values()) {
+                grids[i++] = grid;
+	    }
+	    return grids;
 	}
     }
 

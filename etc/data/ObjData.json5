@@ -2236,5 +2236,72 @@
     tags: [
       "STOCKPILE"
     ]
+  },
+  /*** Containers ***/
+  {
+    res: "gfx/terobjs/stonecasket",
+    name: "Stone Casket",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [17, 18]
+    }
+  },
+  {
+    res: "gfx/terobjs/chest",
+    name: "Chest",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [29, 30]
+    }
+  },
+  {
+    res: "gfx/terobjs/largechest",
+    name: "Large Chest",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [17, 18]
+    }
+  },
+  {
+    res: "gfx/terobjs/crate",
+    name: "Crate",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [0],
+      full: [16]
+    }
+  },
+  {
+    res: "gfx/terobjs/bonechest",
+    name: "Bone Chest",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [17, 18]
+    }
+  },
+  {
+    res: "gfx/terobjs/cupboard",
+    name: "Chest",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [29, 30]
+    }
   }
 ]

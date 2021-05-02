@@ -4,9 +4,11 @@
 ;;;; Discord 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (java-func +script+ script-send-discord-message "sendDiscordMessage" +string+ +string+)
+(java-func +script+ script-send-discord-message-with-map-and-mark "sendDiscordMessageWithMapAndMark" +string+ +string+ +coord2d+ +double+)
 (java-func +script+ script-start-discord-session "startDiscord" +string+)
 (java-func +script+ script-end-discord "endDiscord")
 (with-script-define send-discord-message script-send-discord-message channel message)
+(with-script-define send-discord-message-with-map-and-mark script-send-discord-message-with-map-and-mark channel message markc angle)
 (with-script-define start-discord-session script-start-discord-session token)
 (with-script-define end-discord-session script-end-discord)
 
@@ -34,7 +36,7 @@
     (msg-clear-messages)
     (values token role)))
 
-(export '(send-discord-message start-discord-session end-discord-session
+(export '(send-discord-message send-discord-message-with-map-and-mark start-discord-session end-discord-session
           prompt-for-discord-info
           +discord-bot-channel+
 		  +discord-angler-channel+))

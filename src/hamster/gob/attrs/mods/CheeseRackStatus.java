@@ -52,4 +52,11 @@ public class CheeseRackStatus extends GAttrib implements Gob.SetupMod {
             default -> state = State.INBETWEEN;
         }
     }
+
+    @Override
+    public String toString() {
+        return "CheeseRackStatus(" +
+                "state=" + state +
+                ')';
+    }
 }

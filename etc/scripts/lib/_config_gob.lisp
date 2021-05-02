@@ -281,7 +281,7 @@
           gob-c gob-name gob-has-tag gob-overlays gob-poses gob-sdt is-gob-dead
           gob-is-holding gob-is-held-by-something gob-is-held-by gob-held-by gob-how-many-gobs-held gob-held-gobs
           gob-kinname gob-equipment
-          gob-id gob-rc gob-v
+          gob-id gob-rc gob-v gob-angle
           is-gob-a my-gob
           is-gob-moving is-gob-friendly is-gob-dangerous
           wait-for-movement

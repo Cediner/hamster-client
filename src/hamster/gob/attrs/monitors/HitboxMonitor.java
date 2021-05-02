@@ -36,4 +36,11 @@ public class HitboxMonitor extends GAttrib {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return "HitboxMonitor(" +
+                "show=" + show +
+                ')';
+    }
 }

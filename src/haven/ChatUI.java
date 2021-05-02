@@ -27,6 +27,7 @@
 package haven;
 
 import com.google.common.flogger.FluentLogger;
+import hamster.GlobalSettings;
 import hamster.gob.sprites.Mark;
 import hamster.gob.sprites.TargetSprite;
 import hamster.ui.ChatUtils;
@@ -43,7 +44,6 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.net.URL;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.regex.*;
 import java.io.IOException;
 import java.awt.datatransfer.*;
@@ -1333,7 +1333,8 @@ public class ChatUI extends Widget {
 	synchronized(notifs) {
 	    notifs.addFirst(new Notification(chan, msg));
 	}
-	ui.sfx(notifsfx);
+	if(GlobalSettings.ALLOWCHATSOUND.get())
+	    ui.sfx(notifsfx);
     }
 
     private class Spring extends NormAnim {

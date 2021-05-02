@@ -1,4 +1,4 @@
-package hamster.ui;
+package hamster.ui.minimap;
 
 import hamster.data.map.MarkerData;
 import haven.Button;
@@ -15,24 +15,24 @@ import java.util.function.Predicate;
 
 public class MapMarkerWnd extends Window {
     private final static List<String> types = Arrays.asList("Placed", "Natural", "Custom", "Linked", "Realm", "Village");
-    private final static Predicate<MapFile.Marker> pmarkers = (m -> m instanceof MapFile.PMarker);
-    private final static Predicate<MapFile.Marker> smarkers = (m -> m instanceof MapFile.SMarker);
-    private final static Predicate<MapFile.Marker> slmarkers = (m -> m instanceof MapFile.CustomMarker && !(m instanceof MapFile.LinkedMarker));
-    private final static Predicate<MapFile.Marker> lmarkers = (m -> m instanceof MapFile.LinkedMarker);
-    private final static Predicate<MapFile.Marker> kmarkers = (m -> m instanceof MapFile.RealmMarker);
-    private final static Predicate<MapFile.Marker> vmarkers = (m -> m instanceof MapFile.VillageMarker);
-    private final static Comparator<MapFile.Marker> namecmp = Comparator.comparing(MapFile.Marker::name);
-    private Predicate<MapFile.Marker> mflt;
-    private List<MapFile.Marker> markers = Collections.emptyList();
+    private final static Predicate<Marker> pmarkers = (m -> m instanceof PMarker);
+    private final static Predicate<Marker> smarkers = (m -> m instanceof SMarker);
+    private final static Predicate<Marker> slmarkers = (m -> m instanceof CustomMarker && !(m instanceof LinkedMarker) && !(m instanceof WaypointMarker));
+    private final static Predicate<Marker> lmarkers = (m -> m instanceof LinkedMarker);
+    private final static Predicate<Marker> kmarkers = (m -> m instanceof RealmMarker);
+    private final static Predicate<Marker> vmarkers = (m -> m instanceof VillageMarker);
+    private final static Comparator<Marker> namecmp = Comparator.comparing(Marker::name);
+    private Predicate<Marker> mflt;
+    private List<Marker> markers = Collections.emptyList();
     private int markerseq = -1;
-    private final Comparator<MapFile.Marker> mcmp = namecmp;
+    private final Comparator<Marker> mcmp = namecmp;
     private final MapWnd map;
     public final MarkerList list;
     private TextEntry namesel, realmedit;
     private BuddyWnd.GroupSelector colsel;
     private Button mremove;
     private final Dropbox<String> typesel;
-    private Dropbox<MapFile.Marker> linker;
+    private Dropbox<Marker> linker;
 
     public MapMarkerWnd(final MapWnd map) {
         super(Coord.z, "Markers", "Markers");
@@ -116,10 +116,10 @@ public class MapMarkerWnd extends Window {
 
     public static final Color every = new Color(255, 255, 255, 16), other = new Color(255, 255, 255, 32), found = new Color(255, 255, 0, 32);
 
-    public class MarkerList extends Searchbox<MapFile.Marker> {
+    public class MarkerList extends Searchbox<Marker> {
         private final Text.Foundry fnd = CharWnd.attrf;
 
-        public MapFile.Marker listitem(int idx) {
+        public Marker listitem(int idx) {
             return (markers.get(idx));
         }
 
@@ -140,44 +140,44 @@ public class MapMarkerWnd extends Window {
         protected void drawbg(GOut g) {
         }
 
-        public void drawitem(GOut g, MapFile.Marker mark, int idx) {
+        public void drawitem(GOut g, Marker mark, int idx) {
             if (soughtitem(idx)) {
                 g.chcolor(found);
                 g.frect(Coord.z, g.sz());
             }
             g.chcolor(((idx % 2) == 0) ? every : other);
             g.frect(Coord.z, g.sz());
-            if (mark instanceof MapFile.PMarker)
-                g.chcolor(((MapFile.PMarker) mark).color);
-            else if (mark instanceof MapFile.CustomMarker)
-                g.chcolor(((MapFile.CustomMarker) mark).color);
-            else if(mark instanceof MapFile.VillageMarker)
-                g.chcolor(MarkerData.getVillageBoldColor(((MapFile.VillageMarker) mark).village));
+            if (mark instanceof PMarker)
+                g.chcolor(((PMarker) mark).color);
+            else if (mark instanceof CustomMarker)
+                g.chcolor(((CustomMarker) mark).color);
+            else if(mark instanceof VillageMarker)
+                g.chcolor(MarkerData.getVillageBoldColor(((VillageMarker) mark).village));
             else
                 g.chcolor();
 
-            if (!(mark instanceof MapFile.LinkedMarker || mark instanceof MapFile.RealmMarker || mark instanceof MapFile.VillageMarker))
+            if (!(mark instanceof LinkedMarker || mark instanceof RealmMarker || mark instanceof VillageMarker))
                 g.aimage(names.apply(mark.nm).tex(), new Coord(5, itemh / 2), 0, 0.5);
-            else if(mark instanceof MapFile.LinkedMarker)
-                g.aimage(names.apply(String.format("[%d ⟶ %d] %s", ((MapFile.LinkedMarker) mark).id, ((MapFile.LinkedMarker) mark).lid, mark.nm)).tex(),
+            else if(mark instanceof LinkedMarker)
+                g.aimage(names.apply(String.format("[%d ⟶ %d] %s", ((LinkedMarker) mark).id, ((LinkedMarker) mark).lid, mark.nm)).tex(),
                         new Coord(5, itemh / 2), 0, 0.5);
-            else if(mark instanceof MapFile.RealmMarker)
-                g.aimage(names.apply(String.format("[%s] %s", ((MapFile.RealmMarker) mark).realm, mark.nm)).tex(),
+            else if(mark instanceof RealmMarker)
+                g.aimage(names.apply(String.format("[%s] %s", ((RealmMarker) mark).realm, mark.nm)).tex(),
                         new Coord(5, itemh / 2), 0 , 0.5);
             else { //Village
-                g.aimage(names.apply(String.format("[%s] %s", ((MapFile.VillageMarker) mark).village, mark.nm)).tex(),
+                g.aimage(names.apply(String.format("[%s] %s", ((VillageMarker) mark).village, mark.nm)).tex(),
                         new Coord(5, itemh / 2), 0 , 0.5);
             }
         }
 
-        public void change(MapFile.Marker mark) {
+        public void change(Marker mark) {
             change2(mark);
             if (mark != null)
                 map.view.center(new MiniMap.SpecLocator(mark.seg, mark.tc));
         }
 
         //TODO: Clean this all up
-        public void change2(MapFile.Marker mark) {
+        public void change2(Marker mark) {
             this.sel = mark;
 
             if (namesel != null) {
@@ -204,19 +204,19 @@ public class MapMarkerWnd extends Window {
 
             if (mark != null) {
                 markerseq = -1;
-                if (mark instanceof MapFile.PMarker) {
+                if (mark instanceof PMarker) {
                     typesel.sel = types.get(0);
                     mflt = pmarkers;
-                } else if (mark instanceof MapFile.SMarker) {
+                } else if (mark instanceof SMarker) {
                     typesel.sel = types.get(1);
                     mflt = smarkers;
-                } else if (mark instanceof MapFile.LinkedMarker) {
+                } else if (mark instanceof LinkedMarker) {
                     typesel.sel = types.get(3);
                     mflt = lmarkers;
-                } else if(mark instanceof MapFile.RealmMarker) {
+                } else if(mark instanceof RealmMarker) {
                     typesel.sel = types.get(4);
                     mflt = kmarkers;
-                } else if(mark instanceof MapFile.VillageMarker) {
+                } else if(mark instanceof VillageMarker) {
                     typesel.sel = types.get(5);
                     mflt = vmarkers;
                 } else {
@@ -242,8 +242,8 @@ public class MapMarkerWnd extends Window {
                 namesel.setReadOnly(false);
                 namesel.buf.point = mark.nm.length();
                 namesel.commit();
-                if (mark instanceof MapFile.PMarker) {
-                    MapFile.PMarker pm = (MapFile.PMarker) mark;
+                if (mark instanceof PMarker) {
+                    PMarker pm = (PMarker) mark;
                     colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
                         public void changed(int group) {
                             this.group = group;
@@ -259,8 +259,8 @@ public class MapMarkerWnd extends Window {
                             change2(null);
                         }
                     }, colsel.c.add(0, colsel.sz.y + 10));
-                } else if (mark instanceof MapFile.CustomMarker) {
-                    MapFile.CustomMarker pm = (MapFile.CustomMarker) mark;
+                } else if (mark instanceof CustomMarker) {
+                    CustomMarker pm = (CustomMarker) mark;
                     colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
                         public void changed(int group) {
                             this.group = group;
@@ -270,41 +270,41 @@ public class MapMarkerWnd extends Window {
                     }, namesel.c.add(0, namesel.sz.y + 10));
                     if ((colsel.group = Utils.index(BuddyWnd.gc, pm.color)) < 0)
                         colsel.group = 0;
-                    if (mark instanceof MapFile.LinkedMarker) {
+                    if (mark instanceof LinkedMarker) {
                         linker = MapMarkerWnd.this.add(new Dropbox<>(200, 5, 20) {
-                            private List<MapFile.Marker> lst;
+                            private List<Marker> lst;
 
                             {
                                 if (map.view.file.lock.readLock().tryLock()) {
                                     try {
                                         lst = map.view.file.markers.stream()
-                                                .filter(m -> m != mark && m instanceof MapFile.LinkedMarker &&
-                                                        MapFile.canLink(((MapFile.LinkedMarker) mark).type, ((MapFile.LinkedMarker) m).type))
+                                                .filter(m -> m != mark && m instanceof LinkedMarker &&
+                                                        LinkedMarker.canLink(((LinkedMarker) mark).type, ((LinkedMarker) m).type))
                                                 .sorted(mcmp).collect(java.util.stream.Collectors.toList());
                                         list.display();
                                     } finally {
                                         map.view.file.lock.readLock().unlock();
                                     }
                                 }
-                                if (((MapFile.LinkedMarker) mark).lid != -1)
-                                    sel = map.view.file.lmarkers.get(((MapFile.LinkedMarker) mark).lid);
+                                if (((LinkedMarker) mark).lid != -1)
+                                    sel = map.view.file.lmarkers.get(((LinkedMarker) mark).lid);
                             }
 
                             @Override
-                            public void change(MapFile.Marker item) {
+                            public void change(Marker item) {
                                 super.change(item);
-                                final MapFile.LinkedMarker link = (MapFile.LinkedMarker) item;
-                                if (((MapFile.LinkedMarker) mark).lid != -1) {
-                                    map.view.file.lmarkers.get(((MapFile.LinkedMarker) mark).lid).lid = -1;
+                                final LinkedMarker link = (LinkedMarker) item;
+                                if (((LinkedMarker) mark).lid != -1) {
+                                    map.view.file.lmarkers.get(((LinkedMarker) mark).lid).lid = -1;
                                 }
-                                ((MapFile.LinkedMarker) mark).lid = link.id;
-                                link.lid = ((MapFile.LinkedMarker) mark).id;
+                                ((LinkedMarker) mark).lid = link.id;
+                                link.lid = ((LinkedMarker) mark).id;
                                 map.view.file.update(mark);
                                 map.view.file.update(link);
                             }
 
                             @Override
-                            protected MapFile.Marker listitem(int i) {
+                            protected Marker listitem(int i) {
                                 return lst.get(i);
                             }
 
@@ -314,8 +314,8 @@ public class MapMarkerWnd extends Window {
                             }
 
                             @Override
-                            protected void drawitem(GOut g, MapFile.Marker item, int i) {
-                                FastText.aprintf(g, new Coord(5, itemh / 2), 0.0, 0.5, "[%d] %s", ((MapFile.LinkedMarker) item).id, item.nm);
+                            protected void drawitem(GOut g, Marker item, int i) {
+                                FastText.aprintf(g, new Coord(5, itemh / 2), 0.0, 0.5, "[%d] %s", ((LinkedMarker) item).id, item.nm);
                             }
                         }, colsel.c.add(0, colsel.sz.y + 10));
                         mremove = MapMarkerWnd.this.add(new Button(200, "Remove", false) {
@@ -332,8 +332,8 @@ public class MapMarkerWnd extends Window {
                             }
                         }, colsel.c.add(0, colsel.sz.y + 10));
                     }
-                } else if (mark instanceof MapFile.RealmMarker) {
-                    MapFile.RealmMarker pm = (MapFile.RealmMarker) mark;
+                } else if (mark instanceof RealmMarker) {
+                    RealmMarker pm = (RealmMarker) mark;
                     colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
                         public void changed(int group) {
                             this.group = group;
@@ -348,7 +348,7 @@ public class MapMarkerWnd extends Window {
                         }
 
                         public void activate(String text) {
-                            ((MapFile.RealmMarker) mark).realm = text;
+                            ((RealmMarker) mark).realm = text;
                             colsel.group = MarkerData.getRealmColorID(text);
                             map.view.file.update(mark);
                             commit();
@@ -364,9 +364,9 @@ public class MapMarkerWnd extends Window {
                             change2(null);
                         }
                     }, realmedit.c.add(0, realmedit.sz.y + 10));
-                } else if(mark instanceof MapFile.VillageMarker) {
+                } else if(mark instanceof VillageMarker) {
                     namesel.setReadOnly(true);
-                    MapFile.VillageMarker pm = (MapFile.VillageMarker) mark;
+                    VillageMarker pm = (VillageMarker) mark;
                     colsel = MapMarkerWnd.this.add(new BuddyWnd.GroupSelector(0) {
                         public void changed(int group) {
                             this.group = group;
@@ -381,7 +381,7 @@ public class MapMarkerWnd extends Window {
                         }
 
                         public void activate(String text) {
-                            ((MapFile.VillageMarker) mark).village = text;
+                            ((VillageMarker) mark).village = text;
                             colsel.group = MarkerData.getVillageColorID(text);
                             map.view.file.update(mark);
                             commit();

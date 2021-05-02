@@ -9,7 +9,7 @@ import static hamster.ui.fight.WeightType.UA;
 public class Attack extends Card implements Attacks {
     private final boolean attackHasMu;
     public final double attackweight;
-    private final Map<DefenseType, Double> openingweights = new HashMap<>();
+    protected final Map<DefenseType, Double> openingweights = new HashMap<>();
     public final WeightType type;
     public final int cost;
     private final Set<DefenseType> damagetypes = new HashSet<>();
@@ -28,7 +28,8 @@ public class Attack extends Card implements Attacks {
         this.damage = damage;
         this.grievousDamageWeight = grievousDamageWeight;
         this.damageweight = dmgweight;
-        this.damagetypes.addAll(Arrays.asList(attacktypes));
+        if(attacktypes != null)
+            this.damagetypes.addAll(Arrays.asList(attacktypes));
         this.attackHasMu = attackHasMu;
         this.attackweight = attackweight;
         openingweights.put(DefenseType.RED, red);
@@ -44,6 +45,13 @@ public class Attack extends Card implements Attacks {
                   final DefenseType... attacktypes) {
         this(name, cooldownHasMu, cooldown, type, cost, 0, grievousDamageWeight, dmgweight,
                 attackHasMu, attackweight, red, green, yellow, blue, attacktypes);
+    }
+
+    public Attack(final String name, final boolean cooldownHasMu, final int cooldown, final WeightType type,
+                  final int cost, final boolean attackHasMu, final double attackweight,
+                  final double red, final double green, final double yellow, final double blue) {
+        this(name, cooldownHasMu, cooldown, type, cost, 0, 0.0, 0.0, attackHasMu, attackweight,
+                red, green, yellow, blue);
     }
 
     @SuppressWarnings("unused") // For scripting API

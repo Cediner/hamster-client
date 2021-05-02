@@ -65,4 +65,11 @@ public class DryingFrameStatus extends GAttrib implements Gob.SetupMod {
             state = State.DRYING;
         }
     }
+
+    @Override
+    public String toString() {
+        return "DryingFrameStatus(" +
+                "state=" + state +
+                ')';
+    }
 }

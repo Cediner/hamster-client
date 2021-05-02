@@ -22,5 +22,10 @@ public class TreeRotation extends GAttrib implements Gob.SetupMod {
     public Pipe.Op placestate() {
 	return(rot);
     }
+
+    @Override
+    public String toString() {
+	return "TreeRotation";
+    }
 }
 

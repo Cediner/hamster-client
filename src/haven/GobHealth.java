@@ -69,4 +69,11 @@ public class GobHealth extends GAttrib implements Gob.SetupMod, RenderTree.Node,
 	    return(null);
 	return(fx);
     }
+
+    @Override
+    public String toString() {
+	return "GobHealth(" +
+		"hp=" + hp +
+		')';
+    }
 }

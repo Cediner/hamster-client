@@ -11,7 +11,7 @@ public class Restoration extends Card implements Attacks {
         boolean canExecute(final int myip, final int enemyip);
     }
 
-    private final Map<DefenseType, Double> reductions = new HashMap<>();
+    protected final Map<DefenseType, Double> reductions = new HashMap<>();
     private final Map<DefenseType, Double> openingweights = new HashMap<>(); //only for Flex and Yield, but fuck Yield.
     public final WeightType attacktype;
     public final double attackweight;
