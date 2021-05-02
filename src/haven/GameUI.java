@@ -44,6 +44,7 @@ import hamster.ui.core.Theme;
 import hamster.ui.core.indir.IndirSlotView;
 import hamster.ui.food.FoodSearchWnd;
 import hamster.ui.minimap.MapMarkerWnd;
+import hamster.ui.minimap.PMarker;
 import hamster.ui.opt.OptionsWnd;
 import hamster.ui.script.ScriptManager;
 import hamster.ui.search.ActWnd;
@@ -642,8 +643,8 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    if (ui.sess != null && ui.sess.alive() && ui.sess.username != null) {
 			if (MapConfig.loadMapSetting(ui.sess.username, "mapper")) {
 			    MappingClient.getInstance(ui.sess.username).ProcessMap(file, (m) -> {
-				if (m instanceof MapFile.PMarker && MapConfig.loadMapSetting(ui.sess.username, "green")) {
-				    return ((MapFile.PMarker) m).color.equals(Color.GREEN);
+				if (m instanceof PMarker && MapConfig.loadMapSetting(ui.sess.username, "green")) {
+				    return ((PMarker) m).color.equals(Color.GREEN) && !m.name().equals("");
 				}
 				return true;
 			    });

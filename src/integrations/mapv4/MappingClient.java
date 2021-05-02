@@ -1,11 +1,11 @@
 package integrations.mapv4;
 
 import hamster.gob.Tag;
+import hamster.ui.minimap.Marker;
+import hamster.ui.minimap.PMarker;
+import hamster.ui.minimap.SMarker;
 import haven.*;
 import haven.MCache.LoadingMap;
-import haven.MapFile.Marker;
-import haven.MapFile.PMarker;
-import haven.MapFile.SMarker;
 import integrations.json.JSONArray;
 import integrations.json.JSONObject;
 
@@ -307,7 +307,7 @@ public class MappingClient {
                 while (iterator.hasNext()) {
                     MarkerData md = iterator.next();
                     try {
-                        if (!(md.m instanceof MapFile.SMarker) && !(md.m instanceof MapFile.PMarker))
+                        if (!(md.m instanceof SMarker) && !(md.m instanceof PMarker))
                             continue;
                         Coord mgc = new Coord(Math.floorDiv(md.m.tc.x, 100), Math.floorDiv(md.m.tc.y, 100));
                         long gridId = md.gridID;
