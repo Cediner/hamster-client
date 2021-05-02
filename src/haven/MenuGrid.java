@@ -176,7 +176,8 @@ public class MenuGrid extends MovableWidget {
 		if((curoff + (gsz.x*gsz.y)-2) >= curbtns.size())
 		    curoff = 0;
 		else
-		    curoff += (gsz.x*gsz.y)-2;
+		    curoff += (gsz.x * gsz.y) - 2;
+		updlayout();
 	    }
 
 	    public String name() {return("More...");}
@@ -188,7 +189,7 @@ public class MenuGrid extends MovableWidget {
 	    {pag.button = this;}
 
 	    public void use() {
-		pag.scm.cur = paginafor(pag.scm.cur.act().parent);
+		pag.scm.change(paginafor(pag.scm.cur.act().parent));
 		curoff = 0;
 	    }
 
@@ -681,21 +682,24 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
+    public void change(Pagina dst) {
+	this.cur = dst;
+	curoff = 0;
+	updlayout();
+    }
+
     public void use(PagButton r, boolean reset) {
 	Collection<PagButton> sub = new ArrayList<>();
 	cons(r.pag, sub);
 	if(sub.size() > 0) {
-	    this.cur = r.pag;
-	    curoff = 0;
+	    change(r.pag);
 	} else {
 	    r.pag.newp = 0;
 	    r.use();
-	    if(reset) {
-		this.cur = null;
-		curoff = 0;
-	    }
+	    if(reset)
+		change(null);
 	}
-	updlayout();
+	//updlayout();
     }
 
     public void tick(double dt) {
@@ -736,11 +740,9 @@ public class MenuGrid extends MovableWidget {
     public void uimsg(String msg, Object... args) {
 	if(msg == "goto") {
 	    if(args[0] == null)
-		cur = null;
+		change(null);
 	    else
-		cur = paginafor(ui.sess.getres((Integer)args[0]));
-	    curoff = 0;
-	    updlayout();
+		change(paginafor(ui.sess.getres((Integer)args[0])));
 	} else if(msg == "fill") {
 	    synchronized(paginae) {
 		int a = 0;
