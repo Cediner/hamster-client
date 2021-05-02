@@ -29,10 +29,13 @@ package haven.render;
 import java.lang.ref.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
+
+import com.google.common.flogger.FluentLogger;
 import haven.*;
 import static haven.Utils.eq;
 
 public class RenderTree implements RenderList.Adapter {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final Lock lock = new ReentrantLock();
     private final TreeSlot root;
     private final List<Client<?>> clients = new ArrayList<>();
@@ -537,6 +540,12 @@ public class RenderTree implements RenderList.Adapter {
 	}
 
 	private DepInfo setdstate(DepInfo nst) {
+	    if(!Thread.currentThread().getName().equals("Haven UI thread") &&
+		!Thread.currentThread().getName().equals("Loader thread") &&
+	    	!Thread.currentThread().getName().startsWith("ForkJoinPool")) { // UI tick spawned threads, safe
+		logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
+		Thread.dumpStack();
+	    }
 	    DepInfo pst = this.dstate;
 	    if(pst != null) {
 		if(deps != null) {
