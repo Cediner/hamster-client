@@ -97,16 +97,20 @@ public class Inventory extends Widget implements DTarget {
 	add(child);
 	Coord c = (Coord)args[0];
 	if(child instanceof GItem) {
-	    GItem i = (GItem)child;
-	    wmap.put(i, add(new WItem(i), c.mul(sqsz).add(1, 1)));
+	    GItem i = (GItem) child;
+	    synchronized (wmap) {
+		wmap.put(i, add(new WItem(i), c.mul(sqsz).add(1, 1)));
+	    }
 	}
     }
     
     public void cdestroy(Widget w) {
 	super.cdestroy(w);
 	if(w instanceof GItem) {
-	    GItem i = (GItem)w;
-	    ui.destroy(wmap.remove(i));
+	    GItem i = (GItem) w;
+	    synchronized (wmap) {
+		ui.destroy(wmap.remove(i));
+	    }
 	}
     }
     
