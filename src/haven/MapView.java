@@ -2366,7 +2366,9 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
 	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
 	base.updatePathfindingBlackout(true);
+	g.updatePathfindingBlackout(true);
 	final boolean los = finder.walk(new Coord(base.getc()), g.rc.floor());
+	g.updatePathfindingBlackout(false);
 	base.updatePathfindingBlackout(false);
 	return los;
     }

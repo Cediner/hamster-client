@@ -9,7 +9,8 @@
       "id": 0,
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\minv\\image-0.png",
-      "scale": 4.0
+      "scale": 4.0,
+      "scale-method": "Box"
     },
     {
       "layer-name": "image",

@@ -7,7 +7,7 @@ import hamster.ui.core.MovableWidget;
 import haven.*;
 
 import java.awt.event.KeyEvent;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,7 +23,7 @@ public class BeltWnd extends MovableWidget {
 
     public class BeltBtn extends Widget implements DTarget, DropTarget {
         //Key to activate
-        private final KeyBind key;
+        private final KeyBind key, key_ctrl;
         //Server slot id
         private int slot;
         //What to render, either a Pagina or a Resource, never both
@@ -35,9 +35,10 @@ public class BeltWnd extends MovableWidget {
         //tooltip
         private Tex tt;
 
-        private BeltBtn(final KeyBind key) {
+        private BeltBtn(final KeyBind key, final KeyBind key_ctrl) {
             super(Inventory.invsq.sz());
             this.key = key;
+            this.key_ctrl = key_ctrl;
             cancancel = false;
         }
 
@@ -129,10 +130,18 @@ public class BeltWnd extends MovableWidget {
         @Override
         public boolean globtype(char key, KeyEvent ev) {
             final String bind = KeyBind.generateSequence(ev, ui);
-            if(!this.key.check(bind, () -> { use(); return true; }))
-                return super.globtype(key, ev);
-            else
+            if(this.key.match(bind)) {
+                use();
                 return true;
+            } else if(this.key_ctrl.match(bind)) {
+                //key_ctrl is only for loftar stuff right now
+                if(bslot != null) {
+                    ui.gui.wdgmsg("belt", slot, 1, 2);
+                }
+                return true;
+            } else {
+                return super.globtype(key, ev);
+            }
         }
 
         @Override
@@ -246,10 +255,10 @@ public class BeltWnd extends MovableWidget {
     final IndirSetting<Boolean> locked_s;
 
     public BeltWnd(final String name, final BeltData data,
-		   final IndirSetting<String> style, final IndirSetting<Boolean> vis,
-		   final IndirSetting<Integer> page, final IndirSetting<Boolean> locked,
-		   final Collection<KeyBind> kbs,
-		   final int pages, final int start) {
+                   final IndirSetting<String> style, final IndirSetting<Boolean> vis,
+                   final IndirSetting<Integer> page, final IndirSetting<Boolean> locked,
+                   final List<KeyBind> kbs, final List<KeyBind> kbs_ctrl,
+                   final int pages, final int start) {
         super(name);
         this.data = data;
         try {
@@ -295,11 +304,8 @@ public class BeltWnd extends MovableWidget {
             upd_page();
         }));
 
-        {
-            int i = 0;
-            for(final KeyBind kb : kbs) {
-                btns[i++] = add(new BeltBtn(kb), new Coord(0,  0));
-            }
+        for(var i = 0;i < kbs.size(); ++i) {
+            btns[i] = add(new BeltBtn(kbs.get(i), kbs_ctrl.get(i)), new Coord(0,  0));
         }
         reposition();
         pack();

@@ -321,9 +321,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	questwnd = new QuestWnd();
 	//Setup hotbars
 	final BeltData data = new BeltData(usr + "::" + chrid);
-	hotbar1 = new BeltWnd("Hotbar 1", data, KB_STYLE, KB_VIS, KB_PAGE, KB_LOCK, Arrays.asList(KB_HK),5, 0);
-	hotbar2 = new BeltWnd("Hotbar 2", data, KB_F_STYLE, KB_F_VIS, KB_F_PAGE, KB_F_LOCK, Arrays.asList(KB_HK_F), 5, 50);
-	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), 4, 100);
+	hotbar1 = new BeltWnd("Hotbar 1", data, KB_STYLE, KB_VIS, KB_PAGE, KB_LOCK, Arrays.asList(KB_HK), Arrays.asList(KB_HK_C),5, 0);
+	hotbar2 = new BeltWnd("Hotbar 2", data, KB_F_STYLE, KB_F_VIS, KB_F_PAGE, KB_F_LOCK, Arrays.asList(KB_HK_F), Arrays.asList(KB_HK_C_F), 5, 50);
+	hotbar3 = new BeltWnd("Hotbar 3", data, KB_N_STYLE, KB_N_VIS, KB_N_PAGE, KB_N_LOCK, Arrays.asList(KB_HK_N), Arrays.asList(KB_HK_C_N), 4, 100);
 	//Setup keybinds
 	setKeybinds();
 	//Custom Wdgs
