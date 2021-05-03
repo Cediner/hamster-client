@@ -246,6 +246,10 @@
       // Keybind Options
       opt_kb_description: "Click on the black box to start editing. Right click to cancel or Enter to confirm. If your choice shows up Red/Purple then it overlaps another keybind.",
       kb_keybind: "Keybinds",
+      kb_script: "Script",
+      kb_script_kill_all: "Kill all scripts",
+      kb_script_kill_last: "Kill latest script ran",
+      kb_script_rerun_last: "Rerun last script ran",
       kb_ui: "UI",
       kb_ui_mm: "Toggle Minimap",
       kb_ui_inv: "Toggle Inventory",
@@ -571,6 +575,10 @@
       // Keybind Options
       opt_kb_description: "Cliquez sur la boîte noire pour commencer l'édition. Cliquez avec le bouton droit pour annuler ou sur Entrée pour confirmer. Si votre choix apparaît Rouge / Violet, il entre en conflit avec une autre association de clé.",
       kb_keybind: "Keybinds",
+      kb_script: "Script",
+      kb_script_kill_all: "Tuez tous les scripts",
+      kb_script_kill_last: "Tuer le dernier script exécuté",
+      kb_script_rerun_last: "Réexécuter le dernier script exécuté",
       kb_ui: "UI",
       kb_ui_mm: "Afficher / masquer la mini-carte",
       kb_ui_inv: "Afficher / masquer l'inventaire",

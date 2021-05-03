@@ -20,6 +20,8 @@ public class KeyBind {
 	KB_SESSION_CYCLE_FORWARD,
     	//Misc UI stuff
     	KB_MAKE_ONE, KB_MAKE_ALL, KB_SCM_ROOT, KB_SCM_BACK, KB_SCM_NEXT;
+    public static final KeyBind // Scripts
+    	KB_KILL_ALL_SCRIPTS, KB_KILL_LAST_SCRIPT, KB_RERUN_LAST_SCRIPT;
     public static final KeyBind // Gameplay
 	KB_TOGGLE_GRID, KB_TOGGLE_TIPS, KB_TOGGLE_HITBOXES, KB_TOGGLE_HIDDEN, KB_TOGGLE_PAUSE,
 	KB_QUICK_ACTION, KB_QUICK_BOARD, KB_EQ_HELD_INTO_LH, KB_EQ_HELD_INTO_RH, KB_TOGGLE_BORDER;
@@ -94,6 +96,12 @@ public class KeyBind {
 	    KB_SCM_NEXT = addKB("kb_ui_scm_next", UI_GRP, "N");
 	    KB_SESSION_CYCLE_BACK = addKB("kb_ui_session_cycle_back", UI_GRP, "C-Left");
 	    KB_SESSION_CYCLE_FORWARD = addKB("kb_ui_session_cycle_forward", UI_GRP, "C-Right");
+	}
+	{ // Script keybinds
+	     final String SC_GRP = TranslationLookup.get("kb_script");
+	    KB_KILL_ALL_SCRIPTS = addKB("kb_script_kill_all", SC_GRP ,"");
+	    KB_KILL_LAST_SCRIPT = addKB("kb_script_kill_last", SC_GRP , "");
+	    KB_RERUN_LAST_SCRIPT = addKB("kb_script_rerun_last", SC_GRP ,"");
 	}
 	{ // Gameplay Keybinds
 	    final String GP_GRP = TranslationLookup.get("kb_gameplay");

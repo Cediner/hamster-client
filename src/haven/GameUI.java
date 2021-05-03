@@ -1160,6 +1160,19 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    	binds.put(KB_KILL_ALL_SCRIPTS, () -> {
+	    ui.sess.details.context.killAll();
+    	    return true;
+	});
+    	binds.put(KB_KILL_LAST_SCRIPT, () -> {
+    	    ui.sess.details.context.killLast();
+	    return true;
+	});
+    	binds.put(KB_RERUN_LAST_SCRIPT, () -> {
+    	    ui.sess.details.context.lastScript()
+		    .ifPresent(desc -> ui.sess.details.context.launch(desc, ui.sess.details));
+	    return true;
+	});
     	binds.put(KB_QUICK_BOARD, () -> {
     	   if(map != null) {
 	       final Gob pl = ui.sess.glob.oc.getgob(map.plgob);

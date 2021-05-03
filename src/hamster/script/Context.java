@@ -7,12 +7,16 @@ import hamster.util.ObservableMapListener;
 import haven.Widget;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class Context {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     private final ObservableMap<Long, Script> scripts = new ObservableMap<>(new HashMap<>());
     private final IDPool idpool = new IDPool(0, Integer.MAX_VALUE);
+    private ScriptDescription lastScript = null;
 
     public Context() {
     }
@@ -26,6 +30,23 @@ public class Context {
 
     public void stopListeningTo(final ObservableMapListener<Long, Script> listener) {
         scripts.removeListener(listener);
+    }
+
+    public synchronized void killLast() {
+        if(scripts.size() > 0) {
+            scripts.values()
+                    .stream()
+                    .reduce((x, y) -> x.time() < y.time() ? x : y)
+                    .ifPresent(Script::interrupt);
+        }
+    }
+
+    public synchronized void killAll() {
+        scripts.values().forEach(Script::interrupt);
+    }
+
+    public Optional<ScriptDescription> lastScript() {
+        return Optional.ofNullable(lastScript);
     }
 
     public synchronized void remove(final long sid) {
@@ -49,14 +70,23 @@ public class Context {
 
     public synchronized void launchLispScript(final String script, final SessionDetails session) {
         final Script thr = new LispScript(script, idpool.next(), session);
+        lastScript = new ScriptDescription(script, ScriptDescription.Type.Lisp);
         scripts.put(thr.sid(), thr);
         thr.start();
     }
 
     public synchronized void launchLuaScript(final String script, final SessionDetails session) {
         final Script thr = new LuaScript(script, idpool.next(), session);
+        lastScript = new ScriptDescription(script, ScriptDescription.Type.Lua);
         scripts.put(thr.sid(), thr);
         thr.start();
+    }
+
+    public synchronized void launch(final ScriptDescription desc, final SessionDetails session) {
+        switch (desc.type) {
+            case Lisp -> launchLispScript(desc.name, session);
+            case Lua -> launchLuaScript(desc.name, session);
+        }
     }
 
     public synchronized void dispatchmsg(final Widget wdg, final String msg, final Object... args) {
