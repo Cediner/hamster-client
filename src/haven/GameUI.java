@@ -413,19 +413,16 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public static class Hidewnd extends Window {
 	Hidewnd(Coord sz, String cap, boolean lg) {
-	    super(sz, cap, lg);
+	    super(sz, cap, cap, lg);
 	}
 
 	Hidewnd(Coord sz, String cap) {
-	    super(sz, cap);
+	    super(sz, cap, cap);
 	}
 
-	public void wdgmsg(Widget sender, String msg, Object... args) {
-	    if((sender == this) && msg.equals("close")) {
-		this.hide();
-		return;
-	    }
-	    super.wdgmsg(sender, msg, args);
+	@Override
+	public void close() {
+	    hide();
 	}
     }
 
