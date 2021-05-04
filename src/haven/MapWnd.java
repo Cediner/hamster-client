@@ -39,6 +39,7 @@ import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
 import hamster.MouseBind;
+import hamster.data.DirMap;
 import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.waypoint.WaypointPathfinder;
@@ -495,6 +496,12 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			    drawmovement(g.reclip(view.c, view.sz), loc);
 			    //Draw tracking
 			    drawTracking(g, loc);
+			    //Draw nearest thingwall name
+			    file.getNearestThingwall(loc).ifPresent(mark ->
+				    FastText.asprintf(g, sz.sub(Window.wbox.bbroff().x, 0), 1.0, 1.0,
+					    "%s - %s %d", mark.nm,
+					    DirMap.anglename(loc.tc.angle(mark.tc)),
+					    Math.round(loc.tc.dist(mark.tc))));
 		}));
 	    } catch (Loading ignored){}
 	}

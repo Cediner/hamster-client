@@ -362,6 +362,27 @@ public class MapFile {
 	}
     }
 
+    public Optional<SMarker> getNearestThingwall(final MiniMap.Location loc) {
+        if(!lock.readLock().tryLock())
+            return Optional.empty();
+        try {
+            SMarker mark = null;
+            double dist = Double.MAX_VALUE;
+            for(final var mk : smarkers.values()) {
+                if(mk.seg == loc.seg.id && mk.res.name.equals("gfx/terobjs/mm/thingwall")) {
+                    final var d = loc.tc.dist(mk.tc);
+                    if(d < dist) {
+                        dist = d;
+                        mark = mk;
+		    }
+		}
+	    }
+            return Optional.ofNullable(mark);
+	} finally {
+            lock.readLock().unlock();
+	}
+    }
+
     /**
      * Generate a waypoint map within the given segment
      */

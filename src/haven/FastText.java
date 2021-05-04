@@ -27,9 +27,9 @@
 package haven;
 
 import haven.render.*;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+
+import java.awt.*;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 
 public class FastText {
@@ -57,12 +57,18 @@ public class FastText {
 	    cx += cw[i] + 2;
 	}
 	BufferedImage buf = TexI.mkbuf(new Coord(cx, meter.getAscent() + meter.getDescent()));
-	Graphics g = buf.getGraphics();
+	final var g = buf.createGraphics();
 	g.setFont(font);
-	for(char i = 32; i < 256; i++)
+	for(char i = 32; i < 256; i++) {
 	    g.drawString(Character.toString(i), sx[i], meter.getAscent());
+	}
 	g.dispose();
-	ct = new TexI(buf);
+	final var fbuf = TexI.mkbuf(new Coord(buf.getWidth(), buf.getHeight()*2));
+	final var outlines = Utils.outline2(buf, Color.BLACK);
+	final var fg = fbuf.createGraphics();
+	fg.drawImage(buf, 0, 0, null);
+	fg.drawImage(outlines, 0, buf.getHeight(), null);
+	ct = new TexI(fbuf);
     }
 
     public static int textw(String text) {
@@ -74,6 +80,58 @@ public class FastText {
 
     public static Coord size(final String text) {
 	return new Coord(textw(text), meter.getHeight());
+    }
+
+    public static void asprint(GOut g, Coord c, double ax, double ay, String text) {
+	Coord lc = c.add(g.tx);
+	lc.x -= Math.round(textw(text) * ax);
+	int h = meter.getAscent() + meter.getDescent();
+	if (ay > 0)
+	    lc.y -= Math.round(h * ay);
+	if(lc.isect(g.parent().ul, g.parent().sz())) {
+	    short[] data = new short[text.length() * 4 * 4];
+	    short[] idx = new short[text.length() * 6];
+	    for (int i = 0; i < text.length(); i++) {
+		char cc = text.charAt(i);
+		int vo = i * 4, so = vo * 4, io = i * 6;
+		int w = cw[cc];
+		short x1 = (short) lc.x, x2 = (short) (lc.x + w), y1 = (short) lc.y, y2 = (short) (lc.y + h);
+		short tx1 = (short) (((sx[cc] * 65535) + (ct.tdim.x / 2)) / ct.tdim.x),
+			tx2 = (short) ((((sx[cc] + w) * 65535) + (ct.tdim.x / 2)) / ct.tdim.x);
+		short ty1 = (short)((h * 65535) / ct.tdim.y), ty2 = (short) ((h * 2 * 65535) / ct.tdim.y);
+		data[so + 0] = x1;
+		data[so + 1] = y1;
+		data[so + 2] = tx1;
+		data[so + 3] = ty1;
+		data[so + 4] = x1;
+		data[so + 5] = y2;
+		data[so + 6] = tx1;
+		data[so + 7] = ty2;
+		data[so + 8] = x2;
+		data[so + 9] = y1;
+		data[so + 10] = tx2;
+		data[so + 11] = ty1;
+		data[so + 12] = x2;
+		data[so + 13] = y2;
+		data[so + 14] = tx2;
+		data[so + 15] = ty2;
+		idx[io + 0] = (short) (vo + 0);
+		idx[io + 1] = (short) (vo + 1);
+		idx[io + 2] = (short) (vo + 2);
+		idx[io + 3] = (short) (vo + 1);
+		idx[io + 4] = (short) (vo + 3);
+		idx[io + 5] = (short) (vo + 2);
+		lc.x += w;
+	    }
+	    g.out.draw(g.state().copy().prep(ct.st()),
+		    new Model(Model.Mode.TRIANGLES,
+			    new VertexArray(vf, new VertexArray.Buffer(data.length * 2, DataBuffer.Usage.EPHEMERAL, DataBuffer.Filler.of(data))),
+			    new Model.Indices(idx.length, NumberFormat.UINT16, DataBuffer.Usage.EPHEMERAL, DataBuffer.Filler.of(idx))));
+	}
+    }
+
+    public static void asprintf(GOut g, Coord c, double ax, double ay, String fmt, Object... args) {
+	asprint(g, c, ax, ay, String.format(fmt, args));
     }
 
     public static void aprint(GOut g, Coord c, double ax, double ay, String text) {
