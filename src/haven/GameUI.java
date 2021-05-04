@@ -655,10 +655,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		for(final var buff : settings.buffs()) {
 		    if(buff.status.get()) {
 			togglebuff(buff.status.get(), buff.res);
+			if(buff.status.get() && buff.menures != null)
+			    menu.duse(buff.menures);
 		    }
-		}
-		if(settings.PARTYPERMS.get()) {
-		    menu.duse("paginae/act/permshare");
 		}
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
