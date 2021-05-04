@@ -633,7 +633,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}
 		ResCache mapstore = SQLResCache.mapdb;
 		if (mapstore != null) {
-		    MapFile file = MapFile.load(ui, mapstore, mapfilename());
+		    MapFile file = MapFile.load(mapstore, mapfilename());
 		    mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		    mapmarkers = new MapMarkerWnd(mapfile);
 		    mapmarkers.hide();
@@ -875,7 +875,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private Coord lastsavegrid = null;
     private int lastsaveseq = -1;
     private void mapfiletick() {
-        mapfile.file.tick();
 	MapView map = this.map;
 	if((map == null) || (mapfile == null))
 	    return;

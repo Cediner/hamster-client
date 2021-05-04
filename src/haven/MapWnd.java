@@ -592,22 +592,20 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     }
 
     public void markWaypoint(final Coord2d mc) {
-        synchronized (deferred) {
-            deferred.add(() -> {
-		final Coord2d prc = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob).rc;
-		final Coord offset = mc.sub(prc).floor(tilesz);
-		view.resolveo(player).ifPresent(loc -> {
-		    if (!view.file.lock.writeLock().tryLock())
-			throw (new Loading());
-		    try {
-		        final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
+        final var pl = ui.gui.map.player();
+        if(pl != null) {
+	    view.resolveo(player).ifPresent(loc -> {
+	        final var wid = view.file.nextWaypointID();
+		synchronized (deferred) {
+		    deferred.add(() -> {
+			final Coord2d prc = pl.rc;
+			final Coord offset = mc.sub(prc).floor(tilesz);
+			final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
 				"Waypoint", Color.WHITE, new Resource.Spec(Resource.remote(), MarkerData.waypointmarker.res),
-				view.file.waypointids.next());
+				wid);
 			view.file.add(mark);
-		    } finally {
-			view.file.lock.writeLock().unlock();
-		    }
-		});
+		    });
+		}
 	    });
 	}
     }

@@ -39,8 +39,6 @@ import hamster.script.pathfinding.waypoint.Waypoint;
 import hamster.script.pathfinding.waypoint.WaypointMap;
 import hamster.ui.minimap.*;
 import hamster.util.IDPool;
-import hamster.util.msg.MailBox;
-import hamster.util.msg.MessageBus;
 import haven.render.*;
 import haven.Defer.Future;
 import haven.resutil.Ridges;
@@ -49,6 +47,7 @@ import static haven.MCache.cmaps;
 
 public class MapFile {
     private static final FluentLogger logger = FluentLogger.forEnclosingClass();
+    private static MapFile instance = null;
     public static boolean debug = false;
     public final ResCache store;
     public final String filename;
@@ -58,73 +57,15 @@ public class MapFile {
     public final Map<Long, LinkedMarker> lmarkers = new HashMap<>();
     public final Map<Long, WaypointMarker> wmarkers = new HashMap<>();
     public int markerseq = 0;
-    public IDPool markerids, waypointids;
+    public final IDPool markerids, waypointids;
     public final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    // MessageBus / MailBox System Message
-    public static final hamster.util.msg.MessageBus<MapFileMail> MessageBus = new MessageBus<>();
-    private final MailBox<MapFileMail> mailbox;
-    public static abstract class MapFileMail extends hamster.util.msg.Message {
-	public abstract void apply(final MapFile file);
-    }
-
-    public static class AddMarkerMail extends MapFileMail {
-        private final Marker mark;
-        private final MapFile src;
-        public AddMarkerMail(final MapFile src, final Marker mark) {
-            this.src = src;
-            this.mark = mark;
-	}
-
-	@Override
-	public void apply(MapFile file) {
-	    if(file != src) {
-	        file.addNoSave(mark);
-	    }
-	}
-    }
-
-    public static class RemoveMarkerMail extends MapFileMail {
-	private final Marker mark;
-	private final MapFile src;
-	public RemoveMarkerMail(final MapFile src, final Marker mark) {
-	    this.src = src;
-	    this.mark = mark;
-	}
-
-	@Override
-	public void apply(MapFile file) {
-	    if(file != src) {
-		file.removeNoSave(mark);
-	    }
-	}
-    }
-
-    public static class UpdateMarkerMail extends MapFileMail {
-	private final Marker mark;
-	private final MapFile src;
-	public UpdateMarkerMail(final MapFile src, final Marker mark) {
-	    this.src = src;
-	    this.mark = mark;
-	}
-
-	@Override
-	public void apply(MapFile file) {
-	    if(file != src) {
-		file.updateNoSave(mark);
-	    }
-	}
-    }
-
-    public MapFile(UI ui, ResCache store, String filename) {
+    public MapFile(ResCache store, String filename,
+		   IDPool markerids, IDPool waypointids) {
 	this.store = store;
 	this.filename = filename;
-	this.mailbox = new MailBox<>(ui.office);
-	MessageBus.subscribe(this.mailbox);
-    }
-
-    public void tick() {
-        mailbox.processMail(mail -> mail.apply(this));
+    	this.markerids = markerids;
+    	this.waypointids = waypointids;
     }
 
     private void checklock() {
@@ -132,7 +73,7 @@ public class MapFile {
 	    throw(new IllegalMonitorStateException());
     }
 
-    private String mangle(String datum) {
+    private static String mangle(String filename, String datum) {
 	StringBuilder buf = new StringBuilder();
 	buf.append("map/");
 	if(!filename.equals("")) {
@@ -142,15 +83,24 @@ public class MapFile {
 	buf.append(datum);
 	return(buf.toString());
     }
+
+    private String mangle(String datum) {
+        return mangle(filename, datum);
+    }
+
+    private static InputStream sfetch(final ResCache store, String filename, String ctl, Object... args) throws IOException {
+	return(store.fetch(mangle(filename, String.format(ctl, args))));
+    }
+
     private InputStream sfetch(String ctl, Object... args) throws IOException {
-	return(store.fetch(mangle(String.format(ctl, args))));
+        return sfetch(store, filename, ctl, args);
     }
     private OutputStream sstore(String ctl, Object... args) throws IOException {
 	return(store.store(mangle(String.format(ctl, args))));
     }
 
     public static void warn(Throwable cause, String msg) {
-	Debug.log.printf("mapfile warning: %s\n", msg);
+	logger.atWarning().log("mapfile warning: %s\n", msg);
 	new Warning(cause, msg).issue();
     }
     public static void warn(Throwable cause, String fmt, Object... args) {
@@ -160,44 +110,47 @@ public class MapFile {
 	warn(null, fmt, args);
     }
 
-    public static MapFile load(UI ui, ResCache store, String filename) {
-	MapFile file = new MapFile(ui, store, filename);
-	InputStream fp;
-	try {
-	    fp = file.sfetch("index");
-	} catch(FileNotFoundException e) {
-	    file.markerids = new IDPool(0, Long.MAX_VALUE);
-	    file.waypointids = new IDPool(0, Long.MAX_VALUE);
-	    return(file);
-	} catch(IOException e) {
-	    return(null);
-	}
-	try(StreamMessage data = new StreamMessage(fp)) {
-	    int ver = data.uint8();
-	    if(ver == 1 || ver == 2 || ver == 3) {
-		file.markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
-		file.waypointids = ver < 3 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
-		for(int i = 0, no = data.int32(); i < no; i++)
-		    file.knownsegs.add(data.int64());
-		for(int i = 0, no = data.int32(); i < no; i++) {
-		    Marker mark = loadmarker(file, data);
-		    file.markers.add(mark);
-		    if(mark instanceof SMarker)
-			file.smarkers.put(((SMarker)mark).oid, (SMarker)mark);
-		    else if (mark instanceof LinkedMarker)
-			file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		    else if(mark instanceof WaypointMarker)
-		        file.wmarkers.put(((WaypointMarker) mark).id, (WaypointMarker) mark);
-		}
-	    } else {
-		warn("unknown mapfile index version: %d", ver);
-		return(null);
+    public synchronized static MapFile load(ResCache store, String filename) {
+        if(instance != null)
+            return instance;
+        else {
+	    InputStream fp;
+	    try {
+		fp = sfetch(store, filename, "index");
+	    } catch (FileNotFoundException e) {
+	        return new MapFile(store, filename, new IDPool(0, Long.MAX_VALUE), new IDPool(0, Long.MAX_VALUE));
+	    } catch (IOException e) {
+		return (null);
 	    }
-	} catch(Message.BinError e) {
-	    warn(e, "error when loading index: %s", e);
-	    return(null);
+	    MapFile file;
+	    try (StreamMessage data = new StreamMessage(fp)) {
+		int ver = data.uint8();
+		if (ver == 1 || ver == 2 || ver == 3) {
+		    final var markerids = ver == 1 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
+		    final var waypointids = ver < 3 ? new IDPool(0, Long.MAX_VALUE) : new IDPool(data);
+		    file = new MapFile(store, filename, markerids, waypointids);
+		    for (int i = 0, no = data.int32(); i < no; i++)
+			file.knownsegs.add(data.int64());
+		    for (int i = 0, no = data.int32(); i < no; i++) {
+			Marker mark = loadmarker(file, data);
+			file.markers.add(mark);
+			if (mark instanceof SMarker)
+			    file.smarkers.put(((SMarker) mark).oid, (SMarker) mark);
+			else if (mark instanceof LinkedMarker)
+			    file.lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
+			else if (mark instanceof WaypointMarker)
+			    file.wmarkers.put(((WaypointMarker) mark).id, (WaypointMarker) mark);
+		    }
+		} else {
+		    warn("unknown mapfile index version: %d", ver);
+		    return (null);
+		}
+	    } catch (Message.BinError e) {
+		warn(e, "error when loading index: %s", e);
+		return (null);
+	    }
+	    return (instance = file);
 	}
-	return(file);
     }
 
     private void save() {
@@ -411,6 +364,12 @@ public class MapFile {
 	return new WaypointMap(map, start, goal);
     }
 
+    public long nextWaypointID() {
+        synchronized (waypointids) {
+            return waypointids.next();
+	}
+    }
+
     private static Marker loadmarker(final MapFile file, Message fp) {
 	int ver = fp.uint8();
 	if(ver == 1) {
@@ -548,31 +507,11 @@ public class MapFile {
 	}
     }
 
-    public void addNoSave(final Marker mark) {
-	lock.writeLock().lock();
-	try {
-	    if(!markers.contains(mark)) {
-		if (markers.add(mark)) {
-		    if (mark instanceof SMarker)
-			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
-		    else if (mark instanceof LinkedMarker)
-			lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		    else if(mark instanceof WaypointMarker)
-		        wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
-		    markerseq++;
-		}
-	    }
-	} finally {
-	    lock.writeLock().unlock();
-	}
-    }
-
     public void add(Marker mark) {
 	lock.writeLock().lock();
 	try {
 	    if(!markers.contains(mark)) {
 		if (markers.add(mark)) {
-		    MessageBus.send(new AddMarkerMail(this, mark));
 		    if (mark instanceof SMarker)
 			smarkers.put(((SMarker) mark).oid, (SMarker) mark);
 		    else if (mark instanceof LinkedMarker)
@@ -588,35 +527,10 @@ public class MapFile {
 	}
     }
 
-    public void removeNoSave(Marker mark) {
-	lock.writeLock().lock();
-	try {
-	    if(markers.remove(mark)) {
-		if(mark instanceof SMarker)
-		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
-		if (mark instanceof LinkedMarker) {
-		    markerids.release(((LinkedMarker) mark).id);
-		    lmarkers.remove(((LinkedMarker) mark).id);
-		} else if(mark instanceof WaypointMarker) {
-		    for(final var link : ((WaypointMarker) mark).links) {
-			if(wmarkers.get(link) != null)
-			    wmarkers.get(link).links.remove(((WaypointMarker)mark).id);
-		    }
-		    waypointids.release(((WaypointMarker) mark).id);
-		    wmarkers.remove(((WaypointMarker) mark).id);
-		}
-		markerseq++;
-	    }
-	} finally {
-	    lock.writeLock().unlock();
-	}
-    }
-
     public void remove(Marker mark) {
 	lock.writeLock().lock();
 	try {
 	    if(markers.remove(mark)) {
-		MessageBus.send(new RemoveMarkerMail(this, mark));
 		if(mark instanceof SMarker)
 		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
 		if (mark instanceof LinkedMarker) {
@@ -638,39 +552,10 @@ public class MapFile {
 	}
     }
 
-    public void updateNoSave(Marker mark) {
-	lock.readLock().lock();
-	try {
-	    if(markers.contains(mark)) {
-	        markers.remove(mark);
-		if(mark instanceof SMarker)
-		    smarkers.remove(((SMarker)mark).oid, (SMarker)mark);
-		if (mark instanceof LinkedMarker) {
-		    markerids.release(((LinkedMarker) mark).id);
-		    lmarkers.remove(((LinkedMarker) mark).id);
-		} else if(mark instanceof WaypointMarker) {
-		    waypointids.release(((WaypointMarker) mark).id);
-		    wmarkers.remove(((WaypointMarker) mark).id);
-		}
-	        markers.add(mark);
-		if (mark instanceof SMarker)
-		    smarkers.put(((SMarker) mark).oid, (SMarker) mark);
-		else if (mark instanceof LinkedMarker)
-		    lmarkers.put(((LinkedMarker) mark).id, (LinkedMarker) mark);
-		else if(mark instanceof WaypointMarker)
-		    wmarkers.put(((WaypointMarker)mark).id, (WaypointMarker) mark);
-		markerseq++;
-	    }
-	} finally {
-	    lock.readLock().unlock();
-	}
-    }
-
     public void update(Marker mark) {
 	lock.readLock().lock();
 	try {
 	    if(markers.contains(mark)) {
-		MessageBus.send(new UpdateMarkerMail(this, mark));
 		defersave();
 		markerseq++;
 	    }
