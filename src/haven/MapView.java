@@ -2429,9 +2429,24 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
+    public void moveto(final Gob g, final int button, final int uimods) {
+        clearmovequeue();
+	wdgmsg("click", ui.mc,
+		g.rc.floor(posres),
+		button, ui.modflags(), 0,
+		(int)g.id,
+		g.rc.floor(posres),
+		0, -1);
+    }
+
+    public void moveto(final Coord2d c, final int button, final int uimods) {
+	clearmovequeue();
+	wdgmsg("click", ui.mc, c.floor(posres), button, uimods);
+    }
+
     public void moveto(final Coord2d c) {
 	clearmovequeue();
-	wdgmsg("click", new Coord(1, 1), c.floor(posres), 1, 0);
+	wdgmsg("click", ui.mc, c.floor(posres), 1, 0);
     }
 
     public void relMove(final double x, final double y) {

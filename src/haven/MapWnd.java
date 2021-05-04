@@ -346,6 +346,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 					final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
 					final var moves = pathfinder.path();
 					if(moves != null) {
+					    ui.gui.map.clearmovequeue();
 					    for(final var mv : moves) {
 					        ui.gui.map.queuemove(mv);
 					    }
