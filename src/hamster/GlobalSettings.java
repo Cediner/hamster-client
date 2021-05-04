@@ -240,6 +240,7 @@ public class GlobalSettings {
     public static final IndirSetting<Boolean> SHOWITEMQ = new IndirSetting<>(global, "ui.inv.show-item-quality", true);
     public static final IndirSetting<Boolean> SHOWITEMWEAR = new IndirSetting<>(global, "ui.inv.show-item-wear", true);
     public static final IndirSetting<Boolean> SHOWITEMCONT = new IndirSetting<>(global, "ui.inv.show-item-cont", true);
+    public static final IndirSetting<Boolean> SHOWITEMWM = new IndirSetting<>(global, "ui.inv.show-item-well-mined", true);
     public static final IndirSetting<Boolean> ALWAYSITEMLONGTIPS = new IndirSetting<>(global, "ui.inv.always-show-longtip", true);
     public static final IndirSetting<Boolean> AUTOEQUIP = new IndirSetting<>(global, "ui.inv.auto-equip", true);
     public static final IndirSetting<Boolean> WATERDROPITEMCTRL = new IndirSetting<>(global, "ui.dont-drop-item-over-water", false);
