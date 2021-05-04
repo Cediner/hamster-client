@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapExport {
-    private final Resource markres = Resource.local().loadwait("custom/mm/pl/unknown");
+    private final Resource markres = Resource.local().loadwait("custom/mm/pl/arrow");
     private final Map<Coord, Grid> gridmap = new HashMap<>();
     private final Coord ul, br;
 
