@@ -93,8 +93,10 @@ public class WaypointPathfinder {
             final Node endnode = new Node(null, goal, 0, heuristic.distance(goal, start));
             startpq.add(stnode);
             startNodes.put(start, stnode);
+            ignore.add(start);
             goalpq.add(endnode);
             endNodes.put(goal, endnode);
+            ignore.add(goal);
             fs = ft = heuristic.distance(start, goal);
         }
 

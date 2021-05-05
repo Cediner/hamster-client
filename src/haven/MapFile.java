@@ -339,7 +339,8 @@ public class MapFile {
     /**
      * Generate a waypoint map within the given segment
      */
-    public WaypointMap generateWaypointMap(final Segment seg, final WaypointMarker goalm, final Coord starttc, final Coord2d startmc) {
+    public WaypointMap generateWaypointMap(final Segment seg, final WaypointMarker goalm,
+					   final Coord starttc, final Coord2d startmc) {
 	final var map = new HashMap<Long, Waypoint>();
 	Waypoint start = null, goal = null;
 	double dist = Double.MAX_VALUE;
@@ -349,7 +350,7 @@ public class MapFile {
 		if (wp.seg == seg.id) {
 		    final var offset = new Coord2d(wp.tc.sub(starttc)).mul(MCache.tilesz);
 		    final var waypoint = new Waypoint(wp.id, startmc.add(offset), wp.links);
-		    if(goalm == wp)
+		    if(goalm.id == wp.id)
 		        goal = waypoint;
 		    map.put(wp.id, waypoint);
 		    if(startmc.dist(waypoint.c) < dist) {
