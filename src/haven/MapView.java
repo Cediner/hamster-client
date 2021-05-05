@@ -45,7 +45,9 @@ import hamster.MouseBind;
 import hamster.gob.Hidden;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.NBAPathfinder;
+import hamster.script.pathfinding.waypoint.WaypointPathfinder;
 import hamster.ui.MapViewExt;
+import hamster.ui.minimap.WaypointMarker;
 import hamster.util.JobSystem;
 import hamster.util.msg.MailBox;
 import hamster.util.msg.MessageBus;
@@ -2401,6 +2403,48 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	g.updatePathfindingBlackout(false);
 	base.updatePathfindingBlackout(false);
 	return moves != null ? moves.toArray(new Move[0]) : null;
+    }
+
+    @SuppressWarnings("unused") // For scripting
+    public Move[] findpath(final WaypointMarker mark) {
+        final Gob me = player();
+        if(me != null) {
+	    final var ploco = ui.gui.mapfile.view.resolveo(ui.gui.mapfile.player);
+	    if(ploco.isPresent()) {
+	        final var ploc = ploco.get();
+		if (ploc.seg.id == mark.seg) {
+		    final var map = ui.gui.mapfile.view.file.generateWaypointMap(ploc.seg, mark,
+			    ploc.tc, me.rc);
+		    final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
+		    final var moves = pathfinder.path();
+		    return moves != null ? moves.toArray(new Move[0]) : null;
+		} else {
+		    ui.gui.error("Can't path to waypoints on different map segments than player");
+		}
+	    }
+	}
+        return new Move[0];
+    }
+
+    @SuppressWarnings("unused") // For scripting
+    public Move[] findpathbetween(final WaypointMarker start, final WaypointMarker goal) {
+	final Gob me = player();
+        if(start.seg == goal.seg && me != null) {
+	    final var ploco = ui.gui.mapfile.view.resolveo(ui.gui.mapfile.player);
+	    if(ploco.isPresent()) {
+		final var ploc = ploco.get();
+		if (ploc.seg.id == start.seg) {
+		    final var map = ui.gui.mapfile.view.file.generateWaypointMap(ploc.seg, start, goal,
+			    ploc.tc, me.rc);
+		    final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
+		    final var moves = pathfinder.path();
+		    return moves != null ? moves.toArray(new Move[0]) : null;
+		} else {
+		    ui.gui.error("Can't path to waypoints on different map segments than player");
+		}
+	    }
+	}
+	return new Move[0];
     }
 
     public void pathto(final Coord2d c) {

@@ -69,7 +69,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     public final MapView mv;
     public final Collection<String> overlays = new java.util.concurrent.CopyOnWriteArraySet<>();
     public boolean hmarkers = false;
-    private final Locator player;
+    public final Locator player;
     private final Widget toolbar;
     private final Frame viewf;
     private MapMarkerWnd markers = null;
@@ -361,6 +361,9 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			    } catch (Exception e) {
 				logger.atWarning().withCause(e).log("Failed to path to waypoint");
 			    }
+			});
+		        opts.put("Select for script", (opt) -> {
+		            ui.sess.details.context.dispatchmsg(this, "waypoint-select", mark.m);
 			});
 		    }
 		    ui.gui.add(new FlowerMenu(opts), ui.mc);
