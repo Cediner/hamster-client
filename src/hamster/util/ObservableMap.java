@@ -31,6 +31,10 @@ public class ObservableMap<K, V> {
         return base.getOrDefault(key, def);
     }
 
+    public int size() {
+        return base.size();
+    }
+
     public boolean containsKey(K key) {
         return base.containsKey(key);
     }
@@ -39,6 +43,8 @@ public class ObservableMap<K, V> {
         listeners.add(listener);
         listener.init(base);
     }
+
+    public Set<K> keyset() { return base.keySet(); }
 
     public Collection<V> values() {
         return base.values();

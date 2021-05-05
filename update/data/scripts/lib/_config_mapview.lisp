@@ -4,6 +4,7 @@
 ;;;; MapView API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconstant +mapview+ "haven.MapView")
+(defconstant +waypoint+ "hamster.ui.minimap.WaypointMarker")
 (java-field mv-plgob "rlplgob")
 (java-func +mapview+ mv-has-moves "hasmoves")
 (java-func +mapview+ mv-find-path-1 "findpath" +coord2d+)
@@ -17,6 +18,8 @@
 (java-func +mapview+ mv-queue-move-1 "queuemove" +coord2d+) 
 (java-func +mapview+ mv-los-1 "los" +coord2d+)
 (java-func +mapview+ mv-los-gob-1 "los" +gob+)
+(java-func +mapview+ mv-path-to-wp-1 "findpath" +waypoint+)
+(java-func +mapview+ mv-path-to-wp-2 "findpathbetween" +waypoint+ +waypoint+)
 
 (defmacro mv-clear-moves ()
   `(mv-clear-moves-1 (mv)))
@@ -128,6 +131,14 @@
   (let ((path (mv-find-path mc)))
     (mv-walk-path path)))
 
+(defun mv-path-to-waypoint (waypoint)
+  (let ((path (mv-path-to-wp-1 (mv) waypoint)))
+    (mv-walk-path path)))
+
+(defun mv-path-between-waypoints (start finish)
+  (let ((path (mv-path-to-wp-2 (mv) start finish)))
+    (mv-walk-path path)))
+
 (defun mv-path-to-gob (gob)
   (let ((path (mv-find-path-to-gob gob)))
     (mv-walk-path path)))
@@ -148,4 +159,4 @@
 
 (export '(move move-apply move-destination
           mv-walk-path mv-reverse-path mv-path-distance
-          mv-path-to mv-path-to-gob mv-smart-move mv-smart-move-to-gob))
+          mv-path-to mv-path-to-waypoint mv-path-between-waypoints mv-path-to-gob mv-smart-move mv-smart-move-to-gob))

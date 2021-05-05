@@ -98,6 +98,7 @@ public class UIPanel extends Scrollport {
         }
         { //Inventory
             inv.add(new IndirCheckBox(TranslationLookup.get("opt_ui_inv_q"), GlobalSettings.SHOWITEMQ));
+            inv.add(new IndirCheckBox(TranslationLookup.get("opt_ui_inv_wellmined"), GlobalSettings.SHOWITEMWM));
             inv.add(new IndirCheckBox(TranslationLookup.get("opt_ui_inv_wear"), GlobalSettings.SHOWITEMWEAR));
             inv.add(new IndirCheckBox(TranslationLookup.get("opt_ui_inv_cont"), GlobalSettings.SHOWITEMCONT));
             inv.add(new IndirCheckBox(TranslationLookup.get("opt_ui_inv_meter"), GlobalSettings.SHOWMETERPER));

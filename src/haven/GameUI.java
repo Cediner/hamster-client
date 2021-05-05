@@ -413,19 +413,16 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 
     public static class Hidewnd extends Window {
 	Hidewnd(Coord sz, String cap, boolean lg) {
-	    super(sz, cap, lg);
+	    super(sz, cap, cap, lg);
 	}
 
 	Hidewnd(Coord sz, String cap) {
-	    super(sz, cap);
+	    super(sz, cap, cap);
 	}
 
-	public void wdgmsg(Widget sender, String msg, Object... args) {
-	    if((sender == this) && msg.equals("close")) {
-		this.hide();
-		return;
-	    }
-	    super.wdgmsg(sender, msg, args);
+	@Override
+	public void close() {
+	    hide();
 	}
     }
 
@@ -636,7 +633,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		}
 		ResCache mapstore = SQLResCache.mapdb;
 		if (mapstore != null) {
-		    MapFile file = MapFile.load(ui, mapstore, mapfilename());
+		    MapFile file = MapFile.load(mapstore, mapfilename());
 		    mapfile = new MapWnd(file, map, Utils.getprefc("wndsz-map", UI.scale(new Coord(700, 500))), "Map");
 		    mapmarkers = new MapMarkerWnd(mapfile);
 		    mapmarkers.hide();
@@ -658,10 +655,9 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		for(final var buff : settings.buffs()) {
 		    if(buff.status.get()) {
 			togglebuff(buff.status.get(), buff.res);
+			if(buff.status.get() && buff.menures != null)
+			    menu.duse(buff.menures);
 		    }
-		}
-		if(settings.PARTYPERMS.get()) {
-		    menu.duse("paginae/act/permshare");
 		}
 	    }
 	    case "fight" -> fv = add((Fightview) child, sz.x - child.sz.x, 0);
@@ -879,7 +875,6 @@ public class GameUI extends ConsoleHost implements Console.Directory {
     private Coord lastsavegrid = null;
     private int lastsaveseq = -1;
     private void mapfiletick() {
-        mapfile.file.tick();
 	MapView map = this.map;
 	if((map == null) || (mapfile == null))
 	    return;
@@ -1160,6 +1155,19 @@ public class GameUI extends ConsoleHost implements Console.Directory {
         binds.put(KB_TOGGLE_OPTS, () -> { opts.toggleVisibility(); return true; });
     	binds.put(KB_SCREENSHOT, () -> { Screenshooter.take(this, Config.screenurl); return true;});
     	binds.put(KB_FOCUS_MAP, () -> { setfocus(map); return true; });
+    	binds.put(KB_KILL_ALL_SCRIPTS, () -> {
+	    ui.sess.details.context.killAll();
+    	    return true;
+	});
+    	binds.put(KB_KILL_LAST_SCRIPT, () -> {
+    	    ui.sess.details.context.killLast();
+	    return true;
+	});
+    	binds.put(KB_RERUN_LAST_SCRIPT, () -> {
+    	    ui.sess.details.context.lastScript()
+		    .ifPresent(desc -> ui.sess.details.context.launch(desc, ui.sess.details));
+	    return true;
+	});
     	binds.put(KB_QUICK_BOARD, () -> {
     	   if(map != null) {
 	       final Gob pl = ui.sess.glob.oc.getgob(map.plgob);
