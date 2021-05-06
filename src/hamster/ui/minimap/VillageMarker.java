@@ -20,11 +20,7 @@ public class VillageMarker extends Marker {
 
     @Override
     public String tip(final UI ui) {
-	if (nm.equals("Banner") && !GlobalSettings.SHOWVMARKERTIPS.get()) {
-	    return "";
-	} else {
-	    return String.format("[%s] %s", village, nm);
-	}
+	return String.format("[%s] %s", village, nm);
     }
 
     @Override
@@ -51,7 +47,7 @@ public class VillageMarker extends Marker {
 		g.frect(c.sub(new Coord(offset, offset).div(scale)), new Coord(isz, isz).div(scale));
 		g.chcolor();
 	    }
-	    if (GlobalSettings.SHOWMMMARKERNAMES.get()) {
+	    if (GlobalSettings.SHOWMMMARKERNAMES.get() && (nm.equals("Idol") || GlobalSettings.SHOWVMARKERTIPS.get())) {
 		final Coord tipc = new Coord(ul.x + img.tex().sz().x / 2 - tip.sz().x / 2, ul.y - tip.sz().y);
 		g.chcolor(MarkerData.getVillageBoldColor(village));
 		g.image(tip.tex(), tipc);

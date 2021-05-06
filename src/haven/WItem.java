@@ -281,6 +281,14 @@ public class WItem extends Widget implements DTarget {
 		FastText.print(g, c, text);
 	    }
 
+	    if(GlobalSettings.SHOWITEMWM.get()) {
+	        item.getinfo(ItemInfo.AdHoc.class).ifPresent(inf -> {
+		    if(inf.str.text.equals("Well mined")) {
+			FastText.asprint(g, sz, 1.0, 1.0, "W");
+		    }
+		});
+	    }
+
 	    if (GlobalSettings.SHOWITEMWEAR.get()) {
 		item.getinfo(Wear.class).ifPresent(wear -> {
 		    double p = 1 - wear.percent();

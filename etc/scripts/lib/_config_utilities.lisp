@@ -203,10 +203,14 @@
   (chat-send-message (bot-chat) prompt)
   (aref (msg-args (wait-for-message "(^click-tile$)")) 0))
 
+(defun prompt-for-selected-waypoint (prompt)
+  (chat-send-message (bot-chat) prompt)
+  (aref (msg-args (wait-for-message "(^waypoint-select$)")) 0))
+
 
 (export '(check-stam-and-drink drink-water refill-water-from-hand refill-water-from-inventory
           check-for-starving
           check-for-movement
           backoff-randomly
-          prompt-for-input prompt-for-selected-gob prompt-for-coord
+          prompt-for-input prompt-for-selected-gob prompt-for-coord prompt-for-selected-waypoint
           get-bbox wait-for-filtered-message wait-for-message loop-through-messages))

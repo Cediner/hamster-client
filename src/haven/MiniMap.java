@@ -890,16 +890,9 @@ public class MiniMap extends Widget {
 		opts.put("Add waypoint", (opt) -> mv.ui.gui.mapfile.markWaypoint(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
 		ui.gui.add(new FlowerMenu(opts), ui.mc);
 	    } else if(gob == null) {
-		mv.wdgmsg("click", mc,
-			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			button, ui.modflags());
+	        ui.gui.map.moveto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)), button, ui.modflags());
 	    } else {
-		mv.wdgmsg("click", mc,
-			loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)).floor(posres),
-			button, ui.modflags(), 0,
-			(int)gob.id,
-			gob.rc.floor(posres),
-			0, -1);
+	        ui.gui.map.moveto(gob, button, ui.modflags());
 	    }
 	}
     }

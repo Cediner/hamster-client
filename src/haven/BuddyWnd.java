@@ -264,7 +264,7 @@ public class BuddyWnd extends Widget implements Iterable<BuddyWnd.Buddy> {
 	private BuddyInfo(Coord sz, Buddy buddy) {
 	    super(sz);
 	    this.buddy = buddy;
-	    this.ava = adda(new Avaview(Avaview.dasz, -1, "avacam"), sz.x / 2, margin2, 0.5, 0);
+	    this.ava = adda(new Avaview(Avaview.dasz, -1, "bavacam"), sz.x / 2, margin2, 0.5, 0);
 	    this.nick = add(new TextEntry(sz.x - margin3, buddy.name) {
 		    {dshow = true;}
 		    public void activate(String text) {

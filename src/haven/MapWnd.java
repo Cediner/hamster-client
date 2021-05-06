@@ -41,6 +41,7 @@ import hamster.GlobalSettings;
 import hamster.IndirSetting;
 import hamster.KeyBind;
 import hamster.MouseBind;
+import hamster.data.DirMap;
 import hamster.data.map.MarkerData;
 import hamster.script.pathfinding.Move;
 import hamster.script.pathfinding.waypoint.WaypointPathfinder;
@@ -72,7 +73,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     public final MapView mv;
     public final Collection<String> overlays = new java.util.concurrent.CopyOnWriteArraySet<>();
     public boolean hmarkers = false;
-    private final Locator player;
+    public final Locator player;
     private final Widget toolbar;
     private final Frame viewf;
     private MapMarkerWnd markers = null;
@@ -427,6 +428,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 					final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
 					final var moves = pathfinder.path();
 					if(moves != null) {
+					    ui.gui.map.clearmovequeue();
 					    for(final var mv : moves) {
 					        ui.gui.map.queuemove(mv);
 					    }
@@ -440,6 +442,9 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			    } catch (Exception e) {
 				logger.atWarning().withCause(e).log("Failed to path to waypoint");
 			    }
+			});
+		        opts.put("Select for script", (opt) -> {
+		            ui.sess.details.context.dispatchmsg(this, "waypoint-select", mark.m);
 			});
 		    }
 		    ui.gui.add(new FlowerMenu(opts), ui.mc);
@@ -576,6 +581,12 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 			    drawmovement(g.reclip(view.c, view.sz), loc);
 			    //Draw tracking
 			    drawTracking(g, loc);
+			    //Draw nearest thingwall name
+			    file.getNearestThingwall(loc).ifPresent(mark ->
+				    FastText.asprintf(g, sz.sub(Window.wbox.bbroff().x, 0), 1.0, 1.0,
+					    "%s - %s %d", mark.nm,
+					    DirMap.anglename(loc.tc.angle(mark.tc)),
+					    Math.round(loc.tc.dist(mark.tc))));
 		}));
 	    } catch (Loading ignored){}
 	}
@@ -668,22 +679,20 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     }
 
     public void markWaypoint(final Coord2d mc) {
-        synchronized (deferred) {
-            deferred.add(() -> {
-		final Coord2d prc = ui.sess.glob.oc.getgob(ui.gui.map.rlplgob).rc;
-		final Coord offset = mc.sub(prc).floor(tilesz);
-		view.resolveo(player).ifPresent(loc -> {
-		    if (!view.file.lock.writeLock().tryLock())
-			throw (new Loading());
-		    try {
-		        final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
+        final var pl = ui.gui.map.player();
+        if(pl != null) {
+	    view.resolveo(player).ifPresent(loc -> {
+	        final var wid = view.file.nextWaypointID();
+		synchronized (deferred) {
+		    deferred.add(() -> {
+			final Coord2d prc = pl.rc;
+			final Coord offset = mc.sub(prc).floor(tilesz);
+			final Marker mark = new WaypointMarker(loc.seg.id, loc.tc.add(offset),
 				"Waypoint", Color.WHITE, new Resource.Spec(Resource.remote(), MarkerData.waypointmarker.res),
-				view.file.waypointids.next());
+				wid);
 			view.file.add(mark);
-		    } finally {
-			view.file.lock.writeLock().unlock();
-		    }
-		});
+		    });
+		}
 	    });
 	}
     }

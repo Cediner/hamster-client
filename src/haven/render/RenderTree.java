@@ -540,12 +540,6 @@ public class RenderTree implements RenderList.Adapter {
 	}
 
 	private DepInfo setdstate(DepInfo nst) {
-	    if(!Thread.currentThread().getName().equals("Haven UI thread") &&
-		!Thread.currentThread().getName().equals("Loader thread") &&
-	    	!Thread.currentThread().getName().startsWith("ForkJoinPool")) { // UI tick spawned threads, safe
-		logger.atWarning().log("Thread: %s", Thread.currentThread().getName());
-		Thread.dumpStack();
-	    }
 	    DepInfo pst = this.dstate;
 	    if(pst != null) {
 		if(deps != null) {
@@ -619,9 +613,13 @@ public class RenderTree implements RenderList.Adapter {
 	}
 
 	private DepInfo dstate() {
-	    if(dstate == null)
-		setdstate(mkdstate(this.cstate, this.ostate));
-	    return(dstate);
+	    if (dstate == null) {
+		final var nst = mkdstate(this.cstate, this.ostate);
+		setdstate(nst);
+		return nst;
+	    } else {
+		return dstate;
+	    }
 	}
 
 	private void checklockdeps() {

@@ -39,7 +39,7 @@ import haven.Composited.ED;
 public class Avaview extends PView {
     private static final String plkey = "PlayerAvaview";
     private enum Type {
-        PLAYER, PARTY, FIGHT, UNK
+        PLAYER, PARTY, FIGHT, BUDDY, UNK
     }
 
     public static final Tex missing = Resource.loadtex("gfx/hud/equip/missing");
@@ -56,6 +56,9 @@ public class Avaview extends PView {
     private final String camnm;
     private final Type type;
     private final WdgLocationHelper loc;
+
+    //Tooltip for buddywnd
+    private Text tt;
 
     @RName("av")
     public static class $_ implements Factory {
@@ -91,6 +94,11 @@ public class Avaview extends PView {
 		type = Type.FIGHT;
 		loc = null;
 		this.camnm = "avacam";
+	    }
+	    case "bavacam" -> {
+	        type = Type.BUDDY;
+	        loc = null;
+	        this.camnm = "avacam";
 	    }
 	    default -> {
 		type = Type.UNK;
@@ -308,6 +316,10 @@ public class Avaview extends PView {
 	if(!drawn) {
 	    try {
 		updcomp();
+		if(tt != null) {
+		    tt.tex().dispose();
+		    tt = null;
+		}
 		super.draw(g);
 	    } catch(Loading e) {
 		g.image(missing, Coord.z, sz);
@@ -316,6 +328,42 @@ public class Avaview extends PView {
 	if(color != null) {
 	    g.chcolor(color);
 	    Window.wbox.draw(g, Coord.z, sz);
+	}
+    }
+
+    private Text makeTooltip() {
+	final StringBuilder base = new StringBuilder();
+	if(cequ != null) {
+	    for(final var eq : cequ) {
+	        base.append("Equ: ");
+	        base.append(Resource.indirname(eq.res.res));
+	    	base.append("\n");
+	    }
+	}
+
+	if(cmod != null) {
+	    for(final var md : cmod) {
+	        base.append("Mod: ");
+	        base.append(Resource.indirname(md.mod));
+		base.append("\n");
+	        for(final var rd : md.tex) {
+	            base.append("  Tex: ");
+	            base.append(Resource.indirname(rd.res));
+		    base.append("\n");
+		}
+	    }
+	}
+	return RichText.render(base.toString(), 300);
+    }
+
+    @Override
+    public Object tooltip(Coord c, Widget prev) {
+        if(type == Type.BUDDY) {
+            if(tt != null)
+                return tt;
+	    return (cequ != null || cmod != null) ? (tt = makeTooltip()) : null;
+	} else {
+	    return null;
 	}
     }
 
