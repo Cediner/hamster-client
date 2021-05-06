@@ -576,6 +576,13 @@
     range: 110
   },
   {
+    res: "gfx/kritter/eagleowl/eagleowl",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ],
+  },
+  {
     res: "gfx/kritter/boreworm/boreworm",
     tags: [
       "ANIMAL",
