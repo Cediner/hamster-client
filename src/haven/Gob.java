@@ -994,12 +994,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     @SuppressWarnings("unused") // For scripting API
-    public long[] heldGobs() {
-        final long[] held = new long[holding.size()];
-        int i = 0;
-        for(final var id : holding)
-            held[i++] = id;
-        return held;
+    public Long[] heldGobs() {
+        return holding.toArray(new Long[0]);
     }
 
     /*
