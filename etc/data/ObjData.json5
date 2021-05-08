@@ -2310,5 +2310,27 @@
       empty: [1, 2],
       full: [29, 30]
     }
+  },
+  {
+    res: "gfx/terobjs/metalcabinet",
+    name: "Metal Cabinet",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [65, 66]
+    }
+  },
+  {
+    res: "gfx/terobjs/coffer",
+    name: "Coffer",
+    tags: [
+      "CAN_OPEN"
+    ],
+    containerdata: {
+      empty: [1, 2],
+      full: [65, 66]
+    }
   }
 ]
