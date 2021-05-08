@@ -20,6 +20,7 @@
 (defconstant +double+ "double")
 (defconstant +boolean+ "boolean")
 (defconstant +color+ "java.awt.Color")
+(defconstant +bufferedimage+ "java.awt.image.BufferedImage")
 
 (defconstant +script+ "hamster.script.Script")
 (defconstant +context+ "hamster.script.Context")

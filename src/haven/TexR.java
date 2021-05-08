@@ -145,6 +145,14 @@ public class TexR extends Resource.Layer implements Resource.IDLayer<Integer> {
 	}
     }
 
+    public BufferedImage back() {
+        try {
+            return Resource.readimage(new ByteArrayInputStream(img));
+	} catch (IOException e) {
+            return null;
+	}
+    }
+
     public TexL tex() {
 	return(tex);
     }

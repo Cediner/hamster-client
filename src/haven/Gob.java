@@ -26,6 +26,7 @@
 
 package haven;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.function.*;
 
@@ -33,6 +34,9 @@ import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.data.map.MarkerData;
 import hamster.data.gob.ObjData;
+import hamster.gfx.KnarrSprite;
+import hamster.gfx.SailSprite;
+import hamster.gfx.SnekkjaSprite;
 import hamster.gob.*;
 import hamster.gob.attrs.info.ScreenLocation;
 import hamster.gob.attrs.mods.*;
@@ -990,12 +994,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
     }
 
     @SuppressWarnings("unused") // For scripting API
-    public long[] heldGobs() {
-        final long[] held = new long[holding.size()];
-        int i = 0;
-        for(final var id : holding)
-            held[i++] = id;
-        return held;
+    public Long[] heldGobs() {
+        return holding.toArray(new Long[0]);
     }
 
     /*
@@ -1110,6 +1110,17 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	    }
 	}
 	return false;
+    }
+
+    @SuppressWarnings("unused") // For scripting api
+    public BufferedImage sail() {
+	synchronized (this) {
+	    final var d = getattr(Drawable.class);
+	    if(d instanceof ResDrawable && ((ResDrawable) d).spr instanceof SailSprite) {
+	        return ((SailSprite)((ResDrawable) d).spr).sail();
+	    }
+	}
+	return null;
     }
 
     @SuppressWarnings("unused") // For scripting api
@@ -1297,7 +1308,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 	sb.append("Position: ");
 	sb.append(getc());
 	sb.append("\n");
-	return sb.toString().replaceAll("\\{", "(").replaceAll("}", ")");
+	return sb.toString().replaceAll("\\{", "(").replaceAll("}", ")").replaceAll("\\$", "");
     }
 
     /*

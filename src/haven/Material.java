@@ -142,7 +142,7 @@ public class Material implements Pipe.Op {
     }
 
     public String toString() {
-	return(Arrays.asList(states, dynstates).toString());
+        return String.format("States: %s\nDynstates: %s\n", states, dynstates);
     }
 
     public void apply(Pipe p) {

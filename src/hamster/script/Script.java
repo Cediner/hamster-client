@@ -11,6 +11,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.message.MessageBuilder;
 
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -109,6 +110,20 @@ public abstract class Script extends Thread {
 
     public void sendDiscordMessage(final String channel, final String msg) {
         discord.getTextChannelsByName(channel).forEach(chan -> chan.sendMessage(msg));
+    }
+
+    public void sendDiscordImage(final String channel, final String msg, final BufferedImage img) {
+        final var dmsg = new MessageBuilder();
+        dmsg.setContent(msg);
+        dmsg.addAttachment(img, "image.png");
+        discord.getTextChannelsByName(channel).forEach(chan -> {
+            try {
+                dmsg.send(chan).get();
+            } catch (InterruptedException | ExecutionException e) {
+                logger.atSevere().withCause(e).log("Script %s failed to send discord msg", sid);
+                sendDiscordMessage(channel, msg); // fallback is just send the msg contents
+            }
+        });
     }
 
     public void sendDiscordMessageWithMapAndMark(final String channel, final String msg,

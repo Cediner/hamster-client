@@ -60,6 +60,36 @@
       "o": "Coord{0, 0}",
       "img": "unbuilt\\custom\\hud\\sloth\\buttons\\textbtn\\image-5.png",
       "scale": 4.0
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 6,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\buttons\\textbtn\\image-6.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 7,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\buttons\\textbtn\\image-7.png",
+      "scale": 4.0
+    },
+    {
+      "layer-name": "image",
+      "z": 0,
+      "subz": 0,
+      "fl": 4,
+      "id": 8,
+      "o": "Coord{0, 0}",
+      "img": "unbuilt\\custom\\hud\\sloth\\buttons\\textbtn\\image-8.png",
+      "scale": 4.0
     }
   ]
 }

@@ -25,6 +25,15 @@ public class SessionDisplay extends MovableWidget implements ObservableListener<
         }
 
         @Override
+        public void draw(GOut g) {
+            if(MainFrame.instance.p.isActiveUI(this.ui))
+                btn.highlight();
+            else
+                btn.unhighlight();
+            super.draw(g);
+        }
+
+        @Override
         public void tick(double dt) {
             if (nm.equals("Login") && ui.sess != null && ui.sess.username != null) {
                 nm = ui.sess.username;
