@@ -34,6 +34,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.lang.reflect.*;
@@ -2652,7 +2654,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	Coord lastmc = null;
 	RenderTree.Slot slot;
 	private final List<OCache.Delta> deltas = new ArrayList<>();
-	private boolean isplaced = false;
+	private boolean isplaced = false, place = false;
 
 	private Plob(Indir<Resource> res, Message sdt) {
 	    super(MapView.this.glob, MapView.this.cc);
@@ -2693,6 +2695,17 @@ public class MapView extends PView implements DTarget, Console.Directory {
 
 	@Override
 	public void ctick(double dt) {
+	    if(place && !isplaced) {
+	        //defer initial placement
+		try {
+		    place();
+		} catch (Exception e) {
+		    // not yet loaded
+		    return;
+		}
+		isplaced = true;
+		place = false;
+	    }
 	    //Apply any deltas during a tick
 	    if(isplaced) {
 		synchronized (deltas) {
@@ -2803,10 +2816,7 @@ public class MapView extends PView implements DTarget, Console.Directory {
 			    ret.addol(ores, odt);
 			    a = a2;
 			}
-			synchronized (ui) {
-			    ret.place();
-			    ret.isplaced = true;
-			}
+			ret.place = true;
 			return(ret);
 		    }
 		});
