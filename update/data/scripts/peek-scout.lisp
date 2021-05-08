@@ -36,7 +36,6 @@
            (setf started-peek (get-time)))
           (progn
             (scan-for-targets role spotted-gobs tick)
-            (check-if-any-spotted-have-left role spotted-gobs tick)
             (incf tick)
             (when (>= (- (get-time) started-peek) +peek-limit+)
               (cancel-peek)
