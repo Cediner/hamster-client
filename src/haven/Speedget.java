@@ -180,7 +180,7 @@ public class Speedget extends MovableWidget {
     protected void binded() {
 	ui.sess.details.attachSpeedget(this);
 	if(GlobalSettings.RUNONLOGIN.get()) {
-	    setSpeed(Speed.RUN);
+	    forceSpeed(Speed.RUN);
 	}
     }
 
@@ -205,5 +205,9 @@ public class Speedget extends MovableWidget {
 	if (max >= 0 && spd.id <= max) {
 	    set(spd.id);
 	}
+    }
+
+    public void forceSpeed(final Speed spd) {
+        set(spd.id);
     }
 }
