@@ -43,6 +43,9 @@ public class Button extends SIWidget {
     public static final IndirThemeTex dl = res.img(3);
     public static final IndirThemeTex dm = res.img(4);
     public static final IndirThemeTex dr = res.img(5);
+    public static final IndirThemeTex hil = res.img(6);
+    public static final IndirThemeTex him = res.img(7);
+    public static final IndirThemeTex hir = res.img(8);
     public static final int hs = ul.imgs().getHeight(), hl = um.imgs().getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
     public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
@@ -54,7 +57,7 @@ public class Button extends SIWidget {
     public Runnable action = null;
     static Text.Foundry tf = new Text.Foundry(Text.serif.deriveFont(Font.BOLD, UI.scale(12f))).aa(true);
     static Text.Furnace nf = new PUtils.BlurFurn(new PUtils.TexFurn(tf, Window.ctex), 1, 1, new Color(80, 40, 0));
-    protected boolean a = false;
+    protected boolean a = false, highlight = false;
     private UI.Grab d = null;
 	
     @RName("btn")
@@ -138,6 +141,14 @@ public class Button extends SIWidget {
 	return(this);
     }
 
+    public void highlight() {
+        this.highlight = true;
+    }
+
+    public void unhighlight() {
+        this.highlight = false;
+    }
+
     public void draw(BufferedImage img) {
 	Graphics g = img.getGraphics();
 
@@ -146,6 +157,11 @@ public class Button extends SIWidget {
 	    g.drawImage(dl.imgs(), 0, 0, dl.imgs().getWidth(), sz.y, null);
 	    g.drawImage(dm.imgs(), dl.imgs().getWidth(), 0, sz.x - dr.imgs().getWidth() - dl.imgs().getWidth(), sz.y, null);
 	    g.drawImage(dr.imgs(), sz.x - dr.imgs().getWidth(), 0, dr.imgs().getWidth(), sz.y, null);
+	} else if(highlight) {
+	    //highlighted
+	    g.drawImage(hil.imgs(), 0, 0, hil.imgs().getWidth(), sz.y, null);
+	    g.drawImage(him.imgs(), hil.imgs().getWidth(), 0, sz.x - hir.imgs().getWidth() - hil.imgs().getWidth(), sz.y, null);
+	    g.drawImage(hir.imgs(), sz.x - hir.imgs().getWidth(), 0, hir.imgs().getWidth(), sz.y, null);
 	} else {
 	    //up
 	    g.drawImage(ul.imgs(), 0, 0, ul.imgs().getWidth(), sz.y, null);
