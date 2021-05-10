@@ -129,6 +129,12 @@
 ;;   1) Gob - The Gob
 ;; Return: String[]
 (java-func +gob+ gob-equipment "equipment")
+;; Func: gob-sail
+;; Desc: Get the image of a sail if this gob is a snekkja or knarr and it has a custom sail
+;; Inputs:
+;;   1) Gob - The Gob
+;; Return: BufferedImage
+(java-func +gob+ gob-sail "sail")
 
 ;;;; Gob Fields
 ;; Desc: The gob's id
@@ -280,7 +286,7 @@
 (export '(+plant+ +human+ +animal+ +tamed-animal+ +water-vehicle+ +vehicle+ +tree+ +bush+ +log+ +rock+ +stump+ +stockpile+
           gob-c gob-name gob-has-tag gob-overlays gob-poses gob-sdt is-gob-dead
           gob-is-holding gob-is-held-by-something gob-is-held-by gob-held-by gob-how-many-gobs-held gob-held-gobs
-          gob-kinname gob-equipment
+          gob-kinname gob-equipment gob-sail
           gob-id gob-rc gob-v gob-angle
           is-gob-a my-gob
           is-gob-moving is-gob-friendly is-gob-dangerous

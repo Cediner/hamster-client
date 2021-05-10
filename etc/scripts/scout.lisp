@@ -15,6 +15,5 @@
      (start-discord-session token)
      (forever
       (scan-for-targets role spotted-gobs tick)
-      (check-if-any-spotted-have-left role spotted-gobs tick)
       (incf tick)
       (sleep 1)))))

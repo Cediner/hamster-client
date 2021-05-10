@@ -25,7 +25,7 @@ public class MouseBind {
         HITM_DROP_WATER;
     //Minimap related
     public static final MouseBind
-        MM_GOTO_MARKER, MM_EXAMINE_MARKER, MM_SPECIAL_MENU, MM_FOLLOW_LINK;
+        MM_GOTO_MARKER, MM_EXAMINE_MARKER, MM_SPECIAL_MENU, MM_FOLLOW_LINK, MM_SMART_MOVE;
 
     private static MouseBind addMB(final String name, final String group, final String bind) {
         final String display = TranslationLookup.get(name);
@@ -75,6 +75,7 @@ public class MouseBind {
         MM_GOTO_MARKER = addMB("mb_mm_goto_marker", MM_GRP, "S-B1");
         MM_FOLLOW_LINK = addMB("mb_mm_follow_link", MM_GRP, "B3");
         MM_SPECIAL_MENU = addMB("mb_mm_special_menu", MM_GRP, "M-B3");
+        MM_SMART_MOVE = addMB("mb_mm_smart_move", MM_GRP, "C-B1");
     }
 
     @FunctionalInterface

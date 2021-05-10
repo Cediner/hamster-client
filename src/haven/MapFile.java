@@ -365,6 +365,34 @@ public class MapFile {
 	return new WaypointMap(map, start, goal);
     }
 
+    public WaypointMap generateWaypointMap(final Segment seg, final Coord goaltc,
+					   final Coord starttc, final Coord2d startmc) {
+	final var map = new HashMap<Long, Waypoint>();
+	Waypoint start = null, goal = null;
+	double dist = Double.MAX_VALUE, gdist = Double.MAX_VALUE;
+	lock.readLock().lock();
+	try {
+	    for(final var wp : wmarkers.values()) {
+		if (wp.seg == seg.id) {
+		    final var offset = new Coord2d(wp.tc.sub(starttc)).mul(MCache.tilesz);
+		    final var waypoint = new Waypoint(wp.id, startmc.add(offset), wp.links);
+		    map.put(wp.id, waypoint);
+		    if(startmc.dist(waypoint.c) < dist) {
+			start = waypoint;
+			dist = startmc.dist(waypoint.c);
+		    }
+		    if(goaltc.dist(wp.tc) < gdist) {
+		        goal = waypoint;
+		        gdist = goaltc.dist(wp.tc);
+		    }
+		}
+	    }
+	} finally {
+	    lock.readLock().unlock();
+	}
+	return new WaypointMap(map, start, goal);
+    }
+
     public WaypointMap generateWaypointMap(final Segment seg,
 					   final WaypointMarker startm, final WaypointMarker goalm,
 					   final Coord starttc, final Coord2d startmc) {

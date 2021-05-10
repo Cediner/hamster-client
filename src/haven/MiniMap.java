@@ -30,11 +30,13 @@ import java.util.*;
 import java.util.function.*;
 import java.awt.Color;
 
+import com.google.common.flogger.FluentLogger;
 import hamster.GlobalSettings;
 import hamster.MouseBind;
 import hamster.data.map.MarkerData;
 import hamster.gob.Tag;
 import hamster.script.pathfinding.Move;
+import hamster.script.pathfinding.waypoint.WaypointPathfinder;
 import hamster.ui.minimap.*;
 import haven.MapFile.Segment;
 import haven.MapFile.DataGrid;
@@ -46,6 +48,7 @@ import static haven.MCache.tilesz;
 import static haven.OCache.posres;
 
 public class MiniMap extends Widget {
+    private static final FluentLogger logger = FluentLogger.forEnclosingClass();
     public static final Tex bg = Resource.loadtex("gfx/hud/mmap/ptex");
     public static final Tex nomap = Resource.loadtex("gfx/hud/mmap/nomap");
     public static final Tex plp = ((TexI)Resource.loadtex("gfx/hud/mmap/plp")).filter(haven.render.Texture.Filter.LINEAR);
@@ -62,14 +65,16 @@ public class MiniMap extends Widget {
     protected Segment dseg;
     protected int dlvl;
     protected Location dloc;
+    public final Locator player;
 
-    public MiniMap(Coord sz, MapFile file) {
+    public MiniMap(Coord sz, MapFile file, MapView mv) {
 	super(sz);
 	this.file = file;
+	this.player = new MapLocator(mv);
     }
 
-    public MiniMap(MapFile file) {
-	this(Coord.z, file);
+    public MiniMap(MapFile file, MapView mv) {
+	this(Coord.z, file, mv);
     }
 
     protected void attached() {
@@ -885,6 +890,35 @@ public class MiniMap extends Widget {
 		    ui.gui.map.pathto(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2)));
 		else
 		    ui.gui.map.pathto(gob);
+	    } else if(MM_SMART_MOVE.match(bind)) {
+	        try {
+	            final var pc = ui.gui.map.player().rc;
+		    resolveo(player).ifPresent(ploc -> {
+		        final var map = file.generateWaypointMap(ploc.seg,  loc.tc, ploc.tc, pc);
+		        if(map.start != null && map.goal != null && map.start.c.dist(pc) / 11 < ploc.tc.dist(loc.tc)) {
+		            // Use waypoints if the start waypoint isn't further than our goal is to begin with
+			    final var pathfinder = new WaypointPathfinder(map, map.start, map.goal);
+			    final var moves = pathfinder.path();
+			    if(moves != null) {
+				ui.gui.map.clearmovequeue();
+				for(final var move : moves) {
+				    ui.gui.map.queuemove(move);
+				}
+				ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+			    } else {
+			        //Can't waypoint there, just straight click
+				ui.gui.map.clearmovequeue();
+				ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+			    }
+			} else {
+		            // Can't find any waypoints to help get us there, just go straight to it
+		            ui.gui.map.clearmovequeue();
+		            ui.gui.map.queuemove(new Move(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));
+			}
+		    });
+		} catch (Exception e) {
+		    logger.atWarning().withCause(e).log("Failed to path to point");
+		}
 	    } else if(MM_SPECIAL_MENU.match(bind) && gob == null) {
 		final var opts = new HashMap<String, Consumer<String>>();
 		opts.put("Add waypoint", (opt) -> mv.ui.gui.mapfile.markWaypoint(loc.tc.sub(sessloc.tc).mul(tilesz).add(tilesz.div(2))));

@@ -89,7 +89,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 	this.mv = mv;
 	this.player = new MapLocator(mv);
 	viewf = add(new ViewFrame());
-	view = viewf.add(new View(file));
+	view = viewf.add(new View(file, mv));
 	recenter();
 	toolbar = add(new Widget(Coord.z));
 	toolbar.add(new Img(Resource.loadtex("gfx/hud/mmap/fgwdg")), Coord.z);
@@ -343,8 +343,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private class View extends MiniMap {
         private WaypointMarker src = null;
 
-	View(MapFile file) {
-	    super(file);
+	View(MapFile file, MapView mv) {
+	    super(file, mv);
 	}
 
 	public void drawgrid(GOut g, Coord ul, DisplayGrid disp) {

@@ -26,7 +26,6 @@
 
 package haven;
 
-import java.util.*;
 import haven.render.*;
 
 public class ResDrawable extends Drawable {
@@ -89,6 +88,13 @@ public class ResDrawable extends Drawable {
 	} else {
 	    return res.get().name;
 	}
+    }
+
+    @Override
+    public String toString() {
+	return "ResDrawable(" +
+		"spr=" + spr +
+		')';
     }
 
     public ResDrawable cloneFor(final Gob g) {
