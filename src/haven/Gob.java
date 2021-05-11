@@ -1383,6 +1383,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Sk
 		deltas.add((gob) -> gob.setattr(new TanTubStatus(gob)));
 	    } else if (name.equals("gfx/terobjs/cheeserack")) {
 		deltas.add((gob) -> gob.setattr(new CheeseRackStatus(gob)));
+	    } else if (name.equals("gfx/terobjs/gardenpot")) {
+	        deltas.add((gob) -> gob.setattr(new PotStatus(gob)));
 	    }
 
 	    ObjData.getContData(name).ifPresent((cont) -> {

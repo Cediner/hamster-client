@@ -39,7 +39,10 @@
 (defun inventory-item-at (inv coord)
   (let ((found (loop
                   for itm in (listify (inventory-items inv))
-                  when (coord-between coord (item-position itm) (item-size itm))
+                  when (coord-between coord
+                                      (item-position itm)
+                                      (coord-sub (coord-add  (item-position itm) (item-size itm))
+                                                 (coord 1 1)))
                   return itm)))
     (if found
         found

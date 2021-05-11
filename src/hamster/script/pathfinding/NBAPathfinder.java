@@ -137,7 +137,7 @@ public class NBAPathfinder extends Pathfinder {
                         //12:   M = M − {u0}; //remove it from the set
                         rejected.add(nc);
                         //Ensure we didn't clip a hitbox or bad tile
-                        if (!checkHit(nc)) {
+                        if (!checkHit(nc, false)) {
                             //18:       g(v) = min(g(v), g(u0) + d(u0, v));
                             final Node child = new Node(node, nc, node.g + 1, heuristic.distance(nc, target));
                             if (!GlobalSettings.LIMITPATHFINDING.get()) {

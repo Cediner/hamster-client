@@ -33,7 +33,7 @@ public abstract class Pathfinder {
 
     @FunctionalInterface
     interface HitFun {
-        boolean check(final Coord mc);
+        boolean check(final Coord mc, final boolean ignoreland);
     }
 
     @FunctionalInterface
@@ -94,17 +94,19 @@ public abstract class Pathfinder {
      * <p>
      * TODO: plhb is problem slightly too big for this since tiles will let you usually overlap a bit
      */
-    private boolean hitOnBoat(final Coord mc) {
-        final Coord c = mc.add(plhb.offset().round());
-        final Coord br = c.add(plhb.size().round());
+    private boolean hitOnBoat(final Coord mc, final boolean ignoreland) {
+        if(!ignoreland) {
+            final Coord c = mc.add(plhb.offset().round());
+            final Coord br = c.add(plhb.size().round());
 
-        Coord xy = new Coord(0, 0);
-        for (xy.x = c.x; xy.x < br.x; ++xy.x)
-            for (xy.y = c.y; xy.y < br.y; ++xy.y) {
-                final Tile t = ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2));
-                if (t != Tile.DEEPWATER && t != Tile.SHALLOWWATER)
-                    return true;
-            }
+            Coord xy = new Coord(0, 0);
+            for (xy.x = c.x; xy.x < br.x; ++xy.x)
+                for (xy.y = c.y; xy.y < br.y; ++xy.y) {
+                    final Tile t = ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2));
+                    if (t != Tile.DEEPWATER && t != Tile.SHALLOWWATER)
+                        return true;
+                }
+        }
         return false;
     }
 
@@ -114,28 +116,30 @@ public abstract class Pathfinder {
      * TODO: plhb is problem slightly too big for this since tiles will let you usually overlap a bit
      * Especially the case in caves, not so much with ridges...
      */
-    private boolean hitOnLand(final Coord mc) {
-        final Coord c = mc.add(plhb.offset().round());
-        final Coord br = c.add(plhb.size().round());
+    private boolean hitOnLand(final Coord mc, final boolean ignoreland) {
+        if(!ignoreland) {
+            final Coord c = mc.add(plhb.offset().round());
+            final Coord br = c.add(plhb.size().round());
 
-        Coord xy = new Coord(0, 0);
-        for (xy.x = c.x; xy.x < br.x; ++xy.x)
-            for (xy.y = c.y; xy.y < br.y; ++xy.y) {
-                final Tile t = ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2));
-                if (t != Tile.SHALLOWWATER && t != null)
-                    return true;
-            }
+            Coord xy = new Coord(0, 0);
+            for (xy.x = c.x; xy.x < br.x; ++xy.x)
+                for (xy.y = c.y; xy.y < br.y; ++xy.y) {
+                    final Tile t = ui.sess.glob.map.gethitmap(xy.div(MCache.tilesz2));
+                    if (t != Tile.SHALLOWWATER && t != null)
+                        return true;
+                }
+        }
         return false;
     }
 
-    final boolean checkHit(final Coord mc) {
-        return hitGob(mc) || hitfun.check(mc);
+    final boolean checkHit(final Coord mc, final boolean ignoreland) {
+        return hitGob(mc) || hitfun.check(mc, ignoreland);
     }
 
     /**
      * Walks a path between two points to see if we'll hit anything
      */
-    final public boolean walk(final Coord start, final Coord end) {
+    final public boolean walk(final Coord start, final Coord end, final boolean ignoreland) {
         if (end.x - start.x != 0) {
             final double slope = (double) (end.y - start.y) / (double) (end.x - start.x);
             final double b = -(slope * start.x) + start.y;
@@ -146,7 +150,7 @@ public abstract class Pathfinder {
                 int x, y;
                 for (y = start.y; y != end.y; y += dy) {
                     x = (int) ((y - b) / slope);
-                    if (checkHit(new Coord(x, y)))
+                    if (checkHit(new Coord(x, y), ignoreland))
                         return false;
                 }
             } else {
@@ -154,7 +158,7 @@ public abstract class Pathfinder {
                 int x, y;
                 for (x = start.x; x != end.x; x += dx) {
                     y = (int) (slope * x + b);
-                    if (checkHit(new Coord(x, y)))
+                    if (checkHit(new Coord(x, y), ignoreland))
                         return false;
                 }
             }
@@ -165,7 +169,7 @@ public abstract class Pathfinder {
             dy = Integer.compare(dy, 0);
             int y;
             for (y = start.y; y != end.y; y += dy) {
-                if (checkHit(new Coord(start.x, y)))
+                if (checkHit(new Coord(start.x, y), ignoreland))
                     return false;
             }
         }
@@ -284,7 +288,7 @@ public abstract class Pathfinder {
                 int upper = lines.size()-1;
                 while(lower <= upper) {
                     final int half = ((lower + upper) / 2);
-                    if(walk(start, lines.get(half))) {
+                    if(walk(start, lines.get(half), false)) {
                         lower = half + 1;
                         best = half;
                     } else {

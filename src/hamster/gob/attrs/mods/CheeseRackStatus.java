@@ -31,8 +31,7 @@ public class CheeseRackStatus extends GAttrib implements Gob.SetupMod {
 
     @Override
     public Pipe.Op gobstate() {
-        final UI ui = gob.glob.ui.get();
-        if (ui != null && ui.gui != null &&  GlobalSettings.COLORFULCHEESERACKS.get()) {
+        if (GlobalSettings.COLORFULCHEESERACKS.get()) {
             return switch (state) {
                 case EMPTY -> cheeserackempty;
                 case FULL -> cheeserackfull;

@@ -25,14 +25,16 @@
    (changed :initarg :changed :accessor target-changed)))
 
 (defgeneric describe (target))
-(defgeneric update (target gob tick))
-(defun update-target (target tick rc angle speed)
+(defgeneric update (target gob tick alerted))
+(defun update-target (target tick alerted rc angle speed)
   (setf (target-rc target) rc)
   (setf (target-angle target) angle)
   (setf (target-avg-speed target)
         (/ (+ (target-avg-speed target) speed) 2))
   (setf (target-max-speed target) (max (target-max-speed target) speed))
-  (setf (target-tick target) tick))
+  (setf (target-tick target) tick)
+  (when alerted
+    (setf (target-last-alert target) (get-time))))
 
 (defclass player (target)
   ((gear :initarg :gear :accessor player-gear)))
@@ -45,13 +47,13 @@
                  :spotted-at (get-time) :last-alert (get-time)
                  :tick tick :changed nil :gear (gob-equipment gob)))
 
-(defun update-player (player tick rc angle speed gear)
-  (update-target player tick rc angle speed)
+(defun update-player (player tick alerted rc angle speed gear)
+  (update-target player tick alerted rc angle speed)
   (setf (target-changed player) (not (string= (describe-gear (player-gear player)) (describe-gear gear))))   
   (setf (player-gear player) gear))
 
-(defmethod update ((target player) gob tick)
-  (update-player target tick
+(defmethod update ((target player) gob tick alerted)
+  (update-player target tick alerted
                  (gob-rc gob) (gob-angle gob) (gob-v gob)
                  (gob-equipment gob)))
 
@@ -91,13 +93,13 @@
           (target-max-speed target)
           (- (get-time) (target-spotted-at target))))
 
-(defun update-boat (boat tick rc angle speed sail)
-  (update-target boat tick rc angle speed)
+(defun update-boat (boat tick alerted rc angle speed sail)
+  (update-target boat tick alerted rc angle speed)
   (setf (target-changed boat) (or (and (not (boat-sail boat)) sail)))
   (setf (boat-sail boat) sail))
 
-(defmethod update ((target boat) gob tick)
-  (update-boat target tick
+(defmethod update ((target boat) gob tick alerted)
+  (update-boat target tick alerted
                (gob-rc gob) (gob-angle gob) (gob-v gob)
                (gob-sail gob)))
 
@@ -132,7 +134,7 @@
          ((and target
                (> (- (get-time) (target-last-alert target)) +alert-refresh+))
           ;; Previously seen Gob that hasn't left our view by the +alert-refresh+ time
-          (update target gob tick) 
+          (update target gob tick t) 
           (send-discord-message-with-map-and-mark
            "player-alerts"
            (format nil "<@&~A> Stilled spotted a ~A" role (describe target))
@@ -140,7 +142,7 @@
            (target-angle target)))
          (target
           ;; Previously seen Gob that hasn't reached the alert-refresh yet
-          (update target gob tick)
+          (update target gob tick nil)
           (when (target-changed target)
             (if (typep target 'player)
                 (send-discord-message "player-alerts" (format nil "<@&~A> Target changed: ~A" role (describe target)))

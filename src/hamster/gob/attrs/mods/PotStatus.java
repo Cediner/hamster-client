@@ -8,12 +8,8 @@ import haven.render.BaseColor;
 import haven.render.Pipe;
 
 import java.awt.*;
-import java.util.Set;
 
-/**
- * Color mod for containers to tell if they are empty, full, or inbetween
- */
-public class ContainerStatus extends GAttrib implements Gob.SetupMod {
+public class PotStatus extends GAttrib implements Gob.SetupMod {
     enum State {
 	EMPTY(new Color(0, 255, 0, 255)),
 	FULL(new Color(255, 0, 0, 255)),
@@ -29,21 +25,16 @@ public class ContainerStatus extends GAttrib implements Gob.SetupMod {
 	}
     }
 
+    private ContainerStatus.State state;
 
-    private State state;
-    private final Set<Integer> empty;
-    private final Set<Integer> full;
-
-    public ContainerStatus(final Gob g, final Set<Integer> empty, final Set<Integer> full) {
+    public PotStatus(final Gob g) {
 	super(g);
-	this.state = State.INBETWEEN;
-	this.empty = empty;
-	this.full = full;
+	this.state = ContainerStatus.State.INBETWEEN;
     }
 
     @Override
     public Pipe.Op gobstate() {
-	if (GlobalSettings.COLORFULCONTAINERS.get()) {
+	if (GlobalSettings.COLORFULPOTS.get()) {
 	    return state.mod;
 	} else {
 	    return null;
@@ -52,18 +43,17 @@ public class ContainerStatus extends GAttrib implements Gob.SetupMod {
 
     @Override
     public void ctick(double dt) {
-	final int sdt = gob.sdt();
-	if(empty.contains(sdt))
-	    state = State.EMPTY;
-	else if(full.contains(sdt))
-	    state = State.FULL;
-	else
-	    state = State.INBETWEEN;
+        final var ols = gob.ols.size();
+        state = switch (ols) {
+	    case 0 -> ContainerStatus.State.EMPTY;
+	    case 1 -> ContainerStatus.State.INBETWEEN;
+	    default -> ContainerStatus.State.FULL;
+	};
     }
 
     @Override
     public String toString() {
-	return "ContainerStatus(" +
+	return "PotStatus(" +
 		"state=" + state +
 		')';
     }
