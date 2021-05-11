@@ -49,6 +49,7 @@ public class Hitbox {
             hitboxes.put("gfx/kritter/pig", new Rectangular(new Coord2d(-6, -3), new Coord2d(12, 6)));
             hitboxes.put("gfx/kritter/goat", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
             hitboxes.put("gfx/kritter/sheep/lamb", new Rectangular(new Coord2d(-6, -2), new Coord2d(12, 4)));
+            hitboxes.put("gfx/terobjs/boostspeed", new Rectangular(new Coord2d(-3, -3), new Coord2d(6, 6), false));
         }
 
         private final Coord2d off;
