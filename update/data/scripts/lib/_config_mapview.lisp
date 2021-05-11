@@ -16,8 +16,8 @@
 ;;(java-func +mapview+ mv-path-to-gob-1 "pathto" +gob+)
 (java-func +mapview+ mv-clear-moves-1 "clearmovequeue")
 (java-func +mapview+ mv-queue-move-1 "queuemove" +coord2d+) 
-(java-func +mapview+ mv-los-1 "los" +coord2d+)
-(java-func +mapview+ mv-los-gob-1 "los" +gob+)
+(java-func +mapview+ mv-los-1 "los" +coord2d+ +boolean+)
+(java-func +mapview+ mv-los-gob-1 "los" +gob+ +boolean+)
 (java-func +mapview+ mv-path-to-wp-1 "findpath" +waypoint+)
 (java-func +mapview+ mv-path-to-wp-2 "findpathbetween" +waypoint+ +waypoint+)
 
@@ -34,10 +34,10 @@
 (defmacro mv-move-to-gob (gob)
   `(mv-move-to-1 (mv) (gob-rc ,gob)))
 
-(defmacro mv-los (mc)
-  `(mv-los-1 (mv) ,mc))
-(defmacro mv-los-gob (gob)
-  `(mv-los-gob-1 (mv) ,gob))
+(defmacro mv-los (mc &optional (ignore-land nil))
+  `(mv-los-1 (mv) ,mc ,ignore-land))
+(defmacro mv-los-gob (gob &optional (ignore-land nil))
+  `(mv-los-gob-1 (mv) ,gob ,ignore-land))
 
 (defmacro mv-find-path (c)
   `(mv-find-path-1 (mv) ,c))

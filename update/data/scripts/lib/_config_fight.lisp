@@ -38,7 +38,7 @@
 ;; Inputs:
 ;;   1) DefenseType - The type to check
 ;; Return: double [0, 1] (ex: 0.7 => 70%)
-(java-func +fightview+ fv-get-weight-1 "getWeight" +weight-type+)
+(java-func +fightview+ fv-get-weight-1 "getWeight" +def-type+)
 (defmacro fv-get-weight (def)
   `(fv-get-weight-1 (fv) ,def))
 
@@ -62,6 +62,20 @@
 (java-func +fightview+ fv-get-current-cooldown-1 "getcooldown")
 (defmacro fv-get-current-cooldown ()
   `(fv-get-current-cooldown-1 (fv)))
+
+;; Field: fs-use
+;; Desc: The index of the action that is labeled as 'use'
+;; Type: int
+(java-field fs-use-1 "use")
+(defmacro fs-use ()
+  `(fs-use-1 (fs)))
+
+;; Field: fs-useb
+;; Desc: The index of the action that is labeled as 'useb'
+;; Type: int
+(java-field fs-useb-1 "useb")
+(defmacro fs-useb ()
+  `(fs-useb-1 (fs)))
 
 ;; Func: actions
 ;; Desc: Gets all of your actions (cards) during a combat session
@@ -95,7 +109,7 @@
 (defmacro fight-use-action (action-id)
   `(wdgmsg (fs) "use" ,action-id 1 +mf-none+))
 
-(export '(fs fv actions action-id action-card action-number-of-cards fight-use-action fv-get-weight fv-maneuver fv-maneuver-meter fv-get-current-cooldown))
+(export '(fs fs-use fs-useb fv actions action-id action-card action-number-of-cards fight-use-action fv-get-weight fv-maneuver fv-maneuver-meter fv-get-current-cooldown))
 (export '(+def-type-red+ +def-type-green+ +def-type-blue+ +def-type-yellow+))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Card related fields / functions
@@ -140,9 +154,9 @@
 ;; Func: attack-get-opening-weight
 ;; Desc: Get the opening weight applied for a given WeightType
 ;; Inputs:
-;;   1) WeightType -  The weight type to check
+;;   1) DefenseType -  The defense type to check
 ;; Return: double [0,1] (ex: 25% => 0.25, 0.0 means no opening applied)
-(java-func +attack+ attack-get-opening-weight "getWeight" +weight-type+)
+(java-func +attack+ attack-get-opening-weight "getWeight" +def-type+)
 ;; Func: attack-get-damage-types
 ;; Desc: Get the damage types this attack is based on
 ;; Inputs:
@@ -200,16 +214,16 @@
 ;; Desc: Get the opening weight applied by this Restoration based off given WeightType
 ;; Inputs:
 ;;   1) Restoration - This card
-;;   2) WeightType - The weight type to check for weight
+;;   2) DefenseType - The def type to check for weight
 ;; Return: double [0,1] (ex: 15% => 0.15, 0.0 means no opening applied)
-(java-func +restoration+ restoration-get-opening-weight "getOpening" +weight-type+)
+(java-func +restoration+ restoration-get-opening-weight "getOpening" +def-type+)
 ;; Func: restoration-get-reduction-weight
 ;; Desc: Get the reduction weight applied by this Restoration based off given WeightType
 ;; Inputs:
 ;;   1) Restoration - This card
-;;   2) WeightType - The weight type to check for reduction
+;;   2) DefenseType - The def type to check for reduction
 ;; Return: double [0,1] (ex: 10% => 0.1, 0.0 mens no reduction)
-(java-func +restoration+ restoration-get-reduction-weight "getReduction" +weight-type+)
+(java-func +restoration+ restoration-get-reduction-weight "getReduction" +def-type+)
 
 
 ;; Func: meleep

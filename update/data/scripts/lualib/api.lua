@@ -1114,7 +1114,7 @@ api.inventory = {
     local itms = inv:items()
     for i=1, #itms do
       if coord:between(api.item.position(itms[i]),
-                       api.item.size(itms[i])) then
+                       api.item.position(itms[i]):add(api.item.size(itms[i]):sub(api.coord.coord2i(1, 1)))) then
         return itms[i]
       end
     end
