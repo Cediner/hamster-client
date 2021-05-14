@@ -306,9 +306,16 @@ public class Widget {
 		c.y / (double) parent.sz.y);
     }
 
-    public void setPosRel(final Coord2d rel) {
+    public void setPosRel(final Coord2d rel, final boolean locked) {
 	c = new Coord((int) (rel.x * parent.sz.x),
 		(int) (rel.y * parent.sz.y));
+	// If a window is locked ensure it can't be placed outside the visible parent
+	// to avoid it being stuck forever
+	if(locked && c.y < 0)
+	    c.y = 0;
+	if(locked && c.x + sz.x > parent.sz.x)
+	    c.x = parent.sz.x - sz.x;
+
 	if ((c.x + sz.x * WdgLocationHelper.VISIBLE_PER) > parent.sz.x) {
 	    c.x = parent.sz.x - sz.x;
 	} else if ((c.x + (sz.x * WdgLocationHelper.VISIBLE_PER)) < 0) {
