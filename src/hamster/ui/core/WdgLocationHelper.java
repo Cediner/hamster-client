@@ -23,7 +23,7 @@ public class WdgLocationHelper {
     }
 
     public interface ApplyPos {
-        void set(final Coord2d pos);
+        void set(final Coord2d pos, final boolean locked);
     }
 
     private static final Map<String, Coord2d> knownPositions = new HashMap<>();
@@ -91,14 +91,13 @@ public class WdgLocationHelper {
     }
 
     public void added() {
-        loadPosition();
         lock = knownLocks.getOrDefault(key, false);
+        loadPosition();
     }
-
 
     private void loadPosition() {
         if (key != null && knownPositions.containsKey(key)) {
-            applypos.set(knownPositions.get(key));
+            applypos.set(knownPositions.get(key), lock);
         }
     }
 
