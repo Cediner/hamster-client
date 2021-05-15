@@ -43,8 +43,7 @@ public class ContainerStatus extends GAttrib implements Gob.SetupMod {
 
     @Override
     public Pipe.Op gobstate() {
-	final UI ui = gob.glob.ui.get();
-	if (ui != null && ui.gui != null &&  GlobalSettings.COLORFULCONTAINERS.get()) {
+	if (GlobalSettings.COLORFULCONTAINERS.get()) {
 	    return state.mod;
 	} else {
 	    return null;

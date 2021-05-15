@@ -23,7 +23,7 @@ public class Cards {
     public static final Maneuver toarms = new Maneuver("To Arms", 10, MC, 1.0);
 
     //Restorations
-    public static final Restoration arteva = new Restoration("Artful Evasion", false, 40, 0, 0.2, 0.2, 0.2, 0.2,
+    public static final Restoration arteva = new Restoration("Artful Evasion", false, 40, -1, 0.2, 0.2, 0.2, 0.2,
             (mip, eip) -> eip >= 1);
     public static final Restoration fdodge = new Restoration("Feigned Dodge", false, 35, 0, 0.0, 0.15, 0.0, 0.0);
     public static final Restoration flex = new Restoration("Flex", false, 30, 0, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.15, UA, 1,
@@ -32,11 +32,11 @@ public class Cards {
     public static final Restoration qdodge = new Restoration("Quick Dodge", false, 25, 0, 0.0, 0.2, 0.0, 0.0);
     public static final Restoration regaincomp = new Restoration("Regain Composure", false, 25, 0, 0.0, 0.2, 0.2, 0.0);
     public static final Restoration sidestep = new Restoration("Sidestep", false, 25, 0, 0.0, 0.0, 0.0, 0.2);
-    public static final Restoration watchitsmoves = new Restoration("Watch Its Moves", false, 45, 0, 0.0, 0.0, 0.0, 0.3,
+    public static final Restoration watchitsmoves = new Restoration("Watch Its Moves", false, 45, -1, 0.0, 0.0, 0.0, 0.3,
             (mip, eip) -> eip >= 1);
     //technically there's more to yieldground but who cares
     public static final Restoration yieldground = new Restoration("Yield Ground", false, 30, 0, 0.3, 0.3, 0.0, 0.0);
-    public static final Restoration zigzag = new Restoration("Zig-Zag Ruse", false, 50, 0, 0.5, 0.0, 0.5, 0.0,
+    public static final Restoration zigzag = new Restoration("Zig-Zag Ruse", false, 50, -2, 0.5, 0.0, 0.5, 0.0,
             (mip, eip) -> eip >= 2);
 
     //Attacks
@@ -88,7 +88,7 @@ public class Cards {
             return futureWeights;
         }
     };
-    public static final Restoration dash = new Restoration("Dash", true, 80, 0, 1.0, 1.0, 1.0, 1.0) {
+    public static final Restoration dash = new Restoration("Dash", true, 80, -2, 1.0, 1.0, 1.0, 1.0) {
         @Override
         public Map<DefenseType, Double> getFutureWeights(int cards, Map<DefenseType, Double> CurrentWeights) {
             //Dash is special in that it will completely remove your slightest opening

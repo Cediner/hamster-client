@@ -2353,25 +2353,25 @@ public class MapView extends PView implements DTarget, Console.Directory {
 	}
     }
 
-    public boolean los(final Coord2d c) {
+    public boolean los(final Coord2d c, final boolean ignoreland) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
 	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
 	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
 	base.updatePathfindingBlackout(true);
-	final boolean los = finder.walk(new Coord(base.getc()), c.floor());
+	final boolean los = finder.walk(new Coord(base.getc()), c.floor(), ignoreland);
 	base.updatePathfindingBlackout(false);
 	return los;
     }
 
-    public boolean los(final Gob g) {
+    public boolean los(final Gob g, final boolean ignoreland) {
 	final NBAPathfinder finder = new NBAPathfinder(ui);
 	final Gob pl = ui.sess.glob.oc.getgob(plgob);
 	final Gob holder = ui.sess.glob.oc.getgob(pl.whoIsHoldingMe());
 	final Gob base = !pl.isHeldBySomething() ? pl : holder != null ? holder : pl;
 	base.updatePathfindingBlackout(true);
 	g.updatePathfindingBlackout(true);
-	final boolean los = finder.walk(new Coord(base.getc()), g.rc.floor());
+	final boolean los = finder.walk(new Coord(base.getc()), g.rc.floor(), ignoreland);
 	g.updatePathfindingBlackout(false);
 	base.updatePathfindingBlackout(false);
 	return los;

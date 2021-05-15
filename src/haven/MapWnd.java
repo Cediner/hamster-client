@@ -78,7 +78,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
     private final Frame viewf;
     private MapMarkerWnd markers = null;
     private boolean domark = false;
-    private boolean dowpconnect = false;
+    private boolean dowpconnect = false, dowpcont = false;
     private boolean dowpdisconnect = false;
     private final Collection<Runnable> deferred = new LinkedList<>();
     private final Map<KeyBind, KeyBind.Command> binds = new HashMap<>();
@@ -378,6 +378,8 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    dest.links.add(src.id);
 		    file.update(src);
 		    file.update(dest);
+		    if(dowpcont)
+		        src = dest;
 		    return true;
 		} else if(!press && dowpdisconnect && mark.m instanceof WaypointMarker && src.seg == mark.m.seg) {
 		    final var dest = (WaypointMarker) mark.m;
@@ -412,6 +414,11 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		    if(mark.m instanceof WaypointMarker) {
 		        opts.put("Create connections", (opt) -> {
 		            dowpconnect = true;
+		            src = (WaypointMarker) mark.m;
+			});
+		        opts.put("Create continuous connections", (opt) -> {
+		            dowpconnect = true;
+		            dowpcont = true;
 		            src = (WaypointMarker) mark.m;
 			});
 		        opts.put("Remove connections", (opt) -> {
@@ -484,6 +491,7 @@ public class MapWnd extends ResizableWnd implements Console.Directory {
 		return(true);
 	    } else if(dowpconnect && button == 3) {
 	        dowpconnect = false;
+	        dowpcont = false;
 	        return true;
 	    } else if(dowpdisconnect && button == 3) {
 	        dowpdisconnect = false;

@@ -311,7 +311,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	setcanfocus(true);
 	setfocusctl(true);
 	cal = new Cal();
-	zerg = add(new Zergwnd(), Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
+	zerg = new Zergwnd();
 	zerg.hide();
 	//Chat Wdgs
 	chatwnd = new ChatWnd(chat = new ChatUI(600, 150));
@@ -383,6 +383,7 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	final Coord stdloc = UI.scale(200, 200);
 	ui.root.sessionDisplay.unlink();
 	add(ui.root.sessionDisplay);
+	add(zerg, Utils.getprefc("wndc-zerg", UI.scale(new Coord(187, 50))));
 	opts = add(new OptionsWnd(ui));
 	opts.hide();
 	add(questwnd, new Coord(0, sz.y - 200));
