@@ -1,5 +1,5 @@
 {
-  "version": "52f6b7853f2ed80ab095419e113bffbd37b7bcab",
+  "version": "fc1157f24fee541755ba2c094650e9b79d135092",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "JvpowKISnRezmWbioDzV05qKAoOoO1MZmIhV9x8OJek=",
     "data\\res\\custom\\mm\\hud\\realm.res": "cUY6p2VbN99BqilJWPEt1ww3mOpaExP5Lnz7Nb1pdeo=",
@@ -134,7 +134,7 @@
     "data\\scripts\\auto-drop-ores.lisp": "yG4z3LhT6SBF0UHSZAUJiB1bcZX7Rjvf529KHt18xVA=",
     "data\\res\\custom\\hud\\sloth\\scframe.res": "HJtxkLgQw/WuOodllO6NV1IKX68HL0hQONbMRvmVhJw=",
     "data\\res\\custom\\mm\\icons\\cave.res": "9tS3BUR61wLdnJPEacatNh6jyxTIhTe77iHZfbndeNg=",
-    "data\\ObjData.json5": "9Xy9wH0N4Xc8+dS3CHZP4/4hlI0Kluvc2MY8+epB0ME=",
+    "data\\ObjData.json5": "KS+iRugaFsdULzIKUZN5WQCA2fwDYiBn6NGJhQAZjd8=",
     "data\\scripts\\deforester.lisp": "P5NON+m7U1oHvx5bMQL46np8o3DcghxO4GCPXXBz/DI=",
     "data\\scripts\\lib\\_config_script.lisp": "emhcp4GoxmjINFKfBprIYwflu0iHoKwRaDoaQr8sc3I=",
     "data\\scripts\\scout.lisp": "o15Gk1ADn1D4JToh6gsx41biz2AEwzgWjSLr848zUlI=",
@@ -379,6 +379,7 @@
     "data\\res\\custom\\sfx\\default\\swheel.res": "rDEMBu/AtaK4i6QhKYEJ0PiG3weLYy/PkZWnuDMEFXo=",
     "gluegen-rt.jar": "TUQMP3j5N7edvg9u4tnuBgTjZttaFLCeun2iJNpt/6E=",
     "data\\res\\custom\\sfx\\omni\\Z_SS_Rupee_Blue.res": "TkCR42N4xA+187d5oM+fXaytVJW9DVXorBSskacAyBc=",
+    "data\\scripts\\flay-bats.lua": "CkSSQrBve0tLz0n8e9JC26QnFOja8VZl/QiXuFaX9fk=",
     "data\\res\\custom\\hud\\octo\\drop.res": "s/JRryk9EW4m+3kIdokOOeZb2K0ovGp+JJHJvGkzU4k=",
     "data\\res\\custom\\sfx\\omni\\SMB3_Coin.res": "Pw1DgRigqilsaqB2zVVjMLvkLcGVIMaa5lhJeTpML8A=",
     "data\\res\\custom\\hud\\sloth\\buttons\\wnd\\vclaim.res": "bsnc+h5SuqxZl879nYmYqIfLf56nGCIMe3iGiXdZGbw=",

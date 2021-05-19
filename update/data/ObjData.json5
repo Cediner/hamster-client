@@ -201,8 +201,8 @@
     ],
     cropdata: {
       type: "TRELLIS",
-      min_stage: 5,
-      final_stage: 5
+      min_stage: 6,
+      final_stage: 6
     }
   },
   {
@@ -212,8 +212,8 @@
     ],
     cropdata: {
       type: "TRELLIS",
-      min_stage: 5,
-      final_stage: 5
+      min_stage: 6,
+      final_stage: 6
     }
   },
   {
@@ -669,6 +669,22 @@
       "ANIMAL",
       "CAN_FIGHT"
     ]
+  },
+  {
+    res: "gfx/kritter/beaver/oldbeaver",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ],
+    range: 110
+  },
+  {
+    res: "gfx/kritter/beaver/grizzlybeaver",
+    tags: [
+      "ANIMAL",
+      "CAN_FIGHT"
+    ],
+    range: 110
   },
   {
     res: "gfx/kritter/reddeer/reddeer",
