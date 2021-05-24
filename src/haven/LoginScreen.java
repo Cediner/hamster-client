@@ -65,13 +65,8 @@ public class LoginScreen extends Widget {
 	final int spacer = UI.scale(5);
 	add(new Img(bg), Coord.z);
 	adda(new IButton("gfx/hud/buttons/login", "u", "d", "o", this::login) {
-	    protected void depress() {
-		Audio.play(Button.lbtdown.stream());
-	    }
-
-	    protected void unpress() {
-		Audio.play(Button.lbtup.stream());
-	    }
+	    protected void depress() {ui.sfx(Button.clbtdown.stream());}
+	    protected void unpress() {ui.sfx(Button.clbtup.stream());}
 	}, UI.scale(419), UI.scale(520), 0.5, 0.5);
 	add(error, new Coord(UI.scale(420) - username.sz.x / 2, UI.scale(300)));
 	add(progress, new Coord(UI.scale(420) - username.sz.x / 2, error.c.y + error.sz.y + spacer));

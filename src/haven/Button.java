@@ -48,8 +48,9 @@ public class Button extends SIWidget {
     public static final IndirThemeTex hir = res.img(8);
     public static final int hs = ul.imgs().getHeight(), hl = um.imgs().getHeight();
     public static final Resource click = Loading.waitfor(Resource.local().load("sfx/hud/btn"));
-    public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
-    public static final Resource.Audio lbtup   = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "up");
+    @Deprecated public static final Resource.Audio lbtdown = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "down");
+    @Deprecated public static final Resource.Audio lbtup   = Loading.waitfor(Resource.local().load("sfx/hud/lbtn")).layer(Resource.audio, "up");
+    public static final Audio.Clip clbtdown = lbtdown, clbtup = lbtup;
     public static final int margin = UI.scale(10);
     public boolean lg;
     public Text text;

@@ -88,6 +88,26 @@ public class MenuGrid extends MovableWidget {
 	}
     }
 
+    public static class Interaction {
+	public final int btn, modflags;
+	public final Coord2d mc;
+	public final ClickData click;
+
+	public Interaction(int btn, int modflags, Coord2d mc, ClickData click) {
+	    this.btn = btn;
+	    this.modflags = modflags;
+	    this.mc = mc;
+	    this.click = click;
+	}
+
+	public Interaction(int btn, int modflags) {
+	    this(btn, modflags, null, null);
+	}
+
+	public Interaction() {
+	    this(1, 0);
+	}
+    }
     public static class PagButton implements ItemInfo.Owner {
 	public final Pagina pag;
 	public final Resource res;
@@ -112,8 +132,18 @@ public class MenuGrid extends MovableWidget {
 	public KeyBind binding() {
 	    return KeyBind.getDynamicKB(res.name, "MenuGrid", hotkey());
 	}
-	public void use() {
+	@Deprecated public void use() {
 	    pag.use();
+	}
+	public void use(Interaction iact) {
+	    Object[] args = Utils.extend(new Object[0], res.layer(Resource.action).ad);
+	    args = Utils.extend(args, Integer.valueOf(pag.scm.ui.modflags()));
+	    if(iact.mc != null) {
+		args = Utils.extend(args, iact.mc.floor(OCache.posres));
+		if(iact.click != null)
+		    args = Utils.extend(args, iact.click.clickargs());
+	    }
+	    pag.scm.wdgmsg("act", args);
 	}
 
 	public String sortkey() {
@@ -172,7 +202,7 @@ public class MenuGrid extends MovableWidget {
     public final PagButton next = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-next").indir())) {
 	    {pag.button = this;}
 
-	    public void use() {
+	    public void use(Interaction iact) {
 		if((curoff + (gsz.x*gsz.y)-2) >= curbtns.size())
 		    curoff = 0;
 		else
@@ -188,7 +218,7 @@ public class MenuGrid extends MovableWidget {
     public final PagButton bk = new PagButton(new Pagina(this, Resource.local().loadwait("gfx/hud/sc-back").indir())) {
 	    {pag.button = this;}
 
-	    public void use() {
+	    public void use(Interaction iact) {
 		pag.scm.change(paginafor(pag.scm.cur.act().parent));
 		curoff = 0;
 	    }
@@ -472,7 +502,7 @@ public class MenuGrid extends MovableWidget {
 	});
 	binds.put(KeyBind.KB_SCM_BACK, () -> {
 	    if(this.cur != null) {
-	        use(bk, false);
+	        use(bk, new Interaction(), false);
 	        return true;
 	    } else {
 	        return false;
@@ -480,7 +510,7 @@ public class MenuGrid extends MovableWidget {
 	});
 	binds.put(KeyBind.KB_SCM_NEXT, () -> {
 	    if((layout[gsz.x - 2][gsz.y - 1] == next)) {
-		use(next, false);
+		use(next, new Interaction(), false);
 		return true;
 	    } else {
 		return false;
@@ -688,14 +718,14 @@ public class MenuGrid extends MovableWidget {
 	updlayout();
     }
 
-    public void use(PagButton r, boolean reset) {
+    public void use(PagButton r, Interaction iact, boolean reset) {
 	Collection<PagButton> sub = new ArrayList<>();
 	cons(r.pag, sub);
 	if(sub.size() > 0) {
 	    change(r.pag);
 	} else {
 	    r.pag.newp = 0;
-	    r.use();
+	    r.use(iact);
 	    if(reset)
 		change(null);
 	}
@@ -726,7 +756,7 @@ public class MenuGrid extends MovableWidget {
 		dragging = null;
 	    } else if(pressed != null) {
 		if(pressed == h)
-		    use(h, false);
+		    use(h, new Interaction(), false);
 		pressed = null;
 	    }
 	    grab.remove();
@@ -792,7 +822,7 @@ public class MenuGrid extends MovableWidget {
 	    }
 	}
 	if(pag != null) {
-	    use(pag, true);
+	    use(pag, new Interaction(), (KeyMatch.mods(ev) & KeyMatch.S) == 0);
 	    return(true);
 	}
 	return(false);

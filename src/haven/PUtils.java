@@ -68,6 +68,15 @@ public class PUtils {
 	return(new BufferedImage(TexI.glcm, img, false, null));
     }
 
+    public static BufferedImage coercergba(BufferedImage img) {
+	int w = img.getWidth(), h = img.getHeight();
+	WritableRaster buf = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, w, h, 4, null);
+	BufferedImage tgt = new BufferedImage(TexI.glcm, buf, false, null);
+	Graphics g = tgt.createGraphics();
+	g.drawImage(img, 0, 0, w, h, 0, 0, w, h, null);
+	g.dispose();
+	return(tgt);
+    }
     public static WritableRaster imggrow(WritableRaster img, int rad) {
 	int h = img.getHeight(), w = img.getWidth();
 	int[] buf = new int[w * h];
@@ -415,8 +424,7 @@ public class PUtils {
 	public double support() {return(sz);}
     }
 
-    public static BufferedImage convolvedown(BufferedImage img, Coord tsz, Convolution filter) {
-	Raster in = img.getRaster();
+    public static WritableRaster convolvedown(Raster in, Coord tsz, Convolution filter) {
 	int w = in.getWidth(), h = in.getHeight(), nb = in.getNumBands();
 	double xf = (double)w / (double)tsz.x, ixf = 1.0 / xf;
 	double yf = (double)h / (double)tsz.y, iyf = 1.0 / yf;
@@ -492,11 +500,13 @@ public class PUtils {
 		}
 	    }
 	}
-	return(new BufferedImage(img.getColorModel(), res, false, null));
+	return(res);
+    }
+    public static BufferedImage convolvedown(BufferedImage img, Coord tsz, Convolution filter) {
+	return(new BufferedImage(img.getColorModel(), convolvedown(img.getRaster(), tsz, filter), false, null));
     }
 
-    public static BufferedImage convolveup(BufferedImage img, Coord tsz, Convolution filter) {
-	Raster in = img.getRaster();
+    public static WritableRaster convolveup(Raster in, Coord tsz, Convolution filter) {
 	int w = in.getWidth(), h = in.getHeight(), nb = in.getNumBands();
 	double xf = (double)w / (double)tsz.x, ixf = 1.0 / xf;
 	double yf = (double)h / (double)tsz.y, iyf = 1.0 / yf;
@@ -572,10 +582,13 @@ public class PUtils {
 		}
 	    }
 	}
-	return(new BufferedImage(img.getColorModel(), res, false, null));
+	return(res);
+    }
+    public static BufferedImage convolveup(BufferedImage img, Coord tsz, Convolution filter) {
+	return(new BufferedImage(img.getColorModel(), convolveup(img.getRaster(), tsz, filter), false, null));
     }
 
-    public static BufferedImage convolve(BufferedImage img, Coord tsz, Convolution filter) {
+    public static WritableRaster convolve(Raster img, Coord tsz, Convolution filter) {
         if((tsz.x <= img.getWidth()) && (tsz.y <= img.getHeight()))
             return(convolvedown(img, tsz, filter));
         if((tsz.x >= img.getWidth()) && (tsz.y >= img.getHeight()))
@@ -583,12 +596,22 @@ public class PUtils {
         throw(new IllegalArgumentException("Can only scale images up or down in both dimensions"));
     }
 
-    private static final Convolution uifilter = new Hanning(5);
+    public static BufferedImage convolve(BufferedImage img, Coord tsz, Convolution filter) {
+	return(new BufferedImage(img.getColorModel(), convolve(img.getRaster(), tsz, filter), false, null));
+    }
+
+    private static final Convolution uifilter = new Lanczos(3);
     public enum ConvolutionMethod {
-        Box(box), Hanning5(new Hanning(5));
+	Box(box), Hanning5(new Hanning(5));
 
 	public Convolution method;
 	ConvolutionMethod(final Convolution method) { this.method = method; }
+    }
+    public static Raster uiscale(Raster img, Coord tsz) {
+	Coord sz = imgsz(img);
+	if(tsz.equals(sz))
+	    return(img);
+	return(convolve(img, tsz, uifilter));
     }
 
     public static BufferedImage uiscale(BufferedImage img, Coord tsz, ConvolutionMethod method) {
@@ -599,29 +622,26 @@ public class PUtils {
     }
 
     public static BufferedImage uiscale(BufferedImage img, Coord tsz) {
-        return uiscale(img, tsz, ConvolutionMethod.Hanning5);
+	return uiscale(img, tsz, ConvolutionMethod.Hanning5);
     }
 
     public static void main(String[] args) throws Exception {
 	Convolution[] filters = {
-	    new Hanning(1),
-	    new Hanning(4),
-	    new Hanning(5),
-	    new Hamming(1),
-	    new Hamming(4),
-	    new Lanczos(2),
-	    new Lanczos(4),
 	    box,
+	    new Hanning(1),
+	    new Hanning(2),
+	    new Hamming(1),
+	    new Lanczos(2),
+	    new Lanczos(3),
 	};
 	//BufferedImage in = Resource.loadimg("gfx/invobjs/herbs/crowberry");
-	IndirThemeRes res = Theme.themeres("textedit");
-	final Resource.Image img = res.layer(Resource.imgc);
-	Coord tsz = img.ssz;
+	BufferedImage in = javax.imageio.ImageIO.read(new java.io.File("/tmp/e.png"));
+	Coord tsz = new Coord(40, 40);
 	for(int i = 0; i < filters.length; i++) {
 	    double start = Utils.rtime();
-	    BufferedImage out = convolve(img.img, tsz, filters[i]);
+	    BufferedImage out = convolve(in, tsz, filters[i]);
 	    System.err.println(Utils.rtime() - start);
-	    javax.imageio.ImageIO.write(out, "PNG", new java.io.File(String.format("data/dump/%s.png", i)));
+	    javax.imageio.ImageIO.write(out, "PNG", new java.io.File("/tmp/barda" + i + ".png"));
 	}
     }
 }

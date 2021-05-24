@@ -266,21 +266,22 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 	.add(Glob.class, slot -> slot.wdg().ui.sess.glob)
 	.add(Session.class, slot -> slot.wdg().ui.sess);
     public class BeltSlot implements GSprite.Owner {
-	public final int idx;
+	public final int idx, lst;
 	public final Indir<Resource> res;
 	public final Message sdt;
 
-	public BeltSlot(int idx, Indir<Resource> res, Message sdt) {
+	public BeltSlot(int idx, Indir<Resource> res, Message sdt, int lst) {
 	    this.idx = idx;
 	    this.res = res;
 	    this.sdt = sdt;
+	    this.lst = lst;
 	}
 
 	private GSprite spr = null;
 	public GSprite spr() {
 	    GSprite ret = this.spr;
 	    if(ret == null)
-		ret = this.spr = GSprite.create(this, res.get(), Message.nil);
+		ret = this.spr = GSprite.create(this, res.get(), new MessageBuf(sdt));
 	    return(ret);
 	}
 
@@ -996,7 +997,10 @@ public class GameUI extends ConsoleHost implements Console.Directory {
 		    Message sdt = Message.nil;
 		    if (args.length > 2)
 			sdt = new MessageBuf((byte[]) args[2]);
-		    belt[slot] = new BeltSlot(slot, res, sdt);
+		    int lst = -1;
+		    if(args.length > 3)
+			lst = (Integer)args[3];
+		    belt[slot] = new BeltSlot(slot, res, sdt, lst);
 		}
 		if (slot <= 49)
 		    hotbar1.update(slot);

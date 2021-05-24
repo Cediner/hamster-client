@@ -39,7 +39,7 @@ public class Audio {
     private static Player player;
     public static final AudioFormat fmt = new AudioFormat(44100, 16, 2, true, false);
     private static int bufsize = (int) Math.pow(2, 14);
-    public static double volume;
+    public static double volume = 1.0;
     
     static {
 	volume = GlobalSettings.MASTERVOL.get() / 1000.0d;
@@ -53,6 +53,12 @@ public class Audio {
 	public int get(double[][] buf, int len);
     }
     
+    public interface Clip extends Resource.IDLayer<String> {
+	public CS stream();
+	public default String layerid() {return("");}
+	public default double bvol() {return(1.0);}
+    }
+    public static final Class<Clip> clip = Clip.class;
     public static class Mixer implements CS {
 	public final boolean cont;
 	private final Collection<CS> clips = new LinkedList<CS>();
@@ -212,6 +218,9 @@ public class Audio {
 	    this.clip = clip;
 	}
 
+	public VorbisClip(InputStream bs) throws IOException {
+	    this(new VorbisStream(bs));
+	}
 	public int get(double[][] dst, int ns) {
 	    int nch = dst.length;
 	    if(data == null)
@@ -538,15 +547,15 @@ public class Audio {
 	    ((Mixer)pl.stream).stop(clip);
     }
 
-    private static Map<Resource, Resource.Audio> reslastc = new HashMap<Resource, Resource.Audio>();
+    private static Map<Resource, Clip> reslastc = new HashMap<Resource, Clip>();
     public static CS fromres(Resource res) {
-	Collection<Resource.Audio> clips = res.layers(Resource.audio);
+	Collection<Clip> clips = res.layers(Audio.clip, null);
 	synchronized(reslastc) {
-	    Resource.Audio last = reslastc.get(res);
+	    Clip last = reslastc.get(res);
 	    int sz = clips.size();
 	    int s = (int)(Math.random() *  (((sz > 2) && (last != null))?(sz - 1):sz));
-	    Resource.Audio clip = null;
-	    for(Resource.Audio cp : clips) {
+	    Clip clip = null;
+	    for(Clip cp : clips) {
 		if(cp == last)
 		    continue;
 		clip = cp;

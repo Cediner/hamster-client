@@ -47,6 +47,13 @@ public class Area implements Iterable<Coord>, java.io.Serializable {
 	return(a.ul.equals(ul) && a.br.equals(br));
     }
 
+    public static Area corn(Coord ul, Coord br) {
+	return(new Area(ul, br));
+    }
+
+    public static Area corni(Coord ul, Coord bri) {
+	return(new Area(ul, bri.add(1, 1)));
+    }
     public static Area sized(Coord ul, Coord sz) {
 	return(new Area(ul, ul.add(sz)));
     }
@@ -55,6 +62,9 @@ public class Area implements Iterable<Coord>, java.io.Serializable {
 	return(new Area(Coord.z, sz));
     }
 
+    public static Area sizedi(Coord szi) {
+	return(new Area(Coord.z, szi.add(1, 1)));
+    }
     public Coord sz() {
 	return(br.sub(ul));
     }
@@ -78,14 +88,14 @@ public class Area implements Iterable<Coord>, java.io.Serializable {
     public Area overlap(Area o) {
 	if(!isects(o))
 	    return(null);
-	return(new Area(new Coord(Math.max(ul.x, o.ul.x), Math.max(ul.y, o.ul.y)),
-			new Coord(Math.min(br.x, o.br.x), Math.min(br.y, o.br.y))));
+	return(corn(Coord.of(Math.max(ul.x, o.ul.x), Math.max(ul.y, o.ul.y)),
+		    Coord.of(Math.min(br.x, o.br.x), Math.min(br.y, o.br.y))));
     }
 
     public Coord closest(Coord p) {
 	if(contains(p))
 	    return(p);
-	return(new Coord(Utils.clip(p.x, ul.x, br.x),
+	return(Coord.of(Utils.clip(p.x, ul.x, br.x),
 			 Utils.clip(p.y, ul.y, br.y)));
     }
 
@@ -94,23 +104,23 @@ public class Area implements Iterable<Coord>, java.io.Serializable {
     }
 
     public Area xl(Coord off) {
-	return(new Area(ul.add(off), br.add(off)));
+	return(corn(ul.add(off), br.add(off)));
     }
 
     public Area margin(Coord m) {
-	return(new Area(ul.sub(m), br.add(m)));
+	return(corn(ul.sub(m), br.add(m)));
     }
 
     public Area margin(int m) {
-	return(margin(new Coord(m, m)));
+	return(margin(Coord.of(m, m)));
     }
 
     public Area mul(Coord d) {
-	return(new Area(ul.mul(d), br.mul(d)));
+	return(corn(ul.mul(d), br.mul(d)));
     }
 
     public Area div(Coord d) {
-	return(new Area(ul.div(d), br.sub(1, 1).div(d).add(1, 1)));
+	return(corn(ul.div(d), br.sub(1, 1).div(d).add(1, 1)));
     }
 
     public int ridx(Coord c) {
@@ -128,7 +138,7 @@ public class Area implements Iterable<Coord>, java.io.Serializable {
 		}
 
 		public Coord next() {
-		    Coord ret = new Coord(x, y);
+		    Coord ret = Coord.of(x, y);
 		    if(++x >= br.x) {
 			x = ul.x;
 			y++;

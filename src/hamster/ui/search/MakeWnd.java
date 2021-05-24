@@ -110,7 +110,7 @@ public class MakeWnd extends Window implements ObservableListener<MenuGrid.Pagin
 
     public void act(MenuGrid.Pagina act) {
 	if (ui.gui != null) {
-	    ui.gui.menu.use(act.button(), false);
+	    ui.gui.menu.use(act.button(), new MenuGrid.Interaction(1, ui.modflags()), false);
 	}
     }
 
