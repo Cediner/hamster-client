@@ -136,14 +136,18 @@ public class MenuGrid extends MovableWidget {
 	    pag.use();
 	}
 	public void use(Interaction iact) {
-	    Object[] args = Utils.extend(new Object[0], res.layer(Resource.action).ad);
-	    args = Utils.extend(args, Integer.valueOf(pag.scm.ui.modflags()));
-	    if(iact.mc != null) {
-		args = Utils.extend(args, iact.mc.floor(OCache.posres));
-		if(iact.click != null)
-		    args = Utils.extend(args, iact.click.clickargs());
+	    if (pag instanceof CustomPagina)
+	        use();
+	    else {
+		Object[] args = Utils.extend(new Object[0], res.layer(Resource.action).ad);
+		args = Utils.extend(args, Integer.valueOf(pag.scm.ui.modflags()));
+		if (iact.mc != null) {
+		    args = Utils.extend(args, iact.mc.floor(OCache.posres));
+		    if (iact.click != null)
+			args = Utils.extend(args, iact.click.clickargs());
+		}
+		pag.scm.wdgmsg("act", args);
 	    }
-	    pag.scm.wdgmsg("act", args);
 	}
 
 	public String sortkey() {
