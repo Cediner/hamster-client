@@ -1,5 +1,5 @@
 {
-  "version": "be8843bff6d6a7f20c22492252838e40f3bdbc96",
+  "version": "175e1e6f67a3575bcb1d76ad185d0587f3ece501",
   "files": {
     "data\\scripts\\lib\\_config_flowermenu.lisp": "JvpowKISnRezmWbioDzV05qKAoOoO1MZmIhV9x8OJek=",
     "data\\res\\custom\\mm\\hud\\realm.res": "cUY6p2VbN99BqilJWPEt1ww3mOpaExP5Lnz7Nb1pdeo=",
@@ -255,7 +255,6 @@
     "data\\res\\custom\\hud\\sloth\\buttons\\square\\two.res": "HKdUvY3fRm/phjvHVpJ58uq1cho/Q7EtVMz7abAekQE=",
     "data\\res\\custom\\sfx\\omni\\AOE2_MilitaryCreation.res": "IQtcxednm3T+DN8YY4YXnBlaYCPQ2fpxyMHc5zeEcQI=",
     "data\\res\\custom\\hud\\default\\belt\\down.res": "+fBsqM9MBQV6qU4ZwoqwD/LKPwdcH7CxSMEgYpoAmJA=",
-    "run.bat": "dSWF7IwJKU6XoiK2GiJWNxVCCuOQvzGTgmJPNSOlvc8=",
     "data\\res\\custom\\hud\\octo\\buttons\\lock.res": "qHgauNHkxseDqMvmxEUNS07bHnl3BFZgifR1cNFoQy4=",
     "data\\scripts\\party-member-locator.lua": "XNiB+VEixutlYP+kl1JGkeuYiyBVwDpyIpMBPm7VaL4=",
     "data\\res\\custom\\sfx\\default\\match.res": "v0uNoMUTm0CZz6u3IXvcGr91WjOYzq4yFxPdXHvYuvM=",

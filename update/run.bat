@@ -1,1 +1,0 @@
-java -Djava.util.logging.config.file=logging.properties -Dsun.java2d.uiScale.enabled=false -Xmx1024M -jar hafen.jar
